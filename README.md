@@ -1,3 +1,3 @@
 # 2024-Crescendo
 
-Spartronics 4915's code for FRC's 2024 season.
+Spartronics 4915's code for the 2024 FRC game, Crescendo.
