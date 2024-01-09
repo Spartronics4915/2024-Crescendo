@@ -12,7 +12,7 @@ public final class Constants {
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
 
-        public static final int IntakeBeamBreakID = 0; //placeholder
+        public static final int kIntakeBeamBreakID = 0; //placeholder
     }
 
     public static final class Drive {
@@ -21,9 +21,9 @@ public final class Constants {
 
     public static final class UtilRec {
         public static record PIDConstants(
-                double kP,
-                double kI,
-                double kD
+                double P,
+                double I,
+                double D
             ) {}
 
         public static record MotorContstants(
@@ -48,6 +48,7 @@ public final class Constants {
         
 
         public static final double kInSpeed = 0.2; // placeholder
+        public static final double kLoadSpeed = 0.2; //placeholder
         public static final double kOutSpeed = -0.3; // placeholder
         public static final double kOffSpeed = 0;
     }

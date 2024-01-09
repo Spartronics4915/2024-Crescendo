@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.spartronics4915.frc2024.Constants.UtilRec.MotorContstants;
 import com.spartronics4915.frc2024.Constants.UtilRec.PIDConstants;
 import com.spartronics4915.frc2024.util.Loggable;
 
 
-import static com.spartronics4915.frc2024.Constants.Intake.*;
-import static com.spartronics4915.frc2024.Constants.OI.IntakeBeamBreakID;
+import static com. spartronics4915.frc2024.Constants.Intake.*;
+import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
+import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {
     public static enum IntakeState {
@@ -57,7 +57,7 @@ public class Intake extends SubsystemBase implements Loggable {
         mPIDController = constructPIDController(mMotor, kPIDconstants);
 
         //beam break setup
-        mBeamBreak = new DigitalInput(IntakeBeamBreakID);
+        mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
 
     private CANSparkMax constructMotor(MotorContstants kMotorValues){
@@ -73,9 +73,9 @@ public class Intake extends SubsystemBase implements Loggable {
     private SparkMaxPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
         SparkMaxPIDController pid = motor.getPIDController();
 
-        pid.setP(kPIDValues.kP());
-        pid.setI(kPIDValues.kI());
-        pid.setD(kPIDValues.kD());
+        pid.setP(kPIDValues.P());
+        pid.setI(kPIDValues.I());
+        pid.setD(kPIDValues.D());
 
         return pid;
     }
@@ -123,7 +123,16 @@ public class Intake extends SubsystemBase implements Loggable {
     }
 
     private void in() {
+        if (mBeamBreak.get()) {
+            mCurrentState = IntakeState.OFF;
+            off();
+            return;
+        }
         mPIDController.setReference(kInSpeed, ControlType.kVelocity);
+    }
+
+    private void load() {
+        mPIDController.setReference(kLoadSpeed, ControlType.kVelocity);
     }
 
     private void out() {
@@ -143,15 +152,10 @@ public class Intake extends SubsystemBase implements Loggable {
     public void periodic() {
         switch (mCurrentState) {
             case IN: //will intake until beamBreak has been triggered
-                if (mBeamBreak.get()) {
-                    mCurrentState = IntakeState.OFF;
-                    off();
-                    break;
-                }
                 in();
                 break;
             case LOAD: //loads into shooter
-                in();
+                load();
                 break;
             case OUT:
                 out();
