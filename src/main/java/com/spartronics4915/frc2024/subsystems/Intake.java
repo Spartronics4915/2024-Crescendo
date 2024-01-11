@@ -1,5 +1,6 @@
 package com.spartronics4915.frc2024.subsystems;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -12,11 +13,12 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.spartronics4915.frc2024.Constants.UtilRec.MotorContstants;
 import com.spartronics4915.frc2024.Constants.UtilRec.PIDConstants;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
 
 
 import static com. spartronics4915.frc2024.Constants.Intake.*;
-import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {
@@ -28,8 +30,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
     private IntakeState mCurrentState;
 
-    private ShuffleboardLayout mIntakeOverview;
-    private SimpleWidget mIntakeStateWidget;
+    private GenericEntry mIntakeStateWidget;
 
     private final CANSparkMax mMotor;
     private final SparkMaxPIDController mPIDController;
@@ -39,15 +40,8 @@ public class Intake extends SubsystemBase implements Loggable {
     private Intake() {
         mCurrentState = IntakeState.OFF;
 
-        mIntakeOverview = Shuffleboard
-                .getTab("Overview")
-                .getLayout("Intake", BuiltInLayouts.kList)
-                .withSize(2, 2);
-
-        mIntakeStateWidget = mIntakeOverview
-                .add("State", IntakeState.NONE)
-                .withSize(2, 2);
-
+        var EntryMap = IntakeTabManager.getEnumMap(this);
+        mIntakeStateWidget = EntryMap.get(IntakeSubsystemEntries.IntakeState);
 
         //motor setup 
 
@@ -145,13 +139,13 @@ public class Intake extends SubsystemBase implements Loggable {
 
     @Override
     public void updateShuffleboard() {
-        mIntakeStateWidget.getEntry().setValue(mCurrentState);
+        mIntakeStateWidget.setString(mCurrentState.name());
     }
 
     @Override
     public void periodic() {
         switch (mCurrentState) {
-            case IN: //will intake until beamBreak has been triggered
+            case IN: //will intake until beamBreak has been triggered,
                 in();
                 break;
             case LOAD: //loads into shooter
