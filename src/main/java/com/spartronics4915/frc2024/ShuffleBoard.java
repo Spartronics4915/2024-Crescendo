@@ -9,7 +9,6 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class ShuffleBoard {
     public static String UserTab = "Overview"; //anything the drivers need to see should be on this tab
@@ -34,7 +33,7 @@ public class ShuffleBoard {
 
                 
                 out.put(IntakeSubsystemEntries.IntakeState, 
-                    mIntakeOverview.add(IntakeSubsystemEntries.IntakeState.entryName, IntakeState.NONE)
+                    mIntakeOverview.add(IntakeSubsystemEntries.IntakeState.entryName, IntakeState.NONE.name())
                         .withSize(2, 2)
                         .getEntry()
                 );

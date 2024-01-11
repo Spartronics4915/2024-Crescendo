@@ -139,7 +139,7 @@ public class Intake extends SubsystemBase implements Loggable {
 
     @Override
     public void updateShuffleboard() {
-        mIntakeStateWidget.setValue(mCurrentState);
+        mIntakeStateWidget.setString(mCurrentState.name());
     }
 
     @Override
