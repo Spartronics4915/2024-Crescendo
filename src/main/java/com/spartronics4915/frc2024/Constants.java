@@ -1,7 +1,7 @@
 package com.spartronics4915.frc2024;
 
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
 
 public final class Constants {
