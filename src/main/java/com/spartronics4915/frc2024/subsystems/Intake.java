@@ -9,16 +9,15 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.UtilRec.MotorContstants;
 import com.spartronics4915.frc2024.Constants.UtilRec.PIDConstants;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
 
-
-import static com. spartronics4915.frc2024.Constants.Intake.*;
+import static com.spartronics4915.frc2024.Constants.Intake.*;
 import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {
@@ -33,7 +32,7 @@ public class Intake extends SubsystemBase implements Loggable {
     private GenericEntry mIntakeStateWidget;
 
     private final CANSparkMax mMotor;
-    private final SparkMaxPIDController mPIDController;
+    private final SparkPIDController mPIDController;
 
     private final DigitalInput mBeamBreak;
 
@@ -54,18 +53,18 @@ public class Intake extends SubsystemBase implements Loggable {
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
 
-    private CANSparkMax constructMotor(MotorContstants kMotorValues){
-        CANSparkMax motor = new CANSparkMax(kMotorValues.kMotorID(), kMotorValues.kMotorType());
+    private CANSparkMax constructMotor(MotorContstants motorValues){
+        CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
         motor.restoreFactoryDefaults();
-        motor.setInverted(kMotorValues.kMotorIsInverted());
-        motor.setIdleMode(kMotorValues.kIdleMode());
-        motor.setSmartCurrentLimit(kMotorValues.kCurrentLimit());
+        motor.setInverted(motorValues.kMotorIsInverted());
+        motor.setIdleMode(motorValues.kIdleMode());
+        motor.setSmartCurrentLimit(motorValues.kCurrentLimit());
         motor.burnFlash();
         return motor;
     }
 
-    private SparkMaxPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
-        SparkMaxPIDController pid = motor.getPIDController();
+    private SparkPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
+        SparkPIDController pid = motor.getPIDController();
 
         pid.setP(kPIDValues.P());
         pid.setI(kPIDValues.I());
