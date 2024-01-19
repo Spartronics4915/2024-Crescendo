@@ -12,6 +12,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import com.spartronics4915.frc2024.util.*;
+
 import static com.spartronics4915.frc2024.Constants.Drive.*;
 
 public class SwerveModule {
@@ -50,6 +52,10 @@ public class SwerveModule {
 
         mX = x;
         mY = y;
+    }
+
+    public SwerveModule(ModuleConstants mc) {
+        this(mc.driveMotorID(), mc.angleMotorID(), mc.encoderID(), mc.encoderOffsetDegrees(), mc.x(), mc.y());
     }
 
     public void setDesiredState(SwerveModuleState state) {

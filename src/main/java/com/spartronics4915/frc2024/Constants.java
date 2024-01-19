@@ -26,8 +26,10 @@ public final class Constants {
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
-        public static final double kTreadCoefficientOfFriction = 1.13; // black neoprene
-        public static final double kRobotTotalMassKg = 50; // Incl. battery and bumpers, could be used to calculate required power for some acceleration. TODO: get actual value
+        // black neoprene
+        public static final double kTreadCoefficientOfFriction = 1.13;
+        // Incl. battery and bumpers, could be used to calculate required power for some acceleration. TODO: get actual value
+        public static final double kRobotTotalMassKg = 50;
 
         public static final double kDriveGearRatio = 6.75 / 1.0; // L2 MK4i
         public static final double kDriveVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio) / 60.0;
@@ -35,10 +37,11 @@ public final class Constants {
 
         public static final double kAngleGearRatio =  150.0 / 7.0; // MK4i
         public static final double kAnglePositionConversionFactor = (2 * Math.PI) / (kAngleGearRatio);
+        // Decrease this value if wheels start to slip with worn out tread. Should be 1.0 with new tread.
+        public static final double kTreadWearAdjustment = 1.0;
 
-        public static final double kTreadWearAdjustment = 1.0; // Decrease this value if wheels start to slip with worn out tread. Should be 1.0 with new tread.
-
-        public static final double kMaxSpeed = Units.feetToMeters(17.6); // theoretical maximum with NEO Vortex and L2 MK4i
+        // theoretical maximum with NEO Vortex and L2 MK4i
+        public static final double kMaxSpeed = Units.feetToMeters(17.6);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
         public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
