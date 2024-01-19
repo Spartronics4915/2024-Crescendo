@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
-import com.spartronics4915.frc2024.Constants.UtilRec.MotorContstants;
-import com.spartronics4915.frc2024.Constants.UtilRec.PIDConstants;
+import com.spartronics4915.frc2024.util.MotorConstants;
+import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase implements Loggable {
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
 
-    private CANSparkMax constructMotor(MotorContstants motorValues){
+    private CANSparkMax constructMotor(MotorConstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
         motor.restoreFactoryDefaults();
         motor.setInverted(motorValues.kMotorIsInverted());
