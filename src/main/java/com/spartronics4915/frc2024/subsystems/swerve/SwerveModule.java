@@ -1,43 +1,109 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+import static com.spartronics4915.frc2024.Constants.Drive.*;
+
 public class SwerveModule {
     private final CANSparkFlex mDriveMotor;
     private final CANSparkMax mAngleMotor;
+
+    private final SparkPIDController mDrivePID;
+    private final SparkPIDController mAnglePID;
 
     private final CANcoder mCANCoder;
 
     private final double mX;
     private final double mY;
 
-    private SwerveModuleState mDesiredState;
-
     public SwerveModule(
             int driveMotorID,
             int angleMotorID,
             int encoderID,
+            double encoderOffsetDegrees,
             double x,
             double y) {
         mDriveMotor = new CANSparkFlex(driveMotorID, MotorType.kBrushless);
         mAngleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
-        // TODO: set settings
+        configureDriveMotor(mDriveMotor);
+        configureAngleMotor(mAngleMotor);
+
+        mDrivePID = mDriveMotor.getPIDController();
+        mAnglePID = mAngleMotor.getPIDController();
 
         mCANCoder = new CANcoder(encoderID);
+        mCANCoder
+                .getConfigurator()
+                .apply(new CANcoderConfiguration()
+                        .withMagnetSensor(new MagnetSensorConfigs()
+                                .withMagnetOffset(encoderOffsetDegrees)));
 
         mX = x;
         mY = y;
-
-        mDesiredState = new SwerveModuleState();
     }
 
     public void setDesiredState(SwerveModuleState state) {
-        mDesiredState = state;
+        mDrivePID.setReference(state.speedMetersPerSecond,
+                ControlType.kSmartVelocity);
+        mAnglePID.setReference(state.angle.getDegrees(),
+                ControlType.kPosition);
+    }
+
+    private void configureDriveMotor(CANSparkFlex motor) {
+        motor.restoreFactoryDefaults();
+        motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
+        motor.enableVoltageCompensation(kMaxVoltage);
+        motor.setInverted(false);
+        motor.setIdleMode(IdleMode.kBrake);
+
+        final var encoder = motor.getEncoder();
+        encoder.setPositionConversionFactor(kDrivePositionConversionFactor);
+        encoder.setVelocityConversionFactor(kDriveVelocityConversionFactor);
+        encoder.setPosition(0);
+
+        final var pid = motor.getPIDController();
+        final var pc = kDrivePIDFConstants;
+        pid.setP(pc.p());
+        pid.setI(pc.i());
+        pid.setD(pc.d());
+        pid.setFF(pc.ff());
+        pid.setSmartMotionMaxVelocity(kMaxSpeed, 1);
+        pid.setSmartMotionMaxAccel(kMaxAcceleration, 1);
+
+        motor.burnFlash();
+    }
+
+    private void configureAngleMotor(CANSparkMax motor) {
+        motor.restoreFactoryDefaults();
+        motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
+        motor.enableVoltageCompensation(kMaxVoltage);
+        motor.setInverted(false);
+        motor.setIdleMode(IdleMode.kBrake);
+
+        final var encoder = motor.getEncoder();
+        encoder.setPositionConversionFactor(kAnglePositionConversionFactor);
+        encoder.setPosition(0);
+
+        final var pid = motor.getPIDController();
+        final var pc = kDrivePIDFConstants;
+        pid.setP(pc.p());
+        pid.setI(pc.i());
+        pid.setD(pc.d());
+        pid.setFF(pc.ff());
+        pid.setPositionPIDWrappingEnabled(true);
+        pid.setPositionPIDWrappingMaxInput(180);
+        pid.setPositionPIDWrappingMinInput(-180);
+
+        motor.burnFlash();
     }
 }
