@@ -54,11 +54,11 @@ public class Intake extends SubsystemBase implements Loggable {
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){
-        CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
+        CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
-        motor.setInverted(motorValues.kMotorIsInverted());
-        motor.setIdleMode(motorValues.kIdleMode());
-        motor.setSmartCurrentLimit(motorValues.kCurrentLimit());
+        motor.setInverted(motorValues.motorIsInverted());
+        motor.setIdleMode(motorValues.idleMode());
+        motor.setSmartCurrentLimit(motorValues.currentLimit());
         motor.burnFlash();
         return motor;
     }
@@ -66,9 +66,9 @@ public class Intake extends SubsystemBase implements Loggable {
     private SparkPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
         SparkPIDController pid = motor.getPIDController();
 
-        pid.setP(kPIDValues.P());
-        pid.setI(kPIDValues.I());
-        pid.setD(kPIDValues.D());
+        pid.setP(kPIDValues.p());
+        pid.setI(kPIDValues.i());
+        pid.setD(kPIDValues.d());
 
         return pid;
     }
