@@ -51,5 +51,10 @@ public final class Constants {
         public static final double kLoadSpeed = 0.2; //placeholder
         public static final double kOutSpeed = -0.3; // placeholder
         public static final double kOffSpeed = 0;
+}
+
+    public static final class AutoAimConstants {
+        public static final double kShooterSpeed = 1.0; //FIXME temp
+        public static final double kRelSpeakHeight = 10;
     }
 }
