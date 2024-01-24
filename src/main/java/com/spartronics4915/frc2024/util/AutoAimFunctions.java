@@ -19,6 +19,8 @@ public class AutoAimFunctions {
         //the inputs are intended to be relative to the robot in terms of position and velocity, (ie if the robot was moving towards the speaker the speaker would have a velocity going towards the origin)
         //uses code from: https://stackoverflow.com/a/22117046/21621189, look in comments for errors and edge cases accounted for
 
+        //a desmos visualization: https://www.desmos.com/calculator/ejg6jrsodq
+
         double kShooterSpeed = AutoAimConstants.kShooterSpeed; //s1
 
         double a = pow(speakVel.getX()) + pow(speakVel.getY()) - pow(kShooterSpeed);
