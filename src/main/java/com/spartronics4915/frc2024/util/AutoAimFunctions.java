@@ -33,7 +33,7 @@ public class AutoAimFunctions {
         double t; //t = time at collision (from 0) in time unit of speakerVel 
 
         if (!check(t1) && !check(t2)) {
-            return null;
+            return Optional.empty();
         }else if (!check(t1) || !check(t2)){
             t = check(t1) ? t1 : t2;
         }else{
