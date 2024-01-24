@@ -16,7 +16,7 @@ public class AutoAimFunctions {
         Translation2d speakPos, //S0
         Translation2d speakVel //V0
     ){
-        
+        //the inputs are intended to be relative to the robot in terms of position and velocity, (ie if the robot was moving towards the speaker the speaker would have a velocity going towards the origin)
         //uses code from: https://stackoverflow.com/a/22117046/21621189, look in comments for errors and edge cases accounted for
 
         double kShooterSpeed = AutoAimConstants.kShooterSpeed; //s1
@@ -30,7 +30,7 @@ public class AutoAimFunctions {
         double t1 = (-b + Math.sqrt((b * b) - (4 * a * c))) / (2 * a);
         double t2 = (-b - Math.sqrt((b * b) - (4 * a * c))) / (2 * a);
 
-        double t; //t = time at collision (from 0) in time unit of speakerVel 
+        double t; //t = time at collision (from 0) in time unit of speakVel 
 
         if (!check(t1) && !check(t2)) {
             return Optional.empty();
@@ -42,7 +42,7 @@ public class AutoAimFunctions {
 
         Translation2d out = speakPos.plus(speakVel.times(t));
 
-        return Optional.of(out); //outputs the speakerPos relative to the robot, rotation relative to the field
+        return Optional.of(out); //outputs the speakerPos at the collision time relative to the robot, (rotation is based on the same as the input translate2ds)
     }
 
     public static Rotation3d getShooterAngle(Translation2d speakPos){ //this is the position of the speaker centered around the robot
