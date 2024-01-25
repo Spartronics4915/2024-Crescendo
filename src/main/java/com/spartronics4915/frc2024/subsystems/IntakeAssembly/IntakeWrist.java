@@ -116,11 +116,11 @@ public class IntakeWrist extends SubsystemBase{
     }
 
     public void currentToSetPoint(){
-        setRotationSetPoint(getEncoderPosReading()); //TODO clamp for saftey?
+        setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
     }
     
-    private void setRotationSetPoint(Rotation2d angle){
-        if (isSafeAngle(angle))
+    private void setRotationSetPoint(Rotation2d angle, boolean force){
+        if (isSafeAngle(angle) || force) //TODO remove force for setting to closest safe value or shutdown (based on context)
             mRotSetPoint = angle;
     }
 
@@ -131,7 +131,7 @@ public class IntakeWrist extends SubsystemBase{
 
     private void setState(IntakeAssemblyState newState){
         mManualMovment = false;
-        setRotationSetPoint(newState.wristAngle);
+        setRotationSetPoint(newState.wristAngle, false);
     }
 
 
