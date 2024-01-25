@@ -30,6 +30,9 @@ public class IntakeWrist extends SubsystemBase{
     //Decision list:
     
     //#region variables
+
+        private static IntakeWrist mInstance;
+
         private CANSparkMax mWristMotor;
         private SparkPIDController mPidController;
         private RelativeEncoder mEncoder;
@@ -54,6 +57,12 @@ public class IntakeWrist extends SubsystemBase{
         shuffleInit();
     }
 
+    public static IntakeWrist getInstance() {
+        if (mInstance == null) {
+            mInstance = new IntakeWrist();
+        }
+        return mInstance;
+    }
 
     //#region Init functions
 

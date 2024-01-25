@@ -85,7 +85,7 @@ public final class Constants {
 
             public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final class ManualConstants { //speed of manual movments
+            public static final class ManualConstants { //speed of manual movements, 
                 
             }
         }
