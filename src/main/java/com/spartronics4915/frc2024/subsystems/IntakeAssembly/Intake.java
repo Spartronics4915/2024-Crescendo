@@ -17,7 +17,7 @@ import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
 
-import static com.spartronics4915.frc2024.Constants.Intake.*;
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
 import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {

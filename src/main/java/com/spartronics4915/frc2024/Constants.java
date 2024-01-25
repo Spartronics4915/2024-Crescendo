@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 public final class Constants {
     public static final class OI {
         public static final int kDriverControllerPort = 0;
@@ -34,25 +36,45 @@ public final class Constants {
             int kCurrentLimit
         ) {}
     }
-
-    public static final class Intake {
-
-        public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-
-        public static final int kMotorID = 15;
-        public static final boolean kMotorIsInverted = false; // subject to change
-        public static final IdleMode kIdleMode = IdleMode.kBrake;
-        public static final int kCurrentLimit = 40;
-
-        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //FIXME DO NOT TEST WITH THESE VALUES
-        
-
-        public static final double kInSpeed = 0.2; // placeholder
-        public static final double kLoadSpeed = 0.2; //placeholder
-        public static final double kOutSpeed = -0.3; // placeholder
-        public static final double kOffSpeed = 0;
-    }
     public static final class IntakeAssembly {
+        public enum IntakeAssemblyState{
+            GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
+            STOW (Rotation2d.fromDegrees(0.0), 0.0),
+            AMP (Rotation2d.fromDegrees(0.0), 0.0),
+            LOAD (Rotation2d.fromDegrees(0.0), 0.0),
+            MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
+
+            public final Rotation2d wristAngle;
+            public final double ElevatorHeight;
+            private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
+                this.wristAngle = wristAngle;
+                ElevatorHeight = elevatorHeight;
+            }
+            
+        }
+
+        public static final class IntakeConstants {
+            public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //FIXME DO NOT TEST WITH THESE VALUES
+            
+
+            public static final double kInSpeed = 0.2; // placeholder
+            public static final double kLoadSpeed = 0.2; //placeholder
+            public static final double kOutSpeed = -0.3; // placeholder
+            public static final double kOffSpeed = 0;
+        }
         
+        public static final class IntakeWrist {
+
+
+            public static final class ManualConstants { //speed of manual movments
+                
+            }
+        }
+
+        public static final class ElevatorConstants {
+            
+        }
     }
 }
