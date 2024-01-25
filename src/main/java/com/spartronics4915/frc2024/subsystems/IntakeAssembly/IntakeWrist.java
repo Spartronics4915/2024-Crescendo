@@ -103,11 +103,11 @@ public class IntakeWrist extends SubsystemBase{
 
     //#endregion
 
-    private Rotation2d getEncoderPosReading(){
+    public Rotation2d getEncoderPosReading(){
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
-    private double getEncoderVelReading(){
+    public double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
