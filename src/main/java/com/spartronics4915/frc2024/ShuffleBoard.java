@@ -65,11 +65,13 @@ public class ShuffleBoard {
             out.put(WristSubsystemEntries.WristSetPoint, 
                 mIntakeOverview.add(WristSubsystemEntries.WristSetPoint.entryName, 0.0)
                     .withSize(2, 2)
+                    .withPosition(0, 0)
                     .getEntry()
             );
             out.put(WristSubsystemEntries.WristSetPoint, 
                 mIntakeOverview.add(WristSubsystemEntries.WristManualControl.entryName, false)
                     .withSize(2, 2)
+                    .withPosition(2, 0)
                     .getEntry()
             );
 
