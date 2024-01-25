@@ -1,6 +1,9 @@
 package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,20 +14,22 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
+import com.spartronics4915.frc2024.Constants.GeneralConstants;
+import com.spartronics4915.frc2024.Constants.GeneralConstants.*;
 
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
 
 public class IntakeWrist extends SubsystemBase{
     //Decision list:
-    //Trapazoid motion profiles? (can implement after the fact, structuring code so it can be easily done)
-    //fully statebased or setpoint based? (I am going to go for setpoint based since it allows for manual controls)
-    //another option is to implement smartmotion / smartvelocity
     
     //#region variables
         private CANSparkMax mWristMotor;
         private SparkPIDController mPidController;
         private RelativeEncoder mEncoder;
         //Setpoint
+        private Rotation2d mRotSetPoint;
+
+        private final TrapezoidProfile kTrapazoidProfile;
         //limit switches?
         private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
     //#endregion
@@ -34,10 +39,17 @@ public class IntakeWrist extends SubsystemBase{
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
         mPidController = initPID(IntakeWristConstants.kPIDconstants);
         mEncoder = initEncoder();
+        kTrapazoidProfile = initTrapazoid(IntakeWristConstants.kTrapzoidConstants);
+
+        setState(IntakeWristConstants.kStartupState);
     }
 
 
     //#region Init functions
+
+    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
+        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
+    }
 
     public CANSparkMax initMotor(MotorContstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
@@ -68,8 +80,12 @@ public class IntakeWrist extends SubsystemBase{
 
     //#endregion
 
-    private Rotation2d getEncoderRead(){
+    private Rotation2d getEncoderPosReading(){
         return Rotation2d.fromDegrees(mEncoder.getPosition()); //CHECKUP Failure Point?
+    }
+
+    private double getEncoderVelReading(){
+        return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
     private boolean isSafeAngle(Rotation2d angle){
@@ -77,16 +93,17 @@ public class IntakeWrist extends SubsystemBase{
     }
 
     public void currentToSetPoint(){
-        setRotationSetPoint(getEncoderRead()); //TODO clamp for saftey?
+        setRotationSetPoint(getEncoderPosReading()); //TODO clamp for saftey?
     }
     
     private void setRotationSetPoint(Rotation2d angle){
         if (isSafeAngle(angle))
-            mPidController.setReference(angle.getRotations(), ControlType.kPosition); //CHECKUP setPos feels easy
+            mRotSetPoint = angle;
     }
 
     private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
-        mPidController.setReference(velocity, ControlType.kVelocity);
+        mManualMovment = true;
+        mPidController.setReference(velocity, ControlType.kVelocity); //CHECKUP override?
     }
 
     private void setState(IntakeAssemblyState newState){
@@ -116,6 +133,21 @@ public class IntakeWrist extends SubsystemBase{
 
     @Override
     public void periodic() {
+        if (mManualMovment) {
+            //let commands handle it
+        } else {
+            TrapazoidMotionProfileUpdate();
+        }
         //will add things here if trapazoid motion profiles get used
+    }
+
+    private void TrapazoidMotionProfileUpdate(){
+        //CHECKUP not sure if this will work
+        var nextState = kTrapazoidProfile.calculate(
+            GeneralConstants.kUpdateTime,
+            new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+            new State(mRotSetPoint.getRotations(), 0)
+        );
+        mPidController.setReference(nextState.velocity, ControlType.kVelocity);
     }
 }

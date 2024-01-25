@@ -21,6 +21,10 @@ public final class Constants {
         public static final int kPigeon2ID = 2;
     }
 
+    public static final class GeneralConstants {
+        public static final double kUpdateTime = 1.0/50.0; //used in trapazoid profiles
+    }
+
     public static final class UtilRec {
         public static record PIDConstants(
                 double P,
@@ -34,6 +38,11 @@ public final class Constants {
             boolean kMotorIsInverted, 
             IdleMode kIdleMode,
             int kCurrentLimit
+        ) {}
+
+        public static record TrapazoidConstaintsConstants(
+            double kMaxVel,
+            double kMaxAccel
         ) {}
     }
     public static final class IntakeAssembly {
@@ -52,6 +61,7 @@ public final class Constants {
             }
             
         }
+        
 
         public static final class IntakeConstants {
             public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
@@ -66,9 +76,14 @@ public final class Constants {
         }
         
         public static final class IntakeWristConstants {
+
+            //FIXME UNITS
+
             public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
+            public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final class ManualConstants { //speed of manual movments
                 
