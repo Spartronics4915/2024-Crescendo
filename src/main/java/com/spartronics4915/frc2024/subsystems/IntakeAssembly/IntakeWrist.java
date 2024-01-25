@@ -6,29 +6,35 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
+
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
 
 public class IntakeWrist extends SubsystemBase{
     
     //#region variables
-        //Motor
         private CANSparkMax mWristMotor;
-        //PID
-        //Encoder
+        private SparkPIDController mPidController;
+        private RelativeEncoder mEncoder;
         //Setpoint
         //limit switches?
         private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
     //#endregion
 
+    public IntakeWrist() {
+        super();
+        mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
+        mPidController = initPID(IntakeWristConstants.kPIDconstants);
+        mEncoder = initEncoder();
+    }
+
 
     //#region Init functions
 
-    public IntakeWrist() {
-        super();
-    }
-
-    public CANSparkMax InitMotor(MotorContstants motorValues){
+    public CANSparkMax initMotor(MotorContstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
         motor.restoreFactoryDefaults();
         motor.setInverted(motorValues.kMotorIsInverted());
@@ -38,7 +44,19 @@ public class IntakeWrist extends SubsystemBase{
         return motor;
     }
 
+    public SparkPIDController initPID(PIDConstants kPIDValues){
+        SparkPIDController pid = mWristMotor.getPIDController();
 
+        pid.setP(kPIDValues.P());
+        pid.setI(kPIDValues.I());
+        pid.setD(kPIDValues.D());
+
+        return pid;
+    }
+
+    public RelativeEncoder initEncoder(){
+        return mWristMotor.getEncoder();
+    }
 
     //#endregion
 

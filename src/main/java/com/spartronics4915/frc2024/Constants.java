@@ -56,7 +56,7 @@ public final class Constants {
         public static final class IntakeConstants {
             public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
 
-            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //FIXME DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
             
 
             public static final double kInSpeed = 0.2; // placeholder
@@ -65,7 +65,9 @@ public final class Constants {
             public static final double kOffSpeed = 0;
         }
         
-        public static final class IntakeWrist {
+        public static final class IntakeWristConstants {
+            public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
 
 
             public static final class ManualConstants { //speed of manual movments
