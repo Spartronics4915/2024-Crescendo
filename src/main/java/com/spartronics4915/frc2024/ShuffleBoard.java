@@ -2,8 +2,8 @@ package com.spartronics4915.frc2024;
 
 import java.util.EnumMap;
 
-import com.spartronics4915.frc2024.subsystems.Intake;
-import com.spartronics4915.frc2024.subsystems.Intake.IntakeState;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;

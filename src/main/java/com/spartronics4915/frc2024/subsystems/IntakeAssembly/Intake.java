@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2024.subsystems;
+package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;

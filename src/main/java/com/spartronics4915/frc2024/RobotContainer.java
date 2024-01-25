@@ -4,8 +4,8 @@
 
 package com.spartronics4915.frc2024;
 
-import com.spartronics4915.frc2024.subsystems.Intake;
-import com.spartronics4915.frc2024.subsystems.Intake.IntakeState;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
