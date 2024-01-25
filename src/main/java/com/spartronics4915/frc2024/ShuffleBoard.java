@@ -25,21 +25,21 @@ public class ShuffleBoard {
         }
 
         public static EnumMap<IntakeSubsystemEntries, GenericEntry> getEnumMap(Intake subsystem) { 
-                EnumMap<IntakeSubsystemEntries, GenericEntry> out = new EnumMap<>(IntakeSubsystemEntries.class);
-                ShuffleboardLayout mIntakeOverview = Shuffleboard
-                    .getTab("Overview")
-                    .getLayout("Intake", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+            EnumMap<IntakeSubsystemEntries, GenericEntry> out = new EnumMap<>(IntakeSubsystemEntries.class);
+            ShuffleboardLayout mIntakeOverview = Shuffleboard
+                .getTab(UserTab)
+                .getLayout("Intake", BuiltInLayouts.kList)
+                .withSize(2, 2);
 
-                
-                out.put(IntakeSubsystemEntries.IntakeState, 
-                    mIntakeOverview.add(IntakeSubsystemEntries.IntakeState.entryName, IntakeState.NONE.name())
-                        .withSize(2, 2)
-                        .getEntry()
-                );
+            
+            out.put(IntakeSubsystemEntries.IntakeState, 
+                mIntakeOverview.add(IntakeSubsystemEntries.IntakeState.entryName, IntakeState.NONE.name())
+                    .withSize(2, 2)
+                    .getEntry()
+            );
 
-                return out;
-            }
+            return out;
+        }
     }
-
+    
 }
