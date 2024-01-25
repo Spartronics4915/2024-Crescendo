@@ -4,9 +4,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.EnumMap;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -18,6 +21,10 @@ import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants.*;
 
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
+import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
 
 public class IntakeWrist extends SubsystemBase{
     //Decision list:
@@ -26,12 +33,13 @@ public class IntakeWrist extends SubsystemBase{
         private CANSparkMax mWristMotor;
         private SparkPIDController mPidController;
         private RelativeEncoder mEncoder;
-        //Setpoint
         private Rotation2d mRotSetPoint;
 
         private final TrapezoidProfile kTrapazoidProfile;
-        //limit switches?
         private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
+        //limit switches?
+
+        private EnumMap<WristSubsystemEntries, GenericEntry> mEntries;
     //#endregion
 
     public IntakeWrist() {
@@ -40,16 +48,14 @@ public class IntakeWrist extends SubsystemBase{
         mPidController = initPID(IntakeWristConstants.kPIDconstants);
         mEncoder = initEncoder();
         kTrapazoidProfile = initTrapazoid(IntakeWristConstants.kTrapzoidConstants);
-
+        
         setState(IntakeWristConstants.kStartupState);
+        
+        shuffleInit();
     }
 
 
     //#region Init functions
-
-    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
-    }
 
     public CANSparkMax initMotor(MotorContstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
@@ -76,6 +82,14 @@ public class IntakeWrist extends SubsystemBase{
 
     public RelativeEncoder initEncoder(){ //TODO encoder init settings
         return mWristMotor.getEncoder();
+    }
+
+    private void shuffleInit() {
+        mEntries = IntakeWristTabManager.getEnumMap(this);
+    }
+
+    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
+        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
     }
 
     //#endregion
@@ -139,7 +153,15 @@ public class IntakeWrist extends SubsystemBase{
             TrapazoidMotionProfileUpdate();
         }
         //will add things here if trapazoid motion profiles get used
+
+        updateShuffleboard();
     }
+
+    private void updateShuffleboard() {
+        mEntries.get(WristSubsystemEntries.WristManualControl).setBoolean(mManualMovment);
+        mEntries.get(WristSubsystemEntries.WristSetPoint).setDouble(mRotSetPoint.getDegrees());
+    }
+
 
     private void TrapazoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
