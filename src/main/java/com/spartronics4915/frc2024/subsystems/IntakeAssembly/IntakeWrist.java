@@ -68,13 +68,13 @@ public class IntakeWrist extends SubsystemBase{
         pid.setI(kPIDValues.I());
         pid.setD(kPIDValues.D());
 
-        //TODO Vel conversion Factor (rpm to xyz)
+        //CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         //position Conversion not needed by using rotation2d
 
         return pid;
     }
 
-    public RelativeEncoder initEncoder(){ //TODO encoder INIT
+    public RelativeEncoder initEncoder(){ //TODO encoder init settings
         return mWristMotor.getEncoder();
     }
 

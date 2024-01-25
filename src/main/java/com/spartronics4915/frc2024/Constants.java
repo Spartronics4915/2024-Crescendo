@@ -77,7 +77,7 @@ public final class Constants {
         
         public static final class IntakeWristConstants {
 
-            //FIXME UNITS
+            //TODO Make Units Clear
 
             public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
