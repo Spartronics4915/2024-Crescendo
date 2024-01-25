@@ -8,12 +8,17 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 
 import com.spartronics4915.frc2024.Constants.UtilRec.*;
 
 public class IntakeWrist extends SubsystemBase{
+    //Decision list:
+    //Trapazoid motion profiles? (can implement after the fact, structuring code so it can be easily done)
+    //fully statebased or setpoint based? (I am going to go for setpoint based since it allows for manual controls)
+    //another option is to implement smartmotion / smartvelocity
     
     //#region variables
         private CANSparkMax mWristMotor;
@@ -51,27 +56,44 @@ public class IntakeWrist extends SubsystemBase{
         pid.setI(kPIDValues.I());
         pid.setD(kPIDValues.D());
 
+        //TODO Vel conversion Factor (rpm to xyz)
+        //position Conversion not needed by using rotation2d
+
         return pid;
     }
 
-    public RelativeEncoder initEncoder(){
+    public RelativeEncoder initEncoder(){ //TODO encoder INIT
         return mWristMotor.getEncoder();
     }
 
     //#endregion
 
     private Rotation2d getEncoderRead(){
-        return Rotation2d.fromDegrees(0.0); //TODO
+        return Rotation2d.fromDegrees(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
-    public void setRotationSetPoint(Rotation2d angle){
-        //TODO
+    private boolean isSafeAngle(Rotation2d angle){
+        return true; //TODO implement Safety
     }
 
-    public void setState(IntakeAssemblyState newState){
+    public void currentToSetPoint(){
+        setRotationSetPoint(getEncoderRead()); //TODO clamp for saftey?
+    }
+    
+    private void setRotationSetPoint(Rotation2d angle){
+        if (isSafeAngle(angle))
+            mPidController.setReference(angle.getRotations(), ControlType.kPosition); //CHECKUP setPos feels easy
+    }
+
+    private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
+        mPidController.setReference(velocity, ControlType.kVelocity);
+    }
+
+    private void setState(IntakeAssemblyState newState){
         mManualMovment = false;
         setRotationSetPoint(newState.wristAngle);
     }
+
 
 
     //#region Commands
@@ -82,18 +104,18 @@ public class IntakeWrist extends SubsystemBase{
     }
 
 
-    public Command currentToSetPoint(){
-        return Commands.runOnce(() -> {
-            setRotationSetPoint(getEncoderRead());
-        });
+    public Command manualRunCommand(double wristSpeed){
+        return Commands.startEnd(
+            () -> setVelocitySetPoint(wristSpeed), 
+            () -> currentToSetPoint()
+        );
     }
+
+
     //#endregion
 
     @Override
     public void periodic() {
-        if (mManualMovment) {
-            // TODO Auto-generated method stub
-            super.periodic();
-        }
+        //will add things here if trapazoid motion profiles get used
     }
 }
