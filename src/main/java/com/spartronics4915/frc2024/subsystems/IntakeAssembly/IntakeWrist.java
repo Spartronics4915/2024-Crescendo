@@ -81,7 +81,7 @@ public class IntakeWrist extends SubsystemBase{
     //#endregion
 
     private Rotation2d getEncoderPosReading(){
-        return Rotation2d.fromDegrees(mEncoder.getPosition()); //CHECKUP Failure Point?
+        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
     private double getEncoderVelReading(){
@@ -143,6 +143,7 @@ public class IntakeWrist extends SubsystemBase{
 
     private void TrapazoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
+        //can throw feedforward here if needed
         var nextState = kTrapazoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),

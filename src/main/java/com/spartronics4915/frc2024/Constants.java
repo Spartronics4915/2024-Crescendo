@@ -46,7 +46,7 @@ public final class Constants {
         ) {}
     }
     public static final class IntakeAssembly {
-        public enum IntakeAssemblyState{
+        public enum IntakeAssemblyState{ //TODO find constants
             GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
             STOW (Rotation2d.fromDegrees(0.0), 0.0),
             AMP (Rotation2d.fromDegrees(0.0), 0.0),
