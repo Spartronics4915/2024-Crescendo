@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
@@ -10,6 +11,9 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import com.spartronics4915.frc2024.util.*;
@@ -22,6 +26,8 @@ public class SwerveModule {
 
     private final SparkPIDController mDrivePID;
     private final SparkPIDController mAnglePID;
+
+    private final SparkRelativeEncoder mDriveEncoder;
 
     private final CANcoder mCANCoder;
 
@@ -43,6 +49,8 @@ public class SwerveModule {
         mDrivePID = mDriveMotor.getPIDController();
         mAnglePID = mAngleMotor.getPIDController();
 
+        mDriveEncoder = mDriveMotor.getEncoder();
+
         mCANCoder = new CANcoder(encoderID);
         mCANCoder
                 .getConfigurator()
@@ -63,6 +71,22 @@ public class SwerveModule {
                 ControlType.kSmartVelocity);
         mAnglePID.setReference(state.angle.getDegrees(),
                 ControlType.kPosition);
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(mDriveEncoder.getVelocity(), getAngle());
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(mDriveEncoder.getPosition(), getAngle());
+    }
+
+    public Translation2d getLocation() {
+        return new Translation2d(mX, mY);
+    }
+
+    private Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(mCANCoder.getPosition().getValue());
     }
 
     private void configureDriveMotor(CANSparkFlex motor) {
