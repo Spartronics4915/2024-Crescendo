@@ -56,5 +56,6 @@ public final class Constants {
     public static final class AutoAimConstants {
         public static final double kShooterSpeed = 1.0; //FIXME temp
         public static final double kRelSpeakHeight = 10;
+        public static final double kMaxDistance = 10.0; //Needs units, the maximum relative distance a target can be from the robot for autoaim 
     }
 }

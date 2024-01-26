@@ -47,7 +47,11 @@ public class AutoAimFunctions {
         return Optional.of(out); //outputs the speakerPos at the collision time relative to the robot, (rotation is based on the same as the input translate2ds)
     }
 
-    public static Rotation3d getShooterAngle(Translation2d speakPos){ //this is the position of the speaker centered around the robot
+    public static boolean isSafeShot(Translation2d target){
+        return (target.getNorm() > AutoAimConstants.kMaxDistance);
+    }
+
+    public static Rotation3d getShooterAngleUnsafe(Translation2d speakPos){ //this is the position of the speaker centered around the robot
         double kRelSpeakHeight = AutoAimConstants.kRelSpeakHeight;
         double dist = speakPos.getNorm();
 
