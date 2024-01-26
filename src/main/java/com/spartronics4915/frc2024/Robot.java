@@ -7,14 +7,27 @@ package com.spartronics4915.frc2024;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.util.datalog.DataLog;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
+    public static DataLog log;
 
     @Override
     public void robotInit() {
+
+        DataLogManager.logNetworkTables(true);
+        
+        log = DataLogManager.getLog();
+        
+        DriverStation.startDataLog(log, true);
+
         mRobotContainer = new RobotContainer();
     }
 
