@@ -21,6 +21,8 @@ public class AutoAimFunctions {
 
         //a desmos visualization: https://www.desmos.com/calculator/ejg6jrsodq
 
+        //FIXME account with vertical motion 
+
         double kShooterSpeed = AutoAimConstants.kShooterSpeed; //s1
 
         double a = pow(speakVel.getX()) + pow(speakVel.getY()) - pow(kShooterSpeed);
