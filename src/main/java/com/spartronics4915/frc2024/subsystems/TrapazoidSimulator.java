@@ -2,12 +2,14 @@ package com.spartronics4915.frc2024.subsystems;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 /**
  * Trapzoid motion profiles act as the setpoint for the motors that the motors try to follow
@@ -16,8 +18,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class TrapazoidSimulator extends SubsystemBase{
 
+    public enum SimType{
+        Elevator,
+        Angle,
+    }
+    
     public record SimulatorSettings(
-        String name, double length, double angle, double lineWidth, Color8Bit color
+        String name, double length, double angle, double lineWidth, Color8Bit color, SimType type, Translation2d rootPos
     ) {}
 
     public interface TrapazoidSimulatorInterface {
@@ -27,7 +34,9 @@ public class TrapazoidSimulator extends SubsystemBase{
 
 
     public record SimulatorObject(
-        TrapazoidSimulatorInterface object, MechanismLigament2d Visual
+        TrapazoidSimulatorInterface object, 
+        MechanismLigament2d visual,
+        SimType type
     ) {}
 
     private ArrayList<SimulatorObject> SimulatedObjects;
@@ -45,14 +54,32 @@ public class TrapazoidSimulator extends SubsystemBase{
                 settings.lineWidth,
                 settings.color
             );
-            simCanvas.getRoot("Trapazoids", 3, 3).append(simLigament);
-            SimulatedObjects.add(new SimulatorObject(simObj, simLigament));
+        
+            var simBase = simCanvas.getRoot(
+                settings.name, 
+                settings.rootPos.getX(), 
+                settings.rootPos.getY()
+            );
+
+            simBase.append(simLigament);
+            SimulatedObjects.add(new SimulatorObject(simObj, simLigament, settings.type));
         }
     } 
     
     @Override
     public void periodic() {
-        
+        for (var simobj : SimulatedObjects) {
+            switch (simobj.type) {
+                case Angle:
+                    simobj.visual.setLength(simobj.object.getSetPoint().position);
+                    break;
+                case Elevator:
+                    simobj.visual.setLength(simobj.object.getSetPoint().position);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }
