@@ -38,6 +38,8 @@ public class IntakeWrist extends SubsystemBase{
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
 
+        private State mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
+
         private final TrapezoidProfile kTrapazoidProfile;
         private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
         //limit switches?
@@ -175,11 +177,13 @@ public class IntakeWrist extends SubsystemBase{
     private void TrapazoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
         //can throw feedforward here if needed
-        var nextState = kTrapazoidProfile.calculate(
+
+        mCurrState = kTrapazoidProfile.calculate(
             GeneralConstants.kUpdateTime,
-            new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+            mCurrState,
             new State(mRotSetPoint.getRotations(), 0)
         );
-        mPidController.setReference(nextState.velocity, ControlType.kVelocity);
+        
+        mPidController.setReference(mCurrState.position, ControlType.kPosition);
     }
 }
