@@ -49,7 +49,7 @@ public class SwerveModule {
         mDrivePID = mDriveMotor.getPIDController();
         mAnglePID = mAngleMotor.getPIDController();
 
-        mDriveEncoder = mDriveMotor.getEncoder();
+        mDriveEncoder = (SparkRelativeEncoder)mDriveMotor.getEncoder();
 
         mCANCoder = new CANcoder(encoderID);
         mCANCoder
