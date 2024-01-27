@@ -25,8 +25,9 @@ import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
+import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
 
-public class IntakeWrist extends SubsystemBase{
+public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInterface{
     //Decision list:
     
     //#region variables
@@ -185,5 +186,10 @@ public class IntakeWrist extends SubsystemBase{
         );
         
         mPidController.setReference(mCurrState.position, ControlType.kPosition);
+    }
+
+    @Override
+    public void setPositionToReal() {
+        currentToSetPoint();
     }
 }
