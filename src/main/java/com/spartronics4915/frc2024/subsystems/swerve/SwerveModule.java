@@ -5,7 +5,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
@@ -21,8 +21,8 @@ import com.spartronics4915.frc2024.util.*;
 import static com.spartronics4915.frc2024.Constants.Drive.*;
 
 public class SwerveModule {
-    private final CANSparkFlex mDriveMotor;
-    private final CANSparkMax mAngleMotor;
+    private final CANSparkBase mDriveMotor;
+    private final CANSparkBase mAngleMotor;
 
     private final SparkPIDController mDrivePID;
     private final SparkPIDController mAnglePID;
@@ -41,7 +41,7 @@ public class SwerveModule {
             double encoderOffsetDegrees,
             double x,
             double y) {
-        mDriveMotor = new CANSparkFlex(driveMotorID, MotorType.kBrushless);
+        mDriveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         mAngleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
         configureDriveMotor(mDriveMotor);
         configureAngleMotor(mAngleMotor);
@@ -89,7 +89,7 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(mCANCoder.getPosition().getValue());
     }
 
-    private void configureDriveMotor(CANSparkFlex motor) {
+    private void configureDriveMotor(CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
@@ -113,7 +113,7 @@ public class SwerveModule {
         motor.burnFlash();
     }
 
-    private void configureAngleMotor(CANSparkMax motor) {
+    private void configureAngleMotor(CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
