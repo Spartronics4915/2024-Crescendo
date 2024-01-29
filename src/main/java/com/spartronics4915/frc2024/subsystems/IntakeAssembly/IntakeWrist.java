@@ -82,7 +82,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
 
     //#region Init functions
 
-    public CANSparkMax initMotor(MotorContstants motorValues){
+    private CANSparkMax initMotor(MotorContstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
         motor.restoreFactoryDefaults();
         motor.setInverted(motorValues.kMotorIsInverted());
@@ -92,7 +92,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         return motor;
     }
 
-    public SparkPIDController initPID(PIDConstants kPIDValues){
+    private SparkPIDController initPID(PIDConstants kPIDValues){
         SparkPIDController pid = mWristMotor.getPIDController();
 
         pid.setP(kPIDValues.P());
@@ -105,7 +105,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         return pid;
     }
 
-    public RelativeEncoder initEncoder(){ //TODO encoder init settings
+    private RelativeEncoder initEncoder(){ //TODO encoder init settings
         return mWristMotor.getEncoder();
     }
 
@@ -124,11 +124,11 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
 
     //#endregion
 
-    public Rotation2d getEncoderPosReading(){
+    private Rotation2d getEncoderPosReading(){
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
-    public double getEncoderVelReading(){
+    private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
@@ -136,7 +136,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         return true; //TODO implement Safety
     }
 
-    public void currentToSetPoint(){
+    private void currentToSetPoint(){
         mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
         setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
     }
