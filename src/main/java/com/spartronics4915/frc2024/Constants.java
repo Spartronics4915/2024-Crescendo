@@ -83,7 +83,7 @@ public final class Constants {
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
-            public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
+            // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final class ManualConstants { //speed of manual movements, 
                 

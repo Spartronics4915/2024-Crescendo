@@ -68,9 +68,8 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         kTrapazoidProfile = initTrapazoid(IntakeWristConstants.kTrapzoidConstants);
         
         
-        mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
-        setState(IntakeWristConstants.kStartupState);
-
+        currentToSetPoint();
+        
         shuffleInit();
     }
 
