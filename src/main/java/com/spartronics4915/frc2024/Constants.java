@@ -4,6 +4,11 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.util.*;
 
+import edu.wpi.first.math.MatBuilder;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -20,25 +25,27 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(1.0, 0.0, 0.0); // FIXME: placeholder values
+
+        public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+        public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+
         public static final double kWheelDiameter = Units.inchesToMeters(4);
         public static final double kTrackWidth = Units.inchesToMeters(22.475);
         public static final double kWheelbase = Units.inchesToMeters(22.475);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
-        // black neoprene
-        public static final double kTreadCoefficientOfFriction = 1.13;
-        // Incl. battery and bumpers, could be used to calculate required power for some acceleration. TODO: get actual value
-        public static final double kRobotTotalMassKg = 50;
-
         public static final double kDriveGearRatio = 6.75 / 1.0; // L2 MK4i
-        public static final double kDriveVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio) / 60.0;
-        public static final double kDrivePositionConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio);
+        public static final double kDriveVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio) / 60.0; // RPM to m/s
+        public static final double kDrivePositionConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio); // rev. to meters
 
         public static final double kAngleGearRatio =  150.0 / 7.0; // MK4i
         public static final double kAnglePositionConversionFactor = (2 * Math.PI) / (kAngleGearRatio);
+
         // Decrease this value if wheels start to slip with worn out tread. Should be 1.0 with new tread.
         public static final double kTreadWearAdjustment = 1.0;
+        public static final double kTreadCoefficientOfFriction = 1.13; // black neoprene
 
         // theoretical maximum with NEO Vortex and L2 MK4i
         public static final double kMaxSpeed = Units.feetToMeters(17.6);
