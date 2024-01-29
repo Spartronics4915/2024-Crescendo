@@ -138,6 +138,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
     }
 
     public void currentToSetPoint(){
+        mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
         setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
     }
     

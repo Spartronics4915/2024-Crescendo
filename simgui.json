@@ -16,6 +16,21 @@
   },
   "NetworkTables": {
     "transitory": {
+      "Shuffleboard": {
+        "IntakeWrist": {
+          "Wrist": {
+            "Amp": {
+              "open": true
+            },
+            "open": true,
+            "stow": {
+              "open": true
+            }
+          },
+          "open": true
+        },
+        "open": true
+      },
       "SmartDashboard": {
         "open": true,
         "simCanvas": {
