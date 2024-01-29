@@ -6,6 +6,7 @@ import com.spartronics4915.frc2024.Constants.AutoAimConstants;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 public class AutoAimFunctions {
 
@@ -53,13 +54,13 @@ public class AutoAimFunctions {
         return (target.getNorm() > AutoAimConstants.kMaxDistance);
     }
 
-    public static Rotation3d getShooterAngleUnsafe(Translation2d speakPos){ //this is the position of the speaker centered around the robot
-        double kRelSpeakHeight = AutoAimConstants.kRelSpeakHeight;
-        double dist = speakPos.getNorm();
+    public static Rotation3d getShooterAngleUnsafe(Translation3d targetPos){ //this is the position of the speaker centered around the robot
+        double kRelHeight = targetPos.getZ() - AutoAimConstants.kShooterHeight;
+        double dist = targetPos.getNorm();
 
         return new Rotation3d(0, 
-            Math.asin(kRelSpeakHeight/dist), 
-            speakPos.getAngle().getRadians()
+            Math.asin(kRelHeight/dist), 
+            targetPos.toTranslation2d().getAngle().getRadians()
         );
     }
 }
