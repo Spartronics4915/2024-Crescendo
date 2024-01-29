@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024;
 
 import java.util.EnumMap;
 
+import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
@@ -68,12 +69,16 @@ public class ShuffleBoard {
                     .withPosition(0, 0)
                     .getEntry()
             );
-            out.put(WristSubsystemEntries.WristSetPoint, 
+            out.put(WristSubsystemEntries.WristManualControl, 
                 mIntakeOverview.add(WristSubsystemEntries.WristManualControl.entryName, false)
                     .withSize(2, 2)
                     .withPosition(2, 0)
                     .getEntry()
             );
+
+            mIntakeOverview.add("stow", subsystem.setStateCommand(IntakeAssemblyState.STOW));
+            mIntakeOverview.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
+
 
             return out;
         }

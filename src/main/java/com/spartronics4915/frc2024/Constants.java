@@ -48,7 +48,7 @@ public final class Constants {
     public static final class IntakeAssembly {
         public enum IntakeAssemblyState{ //TODO find constants
             GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
-            STOW (Rotation2d.fromDegrees(0.0), 0.0),
+            STOW (Rotation2d.fromDegrees(180.0), 0.0),
             AMP (Rotation2d.fromDegrees(0.0), 0.0),
             LOAD (Rotation2d.fromDegrees(0.0), 0.0),
             MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
@@ -64,7 +64,7 @@ public final class Constants {
         
 
         public static final class IntakeConstants {
-            public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorContstants kMotorConstants = new MotorContstants(0, MotorType.kBrushless, false, IdleMode.kBrake, 40);
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
             
@@ -79,7 +79,7 @@ public final class Constants {
 
             //TODO Make Units Clear
 
-            public static final MotorContstants kMotorConstants = new MotorContstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorContstants kMotorConstants = new MotorContstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 

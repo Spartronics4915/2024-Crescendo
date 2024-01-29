@@ -1,10 +1,13 @@
 package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,9 +28,12 @@ import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
+import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
+import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
 import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
 
-public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInterface{
+public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInterface, TrapazoidSimulatorInterface{
     //Decision list:
     
     //#region variables
@@ -39,13 +45,19 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
 
-        private State mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
+        private State mCurrState = null;
 
         private final TrapezoidProfile kTrapazoidProfile;
         private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
         //limit switches?
 
-        private EnumMap<WristSubsystemEntries, GenericEntry> mEntries;
+        //#region ShuffleBoardEntries
+
+        private GenericEntry mManualControlEntry;
+        private GenericEntry mWristSetPoint;
+
+
+        //#endregion
     //#endregion
 
     public IntakeWrist() {
@@ -55,8 +67,10 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         mEncoder = initEncoder();
         kTrapazoidProfile = initTrapazoid(IntakeWristConstants.kTrapzoidConstants);
         
-        setState(IntakeWristConstants.kStartupState);
         
+        mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
+        setState(IntakeWristConstants.kStartupState);
+
         shuffleInit();
     }
 
@@ -97,7 +111,12 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
     }
 
     private void shuffleInit() {
-        mEntries = IntakeWristTabManager.getEnumMap(this);
+        var mEntries = IntakeWristTabManager.getEnumMap(this);
+        mManualControlEntry = mEntries.get(WristSubsystemEntries.WristManualControl);
+        mWristSetPoint = mEntries.get(WristSubsystemEntries.WristSetPoint);
+
+        System.out.println(mManualControlEntry);
+        System.out.println(mWristSetPoint);
     }
 
     private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
@@ -170,8 +189,8 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
     }
 
     private void updateShuffleboard() {
-        mEntries.get(WristSubsystemEntries.WristManualControl).setBoolean(mManualMovment);
-        mEntries.get(WristSubsystemEntries.WristSetPoint).setDouble(mRotSetPoint.getDegrees());
+        mManualControlEntry.setBoolean(mManualMovment);
+        mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
     }
 
 
@@ -191,5 +210,23 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
     @Override
     public void setPositionToReal() {
         currentToSetPoint();
+    }
+
+    @Override
+    public State getSetPoint() {
+        return mCurrState;
+    }
+
+    @Override
+    public SimulatorSettings getSettings() {
+        return new SimulatorSettings(
+            "Wrist", 
+            1.0, 
+            0.0, 
+            20.0,
+            new Color8Bit(Color.kBlueViolet), 
+            SimType.Angle, 
+            new Translation2d(0, 0)
+        );
     }
 }

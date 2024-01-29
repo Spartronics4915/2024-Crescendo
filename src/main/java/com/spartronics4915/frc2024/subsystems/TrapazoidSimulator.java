@@ -2,11 +2,13 @@ package com.spartronics4915.frc2024.subsystems;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
@@ -39,13 +41,13 @@ public class TrapazoidSimulator extends SubsystemBase{
         SimType type
     ) {}
 
-    private ArrayList<SimulatorObject> SimulatedObjects;
+    private ArrayList<SimulatorObject> mSimulatedObjects = new ArrayList<>();
     private Mechanism2d simCanvas;
 
-    public TrapazoidSimulator(TrapazoidSimulatorInterface[] simulatedObjects) {
+    public TrapazoidSimulator(ArrayList<TrapazoidSimulatorInterface> inputSimObjs) {
 
         simCanvas = new Mechanism2d(4, 4,  new Color8Bit("#1f0038"));
-        for (TrapazoidSimulatorInterface simObj : simulatedObjects) {
+        for (TrapazoidSimulatorInterface simObj : inputSimObjs) {
             var settings = simObj.getSettings();
             var simLigament = new MechanismLigament2d(
                 settings.name,
@@ -62,16 +64,17 @@ public class TrapazoidSimulator extends SubsystemBase{
             );
 
             simBase.append(simLigament);
-            SimulatedObjects.add(new SimulatorObject(simObj, simLigament, settings.type));
+            mSimulatedObjects.add(new SimulatorObject(simObj, simLigament, settings.type));
         }
     } 
     
     @Override
     public void periodic() {
-        for (var simobj : SimulatedObjects) {
+        for (var simobj : mSimulatedObjects) {
+            SmartDashboard.putData("simCanvas", simCanvas);
             switch (simobj.type) {
                 case Angle:
-                    simobj.visual.setLength(simobj.object.getSetPoint().position);
+                    simobj.visual.setAngle(Rotation2d.fromRotations(simobj.object.getSetPoint().position)); //Units might need to be fixed
                     break;
                 case Elevator:
                     simobj.visual.setLength(simobj.object.getSetPoint().position);
