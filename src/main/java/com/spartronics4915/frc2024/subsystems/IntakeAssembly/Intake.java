@@ -1,23 +1,19 @@
-package com.spartronics4915.frc2024.subsystems;
+package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
-import com.spartronics4915.frc2024.Constants.UtilRec.MotorContstants;
-import com.spartronics4915.frc2024.Constants.UtilRec.PIDConstants;
+import com.spartronics4915.frc2024.util.MotorConstants;
+import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
 
-import static com.spartronics4915.frc2024.Constants.Intake.*;
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
 import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {
@@ -53,12 +49,12 @@ public class Intake extends SubsystemBase implements Loggable {
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
 
-    private CANSparkMax constructMotor(MotorContstants motorValues){
-        CANSparkMax motor = new CANSparkMax(motorValues.kMotorID(), motorValues.kMotorType());
+    private CANSparkMax constructMotor(MotorConstants motorValues){
+        CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
-        motor.setInverted(motorValues.kMotorIsInverted());
-        motor.setIdleMode(motorValues.kIdleMode());
-        motor.setSmartCurrentLimit(motorValues.kCurrentLimit());
+        motor.setInverted(motorValues.motorIsInverted());
+        motor.setIdleMode(motorValues.idleMode());
+        motor.setSmartCurrentLimit(motorValues.currentLimit());
         motor.burnFlash();
         return motor;
     }
@@ -66,9 +62,9 @@ public class Intake extends SubsystemBase implements Loggable {
     private SparkPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
         SparkPIDController pid = motor.getPIDController();
 
-        pid.setP(kPIDValues.P());
-        pid.setI(kPIDValues.I());
-        pid.setD(kPIDValues.D());
+        pid.setP(kPIDValues.p());
+        pid.setI(kPIDValues.i());
+        pid.setD(kPIDValues.d());
 
         return pid;
     }
