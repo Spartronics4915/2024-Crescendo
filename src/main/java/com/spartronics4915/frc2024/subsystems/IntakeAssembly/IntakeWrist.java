@@ -21,7 +21,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
-import com.spartronics4915.frc2024.Constants.Drive.TrapezoidConstraintsConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants.*;
 
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
@@ -67,7 +66,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
         mPidController = initPID(IntakeWristConstants.kPIDconstants);
         mEncoder = initEncoder();
-        kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstants);
+        kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
         
         
         currentToSetPoint();
@@ -120,8 +119,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         System.out.println(mWristSetPoint);
     }
 
-    private TrapezoidProfile initTrapezoid(TrapezoidConstraintsConstants constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
+    private TrapezoidProfile initTrapezoid(Constraints constraints) {
+        return new TrapezoidProfile(constraints);
     }
 
     //#endregion
