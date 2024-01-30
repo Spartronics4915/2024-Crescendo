@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.EnumMap;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -21,11 +20,8 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
-import com.spartronics4915.frc2024.Constants.GeneralConstants.*;
 
-import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
-import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
@@ -33,6 +29,8 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimula
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
+
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
 public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInterface, TrapezoidSimulatorInterface{
     //Decision list:
@@ -42,7 +40,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         private static IntakeWrist mInstance;
 
         private CANSparkMax mWristMotor;
-        private SparkPIDController mPidController;
+        private SparkPIDController mPidPosController;
+
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
 
@@ -64,7 +63,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     public IntakeWrist() {
         super();
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
-        mPidController = initPID(IntakeWristConstants.kPIDconstants);
+        mPidPosController = initPID(IntakeWristConstants.kPIDSlotPosconstants, 0);
+        initPID(IntakeWristConstants.kPIDSlotVeloconstants, 1);
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
         
@@ -93,12 +93,12 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return motor;
     }
 
-    private SparkPIDController initPID(PIDConstants kPIDValues){
+    private SparkPIDController initPID(PIDConstants kPIDValues, int slot){
         SparkPIDController pid = mWristMotor.getPIDController();
 
-        pid.setP(kPIDValues.p());
-        pid.setI(kPIDValues.i());
-        pid.setD(kPIDValues.d());
+        pid.setP(kPIDValues.p(), slot);
+        pid.setI(kPIDValues.i(), slot);
+        pid.setD(kPIDValues.d(), slot);
 
         //CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         //position Conversion not needed by using rotation2d
@@ -149,7 +149,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
         mManualMovment = true;
-        mPidController.setReference(velocity, ControlType.kVelocity); //CHECKUP override?
+        mPidPosController.setReference(velocity, ControlType.kVelocity, kVelPIDSlot); //CHECKUP override?
     }
 
     private void setState(IntakeAssemblyState newState){
@@ -205,7 +205,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             new State(mRotSetPoint.getRotations(), 0)
         );
         
-        mPidController.setReference(mCurrState.position, ControlType.kPosition);
+        mPidPosController.setReference(mCurrState.position, ControlType.kPosition, kPosPIDSlot);
     }
 
     @Override
