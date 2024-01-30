@@ -34,6 +34,8 @@ public class SwerveModule {
     private final double mX;
     private final double mY;
 
+    private SwerveModuleState mLastDesiredStateSet;
+
     public SwerveModule(
             int driveMotorID,
             int angleMotorID,
@@ -71,10 +73,24 @@ public class SwerveModule {
                 ControlType.kSmartVelocity);
         mAnglePID.setReference(state.angle.getDegrees(),
                 ControlType.kPosition);
+
+        mLastDesiredStateSet = state;
+    }
+
+    public SwerveModuleState getDesiredState() {
+        return mLastDesiredStateSet;
     }
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(mDriveEncoder.getVelocity(), getAngle());
+    }
+
+    /*
+     * WARNING: Should only be used by simulation.
+     */
+    public void setPosition(double pos) {
+
+        mDriveEncoder.setPosition(pos);
     }
 
     public SwerveModulePosition getPosition() {

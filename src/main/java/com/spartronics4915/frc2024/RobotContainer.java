@@ -9,6 +9,8 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -30,8 +32,10 @@ public class RobotContainer {
     
     private static final Intake mIntake = Intake.getInstance();
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
+    private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
 
     private static final TrapezoidSimulator mSimulator;
+    private final SwerveSim mSwerveSim;
 
     static{
         TrapezoidSubsystems.add(mIntakeWrist);
@@ -42,6 +46,7 @@ public class RobotContainer {
     
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
+        mSwerveSim = new SwerveSim(mSwerveDrive);
         configureBindings();
     }
 

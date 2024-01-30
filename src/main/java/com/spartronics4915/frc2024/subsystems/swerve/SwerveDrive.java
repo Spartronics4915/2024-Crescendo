@@ -16,9 +16,10 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import static com.spartronics4915.frc2024.Constants.Drive.*;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -59,7 +60,7 @@ public class SwerveDrive extends SubsystemBase {
 
         mRotationIsIndependent = false;
 
-        mModuleLocations = (Translation2d[]) Stream.of(mModules).map((m) -> m.getLocation()).toArray();
+        mModuleLocations = (Translation2d[]) Arrays.stream(mModules).map((m) -> m.getLocation()).toArray(Translation2d[]::new);
 
         mKinematics = new SwerveDriveKinematics(mModuleLocations);
 
@@ -127,7 +128,11 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private SwerveModulePosition[] getModulePositions() {
-        return (SwerveModulePosition[]) Stream.of(mModules).map((m) -> m.getPosition()).toArray();
+        return (SwerveModulePosition[]) Stream.of(mModules).map((m) -> m.getPosition()).toArray(SwerveModulePosition[]::new);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        return (SwerveModuleState[]) Stream.of(mModules).map((m) -> m.getState()).toArray(SwerveModuleState[]::new);
     }
 
     public Rotation2d getAngle() {
@@ -156,8 +161,25 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
 
-        final var vs = VisionSubsystem.getInstance();
-        vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
-        vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+
+        // This code causes the robot to crash
+        
+        // final var vs = VisionSubsystem.getInstance();
+        // vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+        // vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+    }
+
+    public SwerveModule[] getSwerveModules() {
+
+        return mModules;
+    }
+    
+    public SwerveDriveKinematics getSwerveDriveKinematics() {
+        return mKinematics;
+    }
+
+    public Pigeon2 getImU() {
+
+        return mIMU;
     }
 }
