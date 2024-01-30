@@ -8,12 +8,21 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
+    private static VisionSubsystem mInstance;
+
     private final LimelightDevice alice;
     private final LimelightDevice bob;
     
-    public VisionSubsystem() {
+    private VisionSubsystem() {
         alice = new LimelightDevice("alice");
         bob = new LimelightDevice("bob");
+    }
+
+    public static VisionSubsystem getInstance() {
+        if (mInstance == null) {
+            mInstance = new VisionSubsystem();
+        }
+        return mInstance;
     }
 
     /**
