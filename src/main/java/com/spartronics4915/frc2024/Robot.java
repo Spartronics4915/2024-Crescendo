@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        Modeinit();
+        modeInit();
         mAutonomousCommand = mRobotContainer.getAutonomousCommand();
 
         if (mAutonomousCommand != null) {
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        Modeinit();
+        modeInit();
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        Modeinit();
+        modeInit();
         CommandScheduler.getInstance().cancelAll();
     }
 
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
     /**
      * this method is called every time a robot is enabled or disabled
      */
-    public void Modeinit(){
+    public void modeInit(){
         
         //Saftey for trapazoid
         for (var trapazoid : TrapazoidSubsystemInterface.TrapazoidSubsystems) {
