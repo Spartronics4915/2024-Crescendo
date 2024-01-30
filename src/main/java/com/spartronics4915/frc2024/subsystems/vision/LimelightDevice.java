@@ -1,5 +1,7 @@
 package com.spartronics4915.frc2024.subsystems.vision;
 
+import java.util.Optional;
+
 import com.spartronics4915.frc2024.LimelightHelpers;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,49 +14,52 @@ public class LimelightDevice extends SubsystemBase {
 
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
-    private final String name;
+    private final String mName;
 
     /**
      * Creates a new LimelightDevice
      * @param name The name of the limelight
      */
     public LimelightDevice(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
-    public VisionMeasurement getVisionMeasurement() {
-        double[] botpose = LimelightHelpers.getBotPose(name);
+    public Optional<VisionMeasurement> getVisionMeasurement() {
+        if (!canSeeTags()) {
+            return Optional.empty();
+        }
+        double[] botpose = LimelightHelpers.getBotPose(mName);
         Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(botpose[3], botpose[4], botpose[5]));
         double timestamp = Timer.getFPGATimestamp() - (botpose[6]/1000.0);
-        return new VisionMeasurement(pose, timestamp);
+        return Optional.of(new VisionMeasurement(pose, timestamp));
     }
     
     /**
      * @return If the limelight can see any tags
      */
     public boolean canSeeTags() {
-        return LimelightHelpers.getTV(name);
+        return LimelightHelpers.getTV(mName);
     }
 
     /**
      * @return The {@link Pose3d} of the robot, as estimated from Limelight MetaTag
      */
     public Pose3d getBotPose3d() {
-        return LimelightHelpers.getBotPose3d(name);
+        return LimelightHelpers.getBotPose3d(mName);
     }
 
     /**
      * @return The {@link Pose2d} of the robot, as estimated from Limelight MetaTag
      */
     public Pose2d getBotPose2d() {
-        return LimelightHelpers.getBotPose2d(name);
+        return LimelightHelpers.getBotPose2d(mName);
     }
 
     /**
      * @return The number of tags seen by the limelight
      */
     public int numberOfTagsSeen() {
-        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(name);
+        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         int tagCount = fiducials.length;
         return tagCount;
@@ -64,21 +69,21 @@ public class LimelightDevice extends SubsystemBase {
      * @return The current pipeline index of the limelight
      */
     public int getCurrentPipelineIndex() {
-        return (int) LimelightHelpers.getCurrentPipelineIndex(name);
+        return (int) LimelightHelpers.getCurrentPipelineIndex(mName);
     }
     /**
      * Sets the current pipeline index to the value provided
      * @param index The pipeline index between 0-9
      */
     public void setCurrentPipelineIndex(int index) {
-        LimelightHelpers.setPipelineIndex(name, index);
+        LimelightHelpers.setPipelineIndex(mName, index);
     }
 
     /**
      * @return The id of the primary in-view tag, or 0 if there are none
      */
     public int getPrimaryTag() {
-        return (int) LimelightHelpers.getFiducialID(name);
+        return (int) LimelightHelpers.getFiducialID(mName);
 
     }
 
@@ -95,7 +100,7 @@ public class LimelightDevice extends SubsystemBase {
      * @return The average distance to the visible tags, or 0 if none are seen
      */
     public double getAverageDistanceToVisibleTags() {
-        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(name);
+        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         double averageDistance = 0.0;
         for(LimelightHelpers.LimelightTarget_Fiducial tag : fiducials) {
@@ -108,7 +113,7 @@ public class LimelightDevice extends SubsystemBase {
     /**
      * @return The name of the limelight
      */
-    public String getName() {
-        return name;
+    public String getmName() {
+        return mName;
     }
 }
