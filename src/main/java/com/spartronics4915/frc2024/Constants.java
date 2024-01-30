@@ -139,7 +139,7 @@ public final class Constants {
         }
     }
 
-    public static final class Shooter {
+    public static final class ShooterConstants {
 
         public static final int kShooterMotorId = -1; //placeholder
         public static final boolean kMotorIsInverted = false;

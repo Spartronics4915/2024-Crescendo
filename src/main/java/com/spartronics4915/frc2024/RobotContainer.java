@@ -4,6 +4,7 @@
 
 package com.spartronics4915.frc2024;
 
+import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
@@ -31,12 +32,16 @@ public class RobotContainer {
     private static final Intake mIntake = Intake.getInstance();
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
 
+    private static final Shooter mShooter = Shooter.getInstance();
+
     private static final TrapazoidSimulator mSimulator;
 
     static{
         TrapazoidSubsystems.add(mIntakeWrist);
+        TrapazoidSubsystems.add(mShooter);
         ArrayList<TrapazoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);
+        list.add(mShooter);
         mSimulator = new TrapazoidSimulator(list);
     }
     
