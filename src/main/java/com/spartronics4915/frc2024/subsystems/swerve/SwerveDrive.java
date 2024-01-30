@@ -39,7 +39,6 @@ public class SwerveDrive extends SubsystemBase {
     private Rotation2d mDesiredAngle;
     private boolean mRotationIsIndependent;
 
-    private final SwerveDriveKinematics mKinematics;
     private final SwerveDrivePoseEstimator mPoseEstimator;
 
     private SwerveDrive() {
@@ -61,14 +60,12 @@ public class SwerveDrive extends SubsystemBase {
 
         mModuleLocations = (Translation2d[]) Stream.of(mModules).map((m) -> m.getLocation()).toArray();
 
-        mKinematics = new SwerveDriveKinematics(mModuleLocations);
-
         {
             final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
             final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
             // TODO: change initial pose estimate
-            mPoseEstimator = new SwerveDrivePoseEstimator(mKinematics, getAngle(), getModulePositions(), new Pose2d(),
+            mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
                     stateStdDevs, visionMeasurementStdDevs);
         }
     }
@@ -96,7 +93,7 @@ public class SwerveDrive extends SubsystemBase {
             _speeds.omegaRadiansPerSecond = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
         }
 
-        final var moduleStates = mKinematics.toSwerveModuleStates(_speeds);
+        final var moduleStates = kKinematics.toSwerveModuleStates(_speeds);
 
         final var moduleStatesIterator = List.of(moduleStates).iterator();
 
