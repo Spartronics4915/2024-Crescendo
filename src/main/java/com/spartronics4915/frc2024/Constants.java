@@ -52,4 +52,10 @@ public final class Constants {
         public static final double kOutSpeed = -0.3; // placeholder
         public static final double kOffSpeed = 0;
     }
+
+    public static final class Shooter {
+
+        public static final int kShooterMotorId = -1; //placeholder
+        public static final boolean kMotorIsInverted = false;
+    }
 }
