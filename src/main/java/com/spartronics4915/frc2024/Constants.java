@@ -135,7 +135,8 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            
+            public static final int kMotorId = 267;
         }
     }
+
 }
