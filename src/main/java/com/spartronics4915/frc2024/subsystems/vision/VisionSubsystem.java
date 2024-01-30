@@ -43,9 +43,9 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<VisionMeasurement> getVisionMeasurement() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags()) return Optional.of(preferred.getVisionMeasurement());
-        return Optional.empty();
+        return preferred.getVisionMeasurement();
     }
+
     /**
      * Returns the current botpose from the preferred limelight, or null if no tags are visible.
      * @return The {@link Pose3d} of the robot, or null
