@@ -10,6 +10,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -123,7 +124,7 @@ public final class Constants {
 
             //TODO Make Units Clear
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
@@ -135,7 +136,9 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            public static final int kMotorId = 267;
+            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 41);
+            public static final TrapazoidConstaintsConstants kZoidConstants = new TrapazoidConstaintsConstants(1d, 1/10d);
+            public static final double kMetersToRotation = 1; // Conversion rate
         }
     }
 
