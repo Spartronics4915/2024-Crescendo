@@ -1,8 +1,8 @@
-package com.spartronics4915.frc2024.subsystems;
+package com.spartronics4915.frc2024.subsystems.vision;
 
 import java.util.Optional;
 
-import com.spartronics4915.frc2024.subsystems.LimelightDevice.VisionMeasurement;
+import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;

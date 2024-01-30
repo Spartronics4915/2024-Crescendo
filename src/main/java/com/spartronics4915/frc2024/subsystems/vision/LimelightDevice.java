@@ -1,4 +1,4 @@
-package com.spartronics4915.frc2024.subsystems;
+package com.spartronics4915.frc2024.subsystems.vision;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
 
