@@ -1,5 +1,9 @@
 package com.spartronics4915.frc2024;
 
+import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
+
+import java.util.stream.Stream;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.util.*;
@@ -13,6 +17,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
     public static final class OI {
@@ -21,8 +27,6 @@ public final class Constants {
 
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
-
-        public static final int kIntakeBeamBreakID = 0; //placeholder
     }
 
     public static final class GeneralConstants {
@@ -73,6 +77,11 @@ public final class Constants {
         public static final ModuleConstants kFrontRight = new ModuleConstants(
                 9, 10, 14, 0.0, kWheelbase / 2, -kTrackWidth / 2);
 
+        public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
+                (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
+                .map((mc) -> new Translation2d(mc.x(), mc.y()))
+                .toArray(Translation2d[]::new));
+
         public static final int kDriveMotorCurrentLimit = 40;
         public static final int kAngleMotorCurrentLimit = 40;
         public static final double kMaxVoltage = 12.0;
@@ -113,6 +122,8 @@ public final class Constants {
                     public static final double kLoadSpeed = 0.2; //placeholder
                     public static final double kOutSpeed = -0.3; // placeholder
                     public static final double kOffSpeed = 0;
+
+                    public static final int kIntakeBeamBreakID = 0; //placeholder
                 }
         
         public static final class IntakeWristConstants {

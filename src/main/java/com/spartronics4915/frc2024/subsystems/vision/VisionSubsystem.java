@@ -14,8 +14,8 @@ public class VisionSubsystem extends SubsystemBase {
     private final LimelightDevice bob;
     
     private VisionSubsystem() {
-        alice = new LimelightDevice("alice");
-        bob = new LimelightDevice("bob");
+        alice = new LimelightDevice("limelight-alice");
+        bob = new LimelightDevice("limelight-bob");
     }
 
     public static VisionSubsystem getInstance() {
@@ -68,5 +68,11 @@ public class VisionSubsystem extends SubsystemBase {
     }
     public LimelightDevice getBob() {
         return bob;
+    }
+
+    @Override
+    public void periodic() {
+        getAlice().updateFieldPose();
+        getBob().updateFieldPose();
     }
 }

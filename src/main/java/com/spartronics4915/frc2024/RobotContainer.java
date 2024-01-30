@@ -11,6 +11,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -48,6 +49,7 @@ public class RobotContainer {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
         configureBindings();
+        VisionSubsystem.getInstance(); //ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     private void configureBindings() {
