@@ -44,6 +44,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
+        private double mVelocitySetPoint;
 
         private State mCurrState = null;
 
@@ -149,7 +150,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
         mManualMovment = true;
-        mPidPosController.setReference(velocity, ControlType.kVelocity, kVelPIDSlot); //CHECKUP override?
+        mVelocitySetPoint = velocity;
     }
 
     private void setState(IntakeAssemblyState newState){
@@ -180,7 +181,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     @Override
     public void periodic() {
         if (mManualMovment) {
-            //let commands handle it
+            velocityControlUpdate();
         } else {
             TrapezoidMotionProfileUpdate();
         }
@@ -194,6 +195,14 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
     }
 
+    private void velocityControlUpdate(){ //HACK untested
+        if (getEncoderPosReading().minus(kMaxAngle).getRotations() > 0 && mVelocitySetPoint > 0) {
+            mVelocitySetPoint = 0;
+        } else if (getEncoderPosReading().minus(kMinAngle).getRotations() < 0 && mVelocitySetPoint < 0) {
+            mVelocitySetPoint = 0;
+        }
+        mPidPosController.setReference(mVelocitySetPoint, ControlType.kVelocity, kVelPIDSlot); //CHECKUP override?
+    }
 
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
