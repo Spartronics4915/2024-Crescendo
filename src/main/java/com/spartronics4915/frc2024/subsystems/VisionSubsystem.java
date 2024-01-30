@@ -1,5 +1,7 @@
 package com.spartronics4915.frc2024.subsystems;
 
+import java.util.Optional;
+
 import com.spartronics4915.frc2024.subsystems.LimelightDevice.VisionMeasurement;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,19 +32,19 @@ public class VisionSubsystem extends SubsystemBase {
      * Returns the Vision Measurement from the preferred limelight, or null if no tags are visible.
      * @return The {@link VisionMeasurement} of the robot, or null
      */
-    public VisionMeasurement getVisionMeasurement() {
+    public Optional<VisionMeasurement> getVisionMeasurement() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags()) return preferred.getVisionMeasurement();
-        return null;
+        if (preferred.canSeeTags()) return Optional.of(preferred.getVisionMeasurement());
+        return Optional.empty();
     }
     /**
      * Returns the current botpose from the preferred limelight, or null if no tags are visible.
      * @return The {@link Pose3d} of the robot, or null
      */
-    public Pose3d getPose() {
+    public Optional<Pose3d> getPose() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags()) return preferred.getBotPose3d();
-        return null;
+        if (preferred.canSeeTags()) return Optional.of(preferred.getBotPose3d());
+        return Optional.empty();
     }
     /**
      * @return The greatest number of tags seen from either limelight
