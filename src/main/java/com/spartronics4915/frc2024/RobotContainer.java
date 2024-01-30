@@ -4,11 +4,11 @@
 
 package com.spartronics4915.frc2024;
 
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -20,7 +20,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverTriggerDeadband;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
-import static com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface.TrapazoidSubsystems;
+import static com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface.TrapezoidSubsystems;
 
 import java.util.ArrayList;
 
@@ -31,13 +31,13 @@ public class RobotContainer {
     private static final Intake mIntake = Intake.getInstance();
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
 
-    private static final TrapazoidSimulator mSimulator;
+    private static final TrapezoidSimulator mSimulator;
 
     static{
-        TrapazoidSubsystems.add(mIntakeWrist);
-        ArrayList<TrapazoidSimulatorInterface> list = new ArrayList<>();
+        TrapezoidSubsystems.add(mIntakeWrist);
+        ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);
-        mSimulator = new TrapazoidSimulator(list);
+        mSimulator = new TrapezoidSimulator(list);
     }
     
     public RobotContainer() {

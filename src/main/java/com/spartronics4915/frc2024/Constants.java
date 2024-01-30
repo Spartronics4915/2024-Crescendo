@@ -2,7 +2,7 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
+import com.spartronics4915.frc2024.Constants.Drive.TrapezoidConstraintsConstants;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -86,7 +86,7 @@ public final class Constants {
                 double y
         ) {}
 
-        public static record TrapazoidConstaintsConstants(
+        public static record TrapezoidConstraintsConstants(
             double kMaxVel,
             double kMaxAccel
         ) {}
@@ -125,7 +125,7 @@ public final class Constants {
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final TrapezoidConstraintsConstants kTrapzoidConstants = new TrapezoidConstraintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
