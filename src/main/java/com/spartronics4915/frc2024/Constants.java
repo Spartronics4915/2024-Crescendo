@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -10,6 +11,8 @@ import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 
 public final class Constants {
     public static final class OI {
@@ -20,6 +23,10 @@ public final class Constants {
         public static final double kOperatorTriggerDeadband = 0.3;
 
         public static final int kIntakeBeamBreakID = 0; //placeholder
+    }
+
+    public static final class GeneralConstants {
+        public static final double kUpdateTime = 1/50.0;
     }
 
     public static final class Drive {
@@ -78,22 +85,57 @@ public final class Constants {
                 double x,
                 double y
         ) {}
+
+        public static record TrapazoidConstaintsConstants(
+            double kMaxVel,
+            double kMaxAccel
+        ) {}
     }
+    public static final class IntakeAssembly {
+        public enum IntakeAssemblyState{ //TODO find constants
+            GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
+            STOW (Rotation2d.fromDegrees(180.0), 0.0),
+            AMP (Rotation2d.fromDegrees(0.0), 0.0),
+            LOAD (Rotation2d.fromDegrees(0.0), 0.0),
+            MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
+            public final Rotation2d wristAngle;
+            public final double ElevatorHeight;
+            private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
+                this.wristAngle = wristAngle;
+                ElevatorHeight = elevatorHeight;
+            }
+            
+        }
+        
+        public static final class IntakeConstants {
+                    public static final MotorConstants kMotorConstants = new MotorConstants(0, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+        
+                    public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+                    
+        
+                    public static final double kInSpeed = 0.2; // placeholder
+                    public static final double kLoadSpeed = 0.2; //placeholder
+                    public static final double kOutSpeed = -0.3; // placeholder
+                    public static final double kOffSpeed = 0;
+                }
+        
+        public static final class IntakeWristConstants {
 
-    public static final class Intake {
+            //TODO Make Units Clear
 
-        public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
-        public static final int kMotorID = 15;
-        public static final boolean kMotorIsInverted = false; // subject to change
-        public static final IdleMode kIdleMode = IdleMode.kBrake;
-        public static final int kCurrentLimit = 40;
+            // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //FIXME DO NOT TEST WITH THESE VALUES
+            public static final class ManualConstants { //speed of manual movements, 
+                
+            }
+        }
 
-        public static final double kInSpeed = 0.2; // placeholder
-        public static final double kLoadSpeed = 0.2; //placeholder
-        public static final double kOutSpeed = -0.3; // placeholder
-        public static final double kOffSpeed = 0;
+        public static final class ElevatorConstants {
+            
+        }
     }
 }
