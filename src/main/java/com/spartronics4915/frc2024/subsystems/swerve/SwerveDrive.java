@@ -80,7 +80,7 @@ public class SwerveDrive extends SubsystemBase {
         return mInstance;
     }
 
-    public void drive(ChassisSpeeds speeds, final boolean fieldRelative) {
+    public void drive(final ChassisSpeeds speeds, final boolean fieldRelative) {
         drive(speeds, fieldRelative, mRotationIsIndependent);
     }
 
@@ -148,7 +148,7 @@ public class SwerveDrive extends SubsystemBase {
         return mPoseEstimator.getEstimatedPosition();
     }
 
-    public void resetPose(Pose2d newPose) {
+    public void resetPose(final Pose2d newPose) {
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
     }
 
