@@ -21,8 +21,6 @@ public final class Constants {
 
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
-
-        public static final int kIntakeBeamBreakID = 0; //placeholder
     }
 
     public static final class GeneralConstants {
@@ -113,6 +111,8 @@ public final class Constants {
                     public static final double kLoadSpeed = 0.2; //placeholder
                     public static final double kOutSpeed = -0.3; // placeholder
                     public static final double kOffSpeed = 0;
+
+                    public static final int kIntakeBeamBreakID = 0; //placeholder
                 }
         
         public static final class IntakeWristConstants {
