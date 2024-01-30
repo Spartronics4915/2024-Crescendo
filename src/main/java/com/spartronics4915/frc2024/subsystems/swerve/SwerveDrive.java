@@ -132,6 +132,14 @@ public class SwerveDrive extends SubsystemBase {
         return Rotation2d.fromDegrees(mIMU.getAngle());
     }
 
+    public void addVisionMeasurement(Pose2d cameraPose, double t) {
+        mPoseEstimator.addVisionMeasurement(cameraPose, t);
+    }
+
+    public Pose2d getPose() {
+        return mPoseEstimator.getEstimatedPosition();
+    }
+
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
