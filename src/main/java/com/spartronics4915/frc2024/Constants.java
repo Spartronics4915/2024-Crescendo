@@ -128,9 +128,10 @@ public final class Constants {
             public static final int kVelPIDSlot = 1;
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90);
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(0);
+            public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(120);
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(60);
 
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
             public static final class ManualConstants { //speed of manual movements, 
                 
