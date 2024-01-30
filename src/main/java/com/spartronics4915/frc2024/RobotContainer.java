@@ -36,7 +36,7 @@ public class RobotContainer {
 
     private static final TrapazoidSimulator mSimulator;
 
-    static{
+    static {
         TrapazoidSubsystems.add(mIntakeWrist);
         ArrayList<TrapazoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);

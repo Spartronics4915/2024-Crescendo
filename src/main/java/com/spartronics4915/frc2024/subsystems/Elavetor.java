@@ -1,7 +1,9 @@
 package com.spartronics4915.frc2024.subsystems;
 
 import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
+import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
+import com.spartronics4915.frc2024.Constants.IntakeAssembly;
 import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
@@ -30,13 +32,13 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
     private static Elavetor mInstance;
 
     private CANSparkMax mMotor;
+    private SparkPIDController mPid;
+    private RelativeEncoder mEncoder;
 
     private TrapezoidProfile mmmmmmmmTrapezoid;
 
     private State mCurrentState;
     private Rotation2d mTarget = new Rotation2d(Math.PI * 3);
-
-    private SparkPIDController mPid;
 
     // get meters
     // convert meters to rotations
@@ -47,6 +49,7 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
         mmmmmmmmTrapezoid = initTrapazoid(kZoidConstants);
         mCurrentState = new State();
         mPid = initPID(new PIDConstants(0, 0, 0));
+        mEncoder = initEncoder();
     }
 
     private CANSparkMax initMotor(MotorConstants motorValues) {
@@ -80,11 +83,15 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
         return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
     }
 
+    private double getEncoderVelReading(){
+        return mEncoder.getVelocity(); //CHECKUP Failure Point?
+    }
+
     @Override
     public void periodic() {
         mCurrentState = mmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
-                mCurrentState,
+                new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget.getRotations(), 0));
 
         mPid.setReference(mCurrentState.position, ControlType.kPosition);
@@ -92,7 +99,11 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
 
     @Override
     public void setPositionToReal() {
+        // i kinda just did this above in periodic
+    }
 
+    private Rotation2d getEncoderPosReading(){
+        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
     @Override
@@ -107,7 +118,7 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
                 1.0,
                 90.0,
                 20.0,
-                new Color8Bit(Color.kBlanchedAlmond),
+                new Color8Bit(Color.kMediumPurple),
                 SimType.Elevator,
                 new Translation2d(103 / 100d, 27 / 100d));
     }
@@ -121,6 +132,10 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
 
     public void setTarget(double newTarget) {
         mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
+    }
+
+    public void setTarget(IntakeAssemblyState something) {
+        mTarget = Rotation2d.fromRotations(something.ElevatorHeight * kMetersToRotation);
     }
 
     public Command setTargetCommand(double newTarget) {
