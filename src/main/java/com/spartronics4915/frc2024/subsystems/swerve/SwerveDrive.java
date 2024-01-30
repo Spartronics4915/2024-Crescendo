@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,7 +30,6 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveModule mFrontRight;
 
     private final SwerveModule[] mModules;
-    private final Translation2d[] mModuleLocations;
 
     private final Pigeon2 mIMU;
 
@@ -39,7 +37,6 @@ public class SwerveDrive extends SubsystemBase {
     private Rotation2d mDesiredAngle;
     private boolean mRotationIsIndependent;
 
-    private final SwerveDriveKinematics mKinematics;
     private final SwerveDrivePoseEstimator mPoseEstimator;
 
     private SwerveDrive() {
@@ -59,16 +56,12 @@ public class SwerveDrive extends SubsystemBase {
 
         mRotationIsIndependent = false;
 
-        mModuleLocations = (Translation2d[]) Stream.of(mModules).map((m) -> m.getLocation()).toArray();
-
-        mKinematics = new SwerveDriveKinematics(mModuleLocations);
-
         {
             final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
             final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
             // TODO: change initial pose estimate
-            mPoseEstimator = new SwerveDrivePoseEstimator(mKinematics, getAngle(), getModulePositions(), new Pose2d(),
+            mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
                     stateStdDevs, visionMeasurementStdDevs);
         }
     }
@@ -96,7 +89,7 @@ public class SwerveDrive extends SubsystemBase {
             _speeds.omegaRadiansPerSecond = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
         }
 
-        final var moduleStates = mKinematics.toSwerveModuleStates(_speeds);
+        final var moduleStates = kKinematics.toSwerveModuleStates(_speeds);
 
         final var moduleStatesIterator = List.of(moduleStates).iterator();
 
