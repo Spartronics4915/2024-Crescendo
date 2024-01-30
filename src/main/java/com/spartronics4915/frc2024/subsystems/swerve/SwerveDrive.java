@@ -148,6 +148,10 @@ public class SwerveDrive extends SubsystemBase {
         return mPoseEstimator.getEstimatedPosition();
     }
 
+    public void resetPose(Pose2d newPose) {
+        mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
+    }
+
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
