@@ -14,8 +14,9 @@ public class VisionSubsystem extends SubsystemBase {
     private final LimelightDevice bob;
     
     private VisionSubsystem() {
-        alice = new LimelightDevice("alice");
-        bob = new LimelightDevice("bob");
+        alice = new LimelightDevice("limelight-alice");
+        bob = new LimelightDevice("limelight-bob");
+        System.out.println("Vision subsystem created");
     }
 
     public static VisionSubsystem getInstance() {

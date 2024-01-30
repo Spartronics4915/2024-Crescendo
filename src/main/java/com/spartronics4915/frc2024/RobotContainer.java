@@ -9,6 +9,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -43,6 +44,7 @@ public class RobotContainer {
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         configureBindings();
+        VisionSubsystem.getInstance(); //ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     private void configureBindings() {

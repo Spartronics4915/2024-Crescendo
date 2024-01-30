@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightDevice extends SubsystemBase {
@@ -22,6 +24,7 @@ public class LimelightDevice extends SubsystemBase {
      */
     public LimelightDevice(String name) {
         this.mName = name;
+        createShuffleboard();
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
@@ -115,5 +118,11 @@ public class LimelightDevice extends SubsystemBase {
      */
     public String getmName() {
         return mName;
+    }
+
+    public void createShuffleboard() {
+        ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
+        tab.addInteger(mName + " tag count", () -> {return numberOfTagsSeen();});
+        tab.addDouble(mName + " avg dist", () -> {return getAverageDistanceToVisibleTags();});
     }
 }
