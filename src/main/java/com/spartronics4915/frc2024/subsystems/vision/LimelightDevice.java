@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightDevice extends SubsystemBase {
@@ -17,6 +18,7 @@ public class LimelightDevice extends SubsystemBase {
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
     private final String mName;
+    private final Field2d mField = new Field2d();
 
     /**
      * Creates a new LimelightDevice
@@ -120,9 +122,18 @@ public class LimelightDevice extends SubsystemBase {
         return mName;
     }
 
+    public void updateFieldPose() {
+        mField.setRobotPose(getBotPose2d());
+    }
+
     public void createShuffleboard() {
         ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
-        tab.addInteger(mName + " tag count", () -> {return numberOfTagsSeen();});
-        tab.addDouble(mName + " avg dist", () -> {return getAverageDistanceToVisibleTags();});
+        final int offset = (mName == "limelight-bob" ? 5 : 0);
+        tab.addInteger(mName + " primary tag", () -> {return getPrimaryTag();}).withPosition(0 + offset, 3);
+        tab.addInteger(mName + " tag count", () -> {return numberOfTagsSeen();}).withPosition(1 + offset, 3);
+        tab.addBoolean(mName + " sees tag", () -> {return canSeeTags();}).withPosition(2 + offset, 3);
+        tab.addDouble(mName + " avg dist", () -> {return getAverageDistanceToVisibleTags();}).withPosition(3 + offset, 3);
+        tab.addInteger(mName + " pipeline", () -> {return getCurrentPipelineIndex();}).withPosition(4 + offset, 3);
+        tab.add(mName + " field", mField).withSize(5, 3).withPosition(0 + offset, 0);
     }
 }
