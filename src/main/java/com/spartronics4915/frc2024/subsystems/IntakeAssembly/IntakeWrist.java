@@ -240,7 +240,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     @Override
     public State getSetPoint() {
-        return mCurrState;
+        return new State(mCurrState.position - 0.25, mCurrState.velocity);
     }
 
     @Override
@@ -252,7 +252,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             20.0,
             new Color8Bit(Color.kBlueViolet), 
             SimType.Angle, 
-            new Translation2d(1.5, 0)
+            new Translation2d(0.20, 1.5)
         );
     }
 }
