@@ -21,21 +21,20 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants.*;
 
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimType;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
-import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
+import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
-public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInterface, TrapazoidSimulatorInterface{
+public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInterface, TrapezoidSimulatorInterface{
     //Decision list:
     
     //#region variables
@@ -49,8 +48,8 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
 
         private State mCurrState = null;
 
-        private final TrapezoidProfile kTrapazoidProfile;
-        private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
+        private final TrapezoidProfile kTrapezoidProfile;
+        private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
         //limit switches?
 
         //#region ShuffleBoardEntries
@@ -67,7 +66,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
         mPidController = initPID(IntakeWristConstants.kPIDconstants);
         mEncoder = initEncoder();
-        kTrapazoidProfile = initTrapazoid(IntakeWristConstants.kTrapzoidConstants);
+        kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
         
         
         currentToSetPoint();
@@ -120,8 +119,8 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         System.out.println(mWristSetPoint);
     }
 
-    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
+    private TrapezoidProfile initTrapezoid(Constraints constraints) {
+        return new TrapezoidProfile(constraints);
     }
 
     //#endregion
@@ -183,9 +182,9 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
         if (mManualMovment) {
             //let commands handle it
         } else {
-            TrapazoidMotionProfileUpdate();
+            TrapezoidMotionProfileUpdate();
         }
-        //will add things here if trapazoid motion profiles get used
+        //will add things here if trapezoid motion profiles get used
 
         updateShuffleboard();
     }
@@ -196,11 +195,11 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
     }
 
 
-    private void TrapazoidMotionProfileUpdate(){
+    private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
         //can throw feedforward here if needed
 
-        mCurrState = kTrapazoidProfile.calculate(
+        mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             mCurrState,
             new State(mRotSetPoint.getRotations(), 0)

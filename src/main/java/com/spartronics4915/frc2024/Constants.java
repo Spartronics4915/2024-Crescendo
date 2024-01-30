@@ -2,7 +2,6 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -10,6 +9,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -85,12 +85,8 @@ public final class Constants {
                 double x,
                 double y
         ) {}
-
-        public static record TrapazoidConstaintsConstants(
-            double kMaxVel,
-            double kMaxAccel
-        ) {}
     }
+
     public static final class IntakeAssembly {
         public enum IntakeAssemblyState{ //TODO find constants
             GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
@@ -125,7 +121,7 @@ public final class Constants {
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final Constraints kTrapzoidConstraints = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 

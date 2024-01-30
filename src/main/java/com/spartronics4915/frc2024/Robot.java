@@ -7,7 +7,7 @@ package com.spartronics4915.frc2024;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
+import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
@@ -80,9 +80,9 @@ public class Robot extends TimedRobot {
      */
     public void modeInit(){
         
-        //Saftey for trapazoid
-        for (var trapazoid : TrapazoidSubsystemInterface.TrapazoidSubsystems) {
-            trapazoid.setPositionToReal();
+        //Saftey for trapezoid
+        for (var trapezoid : TrapezoidSubsystemInterface.TrapezoidSubsystems) {
+            trapezoid.setPositionToReal();
         }
     }
 }
