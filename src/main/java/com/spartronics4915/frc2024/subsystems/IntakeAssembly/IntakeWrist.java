@@ -226,7 +226,7 @@ public class IntakeWrist extends SubsystemBase implements TrapazoidSubsystemInte
             20.0,
             new Color8Bit(Color.kBlueViolet), 
             SimType.Angle, 
-            new Translation2d(0, 0)
+            new Translation2d(1.5, 0)
         );
     }
 }

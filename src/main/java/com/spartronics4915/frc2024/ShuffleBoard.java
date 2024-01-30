@@ -59,7 +59,7 @@ public class ShuffleBoard {
             EnumMap<WristSubsystemEntries, GenericEntry> out = new EnumMap<>(WristSubsystemEntries.class);
             ShuffleboardLayout mIntakeOverview = Shuffleboard
                 .getTab(tabName)
-                .getLayout("Wrist", BuiltInLayouts.kList)
+                .getLayout("Wrist", BuiltInLayouts.kGrid)
                 .withSize(2, 2);
 
             
