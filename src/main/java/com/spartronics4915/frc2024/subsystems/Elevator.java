@@ -27,9 +27,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
-// Name changed from Elevator to Elavetor in solidarity with Trapazoid
-public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterface, TrapazoidSubsystemInterface {
-    private static Elavetor mInstance;
+public class Elevator extends SubsystemBase implements TrapazoidSimulatorInterface, TrapazoidSubsystemInterface {
+    private static Elevator mInstance;
 
     private CANSparkMax mMotor;
     private SparkPIDController mPid;
@@ -44,7 +43,7 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
     // convert meters to rotations
     // rotate* (is interesting)
 
-    public Elavetor() {
+    public Elevator() {
         mMotor = initMotor(kMotorConstants);
         mmmmmmmmTrapezoid = initTrapazoid(kZoidConstants);
         mCurrentState = new State();
@@ -123,9 +122,9 @@ public class Elavetor extends SubsystemBase implements TrapazoidSimulatorInterfa
                 new Translation2d(103 / 100d, 27 / 100d));
     }
 
-    public static Elavetor getInstance() {
+    public static Elevator getInstance() {
         if (mInstance == null) {
-            mInstance = new Elavetor();
+            mInstance = new Elevator();
         }
         return mInstance;
     }

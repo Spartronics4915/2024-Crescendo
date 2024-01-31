@@ -136,7 +136,7 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 41);
+            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final TrapazoidConstaintsConstants kZoidConstants = new TrapazoidConstaintsConstants(1d, 1/10d);
             public static final double kMetersToRotation = 1; // Conversion rate
         }
