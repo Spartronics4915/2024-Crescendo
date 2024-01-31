@@ -178,14 +178,14 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     //#region Commands
     public Command setStateCommand(IntakeAssemblyState newState){
-        return Commands.runOnce(() -> {
+        return this.runOnce(() -> {
             setState(newState);
         });
     }
 
 
     public Command manualRunCommand(double wristSpeed){
-        return Commands.startEnd(
+        return this.startEnd(
             () -> setVelocitySetPoint(wristSpeed), 
             () -> currentToSetPoint()
         );
@@ -222,7 +222,6 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
-        //can throw feedforward here if needed
 
         mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
