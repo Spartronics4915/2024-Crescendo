@@ -25,12 +25,6 @@ public class AutoComponents {
     
     public Command loadIntoShooter(){
         return Commands.sequence(
-            mIntakeAssmebly.setState(IntakeAssemblyState.GROUNDPICKUP),
-            Commands.waitUntil(mIntakeAssmebly::atTarget),
-
-            mIntake.setStateCommand(IntakeState.IN),
-            Commands.waitUntil(mIntake::getBeamBreakStatus),
-
             Commands.parallel(
                 mIntake.setStateCommand(IntakeState.OFF),
                 mIntakeAssmebly.setState(IntakeAssemblyState.LOAD)
@@ -41,6 +35,22 @@ public class AutoComponents {
             Commands.waitUntil(() -> {return !mIntake.getBeamBreakStatus();}),
 
             mIntake.setStateCommand(IntakeState.OFF)
+            //TODO add shooter holding code
+        );
+    }
+
+    public Command groundToIntake(){
+        return Commands.sequence(
+            mIntakeAssmebly.setState(IntakeAssemblyState.GROUNDPICKUP),
+            Commands.waitUntil(mIntakeAssmebly::atTarget),
+
+            mIntake.setStateCommand(IntakeState.IN),
+            Commands.waitUntil(mIntake::getBeamBreakStatus),
+
+            Commands.parallel(
+                mIntake.setStateCommand(IntakeState.OFF),
+                mIntakeAssmebly.setState(IntakeAssemblyState.LOAD)
+            )
         );
     }
 
