@@ -72,7 +72,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        getAlice().updateFieldPose();
-        getBob().updateFieldPose();
+        //getAlice().updateFieldPose();
+        //getBob().updateFieldPose();
     }
 }

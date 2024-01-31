@@ -125,8 +125,8 @@ public class SwerveDrive extends SubsystemBase {
         return (SwerveModulePosition[]) Stream.of(mModules).map((m) -> m.getPosition()).toArray(SwerveModulePosition[]::new);
     }
 
-    public SwerveModuleState[] getModuleStates() {
-        return (SwerveModuleState[]) Stream.of(mModules).map((m) -> m.getState()).toArray(SwerveModuleState[]::new);
+    public SwerveModuleState[] getModuleDesiredStates() {
+        return (SwerveModuleState[]) Stream.of(mModules).map((m) -> m.getDesiredState()).toArray(SwerveModuleState[]::new);
     }
 
     public Rotation2d getAngle() {

@@ -7,8 +7,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class SwerveSim extends SubsystemBase {
@@ -27,6 +30,7 @@ public class SwerveSim extends SubsystemBase {
 
         swerveModules = swerveDrive.getSwerveModules();
         lastTime = 0;
+        SmartDashboard.putData("field", field);
     }
 
     public Field2d getField() {
@@ -36,19 +40,18 @@ public class SwerveSim extends SubsystemBase {
     @Override
     public void simulationPeriodic() {
 
+        double dT = Timer.getFPGATimestamp() - lastTime;
+        boolean validStates = true;
         Pigeon2 IMU = swerveDrive.getImU();
 
         if (lastTime == 0) {
             lastTime = Timer.getFPGATimestamp();
             return;
         }
+        else {
+            lastTime = Timer.getFPGATimestamp();
+        }
 
-        double dT = Timer.getFPGATimestamp() - lastTime;
-
-        ChassisSpeeds currChassisSpeed = kinematics.toChassisSpeeds(swerveDrive.getModuleStates());
-
-        Pigeon2SimState simState = IMU.getSimState();
-        simState.addYaw(Rotation2d.fromRadians(currChassisSpeed.omegaRadiansPerSecond).getDegrees() * dT);
 
         // Now it is time to update the module states
         // We are going to update to
@@ -60,8 +63,23 @@ public class SwerveSim extends SubsystemBase {
             if (currDesiredState != null) {
                 double newPos = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
                 m.setPosition(newPos);
+            } else {
+
+                validStates = false;
             }
         }
+
+        if (validStates) {
+
+            ChassisSpeeds currChassisSpeed = kinematics.toChassisSpeeds(swerveDrive.getModuleDesiredStates());
+
+            Pigeon2SimState simState = IMU.getSimState();
+            simState.addYaw(Rotation2d.fromRadians(currChassisSpeed.omegaRadiansPerSecond).getDegrees() * dT);
+
+        }
+
+        Pose2d currPose = swerveDrive.getPose();
+        field.setRobotPose(currPose);
     }
 
 }
