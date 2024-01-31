@@ -35,7 +35,7 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristCo
 
 public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
-    
+    // RPM
     //#region variables
 
         private static IntakeWrist mInstance;
@@ -104,8 +104,6 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         pid.setI(kPIDValues.i(), slot);
         pid.setD(kPIDValues.d(), slot);
 
-        //CHECKUP Decide on Vel conversion Factor (aka use rpm?)
-        //position Conversion not needed by using rotation2d
 
         return pid;
     }
@@ -149,15 +147,15 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void currentToSetPoint(){
         mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
-        setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
+        setRotationSetPoint(getEncoderPosReading(), true); 
     }
     
     private void setRotationSetPoint(Rotation2d angle, boolean force){
-        if (isSafeAngle(angle) || force) //TODO remove force for setting to closest safe value or shutdown (based on context)
+        if (isSafeAngle(angle) || force)
             mRotSetPoint = angle;
     }
 
-    private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
+    private void setVelocitySetPoint(double velocity){
         mManualMovment = true;
         mVelocitySetPoint = velocity;
     }
