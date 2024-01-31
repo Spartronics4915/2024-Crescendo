@@ -174,23 +174,26 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         setRotationSetPoint(newState.wristAngle, false);
     }
 
-
-
+    
+    
     //#region Commands
     public Command setStateCommand(IntakeAssemblyState newState){
         return this.runOnce(() -> {
             setState(newState);
         });
     }
-
-
+    
+    
     public Command manualRunCommand(double wristSpeed){
         return this.startEnd(
             () -> setVelocitySetPoint(wristSpeed), 
             () -> currentToSetPoint()
         );
     }
-
+        
+    public boolean atTargetState(){
+        return (getEncoderPosReading() == mRotSetPoint); //TODO manual mode check?
+    }
 
     //#endregion
 
