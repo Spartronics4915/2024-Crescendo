@@ -10,14 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TempFileCommands {
+public class AutoComponents {
     private SwerveDrive mDriveBase;
     private Intake mIntake;
     private IntakeAssemblyCommands mIntakeAssmebly;
     
     private SubsystemBase mShooter; //TODO placeholder
     
-    public TempFileCommands(SwerveDrive mDriveBase, Intake mIntake, IntakeAssemblyCommands mIntakeAssmebly ) {
+    public AutoComponents(SwerveDrive mDriveBase, Intake mIntake, IntakeAssemblyCommands mIntakeAssmebly ) {
         this.mDriveBase = mDriveBase;
         this.mIntake = mIntake;
         this.mIntakeAssmebly = mIntakeAssmebly;
