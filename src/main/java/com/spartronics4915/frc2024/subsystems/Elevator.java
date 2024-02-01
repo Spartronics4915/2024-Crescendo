@@ -2,7 +2,6 @@ package com.spartronics4915.frc2024.subsystems;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
-import com.spartronics4915.frc2024.Constants.IntakeAssembly;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
@@ -74,7 +73,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private RelativeEncoder initEncoder() { // TODO encoder init settings
-        return mMotor.getEncoder();
+        RelativeEncoder enconder = mMotor.getEncoder();
+        return enconder;
     }
 
     private TrapezoidProfile initTrapazoid(Constraints constraints) {
@@ -91,7 +91,6 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 GeneralConstants.kUpdateTime,
                 new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget.getRotations(), 0));
-
         mPid.setReference(mCurrentState.position, ControlType.kPosition);
     }
 
@@ -100,7 +99,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // i kinda just did this above in periodic
     }
 
-    private Rotation2d getEncoderPosReading(){
+    private Rotation2d getEncoderPosReading() {
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
@@ -128,6 +127,19 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return mInstance;
     }
 
+    /**
+     * @return height of elevator
+     */
+    public double getHeight() {
+        return getEncoderPosReading().getRotations() / kMetersToRotation;
+    }
+
+    /**
+     * @return height of elevator
+     */
+    public double getDistance() {
+        return getHeight();
+    }
     public void setTarget(double newTarget) {
         mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
     }
