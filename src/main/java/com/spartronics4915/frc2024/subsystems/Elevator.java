@@ -2,24 +2,17 @@ package com.spartronics4915.frc2024.subsystems;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
-import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.spartronics4915.frc2024.util.MotorConstants;
-import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -42,47 +35,36 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     // rotate* (is interesting)
 
     public Elevator() {
-        mMotor = initMotor(kMotorConstants);
-        mmmmmmmmTrapezoid = initTrapazoid(kZoidConstants);
+        // Initializes the motor
+        mMotor = new CANSparkMax(kMotorConstants.motorID(), kMotorConstants.motorType());
+        mMotor.restoreFactoryDefaults();
+        mMotor.setInverted(kMotorConstants.motorIsInverted());
+        mMotor.setIdleMode(kMotorConstants.idleMode());
+        mMotor.setSmartCurrentLimit(kMotorConstants.currentLimit());
+        mMotor.burnFlash();
+
+        // Initializes the Trapezoid
+        mmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
+
+        // Sets the current state
         mCurrentState = new State();
-        mPid = initPID(new PIDConstants(0, 0, 0));
-        mEncoder = initEncoder();
-    }
 
-    private CANSparkMax initMotor(MotorConstants motorValues) {
-        CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
-        motor.restoreFactoryDefaults();
-        motor.setInverted(motorValues.motorIsInverted());
-        motor.setIdleMode(motorValues.idleMode());
-        motor.setSmartCurrentLimit(motorValues.currentLimit());
-        motor.burnFlash();
-        return motor;
-    }
-
-    private SparkPIDController initPID(PIDConstants kPIDValues) {
-        SparkPIDController pid = mMotor.getPIDController();
-
-        pid.setP(kPIDValues.p());
-        pid.setI(kPIDValues.i());
-        pid.setD(kPIDValues.d());
-
+        // Initializes the PID
+        mPid = mMotor.getPIDController();
+        mPid.setP(0);
+        mPid.setI(0);
+        mPid.setD(0);
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
-        // position Conversion not needed by using rotation2d
 
-        return pid;
-    }
-
-    private RelativeEncoder initEncoder() { // TODO encoder init settings
-        RelativeEncoder enconder = mMotor.getEncoder();
-        return enconder;
-    }
-
-    private TrapezoidProfile initTrapazoid(Constraints constraints) {
-        return new TrapezoidProfile(constraints);
+        // Sets up the encoder
+        mEncoder = mMotor.getEncoder();
     }
 
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
+    }
+    private Rotation2d getEncoderPosReading() {
+        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
     @Override
@@ -95,36 +77,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     @Override
-    public void setPositionToReal() {
-        // i kinda just did this above in periodic
-    }
-
-    private Rotation2d getEncoderPosReading() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
-    }
-
-    @Override
     public State getSetPoint() {
         return mCurrentState;
     }
 
+    /**
+     * @return Simulator Settings for the Elevator
+     */
     @Override
     public SimulatorSettings getSettings() {
-        return new SimulatorSettings(
-                "Elevator",
-                1.0,
-                90.0,
-                20.0,
-                new Color8Bit(Color.kMediumPurple),
-                SimType.Elevator,
-                new Translation2d(103 / 100d, 27 / 100d));
-    }
-
-    public static Elevator getInstance() {
-        if (mInstance == null) {
-            mInstance = new Elevator();
-        }
-        return mInstance;
+        return kElevatorSimulatorSettings;
     }
 
     /**
@@ -133,25 +95,49 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public double getHeight() {
         return getEncoderPosReading().getRotations() / kMetersToRotation;
     }
-
     /**
      * @return height of elevator
      */
     public double getDistance() {
         return getHeight();
     }
+
+    /**
+     * Sets the new target position
+     * @param newTarget New target position (in meters... i think)
+     */
     public void setTarget(double newTarget) {
         mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
     }
-
-    public void setTarget(IntakeAssemblyState something) {
-        mTarget = Rotation2d.fromRotations(something.ElevatorHeight * kMetersToRotation);
+    /**
+     * Sets the new target position
+     * @param intakeAssemblyState I don't know what this is but I was told to add it so I did
+     */
+    public void setTarget(IntakeAssemblyState intakeAssemblyState) {
+        mTarget = Rotation2d.fromRotations(intakeAssemblyState.ElevatorHeight * kMetersToRotation);
     }
-
+    /**
+     * Command to set the new target position
+     * @param newTarget New target position (in meters... i think)
+     */
     public Command setTargetCommand(double newTarget) {
         return runOnce(() -> {
             setTarget(newTarget);
         });
+    }
+
+    // Here because something requires it
+    @Override
+    public void setPositionToReal() {}
+
+    /**
+     * @return A static instance of the elevator subsystem
+     */
+    public static Elevator getInstance() { 
+        if (mInstance == null) {
+            mInstance = new Elevator();
+        }
+        return mInstance;
     }
 
 }
