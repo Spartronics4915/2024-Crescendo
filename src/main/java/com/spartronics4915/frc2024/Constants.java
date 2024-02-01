@@ -142,4 +142,16 @@ public final class Constants {
         public static final Constraints kTrapzoidConstants = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
     }
+
+    public static final class ShooterConstants {
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(14, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0);
+        public static final double kOffSpeed = 0.0; //unsure if this is necessary
+        public static final double kShootSpeed = 0.2; //placeholder
+        public static final double kConveyorInSpeed = 0.2; //placeholder
+        public static final double kConveyorOutSpeed = 0.2; //placeholder
+
+    }
 }
