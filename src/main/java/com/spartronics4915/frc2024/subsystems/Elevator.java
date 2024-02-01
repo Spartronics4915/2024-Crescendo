@@ -1,19 +1,18 @@
 package com.spartronics4915.frc2024.subsystems;
 
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimType;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
-import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
+import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -27,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
-public class Elevator extends SubsystemBase implements TrapazoidSimulatorInterface, TrapazoidSubsystemInterface {
+public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
     private static Elevator mInstance;
 
     private CANSparkMax mMotor;
@@ -78,8 +77,8 @@ public class Elevator extends SubsystemBase implements TrapazoidSimulatorInterfa
         return mMotor.getEncoder();
     }
 
-    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
+    private TrapezoidProfile initTrapazoid(Constraints constraints) {
+        return new TrapezoidProfile(constraints);
     }
 
     private double getEncoderVelReading(){

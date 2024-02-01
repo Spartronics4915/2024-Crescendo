@@ -2,7 +2,6 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -22,8 +21,6 @@ public final class Constants {
 
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
-
-        public static final int kIntakeBeamBreakID = 0; //placeholder
     }
 
     public static final class GeneralConstants {
@@ -86,12 +83,8 @@ public final class Constants {
                 double x,
                 double y
         ) {}
-
-        public static record TrapazoidConstaintsConstants(
-            double kMaxVel,
-            double kMaxAccel
-        ) {}
     }
+
     public static final class IntakeAssembly {
         public enum IntakeAssemblyState{ //TODO find constants
             GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
@@ -118,17 +111,27 @@ public final class Constants {
                     public static final double kLoadSpeed = 0.2; //placeholder
                     public static final double kOutSpeed = -0.3; // placeholder
                     public static final double kOffSpeed = 0;
+
+                    public static final int kIntakeBeamBreakID = 0; //placeholder
                 }
         
         public static final class IntakeWristConstants {
 
             //TODO Make Units Clear
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final PIDConstants kPIDSlotPosconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDSlotVeloconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final Constraints kTrapzoidConstraints = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
+            public static final int kPosPIDSlot = 0;
+            public static final int kVelPIDSlot = 1;
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
+
+            public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(120);
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(60);
+
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
             public static final class ManualConstants { //speed of manual movements, 
                 
@@ -137,7 +140,7 @@ public final class Constants {
 
         public static final class ElevatorConstants {
             public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final TrapazoidConstaintsConstants kZoidConstants = new TrapazoidConstaintsConstants(1d, 1/10d);
+            public static final Constraints kZoidConstants = new Constraints(1d, 1/10d);
             public static final double kMetersToRotation = 1; // Conversion rate
         }
     }

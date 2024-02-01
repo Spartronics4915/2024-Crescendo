@@ -14,7 +14,6 @@ import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystem
 import com.spartronics4915.frc2024.util.Loggable;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
-import static com.spartronics4915.frc2024.Constants.OI.kIntakeBeamBreakID;
 
 public class Intake extends SubsystemBase implements Loggable {
     public static enum IntakeState {
@@ -67,6 +66,10 @@ public class Intake extends SubsystemBase implements Loggable {
         pid.setD(kPIDValues.d());
 
         return pid;
+    }
+
+    public boolean getBeamBreakStatus(){
+        return mBeamBreak.get();
     }
 
     /**

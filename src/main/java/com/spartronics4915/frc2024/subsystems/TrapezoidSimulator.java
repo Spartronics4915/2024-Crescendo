@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
  * this means that they act independently of the Motors meaning they can be simulator
  * this means that they can be simulated!
  */
-public class TrapazoidSimulator extends SubsystemBase{
+public class TrapezoidSimulator extends SubsystemBase{
 
     public enum SimType{
         Elevator,
@@ -29,14 +29,14 @@ public class TrapazoidSimulator extends SubsystemBase{
         String name, double length, double angle, double lineWidth, Color8Bit color, SimType type, Translation2d rootPos
     ) {}
 
-    public interface TrapazoidSimulatorInterface {
+    public interface TrapezoidSimulatorInterface {
         public State getSetPoint();
         public SimulatorSettings getSettings();
     }
 
 
     public record SimulatorObject(
-        TrapazoidSimulatorInterface object, 
+        TrapezoidSimulatorInterface object, 
         MechanismLigament2d visual,
         SimType type
     ) {}
@@ -44,10 +44,10 @@ public class TrapazoidSimulator extends SubsystemBase{
     private ArrayList<SimulatorObject> mSimulatedObjects = new ArrayList<>();
     private Mechanism2d simCanvas;
 
-    public TrapazoidSimulator(ArrayList<TrapazoidSimulatorInterface> inputSimObjs) {
+    public TrapezoidSimulator(ArrayList<TrapezoidSimulatorInterface> inputSimObjs) {
 
         simCanvas = new Mechanism2d(4, 4,  new Color8Bit("#1f0038"));
-        for (TrapazoidSimulatorInterface simObj : inputSimObjs) {
+        for (TrapezoidSimulatorInterface simObj : inputSimObjs) {
             var settings = simObj.getSettings();
             var simLigament = new MechanismLigament2d(
                 settings.name,
