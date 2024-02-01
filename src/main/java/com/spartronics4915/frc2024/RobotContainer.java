@@ -10,6 +10,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,7 +29,7 @@ public class RobotContainer {
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
     private static final CommandXboxController mOperatorController = new CommandXboxController(kOperatorControllerPort);
     
-    private static final Intake mIntake = Intake.getInstance();
+    // private static final Intake mIntake = Intake.getInstance();
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
 
     private static final TrapezoidSimulator mSimulator;
@@ -46,13 +47,17 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        mOperatorController.leftTrigger(kOperatorTriggerDeadband)
-            .onTrue(mIntake.setStateCommand(IntakeState.IN))
-            .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+        // mOperatorController.leftTrigger(kOperatorTriggerDeadband)
+        //     .onTrue(mIntake.setStateCommand(IntakeState.IN))
+        //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mOperatorController.rightTrigger(kOperatorTriggerDeadband)
-            .onTrue(mIntake.setStateCommand(IntakeState.OUT))
-            .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+        // mOperatorController.rightTrigger(kOperatorTriggerDeadband)
+        //     .onTrue(mIntake.setStateCommand(IntakeState.OUT))
+        //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+
+        mOperatorController.a().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1).getRadians()));
+        mOperatorController.b().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1).getRadians()));
+
     }
 
     public Command getAutonomousCommand() {

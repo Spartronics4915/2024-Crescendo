@@ -122,18 +122,15 @@ public final class Constants {
             //TODO Make Units Clear
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDSlotPosconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final PIDConstants kPIDSlotVeloconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final Constraints kTrapzoidConstraints = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDSlotPosconstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
-            public static final int kPosPIDSlot = 0;
-            public static final int kVelPIDSlot = 1;
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafteyLimit = 1.0; //HACK untested
 
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(60); //only when above the saftey height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(40);
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
