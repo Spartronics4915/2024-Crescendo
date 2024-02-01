@@ -1,43 +1,38 @@
 package com.spartronics4915.frc2024.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
-import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
-import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
+import com.spartronics4915.frc2024.util.Loggable;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Shooter extends SubsystemBase implements TrapazoidSimulatorInterface, TrapazoidSubsystemInterface {
+public class Shooter extends SubsystemBase implements Loggable {
     
-    private CANSparkMax mShooterMotor;
+    public static enum ShooterState {
+        IN, LOAD, OUT, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
+    }
 
-     private static Shooter mInstance;
+    private static Shooter mInstance;
 
-     public static Shooter getInstance() {
+    private ShooterState mCurrentState;
+
+    //private final CANSparkMax mShooterMotor;
+ /* 
+    public Shooter() {
+        mCurrentState = ShooterState.OFF;
+    }
+
+    public static Intake getInstance() {
         if (mInstance == null) {
             mInstance = new Shooter();
         }
         return mInstance;
-    }
-
+    } */
+    
     @Override
-    public void setPositionToReal() {
+    public void updateShuffleboard() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setPositionToReal'");
-    }
-
-    @Override
-    public State getSetPoint() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSetPoint'");
-    }
-
-    @Override
-    public SimulatorSettings getSettings() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSettings'");
+        throw new UnsupportedOperationException("Unimplemented method 'updateShuffleboard'");
     }
 
 }

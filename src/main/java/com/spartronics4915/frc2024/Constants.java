@@ -139,9 +139,11 @@ public final class Constants {
         }
     }
 
-    public static final class ShooterConstants {
+    public static final class ShooterWristConstants {
 
-        public static final int kShooterMotorId = -1; //placeholder
-        public static final boolean kMotorIsInverted = false;
+        public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
+        public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+
     }
 }
