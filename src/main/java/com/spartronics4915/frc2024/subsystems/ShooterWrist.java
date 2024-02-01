@@ -5,16 +5,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
-import com.spartronics4915.frc2024.Constants.Drive.TrapazoidConstaintsConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimType;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.SimulatorSettings;
-import com.spartronics4915.frc2024.subsystems.TrapazoidSimulator.TrapazoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
-import com.spartronics4915.frc2024.util.TrapazoidSubsystemInterface;
+import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -25,21 +24,21 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ShooterWrist extends SubsystemBase implements TrapazoidSimulatorInterface, TrapazoidSubsystemInterface {
+public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
     
     private CANSparkMax mShooterWristMotor;
 
     private CANSparkMax mWristMotor;
     private SparkPIDController mPidController;
     private RelativeEncoder mEncoder;
-    private TrapezoidProfile kTrapazoidProfile;
+    private TrapezoidProfile kTrapezoidProfile;
 
     private State mCurrentState;
     private Rotation2d mTargetRotation2d; //won't simulate because this is null (as of Monday 1/29)
 
     private static ShooterWrist mInstance;
 
-    private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapazoid movment due to the constant calls)
+    private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using Trapezoid movment due to the constant calls)
 
     public static ShooterWrist getInstance() {
         if (mInstance == null) {
@@ -53,7 +52,7 @@ public class ShooterWrist extends SubsystemBase implements TrapazoidSimulatorInt
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID(ShooterWristConstants.kPIDconstants);
         mEncoder = initEncoder();
-        kTrapazoidProfile = initTrapazoid(ShooterWristConstants.kTrapzoidConstants);
+        kTrapezoidProfile = initTrapezoid(ShooterWristConstants.kTrapzoidConstants);
     }
 
     private CANSparkMax initMotor(MotorConstants motorValues){
@@ -83,8 +82,8 @@ public class ShooterWrist extends SubsystemBase implements TrapazoidSimulatorInt
         return mWristMotor.getEncoder();
     }
 
-    private TrapezoidProfile initTrapazoid(TrapazoidConstaintsConstants constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.kMaxVel(), constraints.kMaxAccel()));
+    private TrapezoidProfile initTrapezoid(Constraints constraints) {
+        return new TrapezoidProfile(new Constraints(constraints.maxVelocity, constraints.maxAcceleration));
     }
 
     private Rotation2d getEncoderPosReading(){
@@ -115,16 +114,16 @@ public class ShooterWrist extends SubsystemBase implements TrapazoidSimulatorInt
         if (mManualMovment) {
             //let commands handle it
         } else {
-            TrapazoidMotionProfileUpdate();
+            TrapezoidMotionProfileUpdate();
         }
         
     }
 
-    private void TrapazoidMotionProfileUpdate(){
+    private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
         //can throw feedforward here if needed
 
-        mCurrentState = kTrapazoidProfile.calculate(
+        mCurrentState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             mCurrentState,
             new State(mTargetRotation2d.getRotations(), 0)

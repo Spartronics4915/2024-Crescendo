@@ -139,7 +139,7 @@ public final class Constants {
 
         public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
-        public static final TrapazoidConstaintsConstants kTrapzoidConstants = new TrapazoidConstaintsConstants(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+        public static final Constraints kTrapzoidConstants = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
 
     }
 }
