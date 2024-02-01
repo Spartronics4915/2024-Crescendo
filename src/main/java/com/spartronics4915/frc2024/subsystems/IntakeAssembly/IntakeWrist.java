@@ -45,14 +45,14 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
-        private double mVelocitySetPoint;
+        private Rotation2d mManualDelta;
 
         private final ArmFeedforward kFeedforwardCalc;
 
         private State mCurrState = null;
 
         private final TrapezoidProfile kTrapezoidProfile;
-        private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
+        private boolean mManualMovement = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
         //limit switches?
 
         //#region ShuffleBoardEntries
@@ -148,7 +148,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
     private void currentToSetPoint(){
-        mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
+        mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
+        mManualMovement = false;
         setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
     }
     
@@ -157,9 +158,9 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             mRotSetPoint = angle;
     }
 
-    private void setVelocitySetPoint(double velocity){ //TODO units determiend by vel conversion factor
-        mManualMovment = true;
-        mVelocitySetPoint = velocity;
+    private void setManualDelta(double deltaPosition){ //TODO radians per update
+        mManualMovement = true;
+        mManualDelta = Rotation2d.fromRadians(deltaPosition);
     }
 
     private double getFeedForwardValue(){
@@ -170,7 +171,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
     private void setState(IntakeAssemblyState newState){
-        mManualMovment = false;
+        mManualMovement = false;
         setRotationSetPoint(newState.wristAngle, false);
     }
 
@@ -184,9 +185,9 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
 
-    public Command manualRunCommand(double wristSpeed){
+    public Command manualRunCommand(double radianDelta){
         return this.startEnd(
-            () -> setVelocitySetPoint(wristSpeed), 
+            () -> setManualDelta(radianDelta), 
             () -> currentToSetPoint()
         );
     }
@@ -198,11 +199,10 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     public void periodic() {
         //TODO add system to talk to elevator 
 
-        if (mManualMovment) {
-            velocityControlUpdate();
-        } else {
-            TrapezoidMotionProfileUpdate();
+        if (mManualMovement) {
+            manualControlUpdate();
         }
+        TrapezoidMotionProfileUpdate();
         //will add things here if trapezoid motion profiles get used
 
         updateShuffleboard();
@@ -214,17 +214,17 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
     private void updateShuffleboard() {
-        mManualControlEntry.setBoolean(mManualMovment);
+        mManualControlEntry.setBoolean(mManualMovement);
         mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
     }
 
-    private void velocityControlUpdate(){ //HACK untested
-        if (getEncoderPosReading().minus(kMaxAngleAmp).getRotations() > 0 && mVelocitySetPoint > 0 && softwareRotationLimit()) { //CHECKUP might not work
-            mVelocitySetPoint = 0;
-        } else if (getEncoderPosReading().minus(kMinAngle).getRotations() < 0 && mVelocitySetPoint < 0) {
-            mVelocitySetPoint = 0;
+    private void manualControlUpdate(){ //HACK untested
+        if (getEncoderPosReading().minus(kMaxAngleAmp).getRotations() > 0 && mManualDelta.getRotations() > 0 && softwareRotationLimit()) { //CHECKUP might not work
+            mManualDelta = Rotation2d.fromRotations(0);
+        } else if (getEncoderPosReading().minus(kMinAngle).getRotations() < 0 && mManualDelta.getRotations() < 0) {
+            mManualDelta =  Rotation2d.fromRotations(0);
         }
-        mPidPosController.setReference(mVelocitySetPoint, ControlType.kVelocity, kVelPIDSlot, getFeedForwardValue()); //CHECKUP override?
+        mRotSetPoint.plus(mManualDelta);
     }
 
     private void TrapezoidMotionProfileUpdate(){
