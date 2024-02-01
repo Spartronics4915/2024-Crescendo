@@ -91,7 +91,9 @@ public final class Constants {
             STOW (Rotation2d.fromDegrees(180.0), 0.0),
             AMP (Rotation2d.fromDegrees(0.0), 0.0),
             LOAD (Rotation2d.fromDegrees(0.0), 0.0),
+            SOURCE (Rotation2d.fromDegrees(0.0), 0.0),
             MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
+
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
             private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
@@ -128,8 +130,10 @@ public final class Constants {
             public static final int kVelPIDSlot = 1;
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(120);
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(60);
+            public static final double kMeterSafteyLimit = 1.0; //HACK untested
+
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(60); //only when above the saftey height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(40);
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 

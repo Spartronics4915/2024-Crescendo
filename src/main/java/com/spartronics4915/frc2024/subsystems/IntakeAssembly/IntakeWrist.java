@@ -196,6 +196,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     @Override
     public void periodic() {
+        //TODO add system to talk to elevator 
+
         if (mManualMovment) {
             velocityControlUpdate();
         } else {
@@ -206,13 +208,18 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         updateShuffleboard();
     }
 
+    public boolean softwareRotationLimit(){
+        //FIXME implement elevator distance check
+        return (/*get elevator height */ 0.0 > kMeterSafteyLimit );
+    }
+
     private void updateShuffleboard() {
         mManualControlEntry.setBoolean(mManualMovment);
         mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
     }
 
     private void velocityControlUpdate(){ //HACK untested
-        if (getEncoderPosReading().minus(kMaxAngle).getRotations() > 0 && mVelocitySetPoint > 0) {
+        if (getEncoderPosReading().minus(kMaxAngleAmp).getRotations() > 0 && mVelocitySetPoint > 0 && softwareRotationLimit()) { //CHECKUP might not work
             mVelocitySetPoint = 0;
         } else if (getEncoderPosReading().minus(kMinAngle).getRotations() < 0 && mVelocitySetPoint < 0) {
             mVelocitySetPoint = 0;
