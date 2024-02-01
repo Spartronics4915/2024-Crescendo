@@ -1,6 +1,8 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
+import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
 
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
@@ -78,7 +80,7 @@ public class SwerveDrive extends SubsystemBase {
         return mInstance;
     }
 
-    public void drive(ChassisSpeeds speeds, final boolean fieldRelative) {
+    public void drive(final ChassisSpeeds speeds, final boolean fieldRelative) {
         drive(speeds, fieldRelative, mRotationIsIndependent);
     }
 
@@ -120,7 +122,7 @@ public class SwerveDrive extends SubsystemBase {
         return runOnce(this::decoupleRotation);
     }
 
-    public void setDesiredAngle(Rotation2d angle) {
+    public void setDesiredAngle(final Rotation2d angle) {
         mDesiredAngle = angle;
     }
 
@@ -132,7 +134,13 @@ public class SwerveDrive extends SubsystemBase {
         return Rotation2d.fromDegrees(mIMU.getAngle());
     }
 
-    public void addVisionMeasurement(Pose2d cameraPose, double t) {
+    public void addVisionMeasurement(final VisionMeasurement msmt) {
+        final var p = msmt.pose().toPose2d();
+        final var t = msmt.timestamp();
+        addVisionMeasurement(p, t);
+    }
+
+    public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
         mPoseEstimator.addVisionMeasurement(cameraPose, t);
     }
 
@@ -140,8 +148,16 @@ public class SwerveDrive extends SubsystemBase {
         return mPoseEstimator.getEstimatedPosition();
     }
 
+    public void resetPose(final Pose2d newPose) {
+        mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
+    }
+
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
+
+        final var vs = VisionSubsystem.getInstance();
+        vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+        vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
     }
 }
