@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private SparkPIDController mPid;
     private RelativeEncoder mEncoder;
 
-    private TrapezoidProfile mmmmmmmmmTrapezoid;
+    private TrapezoidProfile mmmmmmmmmmTrapezoid;
 
     private State mCurrentState;
     private Rotation2d mTarget = new Rotation2d(Math.PI * 3);
@@ -44,7 +44,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mMotor.burnFlash();
 
         // Initializes the Trapezoid
-        mmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
+        mmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
         // Sets the current state
         mCurrentState = new State();
@@ -69,7 +69,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     @Override
     public void periodic() {
-        mCurrentState = mmmmmmmmmTrapezoid.calculate(
+        mCurrentState = mmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget.getRotations(), 0));
