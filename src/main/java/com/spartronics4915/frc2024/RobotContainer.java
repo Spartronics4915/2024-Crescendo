@@ -59,11 +59,11 @@ public class RobotContainer {
         VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
-    public CommandXboxController getDriverController() {
+    public static CommandXboxController getDriverController() {
         return mDriverController;
     }
 
-    public CommandXboxController getOperatorController() {
+    public static CommandXboxController getOperatorController() {
         return mOperatorController;
     }
 
