@@ -185,7 +185,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return this.startEnd(
             () -> setManualDelta(angleDelta), 
             () -> {
-                if (!Robot.isSimulation()) currentToSetPoint(); //FIXME remove sim statment when doing chassis stuff?
+                if (!Robot.isSimulation()) currentToSetPoint(); //CHECKUP remove sim statment when doing chassis stuff?
                 mManualMovement = false;
             });
     }
@@ -206,7 +206,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
     public boolean needSoftLimit(){
-        //FIXME implement elevator distance check
+        //TODO implement elevator distance check
         return (/*get elevator height */ 0.0 > kMeterSafteyLimit);
     }
 
