@@ -190,7 +190,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return this.startEnd(
             () -> setManualDelta(angleDelta), 
             () -> {
-                // currentToSetPoint();
+                currentToSetPoint();
                 mManualMovement = false;
             });
     }
@@ -210,9 +210,9 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         updateShuffleboard();
     }
 
-    public boolean softwareRotationLimit(){
+    public boolean needSoftLimit(){
         //FIXME implement elevator distance check
-        return (/*get elevator height */ 0.0 > kMeterSafteyLimit );
+        return (/*get elevator height */ 0.0 > kMeterSafteyLimit);
     }
 
     private void updateShuffleboard() {
@@ -221,9 +221,10 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
     private void manualControlUpdate(){ //HACK untested
-        if (mRotSetPoint.minus(kMaxAngleAmp).getRotations() > 0 && mManualDelta.getRotations() > 0 && softwareRotationLimit()) { //CHECKUP might not work
+
+        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 && mManualDelta.getRotations() > 0 && needSoftLimit()) { //CHECKUP might not work
             mManualDelta = Rotation2d.fromRotations(0);
-        } else if (mRotSetPoint.minus(kMinAngle).getRotations() < 0 && mManualDelta.getRotations() < 0) {
+        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
             mManualDelta =  Rotation2d.fromRotations(0);
         }
         mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
