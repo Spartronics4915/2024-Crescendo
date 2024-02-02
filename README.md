@@ -13,16 +13,16 @@ Buttons:<br>
 * B : Toggle Spin <br>
 
 Manual Controls:<br>
-* Bumpers: Elevator Manaul<br>
-* Horizantal DPad: wrist Manual<br>
-* Veritcal DPad: shooter Manual<br>
+* Bumpers: Elevator Manual<br>
+* Horizontal DPad: wrist Manual<br>
+* Vertical DPad: shooter Manual<br>
 
 Misc:
 * push left stick : subwoofer shot<br>
 * push right stick : climb height elevator, turn intake down<br>
-* Window 	: Stow
+* Window : Stow
   * > put everything in frame perimeter
-* Menu 	: Reverse intake (menu) (runs intake in reverse, amp) (hold for reverse)
+* Menu : Reverse intake (menu) (runs intake in reverse, amp) (hold for reverse)
 
 Triggers:
 * Right : Load + shoot (spin up if not already)
