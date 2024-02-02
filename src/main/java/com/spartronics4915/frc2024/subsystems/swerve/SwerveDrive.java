@@ -118,7 +118,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public Command recoupleRotationCommand() {
-        return runOnce(this::decoupleRotation);
+        return runOnce(this::recoupleRotation);
     }
 
     public void setDesiredAngle(final Rotation2d angle) {
