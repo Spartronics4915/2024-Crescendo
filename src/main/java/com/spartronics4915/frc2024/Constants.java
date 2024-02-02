@@ -122,7 +122,7 @@ public final class Constants {
             //TODO Make Units Clear
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDSlotPosconstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;

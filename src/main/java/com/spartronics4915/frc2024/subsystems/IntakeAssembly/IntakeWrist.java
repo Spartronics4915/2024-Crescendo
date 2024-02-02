@@ -70,7 +70,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     public IntakeWrist() {
         super();
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
-        mWristPIDController = initPID(IntakeWristConstants.kPIDSlotPosconstants);
+        mWristPIDController = initPID(IntakeWristConstants.kPIDConstants);
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
         kFeedforwardCalc = initFeedForward();
