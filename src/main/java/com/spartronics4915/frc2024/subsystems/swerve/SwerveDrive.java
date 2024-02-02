@@ -96,7 +96,7 @@ public class SwerveDrive extends SubsystemBase {
         final var moduleStatesIterator = List.of(moduleStates).iterator();
 
         for (SwerveModule m : mModules) {
-            m.setDesiredState(moduleStatesIterator.next());
+            m.setDesiredState(SwerveModuleState.optimize(moduleStatesIterator.next(), m.getState().angle));
         }
     }
 
