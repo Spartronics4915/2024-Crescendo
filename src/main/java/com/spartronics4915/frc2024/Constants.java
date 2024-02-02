@@ -87,11 +87,13 @@ public final class Constants {
 
     public static final class IntakeAssembly {
         public enum IntakeAssemblyState{ //TODO find constants
-            GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
-            STOW (Rotation2d.fromDegrees(180.0), 0.0),
-            AMP (Rotation2d.fromDegrees(0.0), 0.0),
-            LOAD (Rotation2d.fromDegrees(0.0), 0.0),
-            MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
+            GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 0.0),
+            STOW (Rotation2d.fromDegrees(170.0), 0.0),
+            AMP (Rotation2d.fromDegrees(10.0), 0.0),
+            LOAD (Rotation2d.fromDegrees(190.0), 0.0),
+            SOURCE (Rotation2d.fromDegrees(120.0), 0.0),
+            MANUAL (Rotation2d.fromDegrees(0.0), 0.0); //CHECKUP is this needed?
+
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
             private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
@@ -120,10 +122,17 @@ public final class Constants {
             //TODO Make Units Clear
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final Constraints kTrapzoidConstraints = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
+
+            public static final double kMeterSafteyLimit = 1.0; //HACK untested
+
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(60); //only when above the saftey height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
+
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
             public static final class ManualConstants { //speed of manual movements, 
                 

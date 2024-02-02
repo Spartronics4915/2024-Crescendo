@@ -68,6 +68,10 @@ public class Intake extends SubsystemBase implements Loggable {
         return pid;
     }
 
+    public boolean getBeamBreakStatus(){
+        return mBeamBreak.get();
+    }
+
     /**
      * Gets the current instance of the intake subsystem.
      * 
