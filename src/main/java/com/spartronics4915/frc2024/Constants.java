@@ -58,8 +58,8 @@ public final class Constants {
         public static final double kTreadWearAdjustment = 1.0;
         public static final double kTreadCoefficientOfFriction = 1.13; // black neoprene
 
-        // theoretical maximum with NEO Vortex and L2 MK4i
-        public static final double kMaxSpeed = Units.feetToMeters(17.6);
+        // theoretical maximum with NEO and L2 MK4i
+        public static final double kMaxSpeed = Units.feetToMeters(15.1);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
