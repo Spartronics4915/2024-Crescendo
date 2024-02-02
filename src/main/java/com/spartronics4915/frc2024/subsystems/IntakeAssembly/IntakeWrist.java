@@ -144,21 +144,16 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
-    private boolean isSafeAngle(Rotation2d angle){
-        return true; //TODO implement Safety
-    }
-
     private void currentToSetPoint(){
         mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
-        setRotationSetPoint(getEncoderPosReading(), true); //TODO clamp for saftey? for now will have force boolean
+        setRotationSetPoint(getEncoderPosReading());
     }
     
-    private void setRotationSetPoint(Rotation2d angle, boolean force){
-        if (isSafeAngle(angle) || force) //TODO remove force for setting to closest safe value or shutdown (based on context)
-            mRotSetPoint = angle;
+    private void setRotationSetPoint(Rotation2d angle){
+        mRotSetPoint = angle;
     }
 
-    private void setManualDelta(Rotation2d deltaPosition){ //TODO radians per update
+    private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
         mManualDelta = deltaPosition;
     }
@@ -173,7 +168,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void setState(IntakeAssemblyState newState){
         mManualMovement = false;
-        setRotationSetPoint(newState.wristAngle, false);
+        setRotationSetPoint(newState.wristAngle);
     }
 
 
