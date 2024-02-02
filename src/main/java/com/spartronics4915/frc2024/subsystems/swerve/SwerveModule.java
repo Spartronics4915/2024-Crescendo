@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.RobotBase;
 
 import com.spartronics4915.frc2024.util.*;
 
@@ -85,12 +86,13 @@ public class SwerveModule {
         return new SwerveModuleState(mDriveEncoder.getVelocity(), getAngle());
     }
 
-    /*
-     * WARNING: Should only be used by simulation.
+    /**
+     * Only works in simulation.
      */
     public void setPosition(double pos) {
-
-        mDriveEncoder.setPosition(pos);
+        if (RobotBase.isSimulation()) {
+            mDriveEncoder.setPosition(pos);
+        }
     }
 
     public SwerveModulePosition getPosition() {
