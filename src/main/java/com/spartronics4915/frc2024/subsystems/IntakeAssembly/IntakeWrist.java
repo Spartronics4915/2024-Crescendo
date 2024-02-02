@@ -190,7 +190,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return this.startEnd(
             () -> setManualDelta(angleDelta), 
             () -> {
-                currentToSetPoint();
+                if (!Robot.isSimulation()) currentToSetPoint(); //FIXME remove sim statment when doing chassis stuff?
                 mManualMovement = false;
             });
     }
