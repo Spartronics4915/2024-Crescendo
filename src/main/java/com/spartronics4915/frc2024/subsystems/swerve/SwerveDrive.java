@@ -100,6 +100,10 @@ public class SwerveDrive extends SubsystemBase {
         }
     }
 
+    public boolean rotationIsDecoupled() {
+        return mRotationIsIndependent;
+    }
+
     public void decoupleRotation() {
         setDesiredAngle(getAngle());
         mRotationIsIndependent = true;
