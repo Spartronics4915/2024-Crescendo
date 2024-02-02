@@ -172,8 +172,7 @@ public class SwerveDrive extends SubsystemBase {
         return kKinematics;
     }
 
-    public Pigeon2 getImU() {
-
+    public Pigeon2 getIMU() {
         return mIMU;
     }
 }

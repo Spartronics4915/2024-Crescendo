@@ -42,7 +42,7 @@ public class SwerveSim extends SubsystemBase {
 
         double dT = Timer.getFPGATimestamp() - lastTime;
         boolean validStates = true;
-        Pigeon2 IMU = swerveDrive.getImU();
+        Pigeon2 IMU = swerveDrive.getIMU();
 
         if (lastTime == 0) {
             lastTime = Timer.getFPGATimestamp();
