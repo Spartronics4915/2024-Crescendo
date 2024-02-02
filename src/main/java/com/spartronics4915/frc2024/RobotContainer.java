@@ -57,6 +57,9 @@ public class RobotContainer {
         //     .onTrue(mIntake.setStateCommand(IntakeState.OUT))
         //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
+
+        //TODO switch to a Command file for the intakeAssembly commands 
+
         mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 

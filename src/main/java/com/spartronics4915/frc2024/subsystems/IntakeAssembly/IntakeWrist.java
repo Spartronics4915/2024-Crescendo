@@ -136,6 +136,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     //#endregion
 
+    //#region Component Functions
     private Rotation2d getEncoderPosReading(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
@@ -158,20 +159,12 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         mManualDelta = deltaPosition;
     }
 
-    private double getFeedForwardValue(){
-
-        return kFeedforwardCalc.calculate(
-            getEncoderPosReading().getRadians(), 
-            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
-        );
-    }
-
     private void setState(IntakeAssemblyState newState){
         mManualMovement = false;
         setRotationSetPoint(newState.wristAngle);
     }
 
-
+    //#endregion
 
     //#region Commands
     public Command setStateCommand(IntakeAssemblyState newState){
@@ -187,16 +180,19 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             () -> {
                 if (!Robot.isSimulation()) currentToSetPoint(); //CHECKUP remove sim statment when doing chassis stuff?
                 mManualMovement = false;
-            });
+            }
+        );
     }
 
 
     //#endregion
 
+    //#region periodic functions
+
     @Override
     public void periodic() {
         //TODO add system to talk to elevator 
-
+        
         if (mManualMovement) {
             manualControlUpdate();
         }
@@ -204,12 +200,20 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
     }
-
+    
     public boolean needSoftLimit(){
         //TODO implement elevator distance check
         return (/*get elevator height */ 0.0 > kMeterSafteyLimit);
     }
+    
+    private double getFeedForwardValue(){
 
+        return kFeedforwardCalc.calculate(
+            getEncoderPosReading().getRadians(), 
+            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
+        );
+    }
+    
     private void updateShuffleboard() {
         mManualControlEntry.setBoolean(mManualMovement);
         mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
@@ -236,6 +240,10 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         mWristPIDController.setReference(mCurrState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
+    //#endregion
+
+    //#region overriden interface methods
+
     @Override
     public void setPositionToReal() {
         currentToSetPoint();
@@ -258,4 +266,6 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             new Translation2d(0.20, 1.5)
         );
     }
+
+    //#endregion
 }
