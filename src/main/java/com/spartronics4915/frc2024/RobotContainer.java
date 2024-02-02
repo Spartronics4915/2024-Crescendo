@@ -55,8 +55,8 @@ public class RobotContainer {
         //     .onTrue(mIntake.setStateCommand(IntakeState.OUT))
         //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mOperatorController.a().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1).getRadians()));
-        mOperatorController.b().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1).getRadians()));
+        mOperatorController.a().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.b().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
     }
 

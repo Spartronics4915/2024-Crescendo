@@ -158,9 +158,9 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             mRotSetPoint = angle;
     }
 
-    private void setManualDelta(double deltaPosition){ //TODO radians per update
+    private void setManualDelta(Rotation2d deltaPosition){ //TODO radians per update
         mManualMovement = true;
-        mManualDelta = Rotation2d.fromRadians(deltaPosition);
+        mManualDelta = deltaPosition;
     }
 
     private double getFeedForwardValue(){
@@ -186,11 +186,11 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
 
 
-    public Command manualRunCommand(double radianDelta){
+    public Command manualRunCommand(Rotation2d angleDelta){
         return this.startEnd(
-            () -> setManualDelta(radianDelta), 
+            () -> setManualDelta(angleDelta), 
             () -> {
-                currentToSetPoint();
+                // currentToSetPoint();
                 mManualMovement = false;
             });
     }
@@ -226,7 +226,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         } else if (mRotSetPoint.minus(kMinAngle).getRotations() < 0 && mManualDelta.getRotations() < 0) {
             mManualDelta =  Rotation2d.fromRotations(0);
         }
-        mRotSetPoint = mRotSetPoint.plus(mManualDelta);
+        mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
     }
 
     private void TrapezoidMotionProfileUpdate(){
