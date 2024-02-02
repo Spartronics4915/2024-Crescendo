@@ -90,6 +90,7 @@ public class SwerveDrive extends SubsystemBase {
         drive(speeds, fieldRelative, mRotationIsIndependent);
     }
 
+    // FIXME: field relative drives faster than robot relative
     private void drive(final ChassisSpeeds speeds, final boolean fieldRelative, final boolean rotationIndependent) {
         final ChassisSpeeds _speeds;
         if (fieldRelative) {
@@ -125,7 +126,7 @@ public class SwerveDrive extends SubsystemBase {
 
                 final double inputxraw = dc.getLeftY() * -1.0;
                 final double inputyraw = dc.getLeftX() * -1.0;
-                final double inputomegaraw = dc.getRightX();
+                final double inputomegaraw = dc.getRightX(); // consider changing from angular velocity control to direct angle control
 
                 final double inputx = applyResponseCurve(applyDeadband(inputxraw, kStickDeadband));
                 final double inputy = applyResponseCurve(applyDeadband(inputyraw, kStickDeadband));
@@ -142,6 +143,14 @@ public class SwerveDrive extends SubsystemBase {
                 return Math.signum(x) * Math.pow(x, 2);
             }
         };
+    }
+
+    public void toggleFieldRelative() {
+        mIsFieldRelative = !mIsFieldRelative;
+    }
+
+    public Command toggleFieldRelativeCommand() {
+        return runOnce(this::toggleFieldRelative);
     }
 
     public void setFieldRelative(boolean fieldRelative) {
