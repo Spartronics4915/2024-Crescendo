@@ -4,6 +4,7 @@
 
 package com.spartronics4915.frc2024;
 
+import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
@@ -11,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,8 +57,14 @@ public class RobotContainer {
         //     .onTrue(mIntake.setStateCommand(IntakeState.OUT))
         //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mOperatorController.a().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.b().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+
+        mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
+        mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
+        mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
+        mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP
+
 
     }
 
