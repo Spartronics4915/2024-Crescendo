@@ -19,7 +19,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
+import static edu.wpi.first.math.MathUtil.applyDeadband;
+
 import static com.spartronics4915.frc2024.Constants.Drive.*;
+import static com.spartronics4915.frc2024.Constants.OI.kStickDeadband;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -119,12 +123,23 @@ public class SwerveDrive extends SubsystemBase {
                 final var dc = RobotContainer.getDriverController();
                 ChassisSpeeds cs = new ChassisSpeeds();
 
-                // TODO: add curve and deadband
-                cs.vxMetersPerSecond = dc.getLeftY() * kMaxSpeed * -1.0;
-                cs.vyMetersPerSecond = dc.getLeftX() * kMaxSpeed * -1.0;
-                cs.omegaRadiansPerSecond = dc.getRightX() * kMaxAngularSpeed;
+                final double inputxraw = dc.getLeftY() * -1.0;
+                final double inputyraw = dc.getLeftX() * -1.0;
+                final double inputomegaraw = dc.getRightX();
+
+                final double inputx = applyResponseCurve(applyDeadband(inputxraw, kStickDeadband));
+                final double inputy = applyResponseCurve(applyDeadband(inputyraw, kStickDeadband));
+                final double inputomega = applyResponseCurve(applyDeadband(inputomegaraw, kStickDeadband));
+
+                cs.vxMetersPerSecond = inputx * kMaxSpeed;
+                cs.vyMetersPerSecond = inputy * kMaxSpeed;
+                cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
 
                 drive(cs, mIsFieldRelative);
+            }
+
+            private double applyResponseCurve(double x) {
+                return Math.signum(x) * Math.pow(x, 2);
             }
         };
     }
