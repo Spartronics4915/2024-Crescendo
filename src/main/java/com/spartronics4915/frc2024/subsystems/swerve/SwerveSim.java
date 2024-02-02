@@ -4,6 +4,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -57,11 +58,14 @@ public class SwerveSim extends SubsystemBase {
         // We are going to update to
 
         for (SwerveModule m : swerveModules) {
-
+            // FIXME: No rotation in sim. Might just be a result of using the keyboard as a joystick. 
             // Update the state
             SwerveModuleState currDesiredState = m.getDesiredState();
             if (currDesiredState != null) {
-                double newPos = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
+                double newPosDist = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
+                Rotation2d newPosAngle = currDesiredState.angle; // hack but good enough for sim
+                var newPos = new SwerveModulePosition(newPosDist, newPosAngle);
+                System.err.println(newPos.toString());
                 m.setPosition(newPos);
             } else {
 

@@ -89,9 +89,20 @@ public class SwerveModule {
     /**
      * Only works in simulation.
      */
+    @Deprecated(forRemoval = true)
     public void setPosition(double pos) {
         if (RobotBase.isSimulation()) {
             mDriveEncoder.setPosition(pos);
+        }
+    }
+
+    /**
+     * Only works in simulation.
+     */
+    public void setPosition(SwerveModulePosition pos) {
+        if (RobotBase.isSimulation()) {
+            mDriveEncoder.setPosition(pos.distanceMeters);
+            mCANCoder.setPosition(pos.angle.getRotations());
         }
     }
 
@@ -104,7 +115,7 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(mCANCoder.getPosition().getValue());
+        return Rotation2d.fromRotations(mCANCoder.getPosition().getValue());
     }
 
     private void configureDriveMotor(CANSparkBase motor) {

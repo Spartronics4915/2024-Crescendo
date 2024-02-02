@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
 
@@ -35,6 +36,8 @@ public class SwerveDrive extends SubsystemBase {
 
     private final Pigeon2 mIMU;
 
+    private boolean mIsFieldRelative;
+
     private final PIDController mAngleController;
     private Rotation2d mDesiredAngle;
     private boolean mRotationIsIndependent;
@@ -51,6 +54,8 @@ public class SwerveDrive extends SubsystemBase {
 
         mIMU = new Pigeon2(kPigeon2ID);
 
+        mIsFieldRelative = true;
+
         {
             final var pc = kAngleControllerPIDConstants;
             mAngleController = new PIDController(pc.p(), pc.i(), pc.d());
@@ -66,6 +71,8 @@ public class SwerveDrive extends SubsystemBase {
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
                     stateStdDevs, visionMeasurementStdDevs);
         }
+
+        setDefaultCommand(teleopDriveCommand());
     }
 
     public static SwerveDrive getInstance() {
@@ -98,6 +105,36 @@ public class SwerveDrive extends SubsystemBase {
         for (SwerveModule m : mModules) {
             m.setDesiredState(SwerveModuleState.optimize(moduleStatesIterator.next(), m.getState().angle));
         }
+    }
+
+    private Command teleopDriveCommand() {
+        final var swerve = this;
+        return new Command() {
+            {
+                addRequirements(swerve);
+            }
+
+            @Override
+            public void execute() {
+                final var dc = RobotContainer.getDriverController();
+                ChassisSpeeds cs = new ChassisSpeeds();
+
+                // TODO: add curve and deadband
+                cs.vxMetersPerSecond = dc.getLeftY() * kMaxSpeed * -1.0;
+                cs.vyMetersPerSecond = dc.getLeftX() * kMaxSpeed * -1.0;
+                cs.omegaRadiansPerSecond = dc.getRightX() * kMaxAngularSpeed;
+
+                drive(cs, mIsFieldRelative);
+            }
+        };
+    }
+
+    public void setFieldRelative(boolean fieldRelative) {
+        mIsFieldRelative = fieldRelative;
+    }
+
+    public boolean isFieldRelative() {
+        return mIsFieldRelative;
     }
 
     public boolean rotationIsDecoupled() {
