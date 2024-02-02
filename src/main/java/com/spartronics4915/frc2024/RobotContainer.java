@@ -59,12 +59,22 @@ public class RobotContainer {
         VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
+    public static CommandXboxController getDriverController() {
+        return mDriverController;
+    }
+
+    public static CommandXboxController getOperatorController() {
+        return mOperatorController;
+    }
+
     private void configureBindings() {
-        mOperatorController.leftTrigger(kOperatorTriggerDeadband)
+        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+
+        mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
                 .onTrue(mIntake.setStateCommand(IntakeState.IN))
                 .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mOperatorController.rightTrigger(kOperatorTriggerDeadband)
+        mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
                 .onTrue(mIntake.setStateCommand(IntakeState.OUT))
                 .onFalse(mIntake.setStateCommand(IntakeState.OFF));
     }

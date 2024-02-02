@@ -25,6 +25,8 @@ public final class Constants {
         public static final int kDriverControllerPort = 0;
         public static final int kOperatorControllerPort = 1;
 
+        public static final double kStickDeadband = 0.05;
+
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
     }
@@ -58,12 +60,15 @@ public final class Constants {
         public static final double kTreadWearAdjustment = 1.0;
         public static final double kTreadCoefficientOfFriction = 1.13; // black neoprene
 
-        // theoretical maximum with NEO Vortex and L2 MK4i
-        public static final double kMaxSpeed = Units.feetToMeters(17.6);
+        // theoretical maximum with NEO and L2 MK4i
+        public static final double kMaxSpeed = Units.feetToMeters(15.1);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
-        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 1.0); // placeholder values
-        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 1.0); // placeholder values
+        public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
+        public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
+
+        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
+        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
                 5, 6, 13, 96.328, kWheelbase / 2, kTrackWidth / 2);

@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
 
@@ -18,7 +19,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
+import static edu.wpi.first.math.MathUtil.applyDeadband;
+
 import static com.spartronics4915.frc2024.Constants.Drive.*;
+import static com.spartronics4915.frc2024.Constants.OI.kStickDeadband;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,6 +39,8 @@ public class SwerveDrive extends SubsystemBase {
     private final SwerveModule[] mModules;
 
     private final Pigeon2 mIMU;
+
+    private boolean mIsFieldRelative;
 
     private final PIDController mAngleController;
     private Rotation2d mDesiredAngle;
@@ -51,6 +58,8 @@ public class SwerveDrive extends SubsystemBase {
 
         mIMU = new Pigeon2(kPigeon2ID);
 
+        mIsFieldRelative = true;
+
         {
             final var pc = kAngleControllerPIDConstants;
             mAngleController = new PIDController(pc.p(), pc.i(), pc.d());
@@ -66,6 +75,8 @@ public class SwerveDrive extends SubsystemBase {
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
                     stateStdDevs, visionMeasurementStdDevs);
         }
+
+        setDefaultCommand(teleopDriveCommand());
     }
 
     public static SwerveDrive getInstance() {
@@ -79,6 +90,7 @@ public class SwerveDrive extends SubsystemBase {
         drive(speeds, fieldRelative, mRotationIsIndependent);
     }
 
+    // FIXME: field relative drives faster than robot relative
     private void drive(final ChassisSpeeds speeds, final boolean fieldRelative, final boolean rotationIndependent) {
         final ChassisSpeeds _speeds;
         if (fieldRelative) {
@@ -96,8 +108,61 @@ public class SwerveDrive extends SubsystemBase {
         final var moduleStatesIterator = List.of(moduleStates).iterator();
 
         for (SwerveModule m : mModules) {
-            m.setDesiredState(moduleStatesIterator.next());
+            m.setDesiredState(SwerveModuleState.optimize(moduleStatesIterator.next(), m.getState().angle));
         }
+    }
+
+    private Command teleopDriveCommand() {
+        final var swerve = this;
+        return new Command() {
+            {
+                addRequirements(swerve);
+            }
+
+            @Override
+            public void execute() {
+                final var dc = RobotContainer.getDriverController();
+                ChassisSpeeds cs = new ChassisSpeeds();
+
+                final double inputxraw = dc.getLeftY() * -1.0;
+                final double inputyraw = dc.getLeftX() * -1.0;
+                final double inputomegaraw = dc.getRightX(); // consider changing from angular velocity control to direct angle control
+
+                final double inputx = applyResponseCurve(applyDeadband(inputxraw, kStickDeadband));
+                final double inputy = applyResponseCurve(applyDeadband(inputyraw, kStickDeadband));
+                final double inputomega = applyResponseCurve(applyDeadband(inputomegaraw, kStickDeadband));
+
+                cs.vxMetersPerSecond = inputx * kMaxSpeed;
+                cs.vyMetersPerSecond = inputy * kMaxSpeed;
+                cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
+
+                drive(cs, mIsFieldRelative);
+            }
+
+            private double applyResponseCurve(double x) {
+                return Math.signum(x) * Math.pow(x, 2);
+            }
+        };
+    }
+
+    public void toggleFieldRelative() {
+        mIsFieldRelative = !mIsFieldRelative;
+    }
+
+    public Command toggleFieldRelativeCommand() {
+        return runOnce(this::toggleFieldRelative);
+    }
+
+    public void setFieldRelative(boolean fieldRelative) {
+        mIsFieldRelative = fieldRelative;
+    }
+
+    public boolean isFieldRelative() {
+        return mIsFieldRelative;
+    }
+
+    public boolean rotationIsDecoupled() {
+        return mRotationIsIndependent;
     }
 
     public void decoupleRotation() {
@@ -114,7 +179,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public Command recoupleRotationCommand() {
-        return runOnce(this::decoupleRotation);
+        return runOnce(this::recoupleRotation);
     }
 
     public void setDesiredAngle(final Rotation2d angle) {
@@ -172,8 +237,7 @@ public class SwerveDrive extends SubsystemBase {
         return kKinematics;
     }
 
-    public Pigeon2 getImU() {
-
+    public Pigeon2 getIMU() {
         return mIMU;
     }
 }
