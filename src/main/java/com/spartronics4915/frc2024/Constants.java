@@ -62,6 +62,9 @@ public final class Constants {
         public static final double kMaxSpeed = Units.feetToMeters(17.6);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
+        public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
+        public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
+
         public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
         public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
 
