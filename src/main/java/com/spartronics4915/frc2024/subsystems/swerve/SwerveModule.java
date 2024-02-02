@@ -105,11 +105,11 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(mCANCoder.getPosition().getValue());
     }
 
-    private void configureDriveMotor(CANSparkBase motor) {
+    private void configureDriveMotor(final CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
+        motor.setInverted(true);
         motor.setIdleMode(IdleMode.kBrake);
 
         final var encoder = motor.getEncoder();
@@ -129,11 +129,11 @@ public class SwerveModule {
         motor.burnFlash();
     }
 
-    private void configureAngleMotor(CANSparkBase motor) {
+    private void configureAngleMotor(final CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
+        motor.setInverted(true);
         motor.setIdleMode(IdleMode.kBrake);
 
         final var encoder = motor.getEncoder();
@@ -141,14 +141,14 @@ public class SwerveModule {
         encoder.setPosition(0);
 
         final var pid = motor.getPIDController();
-        final var pc = kDrivePIDFConstants;
+        final var pc = kAnglePIDFConstants;
         pid.setP(pc.p());
         pid.setI(pc.i());
         pid.setD(pc.d());
         pid.setFF(pc.ff());
         pid.setPositionPIDWrappingEnabled(true);
-        pid.setPositionPIDWrappingMaxInput(180);
-        pid.setPositionPIDWrappingMinInput(-180);
+        pid.setPositionPIDWrappingMaxInput(Math.PI);
+        pid.setPositionPIDWrappingMinInput(-Math.PI);
 
         motor.burnFlash();
     }

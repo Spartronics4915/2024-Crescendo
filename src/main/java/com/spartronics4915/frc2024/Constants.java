@@ -41,9 +41,9 @@ public final class Constants {
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
-        public static final double kWheelDiameter = Units.inchesToMeters(4);
-        public static final double kTrackWidth = Units.inchesToMeters(22.475);
-        public static final double kWheelbase = Units.inchesToMeters(22.475);
+        public static final double kWheelDiameter = Units.inchesToMeters(3.87);
+        public static final double kTrackWidth = Units.inchesToMeters(18.75);
+        public static final double kWheelbase = Units.inchesToMeters(23.75);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
@@ -62,20 +62,20 @@ public final class Constants {
         public static final double kMaxSpeed = Units.feetToMeters(17.6);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
-        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
-        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
+        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 1.0); // placeholder values
+        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 1.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
-                3, 4, 11, 0.0, kWheelbase / 2, kTrackWidth / 2);
+                5, 6, 13, 96.328, kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackLeft = new ModuleConstants(
-                5, 6, 12, 0.0, -kWheelbase / 2, kTrackWidth / 2);
+                7, 8, 14, 16.962, -kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackRight = new ModuleConstants(
-                7, 8, 13, 0.0, -kWheelbase / 2, -kTrackWidth / 2);
+                9, 10, 11, 118.652, -kWheelbase / 2, -kTrackWidth / 2);
 
         public static final ModuleConstants kFrontRight = new ModuleConstants(
-                9, 10, 14, 0.0, kWheelbase / 2, -kTrackWidth / 2);
+                3, 4, 12, 167.431, kWheelbase / 2, -kTrackWidth / 2);
 
         public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
