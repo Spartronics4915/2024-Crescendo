@@ -222,8 +222,12 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     private void manualControlUpdate(){ //HACK untested
 
-        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 && mManualDelta.getRotations() > 0 && needSoftLimit()) { //CHECKUP might not work
-            mManualDelta = Rotation2d.fromRotations(0);
+        if (mManualDelta.getRotations() > 0) { //CHECKUP might not work
+            if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
+                mManualDelta = Rotation2d.fromRotations(0);
+            } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
+                mManualDelta = Rotation2d.fromRotations(0);
+            }
         } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
             mManualDelta =  Rotation2d.fromRotations(0);
         }
