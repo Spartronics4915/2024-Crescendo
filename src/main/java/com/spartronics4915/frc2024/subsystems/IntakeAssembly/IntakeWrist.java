@@ -188,8 +188,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         );
     }
         
-    public boolean atTargetState(){
-        return (getEncoderPosReading() == mRotSetPoint); //TODO manual mode check?
+    public boolean atTargetState(double rotationThreshold){
+        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold); //TODO manual mode check?
     }
 
     //#endregion
