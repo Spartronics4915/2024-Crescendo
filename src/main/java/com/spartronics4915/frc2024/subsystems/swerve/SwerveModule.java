@@ -127,7 +127,7 @@ public class SwerveModule {
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
         motor.setInverted(true);
-        motor.setIdleMode(IdleMode.kCoast); // TODO: change this to brake after testing
+        motor.setIdleMode(IdleMode.kBrake); // TODO: change this to brake after testing
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kDrivePositionConversionFactor);
@@ -151,7 +151,7 @@ public class SwerveModule {
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
         motor.setInverted(true);
-        motor.setIdleMode(IdleMode.kCoast);
+        motor.setIdleMode(IdleMode.kBrake);
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kAnglePositionConversionFactor);

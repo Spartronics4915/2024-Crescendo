@@ -65,7 +65,6 @@ public class SwerveSim extends SubsystemBase {
                 double newPosDist = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
                 Rotation2d newPosAngle = currDesiredState.angle; // hack but good enough for sim
                 var newPos = new SwerveModulePosition(newPosDist, newPosAngle);
-                System.err.println(newPos.toString());
                 m.setPosition(newPos);
             } else {
 

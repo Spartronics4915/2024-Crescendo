@@ -111,10 +111,14 @@ public class SwerveDrive extends SubsystemBase {
      * Drives the robot given a {@link ChassisSpeeds} and whether to drive field relative or not.
      */
     public void drive(final ChassisSpeeds speeds, final boolean fieldRelative) {
-        drive(speeds, fieldRelative, mRotationIsIndependent);
+        var omega = speeds.omegaRadiansPerSecond;
+        if (omega != 0) {
+            System.out.println(omega);
+        }
+        drive(speeds, fieldRelative, false);
     }
 
-    private void driveRobotRelative(final ChassisSpeeds speeds) {
+    public void driveRobotRelative(final ChassisSpeeds speeds) {
         drive(speeds, false);
     }
 
@@ -330,6 +334,7 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("IMU Yaw Degrees", getAngle().getDegrees());
+        SmartDashboard.putNumber("Pose Yaw Degrees", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Pose x", getPose().getX());
         SmartDashboard.putNumber("Pose y", getPose().getY());
 
