@@ -44,6 +44,13 @@ public class SwerveModule {
             double encoderOffsetDegrees,
             double x,
             double y) {
+        mCANCoder = new CANcoder(encoderID);
+        mCANCoder
+                .getConfigurator()
+                .apply(new CANcoderConfiguration()
+                        .withMagnetSensor(new MagnetSensorConfigs()
+                                .withMagnetOffset(-Rotation2d.fromDegrees(encoderOffsetDegrees).getRotations())));
+
         mDriveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         mAngleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
         configureDriveMotor(mDriveMotor);
@@ -53,13 +60,6 @@ public class SwerveModule {
         mAnglePID = mAngleMotor.getPIDController();
 
         mDriveEncoder = (SparkRelativeEncoder) mDriveMotor.getEncoder();
-
-        mCANCoder = new CANcoder(encoderID);
-        mCANCoder
-                .getConfigurator()
-                .apply(new CANcoderConfiguration()
-                        .withMagnetSensor(new MagnetSensorConfigs()
-                                .withMagnetOffset(encoderOffsetDegrees)));
 
         mX = x;
         mY = y;
@@ -71,8 +71,8 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState state) {
         mDrivePID.setReference(state.speedMetersPerSecond,
-                ControlType.kSmartVelocity);
-        mAnglePID.setReference(state.angle.getDegrees(),
+                ControlType.kVelocity);
+        mAnglePID.setReference(state.angle.getRadians(),
                 ControlType.kPosition);
 
         mLastDesiredStateSet = state;
@@ -118,12 +118,16 @@ public class SwerveModule {
         return Rotation2d.fromRotations(mCANCoder.getPosition().getValue());
     }
 
-    private void configureDriveMotor(CANSparkBase motor) {
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
+    }
+
+    private void configureDriveMotor(final CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
-        motor.setIdleMode(IdleMode.kBrake);
+        motor.setInverted(true);
+        motor.setIdleMode(IdleMode.kCoast); // TODO: change this to brake after testing
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kDrivePositionConversionFactor);
@@ -146,12 +150,12 @@ public class SwerveModule {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
-        motor.setIdleMode(IdleMode.kBrake);
+        motor.setInverted(true);
+        motor.setIdleMode(IdleMode.kCoast);
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kAnglePositionConversionFactor);
-        encoder.setPosition(0);
+        encoder.setPosition(getAngle().getRadians());
 
         final var pid = motor.getPIDController();
         final var pc = kDrivePIDFConstants;
