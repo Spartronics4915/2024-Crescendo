@@ -27,6 +27,7 @@ import com.spartronics4915.frc2024.Constants.GeneralConstants;
 
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
+import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
@@ -57,6 +58,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         private final TrapezoidProfile kTrapezoidProfile;
         private boolean mManualMovement = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
         //limit switches?
+
+        private Elevator mElevatorSubsystem = Elevator.getInstance();
 
         //#region ShuffleBoardEntries
 
@@ -193,9 +196,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     //#region periodic functions
 
     @Override
-    public void periodic() {
-        //TODO add system to talk to elevator 
-        
+    public void periodic() {        
         if (mManualMovement) {
             manualControlUpdate();
         }
@@ -205,8 +206,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     }
     
     public boolean needSoftLimit(){
-        //TODO implement elevator distance check
-        return (/*get elevator height */ 0.0 > kMeterSafteyLimit);
+        return (mElevatorSubsystem.getHeight() > kMeterSafteyLimit);
     }
     
     private double getFeedForwardValue(){
