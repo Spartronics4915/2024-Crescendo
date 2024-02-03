@@ -125,7 +125,7 @@ public class SwerveDrive extends SubsystemBase {
                 final var dc = RobotContainer.getDriverController();
                 ChassisSpeeds cs = new ChassisSpeeds();
 
-                final double inputxraw = dc.getLeftY() * -1.0;
+                final double inputxraw = dc.getLeftY();
                 final double inputyraw = dc.getLeftX() * -1.0;
                 final double inputomegaraw = dc.getRightX(); // consider changing from angular velocity control to direct angle control
 
@@ -136,6 +136,10 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vxMetersPerSecond = inputx * kMaxSpeed;
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
+                
+                // cs.vxMetersPerSecond = 1;
+                // cs.vyMetersPerSecond = 1;
+                // cs.omegaRadiansPerSecond = 0;
 
                 drive(cs, mIsFieldRelative);
             }
@@ -196,7 +200,7 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(mIMU.getAngle());
+        return Rotation2d.fromDegrees(mIMU.getAngle() * -1.0);
     }
 
     public void addVisionMeasurement(final VisionMeasurement msmt) {
@@ -226,8 +230,16 @@ public class SwerveDrive extends SubsystemBase {
                 String moduleTag = "Module " + i + " encoder : ";
                 double encoderReading = mModules[i].getPosition().angle.getDegrees();
                 SmartDashboard.putNumber(moduleTag, encoderReading);
+
+                String moduleTagRaw = "Module " + i + " encoder raw: ";
+                double encoderReadingRaw = mModules[i].getAbsoluteAngle().getDegrees();
+                SmartDashboard.putNumber(moduleTagRaw, encoderReadingRaw);
             }
         }
+
+        SmartDashboard.putNumber("IMU Yaw Degrees", getAngle().getDegrees());
+        SmartDashboard.putNumber("Pose x", getPose().getX());
+        SmartDashboard.putNumber("Pose y", getPose().getY());
 
         // This code causes the robot to crash
         
