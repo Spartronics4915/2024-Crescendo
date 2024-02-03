@@ -4,6 +4,7 @@
 
 package com.spartronics4915.frc2024;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -80,13 +81,14 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-
-        Pose2d newPose = new Pose2d(new Translation2d(3, 3), new Rotation2d());
-        Command initPose = Commands.runOnce(() -> mSwerveDrive.resetPose(newPose));
-        Command driveBackwards = new DriveStraightCommands.DriveStraightFixedDistance(mSwerveDrive, new Rotation2d(),
-                2, new TrapezoidProfile.Constraints(0.5, 0.5 / 2));
-        Command holdStill = Commands.run(() -> mSwerveDrive.drive(
-                new ChassisSpeeds(0, 0, 0), false));
-        return Commands.sequence(initPose, driveBackwards, holdStill);
+        // Pose2d newPose = new Pose2d(new Translation2d(3, 3), new Rotation2d());
+        // Command initPose = Commands.runOnce(() -> mSwerveDrive.resetPose(newPose));
+        // Command driveBackwards = new DriveStraightCommands.DriveStraightFixedDistance(mSwerveDrive, new Rotation2d(),
+        //         2, new TrapezoidProfile.Constraints(0.5, 0.5 / 2));
+        // Command holdStill = Commands.run(() -> mSwerveDrive.drive(
+        //         new ChassisSpeeds(0, 0, 0), false));
+        // return Commands.sequence(initPose, driveBackwards, holdStill);
+        
+        return new PathPlannerAuto("Test Auto");
     }
 }
