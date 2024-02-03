@@ -59,7 +59,7 @@ public class SwerveModule {
                 .getConfigurator()
                 .apply(new CANcoderConfiguration()
                         .withMagnetSensor(new MagnetSensorConfigs()
-                                .withMagnetOffset(encoderOffsetDegrees)));
+                                .withMagnetOffset(-Rotation2d.fromDegrees(encoderOffsetDegrees).getRotations())));
 
         mX = x;
         mY = y;
@@ -123,7 +123,7 @@ public class SwerveModule {
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
         motor.setInverted(true);
-        motor.setIdleMode(IdleMode.kBrake);
+        motor.setIdleMode(IdleMode.kCoast);
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kDrivePositionConversionFactor);
@@ -147,7 +147,7 @@ public class SwerveModule {
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
         motor.setInverted(true);
-        motor.setIdleMode(IdleMode.kBrake);
+        motor.setIdleMode(IdleMode.kCoast);
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kAnglePositionConversionFactor);
