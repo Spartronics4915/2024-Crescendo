@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,12 +19,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
+import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeWristTabManager.WristSubsystemEntries;
+import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
@@ -41,24 +45,27 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         private static IntakeWrist mInstance;
 
         private CANSparkMax mWristMotor;
-        private SparkPIDController mPidPosController;
+        private SparkPIDController mWristPIDController;
 
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
-        private double mVelocitySetPoint;
+        private Rotation2d mManualDelta;
 
         private final ArmFeedforward kFeedforwardCalc;
 
         private State mCurrState = null;
 
         private final TrapezoidProfile kTrapezoidProfile;
-        private boolean mManualMovment = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
+        private boolean mManualMovement = false; //used to pause position setting to avoid conflict (if using trapezoid movment due to the constant calls)
         //limit switches?
+
+        private Elevator mElevatorSubsystem = Elevator.getInstance();
 
         //#region ShuffleBoardEntries
 
         private GenericEntry mManualControlEntry;
-        private GenericEntry mWristSetPoint;
+        private GenericEntry mWristSetPointEntry;
+        private GenericEntry mEncoderEntry;
 
 
         //#endregion
@@ -67,12 +74,13 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     public IntakeWrist() {
         super();
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
-        mPidPosController = initPID(IntakeWristConstants.kPIDSlotPosconstants, 0);
-        initPID(IntakeWristConstants.kPIDSlotVeloconstants, 1);
+        mWristPIDController = initPID(IntakeWristConstants.kPIDConstants);
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
         kFeedforwardCalc = initFeedForward();
         
+        mEncoder.setPosition(0.0);
+
         currentToSetPoint();
         
         shuffleInit();
@@ -97,12 +105,12 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return motor;
     }
 
-    private SparkPIDController initPID(PIDConstants kPIDValues, int slot){
+    private SparkPIDController initPID(PIDConstants kPIDValues){
         SparkPIDController pid = mWristMotor.getPIDController();
 
-        pid.setP(kPIDValues.p(), slot);
-        pid.setI(kPIDValues.i(), slot);
-        pid.setD(kPIDValues.d(), slot);
+        pid.setP(kPIDValues.p());
+        pid.setI(kPIDValues.i());
+        pid.setD(kPIDValues.d());
 
 
         return pid;
@@ -115,10 +123,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     private void shuffleInit() {
         var mEntries = IntakeWristTabManager.getEnumMap(this);
         mManualControlEntry = mEntries.get(WristSubsystemEntries.WristManualControl);
-        mWristSetPoint = mEntries.get(WristSubsystemEntries.WristSetPoint);
-
-        System.out.println(mManualControlEntry);
-        System.out.println(mWristSetPoint);
+        mWristSetPointEntry = mEntries.get(WristSubsystemEntries.WristSetPoint);
+        mEncoderEntry = mEntries.get(WristSubsystemEntries.WristEncoderReading);
     }
 
     private TrapezoidProfile initTrapezoid(Constraints constraints) {
@@ -133,6 +139,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     //#endregion
 
+    //#region Component Functions
+    
     private Rotation2d getEncoderPosReading(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
@@ -141,51 +149,42 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
-    private boolean isSafeAngle(Rotation2d angle){
-        return true; //TODO implement Safety
-    }
-
     private void currentToSetPoint(){
-        mCurrState = new State(getEncoderPosReading().getRotations(), getEncoderVelReading());
-        setRotationSetPoint(getEncoderPosReading(), true); 
+        mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
+        setRotationSetPoint(getEncoderPosReading());
     }
     
-    private void setRotationSetPoint(Rotation2d angle, boolean force){
-        if (isSafeAngle(angle) || force)
-            mRotSetPoint = angle;
+    private void setRotationSetPoint(Rotation2d angle){
+        mRotSetPoint = angle;
     }
 
-    private void setVelocitySetPoint(double velocity){
-        mManualMovment = true;
-        mVelocitySetPoint = velocity;
-    }
-
-    private double getFeedForwardValue(){
-        return kFeedforwardCalc.calculate(
-            getEncoderPosReading().getRadians(), 
-            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
-        );
+    private void setManualDelta(Rotation2d deltaPosition){
+        mManualMovement = true;
+        mManualDelta = deltaPosition;
     }
 
     private void setState(IntakeAssemblyState newState){
-        mManualMovment = false;
-        setRotationSetPoint(newState.wristAngle, false);
+        mManualMovement = false;
+        setRotationSetPoint(newState.wristAngle);
     }
 
-    
-    
+    //#endregion
+
     //#region Commands
     public Command setStateCommand(IntakeAssemblyState newState){
-        return this.runOnce(() -> {
+        return Commands.runOnce(() -> {
             setState(newState);
         });
     }
-    
-    
-    public Command manualRunCommand(double wristSpeed){
+
+
+    public Command manualRunCommand(Rotation2d angleDelta){
         return this.startEnd(
-            () -> setVelocitySetPoint(wristSpeed), 
-            () -> currentToSetPoint()
+            () -> setManualDelta(angleDelta), 
+            () -> {
+                if (!Robot.isSimulation()) currentToSetPoint(); //CHECKUP remove sim statment when doing chassis stuff?
+                mManualMovement = false;
+            }
         );
     }
         
@@ -195,43 +194,64 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
 
     //#endregion
 
-    @Override
-    public void periodic() {
-        if (mManualMovment) {
-            velocityControlUpdate();
-        } else {
-            TrapezoidMotionProfileUpdate();
-        }
-        //will add things here if trapezoid motion profiles get used
+    //#region periodic functions
 
+    @Override
+    public void periodic() {        
+        if (mManualMovement) {
+            manualControlUpdate();
+        }
+        TrapezoidMotionProfileUpdate();
+        //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
     }
+    
+    public boolean needSoftLimit(){
+        return (mElevatorSubsystem.getHeight() > kMeterSafteyLimit);
+    }
+    
+    private double getFeedForwardValue(){
 
+        return kFeedforwardCalc.calculate(
+            getEncoderPosReading().getRadians(), 
+            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
+        );
+    }
+    
     private void updateShuffleboard() {
-        mManualControlEntry.setBoolean(mManualMovment);
-        mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
+        mManualControlEntry.setBoolean(mManualMovement);
+        mWristSetPointEntry.setDouble(mRotSetPoint.getDegrees());
+        mEncoderEntry.setDouble(getEncoderPosReading().getDegrees());
     }
 
-    private void velocityControlUpdate(){ //HACK untested
-        if (getEncoderPosReading().minus(kMaxAngle).getRotations() > 0 && mVelocitySetPoint > 0) {
-            mVelocitySetPoint = 0;
-        } else if (getEncoderPosReading().minus(kMinAngle).getRotations() < 0 && mVelocitySetPoint < 0) {
-            mVelocitySetPoint = 0;
+    private void manualControlUpdate(){ //HACK untested
+
+        if (mManualDelta.getRotations() > 0) { //CHECKUP might not work
+            if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
+                mManualDelta = Rotation2d.fromRotations(0);
+            } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
+                mManualDelta = Rotation2d.fromRotations(0);
+            }
+        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
+            mManualDelta =  Rotation2d.fromRotations(0);
         }
-        mPidPosController.setReference(mVelocitySetPoint, ControlType.kVelocity, kVelPIDSlot, getFeedForwardValue()); //CHECKUP override?
+        mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
     }
 
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
-
         mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             mCurrState,
             new State(mRotSetPoint.getRotations(), 0)
         );
         
-        mPidPosController.setReference(mCurrState.position, ControlType.kPosition, kPosPIDSlot, getFeedForwardValue());
+        mWristPIDController.setReference(mCurrState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
+
+    //#endregion
+
+    //#region overriden interface methods
 
     @Override
     public void setPositionToReal() {
@@ -255,4 +275,6 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
             new Translation2d(0.20, 1.5)
         );
     }
+
+    //#endregion
 }

@@ -2,6 +2,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/Amp": "Command",
+      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
       "/SmartDashboard/simCanvas": "Mechanism2d"

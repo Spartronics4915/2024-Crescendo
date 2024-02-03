@@ -2,6 +2,8 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -11,8 +13,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public final class Constants {
     public static final class OI {
@@ -87,11 +91,13 @@ public final class Constants {
 
     public static final class IntakeAssembly {
         public enum IntakeAssemblyState{ //TODO find constants
-            GROUNDPICKUP (Rotation2d.fromDegrees(0.0), 0.0),
-            STOW (Rotation2d.fromDegrees(180.0), 0.0),
-            AMP (Rotation2d.fromDegrees(0.0), 0.0),
-            LOAD (Rotation2d.fromDegrees(0.0), 0.0),
-            MANUAL (Rotation2d.fromDegrees(0.0), 0.0);
+            GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 0.0),
+            STOW (Rotation2d.fromDegrees(170.0), 0.0),
+            AMP (Rotation2d.fromDegrees(10.0), 0.0),
+            LOAD (Rotation2d.fromDegrees(190.0), 0.0),
+            SOURCE (Rotation2d.fromDegrees(120.0), 0.0),
+            MANUAL (Rotation2d.fromDegrees(0.0), 0.0); //CHECKUP is this needed?
+
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
             private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
@@ -120,16 +126,16 @@ public final class Constants {
             //TODO Make Units Clear
 
             public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDSlotPosconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final PIDConstants kPIDSlotVeloconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
-            public static final Constraints kTrapzoidConstraints = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
+            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
-            public static final int kPosPIDSlot = 0;
-            public static final int kVelPIDSlot = 1;
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(120);
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(60);
+            public static final double kMeterSafteyLimit = 1.0; //HACK untested
+
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the saftey height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the saftey height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
@@ -139,7 +145,54 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            
+            public static final MotorConstants kMotorConstants = new MotorConstants(10
+            , MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final Constraints kZoidConstants = new Constraints(1d, 1d);
+            public static final double kMetersToRotation = 1; // Conversion rate
+            public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
+                "Elevator",
+                1.0,
+                90.0,
+                20.0,
+                new Color8Bit(Color.kMediumPurple),
+                SimType.Elevator,
+                new Translation2d(103 / 100d, 27 / 100d));
+            public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026, .0156, 7, 102); // HACK untested
         }
+    }
+
+    public static final class ShooterWristConstants {
+        public enum ShooterState{ //Mostly for debug
+            SubwooferShot(Rotation2d.fromDegrees(90));
+
+            public final Rotation2d shooterAngle;
+            private ShooterState(Rotation2d shooterAngle) {
+                this.shooterAngle = shooterAngle;
+            }
+        }
+
+        public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
+        public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
+
+        
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the saftey height
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5); //FIXME used for sim
+
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
+
+
+    }
+
+    public static final class ShooterConstants {
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(14, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0);
+        public static final double kOffSpeed = 0.0; //unsure if this is necessary
+        public static final double kShootSpeed = 0.2; //placeholder
+        public static final double kConveyorInSpeed = 0.2; //placeholder
+        public static final double kConveyorOutSpeed = 0.2; //placeholder
+
     }
 }
