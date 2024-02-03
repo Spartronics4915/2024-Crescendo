@@ -9,6 +9,7 @@ import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
+import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,7 +45,7 @@ public class ShuffleBoard {
                 .getLayout("Intake", BuiltInLayouts.kList)
                 .withSize(2, 2);
 
-            putEntry(out, IntakeSubsystemEntries.IntakeState, IntakeState.NONE, mIntakeOverview, IntakeSubsystemEntries.IntakeState.entryName);
+            putEntry(out, IntakeSubsystemEntries.IntakeState, IntakeState.NONE.toString(), mIntakeOverview, IntakeSubsystemEntries.IntakeState.entryName);
 
             return out;
         }
@@ -87,7 +88,8 @@ public class ShuffleBoard {
         public static String tabName = "Intake";
 
         public static enum ShooterSubsystemEntries{
-            ShooterState ("State");
+            ShooterState ("Shooter-State"),
+            ConveyorState ("Conveyor-State");
 
             private String entryName;
             private ShooterSubsystemEntries(String entryName) {this.entryName = entryName;}
@@ -95,12 +97,15 @@ public class ShuffleBoard {
 
         public static EnumMap<ShooterSubsystemEntries, GenericEntry> getEnumMap(Shooter subsystem) { 
             EnumMap<ShooterSubsystemEntries, GenericEntry> out = new EnumMap<>(ShooterSubsystemEntries.class);
-            ShuffleboardLayout mIntakeOverview = Shuffleboard
+            ShuffleboardLayout mShooterOverview = Shuffleboard
                 .getTab(tabName)
-                .getLayout("Intake", BuiltInLayouts.kList)
+                .getLayout("Shooter", BuiltInLayouts.kList)
                 .withSize(2, 2);
 
-            putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE, mIntakeOverview, ShooterSubsystemEntries.ShooterState.entryName);
+            putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE.name(), mShooterOverview, ShooterSubsystemEntries.ShooterState.entryName);
+
+            putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(), mShooterOverview, ShooterSubsystemEntries.ConveyorState.entryName);
+
 
             return out;
         }

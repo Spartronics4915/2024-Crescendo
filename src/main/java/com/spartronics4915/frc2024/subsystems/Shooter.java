@@ -40,6 +40,8 @@ public class Shooter extends SubsystemBase implements Loggable {
     private ConveyorState mCurrentConveyorState;
 
     private GenericEntry mShooterStateWidget;
+    private GenericEntry mConveyerStateWidget;
+
 
     private final CANSparkMax mShooterMotor;
     private final CANSparkMax mShooterFollowMotor;
@@ -57,6 +59,8 @@ public class Shooter extends SubsystemBase implements Loggable {
 
         var mEntries = ShooterTabManager.getEnumMap(this);
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
+        mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
+
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){
@@ -137,6 +141,7 @@ public class Shooter extends SubsystemBase implements Loggable {
     @Override
     public void updateShuffleboard() {
         mShooterStateWidget.setString(mCurrentShooterState.name());
+        mConveyerStateWidget.setString(mCurrentConveyorState.name());
     }
 
     @Override
