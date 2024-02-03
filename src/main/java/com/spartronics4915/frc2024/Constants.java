@@ -162,11 +162,11 @@ public final class Constants {
     }
 
     public static final class ShooterWristConstants {
-        public enum ShooterState{ //Mostly for debug
+        public enum ShooterWristState{ //Mostly for debug
             SubwooferShot(Rotation2d.fromDegrees(90));
 
             public final Rotation2d shooterAngle;
-            private ShooterState(Rotation2d shooterAngle) {
+            private ShooterWristState(Rotation2d shooterAngle) {
                 this.shooterAngle = shooterAngle;
             }
         }

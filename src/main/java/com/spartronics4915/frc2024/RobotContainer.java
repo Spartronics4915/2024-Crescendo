@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
+import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
@@ -127,6 +128,15 @@ public class RobotContainer {
             mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
             mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
             mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP
+        }
+        
+        if (SubsystemFlags.ShooterFlag.isUsed) {
+            mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
+            mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
+
+            
+            mOperatorController.x().onTrue(mShooter.setStateCommand(ConveyorState.OFF));
+            mOperatorController.b().onTrue(mShooter.setStateCommand(ConveyorState.IN));
         }
     }
 

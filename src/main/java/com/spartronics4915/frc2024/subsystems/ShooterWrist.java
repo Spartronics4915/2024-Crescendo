@@ -8,7 +8,7 @@ import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
-import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterState;
+import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterWristTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterWristTabManager.ShooterWristSubsystemEntries;
 import com.spartronics4915.frc2024.Robot;
@@ -150,7 +150,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mTargetRotation2d = angle;
     }
 
-    private void setState(ShooterState newState){
+    private void setState(ShooterWristState newState){
         mManualMovement = false;
         setRotationSetPoint(newState.shooterAngle);
     }
@@ -170,7 +170,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         }, this);
     }
 
-    public Command setStateCommand(ShooterState newState){
+    public Command setStateCommand(ShooterWristState newState){
         return Commands.runOnce(() -> {
             setState(newState);
         });
