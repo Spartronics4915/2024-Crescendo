@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
 public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
-    //#region all the variables and stuff
+    // #region all the variables and stuff
     private static Elevator mInstance;
 
     private CANSparkMax mMotor;
@@ -44,9 +44,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorSetPointEntry;
     private GenericEntry mElevatorHeightEntry;
     private GenericEntry mElevatorManualControlEntry;
-
-
-    //#endregion
+    // #endregion
 
     public Elevator() {
         // Initializes the motor
@@ -60,55 +58,57 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Initializes the Trapezoid
         mmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
-        
         // Initializes the PID
         mPid = mMotor.getPIDController();
         mPid.setP(0);
         mPid.setI(0);
         mPid.setD(0);
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
-        
+
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
-        
+
         // Sets up Feed Foward
-        mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(), kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
-        
+        mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(),
+                kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
+
         // Sets the current state and target
         resetTarget();
 
         initShuffle();
-        
     }
+
     private void initShuffle() {
         var mEntries = ElevatorTabManager.getEnumMap(this);
         mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
         mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
         mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
     }
-    //#region encoder & feed foward
-    private double getEncoderVelReading(){
-        return mEncoder.getVelocity(); //CHECKUP Failure Point?
+
+    // #region encoder & feed foward
+    private double getEncoderVelReading() {
+        return mEncoder.getVelocity(); // CHECKUP Failure Point?
     }
+
     private Rotation2d getEncoderPosReading() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
+        return Rotation2d.fromRotations(mEncoder.getPosition()); // CHECKUP Failure Point?
     }
 
     private double getFeedFowardValue() {
         return mElevatorFeedforward.calculate(getEncoderVelReading());
     }
-    //#endregion
+    // #endregion
 
     @Override
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
         }
-         // Not-manual
+        // Not-manual
         mCurrentState = mmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
-                //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget.getRotations(), 0));
         mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
 
@@ -120,6 +120,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
     }
+
     @Override
     public State getSetPoint() {
         return new State(mCurrentState.position / kMetersToRotation, 0.0);
@@ -139,6 +140,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public double getHeight() {
         return getEncoderPosReading().getRotations() / kMetersToRotation;
     }
+
     /**
      * @return height of elevator
      */
@@ -146,7 +148,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return getHeight();
     }
 
-    //#region Maunel Manuel Manueal Manael Manual Stuff    (5th times the charm)
+    // #region Maunel Manuel Manueal Manael Manual Stuff (5th times the charm)
 
     private void manualControlUpdate() {
         mTarget = Rotation2d.fromRadians(mTarget.getRadians() + mManualDelta.getRadians());
@@ -162,15 +164,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @param angleDelta
      */
     public Command manualRunCommand(Rotation2d angleDelta) {
-        return this.startEnd(()->setManualDelta(angleDelta),()->{
-            if (!Robot.isSimulation()) resetTarget();
+        return this.startEnd(() -> setManualDelta(angleDelta), () -> {
+            if (!Robot.isSimulation())
+                resetTarget();
             mIsManual = false;
         });
     }
 
-    //#endregion
+    // #endregion
 
-    //#region Target (not the store)
+    // #region Target (not the store)
 
     /**
      * Sets the new target position
@@ -180,6 +183,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mIsManual = false;
         mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
     }
+
     /**
      * Sets the new target position
      * @param intakeAssemblyState I don't know what this is but I was told to add it so I did
@@ -188,6 +192,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mIsManual = false;
         mTarget = Rotation2d.fromRotations(intakeAssemblyState.ElevatorHeight * kMetersToRotation);
     }
+
     /**
      * Command to set the new target position
      * @param newTarget New target position (in meters... i think)
@@ -195,6 +200,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public Command setTargetCommand(double newTarget) {
         return runOnce(() -> {
             setTarget(newTarget);
+        });
+    }
+    
+    /**
+     * Command to set the new target position
+     * @param intakeAssemblyState Whatever the intake assembly state
+     */
+    public Command setTargetCommand(IntakeAssemblyState intakeAssemblyState) {
+        return runOnce(() -> {
+            setTarget(intakeAssemblyState);
         });
     }
 
@@ -206,24 +221,24 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mTarget = getEncoderPosReading();
     }
 
-    //#endregion
+    // #endregion
 
-    //#region i'm just ignoring these things
+    // #region i'm just ignoring these things
 
-        // Here because something requires it
-        @Override
-        public void setPositionToReal() {}
+    // Here because something requires it
+    @Override
+    public void setPositionToReal() {}
 
-        /**
-         * @return A static instance of the elevator subsystem
-         */
-        public static Elevator getInstance() { 
-            if (mInstance == null) {
-                mInstance = new Elevator();
-            }
-            return mInstance;
+    /**
+     * @return A static instance of the elevator subsystem
+     */
+    public static Elevator getInstance() {
+        if (mInstance == null) {
+            mInstance = new Elevator();
         }
+        return mInstance;
+    }
 
-    //#endregion
+    // #endregion
 
 }
