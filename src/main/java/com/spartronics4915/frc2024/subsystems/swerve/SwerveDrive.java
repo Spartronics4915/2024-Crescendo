@@ -301,6 +301,18 @@ public class SwerveDrive extends SubsystemBase {
         return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
     }
 
+    public SwerveModule[] getSwerveModules() {
+        return mModules;
+    }
+    
+    public SwerveDriveKinematics getSwerveDriveKinematics() {
+        return kKinematics;
+    }
+
+    public Pigeon2 getIMU() {
+        return mIMU;
+    }
+
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
@@ -326,18 +338,5 @@ public class SwerveDrive extends SubsystemBase {
         // final var vs = VisionSubsystem.getInstance();
         // vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
         // vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
-    }
-
-    public SwerveModule[] getSwerveModules() {
-
-        return mModules;
-    }
-    
-    public SwerveDriveKinematics getSwerveDriveKinematics() {
-        return kKinematics;
-    }
-
-    public Pigeon2 getIMU() {
-        return mIMU;
     }
 }
