@@ -4,6 +4,7 @@ import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,5 +32,24 @@ public class IntakeAssemblyCommands {
         return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.015);
     }
     
+    public Command ComplexSetState(IntakeAssemblyState newState){
+        Command additionCommand = Commands.none();
+        
+        switch (newState) {
+            case SOURCE:
+                additionCommand = mIntake.setStateCommand(IntakeState.IN);
+                break;
+            case GROUNDPICKUP:
+                additionCommand = mIntake.setStateCommand(IntakeState.IN);
+                break;
+        
+            default:break;
+        }
+
+        return Commands.parallel(
+            setState(newState),
+            additionCommand
+        );
+    }
 
 }
