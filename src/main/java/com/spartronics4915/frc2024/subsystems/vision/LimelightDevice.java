@@ -49,7 +49,7 @@ public class LimelightDevice extends SubsystemBase {
         if (!canSeeTags()) {
             return Optional.empty();
         }
-        double[] botpose = LimelightHelpers.getBotPose(mName);
+        double[] botpose = LimelightHelpers.getBotPose_wpiBlue(mName);
         Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(botpose[3], botpose[4], botpose[5]));
         double timestamp = Timer.getFPGATimestamp() - (botpose[6]/1000.0);
         return Optional.of(new VisionMeasurement(pose, timestamp));
