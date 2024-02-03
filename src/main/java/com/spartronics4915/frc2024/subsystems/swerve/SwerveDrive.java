@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
@@ -17,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -77,6 +79,21 @@ public class SwerveDrive extends SubsystemBase {
                     stateStdDevs, visionMeasurementStdDevs);
         }
 
+        AutoBuilder.configureHolonomic(
+                this::getPose,
+                this::resetPose,
+                this::getRobotRelativeSpeeds,
+                this::driveRobotRelative,
+                kPPConfig,
+                () -> {
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this);
+
         setDefaultCommand(teleopDriveCommand());
     }
 
@@ -95,6 +112,10 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void drive(final ChassisSpeeds speeds, final boolean fieldRelative) {
         drive(speeds, fieldRelative, mRotationIsIndependent);
+    }
+
+    private void driveRobotRelative(final ChassisSpeeds speeds) {
+        drive(speeds, false);
     }
 
     // FIXME: field relative drives faster than robot relative (??)
@@ -276,6 +297,22 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
     }
 
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+        return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
+    }
+
+    public SwerveModule[] getSwerveModules() {
+        return mModules;
+    }
+    
+    public SwerveDriveKinematics getSwerveDriveKinematics() {
+        return kKinematics;
+    }
+
+    public Pigeon2 getIMU() {
+        return mIMU;
+    }
+
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
@@ -301,18 +338,5 @@ public class SwerveDrive extends SubsystemBase {
         // final var vs = VisionSubsystem.getInstance();
         // vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
         // vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
-    }
-
-    public SwerveModule[] getSwerveModules() {
-
-        return mModules;
-    }
-    
-    public SwerveDriveKinematics getSwerveDriveKinematics() {
-        return kKinematics;
-    }
-
-    public Pigeon2 getIMU() {
-        return mIMU;
     }
 }

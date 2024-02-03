@@ -4,6 +4,8 @@ import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 
 import java.util.stream.Stream;
 
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.util.*;
@@ -86,6 +88,14 @@ public final class Constants {
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
                 .map((mc) -> new Translation2d(mc.x(), mc.y()))
                 .toArray(Translation2d[]::new));
+
+        public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, true);
+        public static final HolonomicPathFollowerConfig kPPConfig = new HolonomicPathFollowerConfig(
+                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
+                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
+                kMaxSpeed,
+                kChassisRadius,
+                kReplanningConfig);
 
         public static final int kDriveMotorCurrentLimit = 40;
         public static final int kAngleMotorCurrentLimit = 40;
