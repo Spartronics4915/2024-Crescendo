@@ -239,6 +239,14 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return mInstance;
     }
 
+    /**
+     * If you ever need to not get an instance of the elevator subsystem, use this
+     * @return null
+     */
+    public static Elevator dontGetInstance() {
+        return null;
+    }
+
     // #endregion
 
 }
