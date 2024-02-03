@@ -12,11 +12,13 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase implements Loggable {
@@ -28,9 +30,14 @@ public class Shooter extends SubsystemBase implements Loggable {
         ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
 
+    public static enum ConveyorState {
+        IN, OUT, OFF, NONE;
+    }
+
     private static Shooter mInstance;
 
-    private ShooterState mCurrentState;
+    private ShooterState mCurrentShooterState;
+    private ConveyorState mCurrentConveyorState;
 
     private GenericEntry mShooterStateWidget;
 
@@ -40,7 +47,8 @@ public class Shooter extends SubsystemBase implements Loggable {
     private final SparkPIDController mPIDController;
   
     public Shooter() {
-        mCurrentState = ShooterState.OFF;
+        mCurrentShooterState = ShooterState.OFF;
+        mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
@@ -78,21 +86,39 @@ public class Shooter extends SubsystemBase implements Loggable {
         return mInstance;
     } 
     
-    public ShooterState getState() {
-        return mCurrentState;
+    public ShooterState getShooterState() {
+        return mCurrentShooterState;
     }
 
-    public void setState(ShooterState state){
-        mCurrentState = state;
+    public ConveyorState getConveyorState() {
+        return mCurrentConveyorState;
+    }
+
+    public void setShooterState(ShooterState state){
+        mCurrentShooterState = state;
+    }
+
+    public void setConveyorState(ConveyorState state){
+        mCurrentConveyorState = state;
+    }
+
+    public Command setShooterStateCommand(ShooterState state) {
+        return runOnce(() -> {
+            setShooterState(state);
+        });
+    }
+
+    public Command setStateCommand(ConveyorState state) {
+        return runOnce(() -> {
+            setConveyorState(state);
+        });
     }
 
     private void shooterOff() {
-        mCurrentState = ShooterState.OFF;
         mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
     }
 
     private void shooterOn() {
-        mCurrentState = ShooterState.ON;
         mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
     }
 
@@ -110,7 +136,7 @@ public class Shooter extends SubsystemBase implements Loggable {
 
     @Override
     public void updateShuffleboard() {
-        mShooterStateWidget.setString(mCurrentState.name());
+        mShooterStateWidget.setString(mCurrentShooterState.name());
     }
 
     @Override
