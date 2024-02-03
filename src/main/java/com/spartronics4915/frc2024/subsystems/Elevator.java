@@ -233,9 +233,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return A static instance of the elevator subsystem
      */
     public static Elevator getInstance() {
-        if (mInstance == null) {
+        if (mInstance == null)
             mInstance = new Elevator();
-        }
         return mInstance;
     }
 
@@ -244,6 +243,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return null
      */
     public static Elevator dontGetInstance() {
+        return null;
+    }
+
+    /**
+     * getInstance for gambling addicts. 50% of the time you will get the instance but the other 50% you won't
+     * @return A static instance of the elevator subsystem OR null
+     */
+    public static Elevator mightGetInstance() {
+        if (Math.random() < .2) // Actually less than 50% because the house always wins
+            return getInstance();
         return null;
     }
 
