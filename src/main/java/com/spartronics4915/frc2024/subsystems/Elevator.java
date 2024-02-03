@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024.subsystems;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
@@ -14,7 +15,6 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -32,8 +32,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     private State mCurrentState;
     private Rotation2d mTarget;// = new Rotation2d(Math.PI * 3);
+    private Rotation2d mManualDelta;
 
     private ElevatorFeedforward mElevatorFeedforward;
+
+    private boolean mIsManual = false;
     //#endregion
 
     public Elevator() {
@@ -80,14 +83,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     @Override
     public void periodic() {
-        if (DriverStation.isEnabled()) {
+        if (mIsManual) { // Manual
+            manualControlUpdate();
+        } else { // Not-manual
             mCurrentState = mmmmmmmmmmTrapezoid.calculate(
                     GeneralConstants.kUpdateTime,
                     mCurrentState,
                     //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                     new State(mTarget.getRotations(), 0));
             mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
-        } else resetTarget();
+        }
     }
 
     @Override
@@ -116,6 +121,30 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return getHeight();
     }
 
+    //#region Maunel Manuel Manueal Manael Manual Stuff    (5th times the charm)
+
+    private void manualControlUpdate() {
+        mTarget = Rotation2d.fromRadians(mTarget.getRadians() + mManualDelta.getRadians());
+    }
+
+    private void setManualDelta(Rotation2d deltaPosition) {
+        mIsManual = true;
+        mManualDelta = deltaPosition;
+    }
+
+    /**
+     * Command for manual movement
+     * @param angleDelta
+     */
+    public Command manualRunCommand(Rotation2d angleDelta) {
+        return this.startEnd(()->setManualDelta(angleDelta),()->{
+            if (!Robot.isSimulation()) resetTarget();
+            mIsManual = false;
+        });
+    }
+
+    //#endregion
+
     //#region Target (not the store)
 
     /**
@@ -123,6 +152,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @param newTarget New target position (in meters... i think)
      */
     public void setTarget(double newTarget) {
+        mIsManual = false;
         mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
     }
     /**
@@ -130,6 +160,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @param intakeAssemblyState I don't know what this is but I was told to add it so I did
      */
     public void setTarget(IntakeAssemblyState intakeAssemblyState) {
+        mIsManual = false;
         mTarget = Rotation2d.fromRotations(intakeAssemblyState.ElevatorHeight * kMetersToRotation);
     }
     /**
