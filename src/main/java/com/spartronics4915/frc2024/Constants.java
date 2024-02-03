@@ -154,6 +154,7 @@ public final class Constants {
                 new Color8Bit(Color.kMediumPurple),
                 SimType.Elevator,
                 new Translation2d(103 / 100d, 27 / 100d));
+            public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026, .0156, 7, 102); // HACK untested
         }
     }
 

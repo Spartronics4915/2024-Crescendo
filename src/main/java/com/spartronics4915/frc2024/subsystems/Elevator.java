@@ -10,15 +10,18 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
 public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
+    //#region all the variables and stuff
     private static Elevator mInstance;
 
     private CANSparkMax mMotor;
@@ -28,11 +31,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private TrapezoidProfile mmmmmmmmmmTrapezoid;
 
     private State mCurrentState;
-    private Rotation2d mTarget = new Rotation2d(Math.PI * 3);
+    private Rotation2d mTarget;// = new Rotation2d(Math.PI * 3);
 
-    // get meters
-    // convert meters to rotations
-    // rotate* (is interesting)
+    private ElevatorFeedforward mElevatorFeedforward;
+    //#endregion
 
     public Elevator() {
         // Initializes the motor
@@ -41,13 +43,13 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mMotor.setInverted(kMotorConstants.motorIsInverted());
         mMotor.setIdleMode(kMotorConstants.idleMode());
         mMotor.setSmartCurrentLimit(kMotorConstants.currentLimit());
-        mMotor.burnFlash();
 
+        mMotor.burnFlash();
         // Initializes the Trapezoid
         mmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
-        // Sets the current state
-        mCurrentState = new State();
+        // Sets the current state and target
+        resetTarget();
 
         // Initializes the PID
         mPid = mMotor.getPIDController();
@@ -58,8 +60,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
+        
+        // Sets up Feed Foward
+        mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(), kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
     }
-
+    
+    //#region encoder & feed foward
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
@@ -67,13 +73,21 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }
 
+    private double getFeedFowardValue() {
+        return mElevatorFeedforward.calculate(getEncoderVelReading());
+    }
+    //#endregion
+
     @Override
     public void periodic() {
-        mCurrentState = mmmmmmmmmmTrapezoid.calculate(
-                GeneralConstants.kUpdateTime,
-                new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                new State(mTarget.getRotations(), 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition);
+        if (DriverStation.isEnabled()) {
+            mCurrentState = mmmmmmmmmmTrapezoid.calculate(
+                    GeneralConstants.kUpdateTime,
+                    mCurrentState,
+                    //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                    new State(mTarget.getRotations(), 0));
+            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+        } else resetTarget();
     }
 
     @Override
@@ -102,6 +116,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return getHeight();
     }
 
+    //#region Target (not the store)
+
     /**
      * Sets the new target position
      * @param newTarget New target position (in meters... i think)
@@ -126,18 +142,32 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         });
     }
 
-    // Here because something requires it
-    @Override
-    public void setPositionToReal() {}
-
     /**
-     * @return A static instance of the elevator subsystem
+     * Sets the target position to the motor's current position so nobody gets punched in the face
      */
-    public static Elevator getInstance() { 
-        if (mInstance == null) {
-            mInstance = new Elevator();
-        }
-        return mInstance;
+    public void resetTarget() {
+        this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
+        this.setTarget(getEncoderPosReading().getRotations());
     }
+
+    //#endregion
+
+    //#region i'm just ignoring these things
+
+        // Here because something requires it
+        @Override
+        public void setPositionToReal() {}
+
+        /**
+         * @return A static instance of the elevator subsystem
+         */
+        public static Elevator getInstance() { 
+            if (mInstance == null) {
+                mInstance = new Elevator();
+            }
+            return mInstance;
+        }
+
+    //#endregion
 
 }
