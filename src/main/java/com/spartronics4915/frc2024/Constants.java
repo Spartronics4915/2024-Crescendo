@@ -140,15 +140,30 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            
+
         }
     }
 
     public static final class ShooterWristConstants {
+        public enum ShooterState{ //Mostly for debug
+            SubwooferShot(Rotation2d.fromDegrees(90));
+
+            public final Rotation2d shooterAngle;
+            private ShooterState(Rotation2d shooterAngle) {
+                this.shooterAngle = shooterAngle;
+            }
+        }
 
         public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
-        public static final Constraints kTrapzoidConstants = new Constraints(10, 10); //HACK DO NOT TEST WITH THESE VALUES
+        public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
+
+        
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the saftey height
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5); //FIXME used for sim
+
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
+
 
     }
 

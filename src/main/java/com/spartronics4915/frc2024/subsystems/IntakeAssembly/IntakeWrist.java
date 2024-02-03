@@ -137,6 +137,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     //#endregion
 
     //#region Component Functions
+    
     private Rotation2d getEncoderPosReading(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
         return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
     }

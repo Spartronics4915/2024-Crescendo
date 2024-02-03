@@ -52,7 +52,7 @@ public class RobotContainer {
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         configureBindings();
-        VisionSubsystem.getInstance(); //ensures VisionSubsystem is created so the limelights log (for debug)
+        // VisionSubsystem.getInstance(); //ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     private void configureBindings() {
@@ -67,8 +67,12 @@ public class RobotContainer {
 
         //TODO switch to a Command file for the intakeAssembly commands 
 
+        mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
+
         mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+
 
         mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
