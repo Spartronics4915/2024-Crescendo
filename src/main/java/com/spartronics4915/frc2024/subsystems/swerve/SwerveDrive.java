@@ -157,6 +157,10 @@ public class SwerveDrive extends SubsystemBase {
         };
     }
 
+    private ChassisSpeeds getRobotRelativeSpeeds() {
+        return kKinematics.toChassisSpeeds(Stream.of(mModules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new));
+    }
+
     /**
      * Toggles whether the robot will drive field relative by default.
      */
