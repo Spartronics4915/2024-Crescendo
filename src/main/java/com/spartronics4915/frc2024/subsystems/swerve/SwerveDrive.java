@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 import static edu.wpi.first.math.MathUtil.applyDeadband;
@@ -219,7 +220,14 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
         mPoseEstimator.update(getAngle(), getModulePositions());
-
+        boolean logSwerveModules = true;
+        if (logSwerveModules) {
+            for(int i = 0; i < 4; i ++){
+                String moduleTag = "Module " + i + " encoder : ";
+                double encoderReading = mModules[i].getPosition().angle.getDegrees();
+                SmartDashboard.putNumber(moduleTag, encoderReading);
+            }
+        }
 
         // This code causes the robot to crash
         
