@@ -45,6 +45,8 @@ public class RobotContainer {
     static {
         TrapezoidSubsystems.add(mIntakeWrist);
         TrapezoidSubsystems.add(mShooter);
+        TrapezoidSubsystems.add(mElevator);
+
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);
         list.add(mShooter);

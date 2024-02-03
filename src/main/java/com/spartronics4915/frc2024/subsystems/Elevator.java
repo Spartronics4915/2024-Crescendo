@@ -179,7 +179,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void resetTarget() {
         this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
-        this.setTarget(getEncoderPosReading().getRotations());
+        mTarget = getEncoderPosReading();
     }
 
     //#endregion
