@@ -7,10 +7,12 @@ package com.spartronics4915.frc2024;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.Elevator;
+import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
+import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
@@ -31,29 +33,61 @@ import static com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface.Trape
 import java.util.ArrayList;
 
 public class RobotContainer {
+    private enum SubsystemFlags{
+        IntakeWristFlag (false),
+        IntakeFlag (false),
+        ShooterFlag (true),
+        ShooterWristFlag (false),
+        ElevatorFlag (false);
+
+        private final boolean isUsed;
+        private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
+    }
+
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
     private static final CommandXboxController mOperatorController = new CommandXboxController(kOperatorControllerPort);
     
     // private static final Intake mIntake = Intake.getInstance();
-    private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
-
-    private static final ShooterWrist mShooter = ShooterWrist.getInstance();
-    private static final Elevator mElevator = Elevator.getInstance();
+    
+    private static final IntakeWrist mIntakeWrist;
+    private static final Intake mIntake;
+    private static final ShooterWrist mShooterWrist;
+    private static final Shooter mShooter;
+    private static final Elevator mElevator;
 
     private static final TrapezoidSimulator mSimulator;
 
     static {
-        TrapezoidSubsystems.add(mIntakeWrist);
-        TrapezoidSubsystems.add(mShooter);
-        TrapezoidSubsystems.add(mElevator);
-
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
-        list.add(mIntakeWrist);
-        list.add(mShooter);
-        list.add(mElevator);
+        
+        if (SubsystemFlags.IntakeWristFlag.isUsed){
+            mIntakeWrist = IntakeWrist.getInstance();;
+            TrapezoidSubsystems.add(mIntakeWrist);
+            list.add(mIntakeWrist);
+        } else mIntakeWrist = null;
+
+        if (SubsystemFlags.IntakeFlag.isUsed){
+            mIntake = Intake.getInstance();
+        } else mIntake = null;
+
+        if (SubsystemFlags.ShooterWristFlag.isUsed){
+            mShooterWrist = ShooterWrist.getInstance();
+            TrapezoidSubsystems.add(mShooterWrist);
+            list.add(mShooterWrist);
+        } else mShooterWrist = null;
+
+        if (SubsystemFlags.ShooterFlag.isUsed){
+            mShooter = Shooter.getInstance();
+        } else mShooter = null;
+
+        if (SubsystemFlags.ElevatorFlag.isUsed){
+            mElevator = Elevator.getInstance();
+            TrapezoidSubsystems.add(mElevator);
+            list.add(mElevator);
+        } else mElevator = null;
+
         mSimulator = new TrapezoidSimulator(list);
 
-        TrapezoidSubsystems.add(mElevator);
     }
     
     public RobotContainer() {
@@ -74,22 +108,26 @@ public class RobotContainer {
 
         //TODO switch to a Command file for the intakeAssembly commands 
 
-        mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        if (SubsystemFlags.ShooterWristFlag.isUsed) {
+            mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+            mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        }
+        if (SubsystemFlags.IntakeWristFlag.isUsed) {
+            mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+            mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        }
 
-        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        if (SubsystemFlags.ElevatorFlag.isUsed) {
+            mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
+            mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        }
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
-
-        mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
-        mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
-        mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
-        mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP        
-    
-    
-        
+        if (SubsystemFlags.IntakeWristFlag.isUsed) {
+            mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
+            mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
+            mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
+            mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP
+        }
     }
 
     public Command getAutonomousCommand() {
