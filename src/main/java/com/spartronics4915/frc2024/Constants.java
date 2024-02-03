@@ -67,8 +67,8 @@ public final class Constants {
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
         public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
 
-        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
-        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
+        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(0.0, 0.0, 0.0, 0.2); // placeholder values
+        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
                 3, 4, 11, 0.0, kWheelbase / 2, kTrackWidth / 2);
