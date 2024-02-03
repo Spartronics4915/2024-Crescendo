@@ -16,6 +16,8 @@ Manual Controls:<br>
 * Bumpers: Elevator Manual<br>
 * Horizontal DPad: wrist Manual<br>
 * Vertical DPad: shooter Manual<br>
+(right should be up, left should be down)
+
 
 Misc:
 * push left stick : subwoofer shot<br>
