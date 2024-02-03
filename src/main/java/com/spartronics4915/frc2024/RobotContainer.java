@@ -6,6 +6,7 @@ package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
@@ -37,16 +38,20 @@ public class RobotContainer {
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
 
     private static final ShooterWrist mShooter = ShooterWrist.getInstance();
+    private static final Elevator mElevator = Elevator.getInstance();
 
     private static final TrapezoidSimulator mSimulator;
 
-    static{
+    static {
         TrapezoidSubsystems.add(mIntakeWrist);
         TrapezoidSubsystems.add(mShooter);
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);
         list.add(mShooter);
+        list.add(mElevator);
         mSimulator = new TrapezoidSimulator(list);
+
+        TrapezoidSubsystems.add(mElevator);
     }
     
     public RobotContainer() {
@@ -73,13 +78,16 @@ public class RobotContainer {
         mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
         mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
         mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
-        mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP
-
-
+        mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP        
+    
+    
+        
     }
 
     public Command getAutonomousCommand() {

@@ -2,6 +2,8 @@ package com.spartronics4915.frc2024;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
+import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.util.*;
 
 import edu.wpi.first.math.MatBuilder;
@@ -11,8 +13,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public final class Constants {
     public static final class OI {
@@ -141,7 +145,18 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-
+            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final Constraints kZoidConstants = new Constraints(1d, 1d);
+            public static final double kMetersToRotation = 1; // Conversion rate
+            public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
+                "Elevator",
+                1.0,
+                90.0,
+                20.0,
+                new Color8Bit(Color.kMediumPurple),
+                SimType.Elevator,
+                new Translation2d(103 / 100d, 27 / 100d));
+            public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026, .0156, 7, 102); // HACK untested
         }
     }
 
