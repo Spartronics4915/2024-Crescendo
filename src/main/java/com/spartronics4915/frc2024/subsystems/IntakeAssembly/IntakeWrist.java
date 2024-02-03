@@ -61,7 +61,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
         //#region ShuffleBoardEntries
 
         private GenericEntry mManualControlEntry;
-        private GenericEntry mWristSetPoint;
+        private GenericEntry mWristSetPointEntry;
+        private GenericEntry mEncoderEntry;
 
 
         //#endregion
@@ -121,7 +122,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     private void shuffleInit() {
         var mEntries = IntakeWristTabManager.getEnumMap(this);
         mManualControlEntry = mEntries.get(WristSubsystemEntries.WristManualControl);
-        mWristSetPoint = mEntries.get(WristSubsystemEntries.WristSetPoint);
+        mWristSetPointEntry = mEntries.get(WristSubsystemEntries.WristSetPoint);
+        mEncoderEntry = mEntries.get(WristSubsystemEntries.WristEncoderReading);
     }
 
     private TrapezoidProfile initTrapezoid(Constraints constraints) {
@@ -217,7 +219,8 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     
     private void updateShuffleboard() {
         mManualControlEntry.setBoolean(mManualMovement);
-        mWristSetPoint.setDouble(mRotSetPoint.getDegrees());
+        mWristSetPointEntry.setDouble(mRotSetPoint.getDegrees());
+        mEncoderEntry.setDouble(getEncoderPosReading().getDegrees());
     }
 
     private void manualControlUpdate(){ //HACK untested

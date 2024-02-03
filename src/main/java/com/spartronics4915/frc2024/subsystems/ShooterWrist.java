@@ -9,6 +9,8 @@ import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterState;
+import com.spartronics4915.frc2024.ShuffleBoard.ShooterWristTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.ShooterWristTabManager.ShooterWristSubsystemEntries;
 import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
@@ -24,6 +26,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -52,6 +55,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private boolean mManualMovement = false; //used to pause position setting to avoid conflict (if using Trapezoid movment due to the constant calls)
 
+    private GenericEntry mShooterSetPointEntry;
+    private GenericEntry mShooterEncoderReadingEntry;
+    private GenericEntry mShooterManualControlEntry;
+
     //#endregion
 
     public static ShooterWrist getInstance() {
@@ -71,9 +78,18 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         kFeedforwardCalc = initFeedForward();
 
         currentToSetPoint();
+
+        initShuffleBoard();
     }
 
     //#region init functions
+
+    private void initShuffleBoard() {
+        var mEntries = ShooterWristTabManager.getEnumMap(this);
+        mShooterSetPointEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterSetPoint);
+        mShooterEncoderReadingEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterEncoderReading);
+        mShooterManualControlEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterManualControl);
+    }
 
     private CANSparkMax initMotor(MotorConstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
@@ -181,8 +197,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             manualControlUpdate();
         }
         TrapezoidMotionProfileUpdate();
+
+        updateShuffle();
         //will add things here if trapezoid motion profiles get used
     }
+    
+    private void updateShuffle() {
+        mShooterSetPointEntry.setDouble(mTargetRotation2d.getDegrees());
+        mShooterEncoderReadingEntry.setDouble(getEncoderPosReading().getDegrees());
+        mShooterManualControlEntry.setBoolean(mManualMovement);
+    }
+
     private double getFeedForwardValue(){
 
         return kFeedforwardCalc.calculate(

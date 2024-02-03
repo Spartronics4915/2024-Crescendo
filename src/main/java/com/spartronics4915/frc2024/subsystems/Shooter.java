@@ -4,13 +4,13 @@ import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.kMotor
 
 import com.ctre.phoenix6.controls.Follower;
 
-import static com.spartronics4915.frc2024.Constants.ShooterConstants.kOffSpeed;
-import static com.spartronics4915.frc2024.Constants.ShooterConstants.kPIDconstants;
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.*;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.MotorConstants;
@@ -20,6 +20,9 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase implements Loggable {
+
+    //TODO add shooter belt
+    //TODO add periodic methods
     
     public static enum ShooterState {
         ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -43,6 +46,9 @@ public class Shooter extends SubsystemBase implements Loggable {
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
         mShooterFollowMotor.follow(mShooterMotor, true);
         mPIDController = constructPIDController(mShooterMotor, kPIDconstants);
+
+        var mEntries = ShooterTabManager.getEnumMap(this);
+        mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){

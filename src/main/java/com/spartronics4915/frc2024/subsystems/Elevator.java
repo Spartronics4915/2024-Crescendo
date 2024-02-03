@@ -1,6 +1,8 @@
 package com.spartronics4915.frc2024.subsystems;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.ShuffleBoard.ElevatorTabManager;
+import com.spartronics4915.frc2024.ShuffleBoard.ElevatorTabManager.ElevatorSubsystemEntries;
 import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -37,6 +40,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private ElevatorFeedforward mElevatorFeedforward;
 
     private boolean mIsManual = false;
+
+    private GenericEntry mElevatorSetPointEntry;
+    private GenericEntry mElevatorHeightEntry;
+    private GenericEntry mElevatorManualControlEntry;
+
+
     //#endregion
 
     public Elevator() {
@@ -67,7 +76,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         
         // Sets the current state and target
         resetTarget();
+
+        initShuffle();
         
+    }
+    private void initShuffle() {
+        var mEntries = ElevatorTabManager.getEnumMap(this);
+        mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
+        mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
+        mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
     }
     //#region encoder & feed foward
     private double getEncoderVelReading(){
@@ -94,8 +111,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget.getRotations(), 0));
         mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+
+        updateShuffle();
     }
 
+    private void updateShuffle() {
+        mElevatorSetPointEntry.setDouble(mTarget.getDegrees() / kMetersToRotation);
+        mElevatorHeightEntry.setDouble(getHeight());
+        mElevatorManualControlEntry.setBoolean(mIsManual);
+    }
     @Override
     public State getSetPoint() {
         return new State(mCurrentState.position / kMetersToRotation, 0.0);
