@@ -144,7 +144,7 @@ public final class Constants {
 
         public static final class ElevatorConstants {
             public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final Constraints kZoidConstants = new Constraints(1d, 1/10d);
+            public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
                 "Elevator",

@@ -51,23 +51,24 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Initializes the Trapezoid
         mmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
-        // Sets the current state and target
-        resetTarget();
-
+        
         // Initializes the PID
         mPid = mMotor.getPIDController();
         mPid.setP(0);
         mPid.setI(0);
         mPid.setD(0);
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
-
+        
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
         
         // Sets up Feed Foward
         mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(), kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
+        
+        // Sets the current state and target
+        resetTarget();
+        
     }
-    
     //#region encoder & feed foward
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
@@ -85,19 +86,19 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
-        } else { // Not-manual
-            mCurrentState = mmmmmmmmmmTrapezoid.calculate(
-                    GeneralConstants.kUpdateTime,
-                    mCurrentState,
-                    //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                    new State(mTarget.getRotations(), 0));
-            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
         }
+         // Not-manual
+        mCurrentState = mmmmmmmmmmTrapezoid.calculate(
+                GeneralConstants.kUpdateTime,
+                mCurrentState,
+                //new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                new State(mTarget.getRotations(), 0));
+        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
     }
 
     @Override
     public State getSetPoint() {
-        return mCurrentState;
+        return new State(mCurrentState.position / kMetersToRotation, 0.0);
     }
 
     /**

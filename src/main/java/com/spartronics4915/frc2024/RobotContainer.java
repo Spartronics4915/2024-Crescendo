@@ -11,6 +11,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -59,6 +60,14 @@ public class RobotContainer {
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
             .onTrue(mIntake.setStateCommand(IntakeState.OUT))
             .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+    
+        
+        mOperatorController.a().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.b().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
+
+    
+    
+        
     }
 
     public Command getAutonomousCommand() {
