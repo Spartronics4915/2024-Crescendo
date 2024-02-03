@@ -111,11 +111,7 @@ public class SwerveDrive extends SubsystemBase {
      * Drives the robot given a {@link ChassisSpeeds} and whether to drive field relative or not.
      */
     public void drive(final ChassisSpeeds speeds, final boolean fieldRelative) {
-        var omega = speeds.omegaRadiansPerSecond;
-        if (omega != 0) {
-            System.out.println(omega);
-        }
-        drive(speeds, fieldRelative, false);
+        drive(speeds, fieldRelative, mRotationIsIndependent);
     }
 
     public void driveRobotRelative(final ChassisSpeeds speeds) {
@@ -133,7 +129,9 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         if (rotationIndependent) {
-            _speeds.omegaRadiansPerSecond = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
+            var ac_c = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
+            System.out.println(ac_c);
+            _speeds.omegaRadiansPerSecond = ac_c;
         }
 
         final var moduleStates = kKinematics.toSwerveModuleStates(_speeds);

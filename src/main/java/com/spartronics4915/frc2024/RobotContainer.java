@@ -8,6 +8,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -84,6 +85,9 @@ public class RobotContainer {
         mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
                 .onTrue(mIntake.setStateCommand(IntakeState.OUT))
                 .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+
+        mDriverController.leftTrigger(kDriverTriggerDeadband)
+                .whileTrue(new LockOnCommand());
     }
 
     public Command getAutonomousCommand() {

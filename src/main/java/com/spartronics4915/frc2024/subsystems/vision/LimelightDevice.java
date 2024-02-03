@@ -54,6 +54,10 @@ public class LimelightDevice extends SubsystemBase {
         double timestamp = Timer.getFPGATimestamp() - (botpose[6]/1000.0);
         return Optional.of(new VisionMeasurement(pose, timestamp));
     }
+
+    public double getTx() {
+        return LimelightHelpers.getTX(mName);
+    }
     
     /**
      * @return If the limelight can see any tags
