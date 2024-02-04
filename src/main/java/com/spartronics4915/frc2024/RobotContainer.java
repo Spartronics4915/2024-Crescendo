@@ -6,6 +6,7 @@ package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -36,11 +37,11 @@ import java.util.ArrayList;
 
 public class RobotContainer {
     private enum SubsystemFlags{
-        IntakeWristFlag (false),
+        IntakeWristFlag (true),
         IntakeFlag (false),
-        ShooterFlag (true),
-        ShooterWristFlag (false),
-        ElevatorFlag (false);
+        ShooterFlag (false),
+        ShooterWristFlag (true),
+        ElevatorFlag (true);
 
         private final boolean isUsed;
         private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
@@ -127,11 +128,12 @@ public class RobotContainer {
             mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
         }
 
-        if (SubsystemFlags.IntakeWristFlag.isUsed) {
-            mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
-            mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
-            mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
-            mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP
+        if (SubsystemFlags.IntakeWristFlag.isUsed && SubsystemFlags.ElevatorFlag.isUsed) {
+            var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
+            mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
+            mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
+            mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
+            mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
         }
         
         if (SubsystemFlags.ShooterFlag.isUsed) {

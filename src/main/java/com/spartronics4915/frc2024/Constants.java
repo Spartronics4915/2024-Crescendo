@@ -108,7 +108,7 @@ public final class Constants {
         }
         
         public static final class IntakeConstants {// [ ] Intake constants
-                    public static final MotorConstants kMotorConstants = new MotorConstants(0, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+                    public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
         
                     public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
                     
@@ -125,7 +125,7 @@ public final class Constants {
 
             //TODO Make Units Clear
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
@@ -171,7 +171,7 @@ public final class Constants {
             }
         }
 
-        public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kMotorConstants = new MotorConstants(11, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
         public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
