@@ -1,5 +1,11 @@
 package com.spartronics4915.frc2024;
 
+import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
+
+import java.util.stream.Stream;
+
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
@@ -17,11 +23,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
     public static final class OI {
         public static final int kDriverControllerPort = 0;
         public static final int kOperatorControllerPort = 1;
+
+        public static final double kStickDeadband = 0.05;
 
         public static final double kDriverTriggerDeadband = 0.3;
         public static final double kOperatorTriggerDeadband = 0.3;
@@ -34,14 +43,14 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
-        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(1.0, 0.0, 0.0); // FIXME: placeholder values
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(10.0, 0.0, 1.0); // FIXME: placeholder values
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
-        public static final double kWheelDiameter = Units.inchesToMeters(4);
-        public static final double kTrackWidth = Units.inchesToMeters(22.475);
-        public static final double kWheelbase = Units.inchesToMeters(22.475);
+        public static final double kWheelDiameter = Units.inchesToMeters(3.96);
+        public static final double kTrackWidth = Units.inchesToMeters(18.75);
+        public static final double kWheelbase = Units.inchesToMeters(23.75);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
@@ -56,24 +65,40 @@ public final class Constants {
         public static final double kTreadWearAdjustment = 1.0;
         public static final double kTreadCoefficientOfFriction = 1.13; // black neoprene
 
-        // theoretical maximum with NEO Vortex and L2 MK4i
-        public static final double kMaxSpeed = Units.feetToMeters(17.6);
+        // theoretical maximum with NEO and L2 MK4i
+        public static final double kMaxSpeed = Units.feetToMeters(15.1);
         public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
-        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
-        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.0, 0.0); // placeholder values
+        public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
+        public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
+
+        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(0.0, 0.0, 0.0, 0.2); // placeholder values
+        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
-                3, 4, 11, 0.0, kWheelbase / 2, kTrackWidth / 2);
+                5, 6, 13, 96.680, kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackLeft = new ModuleConstants(
-                5, 6, 12, 0.0, -kWheelbase / 2, kTrackWidth / 2);
+                7, 8, 14, 15.645, -kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackRight = new ModuleConstants(
-                7, 8, 13, 0.0, -kWheelbase / 2, -kTrackWidth / 2);
+                9, 10, 11, 119.268, -kWheelbase / 2, -kTrackWidth / 2);
 
         public static final ModuleConstants kFrontRight = new ModuleConstants(
-                9, 10, 14, 0.0, kWheelbase / 2, -kTrackWidth / 2);
+                3, 4, 12, 166.816, kWheelbase / 2, -kTrackWidth / 2);
+
+        public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
+                (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
+                .map((mc) -> new Translation2d(mc.x(), mc.y()))
+                .toArray(Translation2d[]::new));
+
+        public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, true);
+        public static final HolonomicPathFollowerConfig kPPConfig = new HolonomicPathFollowerConfig(
+                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
+                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
+                kMaxSpeed,
+                kChassisRadius,
+                kReplanningConfig);
 
         public static final int kDriveMotorCurrentLimit = 40;
         public static final int kAngleMotorCurrentLimit = 40;

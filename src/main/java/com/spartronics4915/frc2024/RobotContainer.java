@@ -9,6 +9,13 @@ import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
+import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
@@ -16,17 +23,27 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverTriggerDeadband;
@@ -58,10 +75,12 @@ public class RobotContainer {
     private static final Shooter mShooter;
     private static final Elevator mElevator;
 
+    private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
+
     private static final TrapezoidSimulator mSimulator;
+    private final SwerveSim mSwerveSim;
 
     static {
-
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
         if (SubsystemFlags.IntakeWristFlag.isUsed){
@@ -95,25 +114,23 @@ public class RobotContainer {
 
         ModeSwitchSubsystems.add(mElevator);
     }
-    
+
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
+        mSwerveSim = new SwerveSim(mSwerveDrive);
         configureBindings();
-        // VisionSubsystem.getInstance(); //ensures VisionSubsystem is created so the limelights log (for debug)
+        VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
+    }
+
+    public static CommandXboxController getDriverController() {
+        return mDriverController;
+    }
+
+    public static CommandXboxController getOperatorController() {
+        return mOperatorController;
     }
 
     private void configureBindings() {
-        // mOperatorController.leftTrigger(kOperatorTriggerDeadband)
-        //     .onTrue(mIntake.setStateCommand(IntakeState.IN))
-        //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
-
-        // mOperatorController.rightTrigger(kOperatorTriggerDeadband)
-        //     .onTrue(mIntake.setStateCommand(IntakeState.OUT))
-        //     .onFalse(mIntake.setStateCommand(IntakeState.OFF));
-
-
-        //TODO switch to a Command file for the intakeAssembly commands 
-
         if (SubsystemFlags.ShooterWristFlag.isUsed) {
             mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
@@ -143,9 +160,34 @@ public class RobotContainer {
             mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
             mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
         }
+
+        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+
+        mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
+                .onTrue(mIntake.setStateCommand(IntakeState.IN))
+                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+
+        mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
+                .onTrue(mIntake.setStateCommand(IntakeState.OUT))
+                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+
+        mDriverController.leftTrigger(kDriverTriggerDeadband)
+                .whileTrue(new LockOnCommand());
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        // Pose2d newPose = new Pose2d(new Translation2d(3, 3), new Rotation2d());
+        // Command initPose = Commands.runOnce(() -> mSwerveDrive.resetPose(newPose));
+        // Command driveBackwards = new DriveStraightCommands.DriveStraightFixedDistance(mSwerveDrive, new Rotation2d(),
+        //         2, new TrapezoidProfile.Constraints(0.5, 0.5 / 2));
+        // Command holdStill = Commands.run(() -> mSwerveDrive.drive(
+        //         new ChassisSpeeds(0, 0, 0), false));
+        // return Commands.sequence(initPose, driveBackwards, holdStill);
+        
+        // return new PathPlannerAuto("Test Auto");
+
+        // return new PathPlannerAuto("Path 1 Only");
+        
+        return new PathPlannerAuto("Auto 2");
     }
 }
