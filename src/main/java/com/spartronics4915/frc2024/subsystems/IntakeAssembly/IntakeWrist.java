@@ -31,13 +31,13 @@ import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
-import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
-public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInterface, TrapezoidSimulatorInterface{
+public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
     
     //#region variables
@@ -253,7 +253,7 @@ public class IntakeWrist extends SubsystemBase implements TrapezoidSubsystemInte
     //#region overriden interface methods
 
     @Override
-    public void setPositionToReal() {
+    public void modeSwitchAction() {
         currentToSetPoint();
     }
 

@@ -16,9 +16,9 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
-import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -36,7 +36,7 @@ import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.*;
 import java.util.function.*;
 
 
-public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
+public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
     
     //#region variables
 
@@ -239,7 +239,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     //#endregion
     @Override
-    public void setPositionToReal() {
+    public void modeSwitchAction() {
         currentToSetPoint();
     }
 

@@ -16,6 +16,7 @@ import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
@@ -29,7 +30,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverTriggerDeadband;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
-import static com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface.TrapezoidSubsystems;
+import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
 
 import java.util.ArrayList;
 
@@ -59,11 +60,12 @@ public class RobotContainer {
     private static final TrapezoidSimulator mSimulator;
 
     static {
+
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
         if (SubsystemFlags.IntakeWristFlag.isUsed){
             mIntakeWrist = IntakeWrist.getInstance();;
-            TrapezoidSubsystems.add(mIntakeWrist);
+            ModeSwitchSubsystems.add(mIntakeWrist);
             list.add(mIntakeWrist);
         } else mIntakeWrist = null;
 
@@ -73,7 +75,7 @@ public class RobotContainer {
 
         if (SubsystemFlags.ShooterWristFlag.isUsed){
             mShooterWrist = ShooterWrist.getInstance();
-            TrapezoidSubsystems.add(mShooterWrist);
+            ModeSwitchSubsystems.add(mShooterWrist);
             list.add(mShooterWrist);
         } else mShooterWrist = null;
 
@@ -83,12 +85,13 @@ public class RobotContainer {
 
         if (SubsystemFlags.ElevatorFlag.isUsed){
             mElevator = Elevator.getInstance();
-            TrapezoidSubsystems.add(mElevator);
+            ModeSwitchSubsystems.add(mElevator);
             list.add(mElevator);
         } else mElevator = null;
 
         mSimulator = new TrapezoidSimulator(list);
 
+        ModeSwitchSubsystems.add(mElevator);
     }
     
     public RobotContainer() {

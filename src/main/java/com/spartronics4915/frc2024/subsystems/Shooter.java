@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsyst
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.util.Loggable;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.PIDFConstants;
@@ -20,7 +21,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Shooter extends SubsystemBase implements Loggable {
+public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
     //TODO add shooter belt
     //TODO add periodic methods
@@ -180,6 +181,13 @@ public class Shooter extends SubsystemBase implements Loggable {
             
         }
         updateShuffleboard();
+    }
+
+    @Override
+    public void modeSwitchAction() {
+        mCurrentShooterState = ShooterState.OFF;
+        mCurrentConveyorState = ConveyorState.OFF;
+
     }
 
 }
