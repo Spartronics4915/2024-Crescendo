@@ -19,8 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
-    //TODO add shooter belt
-    //TODO add periodic methods
+
     
     public static enum ShooterState {
         ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -130,7 +129,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     private void shooterOn() {
         mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity); //CHECKUP no spin??
+        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
     }
 
     private void conveyorIn() {

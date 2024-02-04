@@ -47,7 +47,6 @@ public class AutoComponents {
             Commands.waitUntil(() -> {return !mIntake.getBeamBreakStatus();}),
 
             mIntake.setStateCommand(IntakeState.OFF)
-            //TODO add shooter holding code
         );
     }
 

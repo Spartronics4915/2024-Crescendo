@@ -187,7 +187,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
         
     public boolean atTargetState(double rotationThreshold){
-        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold); //TODO manual mode check?
+        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold);
     }
 
     //#endregion

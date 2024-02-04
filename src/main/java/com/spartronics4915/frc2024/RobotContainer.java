@@ -163,14 +163,6 @@ public class RobotContainer {
 
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
-                .onTrue(mIntake.setStateCommand(IntakeState.IN))
-                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
-
-        mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
-                .onTrue(mIntake.setStateCommand(IntakeState.OUT))
-                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
-
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
     }
