@@ -185,14 +185,15 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final MotorConstants kShooterMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
-        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(14, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(15, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
-        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0);
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(3, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final PIDFConstants kPIDconstants = new PIDFConstants(0.1, 0.0, 0.0, 0.0);
         public static final double kOffSpeed = 0.0; //unsure if this is necessary
-        public static final double kShootSpeed = 0.2; //placeholder
-        public static final double kConveyorInSpeed = 0.2; //placeholder
-        public static final double kConveyorOutSpeed = 0.2; //placeholder
+        public static final double kShootSpeed = 1.0; //placeholder
+        public static final double kDiff = 0.05;
+        public static final double kConveyorInSpeed = -1.0; //placeholder
+        public static final double kConveyorOutSpeed = 0.0; //placeholder
 
     }
 }

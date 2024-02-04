@@ -134,7 +134,6 @@ public class RobotContainer {
             mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
             mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
-            
             mOperatorController.x().onTrue(mShooter.setStateCommand(ConveyorState.OFF));
             mOperatorController.b().onTrue(mShooter.setStateCommand(ConveyorState.IN));
         }

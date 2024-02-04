@@ -1,7 +1,5 @@
 package com.spartronics4915.frc2024.subsystems;
 
-import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.kMotorConstants;
-
 import com.ctre.phoenix6.controls.Follower;
 
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.*;
@@ -16,6 +14,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
+import com.spartronics4915.frc2024.util.PIDFConstants;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,14 +46,14 @@ public class Shooter extends SubsystemBase implements Loggable {
     private final CANSparkMax mShooterFollowMotor;
     private final CANSparkMax mConveyorMotor;
     private final SparkPIDController mPIDController;
-  
+
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        mShooterFollowMotor.follow(mShooterMotor, true);
+        // mShooterFollowMotor.follow(mShooterMotor, true);
         mPIDController = constructPIDController(mShooterMotor, kPIDconstants);
 
         var mEntries = ShooterTabManager.getEnumMap(this);
@@ -73,12 +72,13 @@ public class Shooter extends SubsystemBase implements Loggable {
         return motor;
     }
 
-    private SparkPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
+    private SparkPIDController constructPIDController(CANSparkMax motor, PIDFConstants kPIDValues) {
         SparkPIDController pid = motor.getPIDController();
 
         pid.setP(kPIDValues.p());
         pid.setI(kPIDValues.i());
         pid.setD(kPIDValues.d());
+        pid.setFF(kPIDValues.ff());
 
         return pid;
     }
@@ -119,11 +119,15 @@ public class Shooter extends SubsystemBase implements Loggable {
     }
 
     private void shooterOff() {
-        mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
+        mShooterMotor.set(kOffSpeed);
+        mShooterFollowMotor.set(-kOffSpeed);
+        // mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
     }
 
     private void shooterOn() {
-        mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
+        mShooterMotor.set(kShootSpeed);
+        mShooterFollowMotor.set(-(kShootSpeed - kDiff));
+        // mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
     }
 
     private void conveyorIn() {
@@ -146,6 +150,35 @@ public class Shooter extends SubsystemBase implements Loggable {
 
     @Override
     public void periodic() {
+        switch (mCurrentShooterState) {
+            case NONE:
+            shooterOff();
+                break;
+            case OFF:
+            shooterOff();
+                break;
+            case ON:
+            shooterOn();
+                break;
+            
+        }
+        switch (mCurrentConveyorState) {
+            case IN:
+            conveyorIn();
+                break;
+            case NONE:
+            conveyorOff();
+                break;
+            case OFF:
+            conveyorOff();
+                break;
+            case OUT:
+            conveyorOut();
+                break;
+            default:
+                break;
+            
+        }
         updateShuffleboard();
     }
 
