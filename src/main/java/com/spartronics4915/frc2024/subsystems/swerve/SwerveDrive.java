@@ -303,6 +303,10 @@ public class SwerveDrive extends SubsystemBase {
         return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
     }
 
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+        return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), getAngle());
+    }
+
     public SwerveModule[] getSwerveModules() {
         return mModules;
     }
