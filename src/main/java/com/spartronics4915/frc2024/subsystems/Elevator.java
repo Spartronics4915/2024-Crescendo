@@ -202,6 +202,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             setTarget(newTarget);
         });
     }
+
+    public boolean atTargetState(double rotationThreshold){
+        return (Math.abs(getEncoderPosReading().getRotations() - mTarget.getRotations()) < rotationThreshold); //TODO manual mode check?
+    }
     
     /**
      * Command to set the new target position

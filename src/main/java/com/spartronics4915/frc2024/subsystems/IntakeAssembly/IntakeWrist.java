@@ -37,7 +37,7 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristCo
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
-    
+    // RPM
     //#region variables
 
         private static IntakeWrist mInstance;
@@ -110,8 +110,6 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         pid.setI(kPIDValues.i());
         pid.setD(kPIDValues.d());
 
-        //CHECKUP Decide on Vel conversion Factor (aka use rpm?)
-        //position Conversion not needed by using rotation2d
 
         return pid;
     }
@@ -187,7 +185,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             }
         );
     }
-
+        
+    public boolean atTargetState(double rotationThreshold){
+        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold); //TODO manual mode check?
+    }
 
     //#endregion
 
