@@ -42,8 +42,9 @@ public class IntakeAssemblyCommands {
             case GROUNDPICKUP:
                 additionCommand = mIntake.setStateCommand(IntakeState.IN);
                 break;
-        
-            default:break;
+            default:
+                additionCommand = mIntake.setStateCommand(IntakeState.OFF);
+                break;
         }
 
         return Commands.parallel(

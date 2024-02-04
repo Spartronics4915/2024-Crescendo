@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024.subsystems;
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.*;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
@@ -44,6 +45,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private final SparkPIDController mPIDControllerLead; 
     private final SparkPIDController mPIDControllerFollow; 
 
+    private final RelativeEncoder mShooterEncoder;
+
 
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
@@ -55,6 +58,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
         mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
 
+        mShooterEncoder =  mShooterMotor.getEncoder();
 
         var mEntries = ShooterTabManager.getEnumMap(this);
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
@@ -112,7 +116,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         });
     }
 
-    public Command setStateCommand(ConveyorState state) {
+    public Command setConveyorStateCommand(ConveyorState state) {
         return runOnce(() -> {
             setConveyorState(state);
         });
@@ -139,6 +143,10 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     private void conveyorOff() {
         mConveyorMotor.set(0);
+    }
+
+    public boolean hasSpunUp(){
+        return mShooterEncoder.getVelocity() >= kTargetRPM;
     }
 
     @Override

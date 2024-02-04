@@ -160,6 +160,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         setRotationSetPoint(getEncoderPosReading()); //TODO clamp for saftey? for now will have force boolean
     }
 
+    public boolean atTarget(){
+        return Math.abs(getEncoderPosReading().getRotations() - mTargetRotation2d.getRotations()) < kAimedAtTargetThreshold;
+    }
+
     //#endregion
 
     //#region Commands

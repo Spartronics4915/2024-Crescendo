@@ -180,6 +180,8 @@ public final class Constants {
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
+        
+        public static final double kAimedAtTargetThreshold = 1/60; //6 degrees
 
 
     }
@@ -194,6 +196,9 @@ public final class Constants {
         public static final double kDiff = 0.05;
         public static final double kConveyorInSpeed = -1.0; //placeholder
         public static final double kConveyorOutSpeed = 0.0; //placeholder
+
+        public static final double kTargetRPM = 1000;
+
 
     }
 }
