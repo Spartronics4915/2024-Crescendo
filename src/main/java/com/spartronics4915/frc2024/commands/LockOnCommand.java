@@ -20,14 +20,6 @@ public class LockOnCommand extends Command {
         mLimelight = mVision.getAlice();
     }
 
-    private double getTx() {
-        if (mLimelight.getTv()) {
-            return mLimelight.getTx();
-        } else {
-            return 0.0;
-        }
-    }
-
     @Override
     public void initialize() {
         mSwerve.decoupleRotation();
@@ -35,8 +27,7 @@ public class LockOnCommand extends Command {
     
     @Override
     public void execute() {
-        mSwerve.setDesiredAngle(mSwerve.getAngle().rotateBy(Rotation2d.fromDegrees(-getTx())));
-        // System.out.println(getTx());
+        mSwerve.setDesiredAngle(mSwerve.getAngle().rotateBy(Rotation2d.fromDegrees(-mLimelight.getTx())));
     }
 
     @Override
