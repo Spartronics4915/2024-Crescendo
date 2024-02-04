@@ -53,7 +53,7 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<Pose3d> getPose() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags())
+        if (preferred.getTv())
             return Optional.of(preferred.getBotPose3d());
         return Optional.empty();
     }

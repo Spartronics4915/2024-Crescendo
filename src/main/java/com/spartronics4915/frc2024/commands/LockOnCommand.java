@@ -21,7 +21,7 @@ public class LockOnCommand extends Command {
     }
 
     private double getTx() {
-        if (mLimelight.canSeeTags()) {
+        if (mLimelight.getTv()) {
             return mLimelight.getTx();
         } else {
             return 0.0;

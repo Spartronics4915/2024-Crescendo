@@ -26,11 +26,11 @@ public class LimelightDevice extends SubsystemBase {
     private final Field2d mField;
     private final boolean mValid;
 
-    BooleanPublisher controllablePub;
-    StringPublisher typePub;
-    DoublePublisher xPub;
-    DoublePublisher yPub;
-    DoublePublisher zPub;
+    private BooleanPublisher controllablePub;
+    private StringPublisher typePub;
+    private DoublePublisher xPub;
+    private DoublePublisher yPub;
+    private DoublePublisher zPub;
 
     /**
      * Creates a new LimelightDevice
@@ -46,7 +46,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (!canSeeTags()) {
+        if (!getTv()) {
             return Optional.empty();
         }
         double[] botpose = LimelightHelpers.getBotPose_wpiBlue(mName);
@@ -62,7 +62,7 @@ public class LimelightDevice extends SubsystemBase {
     /**
      * @return If the limelight can see any tags
      */
-    public boolean canSeeTags() {
+    public boolean getTv() {
         if (!mValid) return false;
         return LimelightHelpers.getTV(mName);
     }
@@ -145,7 +145,7 @@ public class LimelightDevice extends SubsystemBase {
     /**
      * @return The name of the limelight
      */
-    public String getmName() {
+    public String getName() {
         return mName;
     }
 
@@ -207,7 +207,7 @@ public class LimelightDevice extends SubsystemBase {
         // tab.addInteger(mName + " primary tag", () -> {return getPrimaryTag();}).withPosition(0 + offset, 3);
         tab.addBoolean(mName + " is valid", () -> {return mValid;}).withPosition(0 + offset, 3);
         tab.addInteger(mName + " tag count", () -> {return numberOfTagsSeen();}).withPosition(1 + offset, 3);
-        tab.addBoolean(mName + " sees tag", () -> {return canSeeTags();}).withPosition(2 + offset, 3);
+        tab.addBoolean(mName + " sees tag", () -> {return getTv();}).withPosition(2 + offset, 3);
         tab.addDouble(mName + " avg dist", () -> {return getAverageDistanceToVisibleTags();}).withPosition(3 + offset, 3);
         tab.add(mName + " field", mField).withSize(5, 3).withPosition(0 + offset, 0);
     }
