@@ -99,8 +99,10 @@ public class RobotContainer {
         //         new ChassisSpeeds(0, 0, 0), false));
         // return Commands.sequence(initPose, driveBackwards, holdStill);
         
-        return new PathPlannerAuto("Test Auto");
+        // return new PathPlannerAuto("Test Auto");
 
         // return new PathPlannerAuto("Path 1 Only");
+        
+        return new PathPlannerAuto("Auto 2");
     }
 }

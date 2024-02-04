@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5984571213647922,
-        "y": 7.084297814200024
+        "x": 1.477009028880695,
+        "y": 7.331063581770021
       },
       "isLocked": false,
       "linkedName": null
@@ -20,28 +20,22 @@
         "y": 6.960897180036119
       },
       "prevControl": {
-        "x": 2.2359442294434038,
-        "y": 7.094557533208474
+        "x": 2.3664095144124353,
+        "y": 6.737135903530049
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Auto 2 Shoot 1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -7.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "New Constraints Zone",
       "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 2.0,
+        "maxVelocity": 4.0,
         "maxAcceleration": 11.0853,
         "maxAngularVelocity": 900.0,
         "maxAngularAcceleration": 2220.0

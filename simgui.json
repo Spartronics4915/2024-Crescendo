@@ -44,6 +44,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "Shuffleboard": {
         "IntakeWrist": {
           "Wrist": {
@@ -72,6 +75,15 @@
     }
   },
   "NetworkTables Info": {
+    "Connections": {
+      "open": true
+    },
+    "DartClient_23203894@1": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
   },
   "Plot": {
