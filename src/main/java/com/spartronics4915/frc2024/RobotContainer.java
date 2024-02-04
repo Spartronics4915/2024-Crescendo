@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -49,9 +50,11 @@ public class RobotContainer {
     private static final Intake mIntake = Intake.getInstance();
     private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
     private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
-
+    
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
+
+    private final VisionSubsystem mVision;
 
     static {
         TrapezoidSubsystems.add(mIntakeWrist);
@@ -63,8 +66,8 @@ public class RobotContainer {
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
+        mVision = VisionSubsystem.getInstance();
         configureBindings();
-        VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     public static CommandXboxController getDriverController() {
@@ -88,6 +91,9 @@ public class RobotContainer {
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
+
+        mDriverController.a()
+                .whileTrue(new ToggleDetectorCommand());
     }
 
     public Command getAutonomousCommand() {
