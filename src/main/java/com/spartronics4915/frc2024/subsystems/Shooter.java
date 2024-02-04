@@ -1,7 +1,5 @@
 package com.spartronics4915.frc2024.subsystems;
 
-import com.ctre.phoenix6.controls.Follower;
-
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.*;
 
 import com.revrobotics.CANSparkMax;
@@ -9,12 +7,9 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
-import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
-import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
-import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.PIDFConstants;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -46,7 +41,9 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private final CANSparkMax mShooterMotor;
     private final CANSparkMax mShooterFollowMotor;
     private final CANSparkMax mConveyorMotor;
-    private final SparkPIDController mPIDController;
+    private final SparkPIDController mPIDControllerLead; 
+    private final SparkPIDController mPIDControllerFollow; 
+
 
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
@@ -55,7 +52,9 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
         // mShooterFollowMotor.follow(mShooterMotor, true);
-        mPIDController = constructPIDController(mShooterMotor, kPIDconstants);
+        mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
+        mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
+
 
         var mEntries = ShooterTabManager.getEnumMap(this);
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
@@ -120,15 +119,14 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     private void shooterOff() {
-        mShooterMotor.set(kOffSpeed);
-        mShooterFollowMotor.set(-kOffSpeed);
-        // mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
+
     }
 
     private void shooterOn() {
-        mShooterMotor.set(kShootSpeed);
-        mShooterFollowMotor.set(-(kShootSpeed - kDiff));
-        // mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity); //CHECKUP no spin??
     }
 
     private void conveyorIn() {
