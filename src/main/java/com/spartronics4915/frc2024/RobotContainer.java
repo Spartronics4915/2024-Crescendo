@@ -71,6 +71,7 @@ public class RobotContainer {
 
         if (SubsystemFlags.IntakeFlag.isUsed){
             mIntake = Intake.getInstance();
+            ModeSwitchSubsystems.add(mIntake);
         } else mIntake = null;
 
         if (SubsystemFlags.ShooterWristFlag.isUsed){

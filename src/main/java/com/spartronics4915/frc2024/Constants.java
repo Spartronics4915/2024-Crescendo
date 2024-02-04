@@ -89,7 +89,7 @@ public final class Constants {
         ) {}
     }
 
-    public static final class IntakeAssembly {
+    public static final class IntakeAssembly { // [ ] Intake Assembly constants
         public enum IntakeAssemblyState{ //TODO find constants
             GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 0.0),
             STOW (Rotation2d.fromDegrees(170.0), 0.0),
@@ -107,7 +107,7 @@ public final class Constants {
             
         }
         
-        public static final class IntakeConstants {
+        public static final class IntakeConstants {// [ ] Intake constants
                     public static final MotorConstants kMotorConstants = new MotorConstants(0, MotorType.kBrushless, false, IdleMode.kBrake, 40);
         
                     public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
@@ -121,7 +121,7 @@ public final class Constants {
                     public static final int kIntakeBeamBreakID = 0; //placeholder
                 }
         
-        public static final class IntakeWristConstants {
+        public static final class IntakeWristConstants { // [ ] Intake Wrist constants
 
             //TODO Make Units Clear
 
@@ -135,7 +135,7 @@ public final class Constants {
 
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the saftey height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the saftey height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
@@ -144,7 +144,7 @@ public final class Constants {
             }
         }
 
-        public static final class ElevatorConstants {
+        public static final class ElevatorConstants { // [ ] Elevator Constants
             public static final MotorConstants kMotorConstants = new MotorConstants(10
             , MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
@@ -161,7 +161,7 @@ public final class Constants {
         }
     }
 
-    public static final class ShooterWristConstants {
+    public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState{ //Mostly for debug
             SubwooferShot(Rotation2d.fromDegrees(90));
 
@@ -177,14 +177,14 @@ public final class Constants {
 
         
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the saftey height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5); //FIXME used for sim
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
 
     }
 
-    public static final class ShooterConstants {
+    public static final class ShooterConstants { // [x] Shooter Constants
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(3, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final MotorConstants kConveyorMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
