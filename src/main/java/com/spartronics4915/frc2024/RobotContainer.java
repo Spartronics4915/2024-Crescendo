@@ -26,7 +26,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverTriggerDeadband;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
-import static com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface.TrapezoidSubsystems;
+import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
 
 import java.util.ArrayList;
 
@@ -43,9 +43,9 @@ public class RobotContainer {
     private static final TrapezoidSimulator mSimulator;
 
     static {
-        TrapezoidSubsystems.add(mIntakeWrist);
-        TrapezoidSubsystems.add(mShooter);
-        TrapezoidSubsystems.add(mElevator);
+        ModeSwitchSubsystems.add(mIntakeWrist);
+        ModeSwitchSubsystems.add(mShooter);
+        ModeSwitchSubsystems.add(mElevator);
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         list.add(mIntakeWrist);
@@ -53,7 +53,7 @@ public class RobotContainer {
         list.add(mElevator);
         mSimulator = new TrapezoidSimulator(list);
 
-        TrapezoidSubsystems.add(mElevator);
+        ModeSwitchSubsystems.add(mElevator);
     }
     
     public RobotContainer() {

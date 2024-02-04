@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
-public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
-    // #region all the variables and stuff
+public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+    //#region all the variables and stuff
     private static Elevator mInstance;
 
     private CANSparkMax mMotor;
@@ -225,9 +225,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     // #region i'm just ignoring these things
 
-    // Here because something requires it
-    @Override
-    public void setPositionToReal() {}
+        // Here because something requires it
+        @Override
+        public void modeSwitchAction() {}
 
     /**
      * @return A static instance of the elevator subsystem
