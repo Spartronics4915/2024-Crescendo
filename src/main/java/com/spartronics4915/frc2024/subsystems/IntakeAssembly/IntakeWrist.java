@@ -29,13 +29,17 @@ import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.util.Disableable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
+import java.util.Optional;
+
+import static com.spartronics4915.frc2024.RobotContainer.SubsystemFlags.*;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
-public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
+public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface, Disableable{
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
     //#region variables
@@ -69,7 +73,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         //#endregion
     //#endregion
 
-    public IntakeWrist() {
+    private IntakeWrist() {
         super();
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
         mWristPIDController = initPID(IntakeWristConstants.kPIDConstants);
@@ -87,8 +91,14 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     public static IntakeWrist getInstance() {
         if (mInstance == null) {
             mInstance = new IntakeWrist();
+            if (IntakeWristFlag.isUsed) mInstance.disable();
         }
         return mInstance;
+    }
+
+    @Override
+    public void disable() {
+        mWristMotor.disable();
     }
 
     //#region Init functions
@@ -186,8 +196,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         );
     }
         
-    public boolean atTargetState(double rotationThreshold){
-        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold);
+    public Optional<Boolean> atTargetState(double rotationThreshold){
+        return (IntakeWristFlag.isUsed) ? 
+            Optional.of(Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold) : 
+            Optional.empty();
     }
 
     //#endregion

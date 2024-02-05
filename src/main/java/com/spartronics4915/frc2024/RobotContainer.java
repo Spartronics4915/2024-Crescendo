@@ -53,14 +53,14 @@ import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSub
 import java.util.ArrayList;
 
 public class RobotContainer {
-    private enum SubsystemFlags{
+    public enum SubsystemFlags{
         IntakeWristFlag (true),
-        IntakeFlag (false),
-        ShooterFlag (false),
+        IntakeFlag (true),
+        ShooterFlag (true),
         ShooterWristFlag (true),
         ElevatorFlag (true);
 
-        private final boolean isUsed;
+        public final boolean isUsed;
         private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
     }
 

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.*;
+import static com.spartronics4915.frc2024.util.Disableable.handleBoolOpt;
 
 public class AutoComponents {
     private SwerveDrive mDriveBase;
@@ -44,7 +45,7 @@ public class AutoComponents {
             Commands.waitUntil(mIntakeAssmebly::atTarget),
 
             mIntake.setStateCommand(IntakeState.LOAD),
-            Commands.waitUntil(() -> {return !mIntake.getBeamBreakStatus();}),
+            Commands.waitUntil(() -> !handleBoolOpt(mIntake.getBeamBreakStatus(), true)),
 
             mIntake.setStateCommand(IntakeState.OFF)
         );
@@ -53,7 +54,7 @@ public class AutoComponents {
     public Command shootFromLoaded(){
         return Commands.sequence(
             mShooter.setShooterStateCommand(ShooterState.ON),
-            Commands.waitUntil(mShooter::hasSpunUp),
+            Commands.waitUntil(() -> handleBoolOpt(mShooter.hasSpunUp(), true)),
             mShooter.setConveyorStateCommand(ConveyorState.IN)
         );
     }
@@ -61,7 +62,7 @@ public class AutoComponents {
     public Command shooterAim(Supplier<Rotation2d> aimSupplier){
         return Commands.sequence(
             Commands.deadline(
-                Commands.waitUntil(() -> mShooter.hasSpunUp() && mShooterWrist.atTarget()),
+                Commands.waitUntil(() -> handleBoolOpt(mShooter.hasSpunUp(), true) && handleBoolOpt(mShooterWrist.atTarget(), true)),
                 mShooter.setShooterStateCommand(ShooterState.ON),
                 mShooterWrist.angleToSupplierCommand(aimSupplier)
             )
@@ -73,7 +74,7 @@ public class AutoComponents {
             mIntakeAssmebly.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
             Commands.waitUntil(mIntakeAssmebly::atTarget),
 
-            Commands.waitUntil(mIntake::getBeamBreakStatus),
+            Commands.waitUntil(() -> handleBoolOpt(mIntake.getBeamBreakStatus(), true)),
             mIntakeAssmebly.ComplexSetState(IntakeAssemblyState.LOAD)
         );
     }

@@ -16,6 +16,7 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
+import com.spartronics4915.frc2024.util.Disableable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
@@ -34,9 +35,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.*; 
 import java.util.function.*;
+import static com.spartronics4915.frc2024.RobotContainer.SubsystemFlags.*;
+import java.util.Optional;
 
 
-public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface, Disableable {
     
     //#region variables
 
@@ -64,11 +67,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     public static ShooterWrist getInstance() {
         if (mInstance == null) {
             mInstance = new ShooterWrist();
+            if (ShooterWristFlag.isUsed) mInstance.disable();
         }
         return mInstance;
     }
 
-    public ShooterWrist() {
+    private ShooterWrist() {
         super();
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID(ShooterWristConstants.kPIDconstants);
@@ -80,6 +84,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         currentToSetPoint();
 
         initShuffleBoard();
+    }
+
+    @Override
+    public void disable() {
+        mWristMotor.disable();
     }
 
     //#region init functions
@@ -160,8 +169,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         setRotationSetPoint(getEncoderPosReading()); //TODO clamp for saftey? for now will have force boolean
     }
 
-    public boolean atTarget(){
-        return Math.abs(getEncoderPosReading().getRotations() - mTargetRotation2d.getRotations()) < kAimedAtTargetThreshold;
+    public Optional<Boolean> atTarget(){
+        return (ShooterWristFlag.isUsed) ? Optional.of(Math.abs(getEncoderPosReading().getRotations() - mTargetRotation2d.getRotations()) < kAimedAtTargetThreshold) : Optional.empty();
     }
 
     //#endregion

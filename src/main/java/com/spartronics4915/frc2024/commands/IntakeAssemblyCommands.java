@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static com.spartronics4915.frc2024.util.Disableable.handleBoolOpt;
+
 public class IntakeAssemblyCommands {
     private IntakeWrist mWrist;
     private Intake mIntake;
@@ -29,7 +31,7 @@ public class IntakeAssemblyCommands {
     }
 
     public boolean atTarget(){
-        return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.015);
+        return handleBoolOpt(mWrist.atTargetState(0.015), true) && handleBoolOpt(mElevator.atTargetState(0.015), true);
     }
     
     public Command ComplexSetState(IntakeAssemblyState newState){

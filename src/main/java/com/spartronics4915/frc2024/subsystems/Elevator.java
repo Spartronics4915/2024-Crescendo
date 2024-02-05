@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.spartronics4915.frc2024.util.Disableable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -22,8 +23,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
+import static com.spartronics4915.frc2024.RobotContainer.SubsystemFlags.*;
+import java.util.Optional;
 
-public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface, Disableable {
     //#region all the variables and stuff
     private static Elevator mInstance;
 
@@ -46,7 +49,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorManualControlEntry;
     // #endregion
 
-    public Elevator() {
+    private Elevator() {
         // Initializes the motor
         mMotor = new CANSparkMax(kMotorConstants.motorID(), kMotorConstants.motorType());
         mMotor.restoreFactoryDefaults();
@@ -78,6 +81,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         initShuffle();
     }
 
+    @Override
+    public void disable() {
+        mMotor.disable();
+    }
+
     private void initShuffle() {
         var mEntries = ElevatorTabManager.getEnumMap(this);
         mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
@@ -86,7 +94,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     // #region encoder & feed foward
-    private double getEncoderVelReading() {
+    private double getEncoderVelReading() { //TODO check if need Optional
         return mEncoder.getVelocity(); // CHECKUP Failure Point?
     }
 
@@ -203,8 +211,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         });
     }
 
-    public boolean atTargetState(double rotationThreshold){
-        return (Math.abs(getEncoderPosReading().getRotations() - mTarget.getRotations()) < rotationThreshold);
+    public Optional<Boolean> atTargetState(double rotationThreshold){
+        return (ElevatorFlag.isUsed) ? Optional.of(Math.abs(getEncoderPosReading().getRotations() - mTarget.getRotations()) < rotationThreshold) : Optional.empty();
     }
     
     /**
@@ -239,6 +247,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public static Elevator getInstance() {
         if (mInstance == null) {
             mInstance = new Elevator();
+            if (ElevatorFlag.isUsed) mInstance.disable();
         }
         return mInstance;
     }

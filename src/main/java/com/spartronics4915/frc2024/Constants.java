@@ -133,7 +133,7 @@ public final class Constants {
         }
         
         public static final class IntakeConstants {// [ ] Intake constants
-                    public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+                    public static final MotorConstants kMotorConstants = new MotorConstants(16, MotorType.kBrushless, false, IdleMode.kBrake, 40);
         
                     public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
                     
@@ -150,7 +150,7 @@ public final class Constants {
 
             //TODO Make Units Clear
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(17, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
@@ -170,8 +170,7 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants { // [ ] Elevator Constants
-            public static final MotorConstants kMotorConstants = new MotorConstants(10
-            , MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(18, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
@@ -196,7 +195,7 @@ public final class Constants {
             }
         }
 
-        public static final MotorConstants kMotorConstants = new MotorConstants(11, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
+        public static final MotorConstants kMotorConstants = new MotorConstants(19, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values
         public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
@@ -212,9 +211,9 @@ public final class Constants {
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants
-        public static final MotorConstants kShooterMotorConstants = new MotorConstants(3, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(20, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(21, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(22, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.1, 0.0, 0.0, 0.0); //TODO find these values
         public static final double kOffSpeed = 0.0; //unsure if this is necessary
         public static final double kShootSpeed = 1.0; //placeholder

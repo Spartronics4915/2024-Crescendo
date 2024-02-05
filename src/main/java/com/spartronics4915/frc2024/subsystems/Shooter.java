@@ -8,6 +8,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
+import com.spartronics4915.frc2024.util.Disableable;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
@@ -16,10 +17,11 @@ import com.spartronics4915.frc2024.util.PIDFConstants;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static com.spartronics4915.frc2024.RobotContainer.SubsystemFlags.*;
+import java.util.Optional;
 
-public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
-
+public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface, Disableable {
     
     public static enum ShooterState {
         ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -47,7 +49,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private final RelativeEncoder mShooterEncoder;
 
 
-    public Shooter() {
+    private Shooter() {
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
@@ -63,6 +65,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
 
+    }
+
+    @Override
+    public void disable() {
+        mConveyorMotor.disable();
+        mShooterMotor.disable();
+        mShooterFollowMotor.disable();
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){
@@ -144,8 +153,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyorMotor.set(0);
     }
 
-    public boolean hasSpunUp(){
-        return mShooterEncoder.getVelocity() >= kTargetRPM;
+    public Optional<Boolean> hasSpunUp(){
+        return  (ShooterFlag.isUsed) ? Optional.of(mShooterEncoder.getVelocity() >= kTargetRPM) : Optional.empty();
     }
 
     @Override

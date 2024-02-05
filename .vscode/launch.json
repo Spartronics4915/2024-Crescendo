@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Disableable",
+      "request": "launch",
+      "mainClass": "com.spartronics4915.frc2024.util.Disableable",
+      "projectName": "2024-Crescendo"
+    },
+    {
+      "type": "java",
       "name": "Main",
       "request": "launch",
       "mainClass": "com.spartronics4915.frc2024.Main",

@@ -11,12 +11,15 @@ import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
+import com.spartronics4915.frc2024.util.Disableable;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
+import static com.spartronics4915.frc2024.RobotContainer.SubsystemFlags.*;
+import java.util.Optional;
 
-public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface {
+public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface, Disableable {
     public static enum IntakeState {
         IN, LOAD, OUT, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
@@ -49,6 +52,11 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
 
+    @Override
+    public void disable() {
+        mMotor.disable();
+    }
+
     private CANSparkMax constructMotor(MotorConstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
@@ -69,8 +77,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         return pid;
     }
 
-    public boolean getBeamBreakStatus(){
-        return mBeamBreak.get();
+    public Optional<Boolean> getBeamBreakStatus(){
+        return (IntakeFlag.isUsed) ? Optional.of(mBeamBreak.get()) : Optional.empty();
     }
 
     /**
@@ -81,6 +89,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     public static Intake getInstance() {
         if (mInstance == null) {
             mInstance = new Intake();
+            if (IntakeFlag.isUsed) mInstance.disable();
         }
         return mInstance;
     }
