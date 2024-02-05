@@ -25,7 +25,12 @@ public class AutoAimFunctions {
      * based on this equation: 
      * https://www.wolframalpha.com/input?i2d=true&i=solve+Power%5B%7C%7C%7BSubscript%5Bp%2Cx%5D%2CSubscript%5Bp%2Cy%5D%2CSubscript%5Bp%2Cz%5D%7D%2B%7BSubscript%5Bu%2Cx%5D%2CSubscript%5Bu%2Cy%5D%2CSubscript%5Bu%2Cz%5D%7D*Subscript%5Bv%2Cs%5D*Subscript%5Bt%2Cc%5D%7C%7C%2C2%5D%3DPower%5B%5C%2840%29Subscript%5Bv%2Cn%5D*Subscript%5Bt%2Cc%5D%5C%2841%29%2C2%5D++for+Subscript%5Bt%2Cc%5D
      */
-    public static Optional<Translation3d> movingAutoAim2(Pose2d robotPose, ChassisSpeeds velocity, Translation2d targetPos, double targetZ){
+    public static Optional<Translation3d> movingAutoAim2(
+        Pose2d robotPose, 
+        ChassisSpeeds velocity, 
+        Translation2d targetPos, 
+        double targetZ
+    ){
         var p = targetPos.minus(robotPose.getTranslation()); //position of target relative to robot
         var pz = targetZ - kShooterHeight;
 
