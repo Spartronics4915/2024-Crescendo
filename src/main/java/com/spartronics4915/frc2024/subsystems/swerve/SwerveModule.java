@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.RobotBase;
 
 import com.spartronics4915.frc2024.util.*;
 
@@ -34,6 +35,8 @@ public class SwerveModule {
     private final double mX;
     private final double mY;
 
+    private SwerveModuleState mLastDesiredStateSet;
+
     public SwerveModule(
             int driveMotorID,
             int angleMotorID,
@@ -41,6 +44,13 @@ public class SwerveModule {
             double encoderOffsetDegrees,
             double x,
             double y) {
+        mCANCoder = new CANcoder(encoderID);
+        mCANCoder
+                .getConfigurator()
+                .apply(new CANcoderConfiguration()
+                        .withMagnetSensor(new MagnetSensorConfigs()
+                                .withMagnetOffset(-Rotation2d.fromDegrees(encoderOffsetDegrees).getRotations())));
+
         mDriveMotor = new CANSparkMax(driveMotorID, MotorType.kBrushless);
         mAngleMotor = new CANSparkMax(angleMotorID, MotorType.kBrushless);
         configureDriveMotor(mDriveMotor);
@@ -50,13 +60,6 @@ public class SwerveModule {
         mAnglePID = mAngleMotor.getPIDController();
 
         mDriveEncoder = (SparkRelativeEncoder) mDriveMotor.getEncoder();
-
-        mCANCoder = new CANcoder(encoderID);
-        mCANCoder
-                .getConfigurator()
-                .apply(new CANcoderConfiguration()
-                        .withMagnetSensor(new MagnetSensorConfigs()
-                                .withMagnetOffset(encoderOffsetDegrees)));
 
         mX = x;
         mY = y;
@@ -68,13 +71,39 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState state) {
         mDrivePID.setReference(state.speedMetersPerSecond,
-                ControlType.kSmartVelocity);
-        mAnglePID.setReference(state.angle.getDegrees(),
+                ControlType.kVelocity);
+        mAnglePID.setReference(state.angle.getRadians(),
                 ControlType.kPosition);
+
+        mLastDesiredStateSet = state;
+    }
+
+    public SwerveModuleState getDesiredState() {
+        return mLastDesiredStateSet;
     }
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(mDriveEncoder.getVelocity(), getAngle());
+    }
+
+    /**
+     * Only works in simulation.
+     */
+    @Deprecated(forRemoval = true)
+    public void setPosition(double pos) {
+        if (RobotBase.isSimulation()) {
+            mDriveEncoder.setPosition(pos);
+        }
+    }
+
+    /**
+     * Only works in simulation.
+     */
+    public void setPosition(SwerveModulePosition pos) {
+        if (RobotBase.isSimulation()) {
+            mDriveEncoder.setPosition(pos.distanceMeters);
+            mCANCoder.setPosition(pos.angle.getRotations());
+        }
     }
 
     public SwerveModulePosition getPosition() {
@@ -86,15 +115,19 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(mCANCoder.getPosition().getValue());
+        return Rotation2d.fromRotations(mCANCoder.getPosition().getValue());
     }
 
-    private void configureDriveMotor(CANSparkBase motor) {
+    public Rotation2d getAbsoluteAngle() {
+        return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
+    }
+
+    private void configureDriveMotor(final CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kDriveMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
-        motor.setIdleMode(IdleMode.kBrake);
+        motor.setInverted(true);
+        motor.setIdleMode(IdleMode.kBrake); // TODO: change this to brake after testing
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kDrivePositionConversionFactor);
@@ -113,26 +146,26 @@ public class SwerveModule {
         motor.burnFlash();
     }
 
-    private void configureAngleMotor(CANSparkBase motor) {
+    private void configureAngleMotor(final CANSparkBase motor) {
         motor.restoreFactoryDefaults();
         motor.setSmartCurrentLimit(kAngleMotorCurrentLimit);
         motor.enableVoltageCompensation(kMaxVoltage);
-        motor.setInverted(false);
+        motor.setInverted(true);
         motor.setIdleMode(IdleMode.kBrake);
 
         final var encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(kAnglePositionConversionFactor);
-        encoder.setPosition(0);
+        encoder.setPosition(getAngle().getRadians());
 
         final var pid = motor.getPIDController();
-        final var pc = kDrivePIDFConstants;
+        final var pc = kAnglePIDFConstants;
         pid.setP(pc.p());
         pid.setI(pc.i());
         pid.setD(pc.d());
         pid.setFF(pc.ff());
         pid.setPositionPIDWrappingEnabled(true);
-        pid.setPositionPIDWrappingMaxInput(180);
-        pid.setPositionPIDWrappingMinInput(-180);
+        pid.setPositionPIDWrappingMaxInput(Math.PI);
+        pid.setPositionPIDWrappingMinInput(-Math.PI);
 
         motor.burnFlash();
     }

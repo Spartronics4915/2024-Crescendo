@@ -12,11 +12,10 @@ public class VisionSubsystem extends SubsystemBase {
 
     private final LimelightDevice alice;
     private final LimelightDevice bob;
-    
+
     private VisionSubsystem() {
-        alice = new LimelightDevice("limelight-alice");
-        bob = new LimelightDevice("limelight-bob");
-        System.out.println("Vision subsystem created");
+        alice = new LimelightDevice("alice");
+        bob = new LimelightDevice("bob");
     }
 
     public static VisionSubsystem getInstance() {
@@ -34,7 +33,8 @@ public class VisionSubsystem extends SubsystemBase {
     private LimelightDevice getPreferredLimelight() {
         int aliceTagCount = alice.numberOfTagsSeen();
         int bobTagCount = bob.numberOfTagsSeen();
-        if (aliceTagCount < bobTagCount) return bob;
+        if (aliceTagCount < bobTagCount)
+            return bob;
         return alice;
     }
 
@@ -53,9 +53,11 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<Pose3d> getPose() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags()) return Optional.of(preferred.getBotPose3d());
+        if (preferred.canSeeTags())
+            return Optional.of(preferred.getBotPose3d());
         return Optional.empty();
     }
+
     /**
      * @return The greatest number of tags seen from either limelight
      */
@@ -64,10 +66,20 @@ public class VisionSubsystem extends SubsystemBase {
         int bobTagCount = bob.numberOfTagsSeen();
         return Math.max(aliceTagCount, bobTagCount);
     }
+
     public LimelightDevice getAlice() {
         return alice;
     }
+
     public LimelightDevice getBob() {
         return bob;
+    }
+
+    @Override
+    public void periodic() {
+        getAlice().updateFieldPose();
+        getBob().updateFieldPose();
+        getAlice().updateAccelerometer();
+        getBob().updateAccelerometer();
     }
 }

@@ -1,4 +1,18 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "CANCoder (v6)[11]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [1]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -6,9 +20,23 @@
       "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
+      "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
+      "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
+      "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
     },
     "windows": {
+      "/SmartDashboard/field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/simCanvas": {
         "window": {
           "visible": true
@@ -18,6 +46,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "Shuffleboard": {
         "IntakeWrist": {
           "Wrist": {
@@ -46,6 +77,15 @@
     }
   },
   "NetworkTables Info": {
+    "Connections": {
+      "open": true
+    },
+    "DartClient_23203894@1": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
   },
   "Plot": {
