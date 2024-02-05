@@ -156,10 +156,10 @@ public final class Constants {
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final double kMeterSafteyLimit = 1.0; //HACK untested
+            public static final double kMeterSafetyLimit = 1.0; //HACK untested
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the saftey height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the saftey height
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
@@ -201,7 +201,7 @@ public final class Constants {
         public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
         
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the saftey height
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5); //FIXME used for sim
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values

@@ -157,7 +157,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void currentToSetPoint(){
         mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
-        setRotationSetPoint(getEncoderPosReading()); //TODO clamp for saftey? for now will have force boolean
+        setRotationSetPoint(getEncoderPosReading()); //TODO clamp for safety? for now will have force boolean
     }
 
     //#endregion
