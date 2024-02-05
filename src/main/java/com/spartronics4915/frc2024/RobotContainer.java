@@ -131,35 +131,35 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        if (SubsystemFlags.ShooterWristFlag.isUsed) {
+        // if (SubsystemFlags.ShooterWristFlag.isUsed) {
             mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
-        if (SubsystemFlags.IntakeWristFlag.isUsed) {
+        // }
+        // if (SubsystemFlags.IntakeWristFlag.isUsed) {
             mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
+        // }
 
-        if (SubsystemFlags.ElevatorFlag.isUsed) {
+        // if (SubsystemFlags.ElevatorFlag.isUsed) {
             mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
+        // }
 
-        if (SubsystemFlags.IntakeWristFlag.isUsed && SubsystemFlags.ElevatorFlag.isUsed) {
+        // if (SubsystemFlags.IntakeWristFlag.isUsed && SubsystemFlags.ElevatorFlag.isUsed) {
             var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
             mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
             mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
             mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
             mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
-        }
+        // }
         
-        if (SubsystemFlags.ShooterFlag.isUsed) {
+        // if (SubsystemFlags.ShooterFlag.isUsed) {
             mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
             mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
             mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
             mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
-        }
+        // }
 
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
