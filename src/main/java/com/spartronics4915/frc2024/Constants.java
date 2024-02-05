@@ -17,7 +17,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -158,6 +158,26 @@ public final class Constants {
 
         public static final class ElevatorConstants {
             
+        }
+    }
+
+    public static final class Vision {
+        public enum VisionPipelines {
+            FIDUCIALS_3D (0, false),
+            DETECTOR_NOTE (1, true),
+            DETECTOR_ROBOT (2, true),
+            ALICE_TEMP_NOTE_DETECTOR (4, true); //HACK keep until alice is flashed
+            public final int pipeline;
+            public final boolean isDetector;
+            private VisionPipelines(int pipeline, boolean isDetector) {
+                this.pipeline = pipeline;
+                this.isDetector = isDetector;
+            }
+        }
+
+        public static final class PoseOffsetConstants {
+            public static final Pose3d kAlicePoseOffset = new Pose3d(); // placeholder
+            public static final Pose3d kBobPoseOffset = new Pose3d(); // placeholder
         }
     }
 }

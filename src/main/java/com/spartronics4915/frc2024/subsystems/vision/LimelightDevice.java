@@ -1,17 +1,16 @@
 package com.spartronics4915.frc2024.subsystems.vision;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Optional;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
+import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -23,17 +22,12 @@ public class LimelightDevice extends SubsystemBase {
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
     private final String mName;
-    private final Field2d mField;
     private final boolean mValid;
-
-    private BooleanPublisher controllablePub;
-    private StringPublisher typePub;
-    private DoublePublisher xPub;
-    private DoublePublisher yPub;
-    private DoublePublisher zPub;
+    private final Field2d mField;
+    private VisionPipelines mPipeline;
 
     /**
-     * Creates a new LimelightDevice
+     * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
      * @param name The name of the limelight
      */
     public LimelightDevice(String name) {
@@ -41,8 +35,8 @@ public class LimelightDevice extends SubsystemBase {
         mName = formattedName;
         mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
         mField = new Field2d();
+        mPipeline = VisionPipelines.FIDUCIALS_3D;
         createShuffleboard();
-        fakeAccelerometer();
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
@@ -59,6 +53,10 @@ public class LimelightDevice extends SubsystemBase {
         return LimelightHelpers.getTX(mName);
     }
     
+    public double getTy() {
+        return LimelightHelpers.getTY(mName);
+    }
+
     /**
      * @return If the limelight can see any tags
      */
@@ -69,51 +67,48 @@ public class LimelightDevice extends SubsystemBase {
 
     /**
      * @return The {@link Pose3d} of the robot, as estimated from Limelight MetaTag
+     * @apiNote Returns <code>new Pose3d()</code> if invalid or on a detector pieline
      */
     public Pose3d getBotPose3d() {
-        if (!mValid) return new Pose3d();
+        if (!mValid || mPipeline.isDetector) return new Pose3d();
         return LimelightHelpers.getBotPose3d(mName);
     }
 
     /**
      * @return The {@link Pose2d} of the robot, as estimated from Limelight MetaTag
+     * @apiNote Returns <code>new Pose2d()</code> if invalid or on a detector pieline
      */
     public Pose2d getBotPose2d() {
-        if (!mValid) return new Pose2d();
+        if (!mValid || mPipeline.isDetector) return new Pose2d();
         return LimelightHelpers.getBotPose2d(mName);
     }
 
     /**
      * @return The number of tags seen by the limelight
+     * @apiNote Returns <code>0</code> if invalid or on a detector pieline
      */
     public int numberOfTagsSeen() {
-        if (!mValid) return 0;
+        if (!mValid || mPipeline.isDetector) return 0;
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         int tagCount = fiducials.length;
         return tagCount;
     }
 
-    /**
-     * @return The current pipeline index of the limelight
-     */
-    public int getCurrentPipelineIndex() {
-        if (!mValid) return 0;
-        return (int) LimelightHelpers.getCurrentPipelineIndex(mName);
+    public VisionPipelines getVisionPipeline() {
+        return mPipeline;
     }
-    /**
-     * Sets the current pipeline index to the value provided
-     * @param index The pipeline index between 0-9
-     */
-    public void setCurrentPipelineIndex(int index) {
-        LimelightHelpers.setPipelineIndex(mName, index);
+
+    public void setVisionPipeline(VisionPipelines pipeline) {
+        LimelightHelpers.setPipelineIndex(mName, pipeline.pipeline);
     }
 
     /**
-     * @return The id of the primary in-view tag, or 0 if there are none
+     * @return The id of the primary in-view tag
+     * @apiNote Returns <code>0</code> if invalid or on a detector pipeline
      */
     public int getPrimaryTag() {
-        if (!mValid) return 0;
+        if (!mValid || mPipeline.isDetector) return 0;
         return (int) LimelightHelpers.getFiducialID(mName);
 
     }
@@ -128,10 +123,11 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     /**
-     * @return The average distance to the visible tags, or 0 if none are seen
+     * @return The average distance to the visible tags
+     * @apiNote Returns <code>0.0</code> if invalid or on a detector pipeline
      */
     public double getAverageDistanceToVisibleTags() {
-        if (!mValid) return 0.0;
+        if (!mValid || mPipeline.isDetector) return 0.0;
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         double averageDistance = 0.0;
@@ -140,6 +136,44 @@ public class LimelightDevice extends SubsystemBase {
         }
         averageDistance /= fiducials.length;
         return averageDistance;
+    }
+
+    /**
+     * @return The number of objects detected by the limelight
+     * @apiNote Returns <code>0</code> if invalid or not on a detector pieline
+     */
+    public int numberOfObjectsDetected() {
+        if (!mValid || !mPipeline.isDetector) return 0;
+        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
+        LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
+        int detectedCount = detected.length;
+        return detectedCount;
+    }
+
+    /**
+     * @return The lowest detected target
+     */
+    public LimelightHelpers.LimelightTarget_Detector getSelectedDetectorTarget() {
+        if (!mValid || !mPipeline.isDetector) return null;
+        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
+        LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
+        LimelightHelpers.LimelightTarget_Detector selectedDetector = detected[0];
+        for (LimelightHelpers.LimelightTarget_Detector d : detected) {
+            if (d.ty < selectedDetector.ty) selectedDetector = d;
+        }
+        return selectedDetector;
+    }
+
+    public double getDetectedConfidence() {
+        if (!mValid || !mPipeline.isDetector) return 0.0;
+        LimelightHelpers.LimelightTarget_Detector detected = getSelectedDetectorTarget();
+        return detected.confidence;
+    }
+
+    public String getDetectedClass() {
+        if (!mValid || !mPipeline.isDetector) return "";
+        LimelightHelpers.LimelightTarget_Detector detected = getSelectedDetectorTarget();
+        return detected.className;
     }
 
     /**
@@ -153,8 +187,14 @@ public class LimelightDevice extends SubsystemBase {
         mField.setRobotPose(getBotPose2d());
     }
 
+    public String getFormattedStringTxTy() {
+        BigDecimal bigTx = new BigDecimal(getTx()).setScale(2);
+        BigDecimal bigTy = new BigDecimal(getTy()).setScale(2);
+        return (bigTx + "°;" + bigTy + "°");
+    }
+
     public double[] getXYZOfPrimaryTag() {
-        if (!mValid) return new double[3];
+        if (!mValid || mPipeline.isDetector) return new double[3];
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         LimelightHelpers.LimelightTarget_Fiducial primaryTag = null;
@@ -173,42 +213,52 @@ public class LimelightDevice extends SubsystemBase {
         return xyz;
     }
 
-    public void fakeAccelerometer() {
-    NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    NetworkTable table = inst.getTable("Shuffleboard").getSubTable("VisionTab").getSubTable(mName + " position");
-
-    controllablePub = table.getBooleanTopic(".controllable").publish();
-    typePub = table.getStringTopic(".type").publish();
-    xPub = table.getDoubleTopic("X").publish();
-    yPub = table.getDoubleTopic("Y").publish();
-    zPub = table.getDoubleTopic("Z").publish();
-
-    controllablePub.set(true);
-    typePub.set("3AxisAccelerometer");
-    xPub.set(0.0);
-    yPub.set(1.0);
-    zPub.set(2.0);
-    }
-
-    public void updateAccelerometer(double x, double y, double z) {
-        xPub.set(x);
-        yPub.set(y);
-        zPub.set(z);
-    }
-
-    public void updateAccelerometer() {
-        double[] xyz = getXYZOfPrimaryTag();
-        updateAccelerometer(xyz[0], xyz[1], xyz[2]);
+    public String shuffleboardFormattedName(String title) {
+        String name = mName.split("-")[1];
+        return name + " " + title;
     }
 
     public void createShuffleboard() {
         ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
-        final int offset = (mName == "limelight-bob" ? 5 : 0);
-        // tab.addInteger(mName + " primary tag", () -> {return getPrimaryTag();}).withPosition(0 + offset, 3);
-        tab.addBoolean(mName + " is valid", () -> {return mValid;}).withPosition(0 + offset, 3);
-        tab.addInteger(mName + " tag count", () -> {return numberOfTagsSeen();}).withPosition(1 + offset, 3);
-        tab.addBoolean(mName + " sees tag", () -> {return getTv();}).withPosition(2 + offset, 3);
-        tab.addDouble(mName + " avg dist", () -> {return getAverageDistanceToVisibleTags();}).withPosition(3 + offset, 3);
-        tab.add(mName + " field", mField).withSize(5, 3).withPosition(0 + offset, 0);
+        final int offset = (mName.equals("limelight-bob") ? 5 : 0);
+        tab.add(shuffleboardFormattedName("field"),
+            mField)
+            .withSize(3, 2).withPosition(0 + offset, 0);
+        tab.addBoolean(shuffleboardFormattedName("is valid"),
+            () -> {return mValid;})
+            .withPosition(3 + offset, 0);
+        tab.addBoolean(shuffleboardFormattedName("tv"),
+            () -> {return getTv();})
+            .withPosition(4 + offset, 0);
+        tab.addString(shuffleboardFormattedName("pipeline"),
+            () -> {return mPipeline.toString();})
+            .withPosition(3 + offset, 1);
+        tab.addString(shuffleboardFormattedName("tx ty"),
+            () -> {return getFormattedStringTxTy();})
+            .withPosition(4 + offset, 1);
+        tab.addBoolean(shuffleboardFormattedName("FIDUCIALS"),
+            () -> {return !mPipeline.isDetector;})
+            .withPosition(0 + offset, 2);
+        tab.addInteger(shuffleboardFormattedName("tag count"),
+            () -> {return numberOfTagsSeen();})
+            .withPosition(1 + offset, 2);
+        tab.addInteger(shuffleboardFormattedName("primary tag"),
+            () -> {return getPrimaryTag();}) 
+            .withPosition(2 + offset, 2);
+        tab.addDouble(shuffleboardFormattedName("avg dist"),
+            () -> {return getAverageDistanceToVisibleTags();})
+            .withPosition(3 + offset, 2);
+        tab.addBoolean(shuffleboardFormattedName("DETECTOR"),
+            () -> {return mPipeline.isDetector;})
+            .withPosition(0 + offset, 3);
+        tab.addInteger(shuffleboardFormattedName("detected"),
+            () -> {return numberOfObjectsDetected();})
+            .withPosition(1 + offset, 3);
+        tab.addDouble(shuffleboardFormattedName("confidence"),
+            () -> {return getDetectedConfidence();})
+            .withPosition(2 + offset, 3);
+        tab.addString(shuffleboardFormattedName("class"),
+            () -> {return getDetectedClass();})
+            .withPosition(3 + offset, 3);
     }
 }

@@ -79,7 +79,5 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         getAlice().updateFieldPose();
         getBob().updateFieldPose();
-        getAlice().updateAccelerometer();
-        getBob().updateAccelerometer();
     }
 }
