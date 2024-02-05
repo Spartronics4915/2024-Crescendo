@@ -83,32 +83,32 @@ public class RobotContainer {
     static {
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
-        if (SubsystemFlags.IntakeWristFlag.isUsed){
+        // if (SubsystemFlags.IntakeWristFlag.isUsed){
             mIntakeWrist = IntakeWrist.getInstance();;
             ModeSwitchSubsystems.add(mIntakeWrist);
             list.add(mIntakeWrist);
-        } else mIntakeWrist = null;
+        // } else mIntakeWrist = null;
 
-        if (SubsystemFlags.IntakeFlag.isUsed){
+        // if (SubsystemFlags.IntakeFlag.isUsed){
             mIntake = Intake.getInstance();
             ModeSwitchSubsystems.add(mIntake);
-        } else mIntake = null;
+        // } else mIntake = null;
 
-        if (SubsystemFlags.ShooterWristFlag.isUsed){
+        // if (SubsystemFlags.ShooterWristFlag.isUsed){
             mShooterWrist = ShooterWrist.getInstance();
             ModeSwitchSubsystems.add(mShooterWrist);
             list.add(mShooterWrist);
-        } else mShooterWrist = null;
+        // } else mShooterWrist = null;
 
-        if (SubsystemFlags.ShooterFlag.isUsed){
+        // if (SubsystemFlags.ShooterFlag.isUsed){
             mShooter = Shooter.getInstance();
-        } else mShooter = null;
+        // } else mShooter = null;
 
-        if (SubsystemFlags.ElevatorFlag.isUsed){
+        // if (SubsystemFlags.ElevatorFlag.isUsed){
             mElevator = Elevator.getInstance();
             ModeSwitchSubsystems.add(mElevator);
             list.add(mElevator);
-        } else mElevator = null;
+        // } else mElevator = null;
 
         mSimulator = new TrapezoidSimulator(list);
 
