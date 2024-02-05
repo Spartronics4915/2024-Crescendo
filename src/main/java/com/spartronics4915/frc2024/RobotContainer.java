@@ -31,7 +31,6 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -81,6 +80,7 @@ public class RobotContainer {
     private final SwerveSim mSwerveSim;
 
     static {
+
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
         // if (SubsystemFlags.IntakeWristFlag.isUsed){
@@ -119,6 +119,7 @@ public class RobotContainer {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
         configureBindings();
+
         VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
