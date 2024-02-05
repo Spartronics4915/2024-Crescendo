@@ -170,7 +170,7 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            public static final MotorConstants kMotorConstants = new MotorConstants(10
+            public static final MotorConstants kMotorConstants = new MotorConstants(20 // TODO: add follower motor
             , MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
