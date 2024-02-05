@@ -205,7 +205,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getHeight() > kMeterSafteyLimit);
+        return (mElevatorSubsystem.getHeight() > kMeterSafetyLimit);
     }
     
     private double getFeedForwardValue(){
