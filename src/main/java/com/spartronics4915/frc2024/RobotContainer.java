@@ -27,6 +27,7 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimula
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
+import com.spartronics4915.frc2024.util.EncoderStartup;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,6 +39,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -120,10 +122,15 @@ public class RobotContainer {
         mSimulator = new TrapezoidSimulator(list);
 
         ModeSwitchSubsystems.add(mElevator);
+
+        
     }
 
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
+        
+        overviewTab.add("encoder reset", EncoderStartup.startupResetCommand());
+
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
         configureBindings();

@@ -12,13 +12,26 @@ public interface EncoderStartup {
     public static ArrayList<EncoderStartup> EncoderResetList = new ArrayList<>();
 
     public static Command startupResetCommand(){
-        return Commands.runOnce( () -> {
-            for (var subsys : EncoderResetList) {
-                for (EncoderStartupSettings settings : subsys.getEncoderSettings()) {
-                    settings.encoderStartup();
+        return new Command() {
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
+            public void execute() {
+                for (var subsys : EncoderResetList) {
+                    for (EncoderStartupSettings settings : subsys.getEncoderSettings()) {
+                        settings.encoderStartup();
+                    }
                 }
             }
-        });
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        };
     }
 
     public record EncoderStartupSettings(
