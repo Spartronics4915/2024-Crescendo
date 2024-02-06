@@ -97,15 +97,6 @@ public class AutoAimFunctions {
         return Optional.of(out);
     }
 
-    public static void main(String[] args) {
-        var x = movingAutoAim(
-            new Pose2d(1, 0, Rotation2d.fromDegrees(0)), 
-            new ChassisSpeeds(3, 0, 0), 
-            new Translation3d(1, 3, 2)
-        );
-        System.out.println(x);
-    }
-
     public static Rotation3d getShooterAngle(Translation3d targetPos){ //this is the position of the speaker centered around the robot
         double kRelHeight = targetPos.getZ();
         double dist = targetPos.getNorm();
