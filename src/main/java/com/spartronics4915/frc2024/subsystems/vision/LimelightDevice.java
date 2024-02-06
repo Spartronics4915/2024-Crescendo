@@ -47,7 +47,6 @@ public class LimelightDevice extends SubsystemBase {
         mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
-        // mPipeline = ((name.equals("alice")) ? VisionPipelines.ALICE_TEMP_NOTE_DETECTOR : VisionPipelines.FIDUCIALS_3D);
         LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
         mHasCoral = hasCoral;
         createShuffleboard();

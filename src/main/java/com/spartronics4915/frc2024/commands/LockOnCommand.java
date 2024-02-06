@@ -24,7 +24,7 @@ public class LockOnCommand extends Command {
     @Override
     public void initialize() {
         mSwerve.decoupleRotation();
-        // mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE); FLASH FIRST
+        mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
     }
     
     @Override
@@ -35,6 +35,6 @@ public class LockOnCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         mSwerve.recoupleRotation();
-        // mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D); FLASH FIRST
+        mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
     }
 }
