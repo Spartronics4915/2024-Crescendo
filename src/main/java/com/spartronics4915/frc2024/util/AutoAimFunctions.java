@@ -98,7 +98,11 @@ public class AutoAimFunctions {
     }
 
     public static void main(String[] args) {
-        var x = movingAutoAim(new Pose2d(1, 1, Rotation2d.fromDegrees(0)), new ChassisSpeeds(0, 0, 0), new Translation3d(1, 1, 1));
+        var x = movingAutoAim(
+            new Pose2d(1, 0, Rotation2d.fromDegrees(0)), 
+            new ChassisSpeeds(3, 0, 0), 
+            new Translation3d(1, 3, 2)
+        );
         System.out.println(x);
     }
 
