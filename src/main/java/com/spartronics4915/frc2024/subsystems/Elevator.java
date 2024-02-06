@@ -78,27 +78,6 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         initShuffle();
     }
 
-    private void initShuffle() {
-        var mEntries = ElevatorTabManager.getEnumMap(this);
-        mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
-        mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
-        mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
-    }
-
-    // #region encoder & feed foward
-    private double getEncoderVelReading() {
-        return mEncoder.getVelocity(); // CHECKUP Failure Point?
-    }
-
-    private Rotation2d getEncoderPosReading() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()); // CHECKUP Failure Point?
-    }
-
-    private double getFeedFowardValue() {
-        return mElevatorFeedforward.calculate(getEncoderVelReading());
-    }
-    // #endregion
-
     @Override
     public void periodic() {
         if (mIsManual) { // Manual
@@ -115,12 +94,36 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         updateShuffle();
     }
 
+    // #region encoder & feed foward
+    private double getEncoderVelReading() {
+        return mEncoder.getVelocity(); // CHECKUP Failure Point?
+    }
+
+    private Rotation2d getEncoderPosReading() {
+        return Rotation2d.fromRotations(mEncoder.getPosition()); // CHECKUP Failure Point?
+    }
+
+    private double getFeedFowardValue() {
+        return mElevatorFeedforward.calculate(getEncoderVelReading());
+    }
+    // #endregion
+
+    // #region Shuffleboard
+    private void initShuffle() {
+        var mEntries = ElevatorTabManager.getEnumMap(this);
+        mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
+        mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
+        mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
+    }
+
     private void updateShuffle() {
         mElevatorSetPointEntry.setDouble(mTarget.getDegrees() / kMetersToRotation);
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
     }
+    // #endregion
 
+    // #region Bunch of random getters
     @Override
     public State getSetPoint() {
         return new State(mCurrentState.position / kMetersToRotation, 0.0);
@@ -147,6 +150,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public double getDistance() {
         return getHeight();
     }
+
+    // #endregion
 
     // #region Maunel Manuel Manueal Manael Manual Stuff (5th times the charm)
 
@@ -202,7 +207,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             setTarget(newTarget);
         });
     }
-    
+
     /**
      * Command to set the new target position
      * @param intakeAssemblyState Whatever the intake assembly state
