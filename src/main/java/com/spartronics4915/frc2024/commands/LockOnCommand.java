@@ -1,5 +1,6 @@
 package com.spartronics4915.frc2024.commands;
 
+import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
@@ -23,6 +24,7 @@ public class LockOnCommand extends Command {
     @Override
     public void initialize() {
         mSwerve.decoupleRotation();
+        // mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE); FLASH FIRST
     }
     
     @Override
@@ -33,5 +35,6 @@ public class LockOnCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         mSwerve.recoupleRotation();
+        // mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D); FLASH FIRST
     }
 }

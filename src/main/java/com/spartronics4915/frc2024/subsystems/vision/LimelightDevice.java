@@ -42,7 +42,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (!getTv()) {
+        if (!getTv() || mPipeline.isDetector) {
             return Optional.empty();
         }
         double[] botpose = LimelightHelpers.getBotPose_wpiBlue(mName);
@@ -232,6 +232,18 @@ public class LimelightDevice extends SubsystemBase {
 
     // FIDUCIAL > DETECTOR: 0.25s avg, 0.3s expected max
     // looks like it takes 0.15 to 0.4 seconds
+    /* TODO
+     * assign each limelight a static ip
+     * rest api to set limelight names without web display
+     * flash alice
+     * finalize pipelines and backup
+     * add ifCoral to constructor
+     * measure pose offsets for talos and implement
+     * calibrate limelights
+     * tune detector pipeline
+     * use low resolution on neural networks
+     * figure out how to get that nice high resolution camera stream
+     */
 
     private void profilePipelineSwitching(boolean end) {
         if (!end && !timestampSet) {
