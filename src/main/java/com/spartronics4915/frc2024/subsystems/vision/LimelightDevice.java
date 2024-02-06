@@ -1,7 +1,5 @@
 package com.spartronics4915.frc2024.subsystems.vision;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Optional;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
@@ -18,19 +16,32 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightDevice extends SubsystemBase {
+    /* TODO
+     * assign each limelight a static ip
+     * rest api to set limelight names without web display
+     * flash alice
+     * finalize pipelines and backup
+     * add ifCoral to constructor
+     * measure pose offsets for talos and implement
+     * calibrate limelights
+     * tune detector pipeline
+     * use low resolution on neural networks
+     * figure out how to get that nice high resolution camera stream
+     */
 
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
     private final String mName;
     private final boolean mValid;
-    private final Field2d mField;
     private VisionPipelines mPipeline;
+    private final boolean mHasCoral;
+    private final Field2d mField;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
      * @param name The name of the limelight
      */
-    public LimelightDevice(String name) {
+    public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
         mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
@@ -38,6 +49,7 @@ public class LimelightDevice extends SubsystemBase {
         mPipeline = VisionPipelines.FIDUCIALS_3D;
         // mPipeline = ((name.equals("alice")) ? VisionPipelines.ALICE_TEMP_NOTE_DETECTOR : VisionPipelines.FIDUCIALS_3D);
         LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+        mHasCoral = hasCoral;
         createShuffleboard();
     }
 
@@ -51,6 +63,7 @@ public class LimelightDevice extends SubsystemBase {
         return Optional.of(new VisionMeasurement(pose, timestamp));
     }
 
+//#region Limelight Values
     public double getTx() {
         return LimelightHelpers.getTX(mName);
     }
@@ -59,9 +72,6 @@ public class LimelightDevice extends SubsystemBase {
         return LimelightHelpers.getTY(mName);
     }
 
-    /**
-     * @return If the limelight can see any tags
-     */
     public boolean getTv() {
         if (!mValid) return false;
         return LimelightHelpers.getTV(mName);
@@ -69,7 +79,7 @@ public class LimelightDevice extends SubsystemBase {
 
     /**
      * @return The {@link Pose3d} of the robot, as estimated from Limelight MetaTag
-     * @apiNote Returns <code>new Pose3d()</code> if invalid or on a detector pieline
+     * @apiNote Returns <code>new Pose3d()</code> if invalid
      */
     public Pose3d getBotPose3d() {
         if (!mValid) return new Pose3d();
@@ -78,16 +88,18 @@ public class LimelightDevice extends SubsystemBase {
 
     /**
      * @return The {@link Pose2d} of the robot, as estimated from Limelight MetaTag
-     * @apiNote Returns <code>new Pose2d()</code> if invalid or on a detector pieline
+     * @apiNote Returns <code>new Pose2d()</code> if invalid
      */
     public Pose2d getBotPose2d() {
         if (!mValid) return new Pose2d();
         return LimelightHelpers.getBotPose2d(mName);
     }
+//#endregion
 
+//#region Fiducials
     /**
      * @return The number of tags seen by the limelight
-     * @apiNote Returns <code>0</code> if invalid or on a detector pieline
+     * @apiNote Returns <code>0</code> if invalid
      */
     public int numberOfTagsSeen() {
         if (!mValid) return 0;
@@ -97,20 +109,9 @@ public class LimelightDevice extends SubsystemBase {
         return tagCount;
     }
 
-    public VisionPipelines getVisionPipeline() {
-        return mPipeline;
-    }
-
-    public void setVisionPipeline(VisionPipelines pipeline) {
-        mPipeline = pipeline;
-        System.out.println("pipeline: " + mPipeline.pipeline);
-        if (!pipeline.isDetector) profilePipelineSwitching(true);
-        LimelightHelpers.setPipelineIndex(mName, pipeline.pipeline);
-    }
-
     /**
      * @return The id of the primary in-view tag
-     * @apiNote Returns <code>0</code> if invalid or on a detector pipeline
+     * @apiNote Returns <code>0</code> if invalid
      */
     public int getPrimaryTag() {
         if (!mValid) return 0;
@@ -118,10 +119,6 @@ public class LimelightDevice extends SubsystemBase {
 
     }
 
-    /**
-     * @param tag
-     * @return The distance to the tag
-     */
     private double distanceToTag(LimelightHelpers.LimelightTarget_Fiducial tag) {
         Pose3d pose = tag.getTargetPose_CameraSpace(); //this should be the right method
         return Math.sqrt(pose.getX() * pose.getX() + pose.getY() * pose.getY() + pose.getZ() * pose.getZ());
@@ -129,7 +126,7 @@ public class LimelightDevice extends SubsystemBase {
 
     /**
      * @return The average distance to the visible tags
-     * @apiNote Returns <code>0.0</code> if invalid or on a detector pipeline
+     * @apiNote Returns <code>0.0</code> if invalid
      */
     public double getAverageDistanceToVisibleTags() {
         if (!mValid) return 0.0;
@@ -142,7 +139,9 @@ public class LimelightDevice extends SubsystemBase {
         averageDistance /= fiducials.length;
         return averageDistance;
     }
+//#endregion
 
+//#region Detector
     /**
      * @return The number of objects detected by the limelight
      * @apiNote Returns <code>0</code> if invalid or not on a detector pieline
@@ -157,6 +156,8 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     /**
+     * The selected detector target used by the limelight is determined by the sorting mode set on the pipeline.
+     * If the sorting mode on the limelight is different than in this method, they can return different targets!
      * @return The lowest detected target
      */
     public Optional<LimelightHelpers.LimelightTarget_Detector> getSelectedDetectorTarget() {
@@ -165,9 +166,14 @@ public class LimelightDevice extends SubsystemBase {
         LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
         if (detected.length == 0) return Optional.empty();
         LimelightHelpers.LimelightTarget_Detector selectedDetector = detected[0];
-        for (LimelightHelpers.LimelightTarget_Detector d : detected) {
+        for (LimelightHelpers.LimelightTarget_Detector d : detected) { //LOWEST
             if (d.ty < selectedDetector.ty) selectedDetector = d;
         }
+        /*
+        for (LimelightHelpers.LimelightTarget_Detector d : detected) { //LARGEST
+            if (d.ta < selectedDetector.ta) selectedDetector = d;
+        }
+        */
         return Optional.of(selectedDetector);
     }
 
@@ -184,23 +190,42 @@ public class LimelightDevice extends SubsystemBase {
         if (detected.isEmpty()) return "";
         return detected.get().className;
     }
+//#endregion
 
-    /**
-     * @return The name of the limelight
-     */
+//#region Getters and Setters
     public String getName() {
         return mName;
     }
 
+    public boolean hasCoral() {
+        return mHasCoral;
+    }
+
+    public VisionPipelines getVisionPipeline() {
+        return mPipeline;
+    }
+
+    /**
+     * Switching pipelines takes 0.15 to 0.4 seconds
+     */
+    public void setVisionPipeline(VisionPipelines pipeline) {
+        if (pipeline.isDetector && !mHasCoral) {
+            System.out.println("WARNING! attempted to switch to pipeline " + mPipeline + " but there is no coral!");
+            return;
+        }
+        mPipeline = pipeline;
+        if (!pipeline.isDetector) profilePipelineSwitching(true);
+        LimelightHelpers.setPipelineIndex(mName, pipeline.pipeline);
+    }
+//#endregion
+
+//#region Shuffleboard
     public void updateFieldPose() {
         mField.setRobotPose(getBotPose2d());
     }
 
     public String getFormattedStringTxTy() {
         return (Math.floor(getTx() * 100) / 100) + ";" + (Math.floor(getTy() * 100) / 100);
-        // BigDecimal bigTx = new BigDecimal(getTx()).setScale(2);
-        // BigDecimal bigTy = new BigDecimal(getTy()).setScale(2);
-        // return (bigTx + "°;" + bigTy + "°");
     }
 
     public double[] getXYZOfPrimaryTag() {
@@ -229,21 +254,6 @@ public class LimelightDevice extends SubsystemBase {
     private double interval = 0.0;
     private double timesSwitched = 0.0;
     private double totalInterval = 0.0;
-
-    // FIDUCIAL > DETECTOR: 0.25s avg, 0.3s expected max
-    // looks like it takes 0.15 to 0.4 seconds
-    /* TODO
-     * assign each limelight a static ip
-     * rest api to set limelight names without web display
-     * flash alice
-     * finalize pipelines and backup
-     * add ifCoral to constructor
-     * measure pose offsets for talos and implement
-     * calibrate limelights
-     * tune detector pipeline
-     * use low resolution on neural networks
-     * figure out how to get that nice high resolution camera stream
-     */
 
     private void profilePipelineSwitching(boolean end) {
         if (!end && !timestampSet) {
@@ -322,4 +332,5 @@ public class LimelightDevice extends SubsystemBase {
             () -> {return getAverageProfiledInterval();})
             .withPosition(4 + offset, 3);
         }
+//#endregion
 }
