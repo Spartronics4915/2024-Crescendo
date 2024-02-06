@@ -157,6 +157,7 @@ public final class Constants {
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
+            public static final double kEncoderStartingReading = 0.0; //TODO determine starting encoder reading
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafetyLimit = 1.0; //HACK untested
@@ -175,6 +176,9 @@ public final class Constants {
         public static final class ElevatorConstants {
             public static final MotorConstants kMotorConstants = new MotorConstants(20 // TODO: add follower motor
             , MotorType.kBrushless, false, IdleMode.kBrake, 40);
+
+            public static final double kLeadEncoderStartingReading = 0.0; //TODO determine starting encoder reading
+
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
@@ -198,6 +202,8 @@ public final class Constants {
                 this.shooterAngle = shooterAngle;
             }
         }
+
+        public static final double kEncoderStartingReading = 0.0; //TODO determine starting encoder reading
 
         public static final MotorConstants kMotorConstants = new MotorConstants(11, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values

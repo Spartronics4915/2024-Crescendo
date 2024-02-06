@@ -32,10 +32,11 @@ import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimula
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
+import com.spartronics4915.frc2024.util.EncoderStartup;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
-public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
+public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface, EncoderStartup{
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
     //#region variables
@@ -272,6 +273,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             SimType.Angle, 
             new Translation2d(0.20, 1.5)
         );
+    }
+
+    @Override
+    public EncoderStartupSettings[] getEncoderSettings() {
+        return new EncoderStartupSettings[]{
+            new EncoderStartupSettings(mEncoder, kEncoderStartingReading)
+        };
     }
 
     //#endregion

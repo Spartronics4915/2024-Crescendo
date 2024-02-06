@@ -49,6 +49,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverTriggerDeadband;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
 import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
+import static com.spartronics4915.frc2024.util.EncoderStartup.EncoderResetList;
 
 import java.util.ArrayList;
 
@@ -89,6 +90,7 @@ public class RobotContainer {
         if (SubsystemFlags.IntakeWristFlag.isUsed){
             mIntakeWrist = IntakeWrist.getInstance();;
             ModeSwitchSubsystems.add(mIntakeWrist);
+            EncoderResetList.add(mIntakeWrist);
             list.add(mIntakeWrist);
         } else mIntakeWrist = null;
 
@@ -100,6 +102,7 @@ public class RobotContainer {
         if (SubsystemFlags.ShooterWristFlag.isUsed){
             mShooterWrist = ShooterWrist.getInstance();
             ModeSwitchSubsystems.add(mShooterWrist);
+            EncoderResetList.add(mShooterWrist);
             list.add(mShooterWrist);
         } else mShooterWrist = null;
 
@@ -110,6 +113,7 @@ public class RobotContainer {
         if (SubsystemFlags.ElevatorFlag.isUsed){
             mElevator = Elevator.getInstance();
             ModeSwitchSubsystems.add(mElevator);
+            EncoderResetList.add(mElevator);
             list.add(mElevator);
         } else mElevator = null;
 

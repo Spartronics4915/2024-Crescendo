@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.spartronics4915.frc2024.util.EncoderStartup;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
-public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface, EncoderStartup {
     //#region all the variables and stuff
     private static Elevator mInstance;
 
@@ -241,6 +242,13 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             mInstance = new Elevator();
         }
         return mInstance;
+    }
+
+    @Override
+    public EncoderStartupSettings[] getEncoderSettings() {
+        return new EncoderStartupSettings[]{ //TODO add follower
+            new EncoderStartupSettings(mEncoder, kLeadEncoderStartingReading)
+        };
     }
 
     // #endregion
