@@ -27,6 +27,7 @@ public class LimelightDevice extends SubsystemBase {
      * tune detector pipeline
      * use low resolution on neural networks
      * figure out how to get that nice high resolution camera stream
+     * the coral takes 3-4 seconds to boot up, find a workaround for this!
      */
 
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
