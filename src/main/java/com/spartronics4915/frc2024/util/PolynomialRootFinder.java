@@ -12,6 +12,7 @@ import org.ddogleg.solver.RootFinderType;
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
 public class PolynomialRootFinder {
+    //using the ddogleg library: website: https://ddogleg.org/  
     public static PolynomialRoots finder = PolynomialOps.createRootFinder(6, kRootFinderType);
 
     public static Optional<List<Double>> getRealRoots(Polynomial poly){
