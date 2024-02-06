@@ -156,11 +156,11 @@ public final class Constants {
 
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final double kMeterSafteyLimit = 1.0; //HACK untested
+            public static final double kMeterSafetyLimit = 1.0; //HACK untested
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the saftey height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the saftey height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20);
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
@@ -169,8 +169,9 @@ public final class Constants {
             }
         }
 
-        public static final class ElevatorConstants { // [ ] Elevator Constants
-            public static final MotorConstants kMotorConstants = new MotorConstants(18, MotorType.kBrushless, false, IdleMode.kBrake, 40);
+        public static final class ElevatorConstants {
+            public static final MotorConstants kMotorConstants = new MotorConstants(20 // TODO: add follower motor
+            , MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
@@ -200,8 +201,8 @@ public final class Constants {
         public static final Constraints kTrapzoidConstants = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
         
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the saftey height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5);
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90); //only when above the safety height
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5); //FIXME used for sim
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
         
@@ -222,7 +223,11 @@ public final class Constants {
         public static final double kConveyorOutSpeed = 0.0; //placeholder
 
         public static final double kTargetRPM = 1000;
+    }
 
-
+    public static final class AutoAimConstants {
+        public static final double kShooterSpeed = 3.0; //needs to be in m/s
+        public static final double kShooterHeight = 0.0;
+        public static final double kMaxDistance = 10.0; //Needs units, the maximum relative distance a target can be from the robot for autoaim 
     }
 }
