@@ -15,11 +15,13 @@ public class ToggleDetectorCommand extends Command {
 
     @Override
     public void initialize() {
+        System.out.println("toggle init");
         mLimelight.setVisionPipeline(VisionPipelines.ALICE_TEMP_NOTE_DETECTOR);
     }
 
     @Override
     public void end(boolean interrupted) {
+        System.out.println("toggle end");
         mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
     }
 }

@@ -36,6 +36,8 @@ public class LimelightDevice extends SubsystemBase {
         mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
+        // mPipeline = ((name.equals("alice")) ? VisionPipelines.ALICE_TEMP_NOTE_DETECTOR : VisionPipelines.FIDUCIALS_3D);
+        LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
         createShuffleboard();
     }
 
@@ -70,7 +72,7 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>new Pose3d()</code> if invalid or on a detector pieline
      */
     public Pose3d getBotPose3d() {
-        if (!mValid || mPipeline.isDetector) return new Pose3d();
+        if (!mValid) return new Pose3d();
         return LimelightHelpers.getBotPose3d(mName);
     }
 
@@ -79,7 +81,7 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>new Pose2d()</code> if invalid or on a detector pieline
      */
     public Pose2d getBotPose2d() {
-        if (!mValid || mPipeline.isDetector) return new Pose2d();
+        if (!mValid) return new Pose2d();
         return LimelightHelpers.getBotPose2d(mName);
     }
 
@@ -88,7 +90,7 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>0</code> if invalid or on a detector pieline
      */
     public int numberOfTagsSeen() {
-        if (!mValid || mPipeline.isDetector) return 0;
+        if (!mValid) return 0;
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         int tagCount = fiducials.length;
@@ -100,6 +102,9 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public void setVisionPipeline(VisionPipelines pipeline) {
+        mPipeline = pipeline;
+        System.out.println("pipeline: " + mPipeline.pipeline);
+        if (!pipeline.isDetector) profilePipelineSwitching(true);
         LimelightHelpers.setPipelineIndex(mName, pipeline.pipeline);
     }
 
@@ -108,7 +113,7 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>0</code> if invalid or on a detector pipeline
      */
     public int getPrimaryTag() {
-        if (!mValid || mPipeline.isDetector) return 0;
+        if (!mValid) return 0;
         return (int) LimelightHelpers.getFiducialID(mName);
 
     }
@@ -127,7 +132,7 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>0.0</code> if invalid or on a detector pipeline
      */
     public double getAverageDistanceToVisibleTags() {
-        if (!mValid || mPipeline.isDetector) return 0.0;
+        if (!mValid) return 0.0;
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
         double averageDistance = 0.0;
@@ -143,37 +148,41 @@ public class LimelightDevice extends SubsystemBase {
      * @apiNote Returns <code>0</code> if invalid or not on a detector pieline
      */
     public int numberOfObjectsDetected() {
-        if (!mValid || !mPipeline.isDetector) return 0;
+        if (!mValid) return 0;
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
         int detectedCount = detected.length;
+        if (detectedCount > 0) profilePipelineSwitching(false);
         return detectedCount;
     }
 
     /**
      * @return The lowest detected target
      */
-    public LimelightHelpers.LimelightTarget_Detector getSelectedDetectorTarget() {
-        if (!mValid || !mPipeline.isDetector) return null;
+    public Optional<LimelightHelpers.LimelightTarget_Detector> getSelectedDetectorTarget() {
+        if (!mValid) return Optional.empty();
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
+        if (detected.length == 0) return Optional.empty();
         LimelightHelpers.LimelightTarget_Detector selectedDetector = detected[0];
         for (LimelightHelpers.LimelightTarget_Detector d : detected) {
             if (d.ty < selectedDetector.ty) selectedDetector = d;
         }
-        return selectedDetector;
+        return Optional.of(selectedDetector);
     }
 
     public double getDetectedConfidence() {
-        if (!mValid || !mPipeline.isDetector) return 0.0;
-        LimelightHelpers.LimelightTarget_Detector detected = getSelectedDetectorTarget();
-        return detected.confidence;
+        if (!mValid) return 0.0;
+        Optional<LimelightHelpers.LimelightTarget_Detector> detected = getSelectedDetectorTarget();
+        if (detected.isEmpty()) return 0.0;
+        return detected.get().confidence;
     }
 
     public String getDetectedClass() {
-        if (!mValid || !mPipeline.isDetector) return "";
-        LimelightHelpers.LimelightTarget_Detector detected = getSelectedDetectorTarget();
-        return detected.className;
+        if (!mValid) return "";
+        Optional<LimelightHelpers.LimelightTarget_Detector> detected = getSelectedDetectorTarget();
+        if (detected.isEmpty()) return "";
+        return detected.get().className;
     }
 
     /**
@@ -188,9 +197,10 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public String getFormattedStringTxTy() {
-        BigDecimal bigTx = new BigDecimal(getTx()).setScale(2);
-        BigDecimal bigTy = new BigDecimal(getTy()).setScale(2);
-        return (bigTx + "°;" + bigTy + "°");
+        return (Math.floor(getTx() * 100) / 100) + ";" + (Math.floor(getTy() * 100) / 100);
+        // BigDecimal bigTx = new BigDecimal(getTx()).setScale(2);
+        // BigDecimal bigTy = new BigDecimal(getTy()).setScale(2);
+        // return (bigTx + "°;" + bigTy + "°");
     }
 
     public double[] getXYZOfPrimaryTag() {
@@ -212,6 +222,39 @@ public class LimelightDevice extends SubsystemBase {
         xyz[2] = pose.getZ();
         return xyz;
     }
+
+    private double timestamp = 0.0;
+    private boolean timestampSet = false;
+    private boolean intervalSet = true;
+    private double interval = 0.0;
+    private double timesSwitched = 0.0;
+    private double totalInterval = 0.0;
+
+    // FIDUCIAL > DETECTOR: 0.25s avg, 0.3s expected max
+    // looks like it takes 0.15 to 0.4 seconds
+
+    private void profilePipelineSwitching(boolean end) {
+        if (!end && !timestampSet) {
+            timestamp = Timer.getFPGATimestamp();
+            timestampSet = true;
+            intervalSet = false;
+        } else if (end && !intervalSet) {
+            interval = (Timer.getFPGATimestamp() - timestamp);
+            timestampSet = false;
+            intervalSet = true;
+            timesSwitched++;
+            totalInterval += interval;
+        }
+    }
+
+    public double getProfiledInterval() {
+        return interval;
+    }
+
+    public double getAverageProfiledInterval() {
+        return totalInterval / timesSwitched;
+    }
+    
 
     public String shuffleboardFormattedName(String title) {
         String name = mName.split("-")[1];
@@ -260,5 +303,11 @@ public class LimelightDevice extends SubsystemBase {
         tab.addString(shuffleboardFormattedName("class"),
             () -> {return getDetectedClass();})
             .withPosition(3 + offset, 3);
-    }
+        tab.addDouble(shuffleboardFormattedName("switch interval"),
+            () -> {return getProfiledInterval();})
+            .withPosition(4 + offset, 2);
+        tab.addDouble(shuffleboardFormattedName("avg interval"),
+            () -> {return getAverageProfiledInterval();})
+            .withPosition(4 + offset, 3);
+        }
 }
