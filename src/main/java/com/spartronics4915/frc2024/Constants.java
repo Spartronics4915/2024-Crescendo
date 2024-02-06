@@ -220,7 +220,7 @@ public final class Constants {
         public static final double kShootSpeed = 1.0; //placeholder
         public static final double kDiff = 0.05;
         public static final double kConveyorInSpeed = -1.0; //placeholder
-        public static final double kConveyorOutSpeed = 0.0; //placeholder
+        public static final double kConveyorOutSpeed = 1.0; //placeholder
 
         public static final double kTargetRPM = 1000;
     }

@@ -11,6 +11,7 @@ import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsyst
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
+import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.PIDFConstants;
 
 import edu.wpi.first.networktables.GenericEntry;
@@ -41,19 +42,18 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private final CANSparkMax mShooterMotor;
     private final CANSparkMax mShooterFollowMotor;
     private final CANSparkMax mConveyorMotor;
-    private final SparkPIDController mPIDControllerLead; 
-    private final SparkPIDController mPIDControllerFollow; 
+    private final SparkPIDController mPIDControllerLead;
+    private final SparkPIDController mPIDControllerFollow;
 
     private final RelativeEncoder mShooterEncoder;
-
-
+  
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        // mShooterFollowMotor.follow(mShooterMotor, true);
+        //mShooterFollowMotor.follow(mShooterMotor, true);
         mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
         mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
 
@@ -75,13 +75,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         return motor;
     }
 
-    private SparkPIDController constructPIDController(CANSparkMax motor, PIDFConstants kPIDValues) {
+    private SparkPIDController constructPIDController(CANSparkMax motor, PIDFConstants kpidconstants) {
         SparkPIDController pid = motor.getPIDController();
 
-        pid.setP(kPIDValues.p());
-        pid.setI(kPIDValues.i());
-        pid.setD(kPIDValues.d());
-        pid.setFF(kPIDValues.ff());
+        pid.setP(kPIDconstants.p());
+        pid.setI(kPIDconstants.i());
+        pid.setD(kPIDconstants.d());
+        pid.setFF(kPIDconstants.ff());
 
         return pid;
     }
@@ -122,19 +122,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     private void shooterOff() {
-        // mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
-        mShooterMotor.set(kOffSpeed);
-        mShooterFollowMotor.set(kOffSpeed);
-
+        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
     }
 
     private void shooterOn() {
-        // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
-
-        mShooterMotor.set(kShootSpeed);
-        mShooterFollowMotor.set(-(kShootSpeed - kDiff));
+        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
     }
 
     private void conveyorIn() {
@@ -161,8 +155,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     @Override
     public void periodic() {
-        System.out.println("conveyer: " + mCurrentConveyorState + "\nShooter: " + mCurrentShooterState);
-
         switch (mCurrentShooterState) {
             case NONE:
             shooterOff();
@@ -175,7 +167,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 break;
             
         }
-
         switch (mCurrentConveyorState) {
             case IN:
             conveyorIn();
