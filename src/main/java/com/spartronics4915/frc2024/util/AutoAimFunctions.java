@@ -28,7 +28,7 @@ public class AutoAimFunctions {
      * @param velocity
      * @param targetPos
      * @param targetZ
-     * @return an aiming point for the shooter
+     * @return an aiming point for the shooter, relative to the shooter on the robot
      */
     public static Optional<Translation3d> movingAutoAim(
         final Pose2d robotPose, // m, field
@@ -51,7 +51,7 @@ public class AutoAimFunctions {
 
         double ax = 0;
         double ay = 0;
-        double az = kGravity;
+        double az = 0-kGravity; //relative to the robot the speaker will be accelerating upwards
 
         double s = kShooterSpeed;
 
@@ -70,8 +70,11 @@ public class AutoAimFunctions {
             return Optional.empty();
         }
         var realRootList = possibleRoots.get();
-        realRootList.removeIf((r) -> r > 0); //remove collision times before the present
+        realRootList.removeIf((r) -> r < 0); //remove collision times before the present
         
+        if (realRootList.size() <= 0){
+            return Optional.empty();
+        }
         double tc = realRootList.get(0); //earliest collision time
         for (int i = 0; i < Math.min(realRootList.size(), 5); i++) {
             var r = realRootList.get(i);
@@ -83,7 +86,7 @@ public class AutoAimFunctions {
         //translate collision time (tc) to target position
 
         Translation3d out = 
-            new Translation3d(p.getX(), p.getY(), targetPos.getZ())
+            new Translation3d(px, py, pz)
             .plus(new Translation3d(vx, vy, vz).times(tc))
             .plus(new Translation3d(ax, ay, az).times(pow(tc) * 0.5));
 
@@ -94,8 +97,13 @@ public class AutoAimFunctions {
         return Optional.of(out);
     }
 
+    public static void main(String[] args) {
+        var x = movingAutoAim(new Pose2d(1, 1, Rotation2d.fromDegrees(0)), new ChassisSpeeds(0, 0, 0), new Translation3d(1, 1, 1));
+        System.out.println(x);
+    }
+
     public static Rotation3d getShooterAngle(Translation3d targetPos){ //this is the position of the speaker centered around the robot
-        double kRelHeight = targetPos.getZ() - kShooterHeight; //CHECKUP maybe remove the shooterheight part here?
+        double kRelHeight = targetPos.getZ();
         double dist = targetPos.getNorm();
 
         return new Rotation3d(0, 

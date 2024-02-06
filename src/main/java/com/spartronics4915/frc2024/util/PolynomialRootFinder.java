@@ -22,7 +22,7 @@ public class PolynomialRootFinder {
 
             var list = finder.getRoots()
                 .stream()
-                .filter((r) -> !r.isReal())
+                .filter((r) -> r.isReal())
                 .map((r) -> r.real)
                 .collect(toList());
             
