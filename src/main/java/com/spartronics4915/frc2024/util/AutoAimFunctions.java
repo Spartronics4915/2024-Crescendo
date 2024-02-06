@@ -33,16 +33,15 @@ public class AutoAimFunctions {
     public static Optional<Translation3d> movingAutoAim(
         final Pose2d robotPose, // m, field
         final ChassisSpeeds velocity, //m/s, field 
-        final Translation2d targetPos, //m, field
-        final double targetZ //m, ground
+        final Translation3d targetPos //m, field
     ){
         //varaiable declarations so they match the formulas
 
-        var p = targetPos.minus(robotPose.getTranslation());
+        var p = targetPos.toTranslation2d().minus(robotPose.getTranslation());
 
         double px = p.getX();
         double py = p.getY();
-        double pz = targetZ - kShooterHeight;
+        double pz = targetPos.getZ() - kShooterHeight;
 
         var v = new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond);
 
@@ -84,7 +83,7 @@ public class AutoAimFunctions {
         //translate collision time (tc) to target position
 
         Translation3d out = 
-            new Translation3d(p.getX(), p.getY(), targetZ)
+            new Translation3d(p.getX(), p.getY(), targetPos.getZ())
             .plus(new Translation3d(vx, vy, vz).times(tc))
             .plus(new Translation3d(ax, ay, az).times(pow(tc) * 0.5));
 
