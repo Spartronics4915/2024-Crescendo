@@ -46,8 +46,8 @@ public class AutoAimFunctions {
 
         var v = new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond);
 
-        double vx = v.getX();
-        double vy = v.getY();
+        double vx = -v.getX();
+        double vy = -v.getY();
         double vz = 0;
 
         double ax = 0;
