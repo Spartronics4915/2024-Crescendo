@@ -66,7 +66,7 @@ public class AutoAimFunctions {
 
         // get real, non negative roots:
 
-        var possibleRoots = PolynomialRootFinder.getRoots(Polynomial.wrap(c0,c1,c2,c3,c4));
+        var possibleRoots = PolynomialRootFinder.getRealRoots(Polynomial.wrap(c0,c1,c2,c3,c4));
         if (!possibleRoots.isPresent()) {
             return Optional.empty();
         }
