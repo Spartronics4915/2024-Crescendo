@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
         
         //Safety for trapezoid
         for (var trapezoid : ModeSwitchInterface.ModeSwitchSubsystems) {
-            trapezoid.modeSwitchAction();
+            if (trapezoid != null) trapezoid.modeSwitchAction();
         }
     }
 }
