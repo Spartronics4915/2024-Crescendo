@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -35,7 +36,7 @@ public class AutoAimFunctions {
         var pz = targetZ - kShooterHeight;
 
         var TempVelocity = new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond);
-        var u = TempVelocity.div(TempVelocity.getNorm());//.times(-1.0); //reversing the direction of the unit velocity vector //no z component
+        var u = TempVelocity.div(TempVelocity.getNorm()).times(-1.0); //reversing the direction of the unit velocity vector so its relative to the robot //no z component
         var vs = TempVelocity.getNorm(); //speaker velocity
         var vn = kShooterSpeed;
         var uz = 0;
@@ -69,13 +70,43 @@ public class AutoAimFunctions {
 
         Translation2d outXY = p.plus(TempVelocity.times(t));
         Translation3d out = new Translation3d(outXY.getX(), outXY.getY(), targetZ);
-
+        
         if (out.getNorm() > kMaxDistance) {
             return Optional.empty();
         }
 
         //TODO make sure you understand this
         return Optional.of(out); //relative to robot
+    }
+
+    public static Optional<Translation3d> movingAutoAim3(){
+        
+        
+        
+        return Optional.empty();
+    }
+
+    public static double[] quarticRootSolver(double a, double b, double c, double d, double e){
+
+        double d0 = pow(c) - 3*b*d + 12*a*e;
+        double d1 = 2 * Math.pow(c, 3) - 9*b*c*d + 27*pow(b)*e + 27*a*pow(d) - 72*a*c*e;
+
+        double p = (8*a*c - 3*b*pow(b)) / (8*pow(a));
+        double q = (Math.pow(b, 3) - 4*a*b*c + 8*pow(a)*d) / (Math.pow(a, 3) * 8);
+
+        double Q = Math.cbrt((d1 + Math.sqrt(pow(d1)-4*Math.pow(d1, 3)))/2.0);
+        double S = (0.5) * Math.sqrt( (-2/3.0)*p + (1 / (3*a))*(Q+(d0/Q)));
+        //TODO special case formulas
+
+        double sc1 = -b/(4*a); 
+        double sc2 = (0.5) * Math.sqrt(-4 * pow(S) - 2 * p + q / S); 
+
+        double x1 = sc1 - S + sc2;
+        double x2 = sc1 - S - sc2;
+        double x3 = sc1 + S + sc2;
+        double x4 = sc1 + S - sc2;
+
+        return new double[]{x1, x2, x3, x4};
     }
 
     public static Optional<Translation2d> movingAutoAim(
