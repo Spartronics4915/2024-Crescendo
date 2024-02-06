@@ -1,6 +1,8 @@
 package com.spartronics4915.frc2024.util;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
@@ -11,7 +13,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import java.util.ArrayList;
 import java.util.function.*;
+import java.util.stream.IntStream;
+import java.util.Arrays;
+
+
 public class AutoAimFunctions {
 
     private static double pow(double a){return Math.pow(a, 2);}
@@ -88,18 +95,43 @@ public class AutoAimFunctions {
 
     public static double[] quarticRootSolver(double a, double b, double c, double d, double e){
 
+        // var list = PolynomialRootFinderEJML.findRoots(a,b,c,d,e);
+        
+        // ArrayList<Double> realRoots = new ArrayList<>();
+
+        // for (var root : list) {
+        //     if (root.isReal()) {
+        //         realRoots.add(root.real);
+        //     }
+        // }
+        // Double[] out = new Double[]{};
+        // return  realRoots.toArray(out);
+
+        
         double d0 = pow(c) - 3*b*d + 12*a*e;
         double d1 = 2 * Math.pow(c, 3) - 9*b*c*d + 27*pow(b)*e + 27*a*pow(d) - 72*a*c*e;
 
         double p = (8*a*c - 3*b*pow(b)) / (8*pow(a));
         double q = (Math.pow(b, 3) - 4*a*b*c + 8*pow(a)*d) / (Math.pow(a, 3) * 8);
 
-        double Q = Math.cbrt((d1 + Math.sqrt(pow(d1)-4*Math.pow(d1, 3)))/2.0);
-        double S = (0.5) * Math.sqrt( (-2/3.0)*p + (1 / (3*a))*(Q+(d0/Q)));
+        double delta = (pow(d1) - 4*Math.pow(d0,3))/27;
+
+        double S;
+
+        double Q = Math.cbrt((d1 + Math.sqrt(pow(d1)-4*Math.pow(d0, 3)))/2.0);
+        if (delta > 0) {
+            double fp = Math.acos(d1/(2*Math.sqrt(Math.pow(d0, 3)))); 
+            S = (0.5) * Math.sqrt( (-2/3.0)*p + (2 / (3*a))*(Math.sqrt(d0) * Math.cos(fp/3)));
+        } else {
+            S = (0.5) * Math.sqrt( (-2/3.0)*p + (1 / (3*a))*(Q+(d0/Q)));
+        }
+        
         //TODO special case formulas
 
         double sc1 = -b/(4*a); 
         double sc2 = (0.5) * Math.sqrt(-4 * pow(S) - 2 * p + q / S); 
+
+        
 
         double x1 = sc1 - S + sc2;
         double x2 = sc1 - S - sc2;
@@ -107,6 +139,26 @@ public class AutoAimFunctions {
         double x4 = sc1 + S - sc2;
 
         return new double[]{x1, x2, x3, x4};
+    }
+
+    public static Random r = new Random();
+
+    public static ArrayList<Double> testFunction(){
+        var a = r.nextDouble(6) - 3;
+        var b = r.nextDouble(6) - 3;
+        var c = r.nextDouble(6) - 3;
+        var d = r.nextDouble(6) - 3;
+        var e = r.nextDouble(6) - 3;
+        // System.out.println(Arrays.toString(PolynomialRootFinderApache.findRoots(a, b, c, d, e)));
+        // System.out.println(Arrays.toString(quarticRootSolver(a, b, c, d, e)));
+        var list = PolyDDogLeg.getRoots(e,d,c,b,a).get();
+        return list;
+        
+        // System.out.println("DDogLeg");
+
+        // for (Double root1 : list) {
+        //     System.out.println(root1 + "\t : \t" + (a*Math.pow(root1,4) + b*Math.pow(root1,3) + c*Math.pow(root1,2) + d*Math.pow(root1,1) + e));
+        // }
     }
 
     public static Optional<Translation2d> movingAutoAim(
@@ -144,6 +196,7 @@ public class AutoAimFunctions {
 
         return Optional.of(out); //outputs the speakerPos at the collision time relative to the robot, (rotation is based on the same as the input translate2ds)
     }
+
 
     public static boolean isSafeShot(Translation2d target){
         return (target.getNorm() > kMaxDistance);

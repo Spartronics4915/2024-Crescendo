@@ -47,11 +47,22 @@ wpi.java.debugJni = false
 // Set this to true to enable desktop support.
 def includeDesktopSupport = true
 
+repositories {
+    mavenCentral()
+}
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
+
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+
+    // implementation 'org.ejml:ejml-core:0.43.1'
+    
+    // https://mvnrepository.com/artifact/org.ddogleg/ddogleg
+    implementation 'org.ddogleg:ddogleg:0.23.1'
+
 
     roborioDebug wpi.java.deps.wpilibJniDebug(wpi.platforms.roborio)
     roborioDebug wpi.java.vendor.jniDebug(wpi.platforms.roborio)

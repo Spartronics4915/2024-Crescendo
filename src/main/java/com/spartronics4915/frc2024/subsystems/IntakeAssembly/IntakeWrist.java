@@ -29,6 +29,7 @@ import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.util.AutoAimFunctions;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
@@ -202,6 +203,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         TrapezoidMotionProfileUpdate();
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
+
+        for (int i = 0; i < 25; i++) {
+            System.out.println(AutoAimFunctions.testFunction().size());
+        }
     }
     
     public boolean needSoftLimit(){

@@ -77,7 +77,7 @@ public class RobotContainer {
     private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
 
     private static final TrapezoidSimulator mSimulator;
-    private final SwerveSim mSwerveSim;
+    // private final SwerveSim mSwerveSim;
 
     static {
 
@@ -117,10 +117,10 @@ public class RobotContainer {
 
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
-        mSwerveSim = new SwerveSim(mSwerveDrive);
+        // mSwerveSim = new SwerveSim(mSwerveDrive);
         configureBindings();
 
-        VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
+        // VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     public static CommandXboxController getDriverController() {
