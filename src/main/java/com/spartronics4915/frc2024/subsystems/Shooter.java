@@ -122,14 +122,19 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     private void shooterOff() {
-        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
+        // mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
+        // mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
+        mShooterMotor.set(kOffSpeed);
+        mShooterFollowMotor.set(kOffSpeed);
 
     }
 
     private void shooterOn() {
-        mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
+        // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
+        // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
+
+        mShooterMotor.set(kShootSpeed);
+        mShooterFollowMotor.set(-(kShootSpeed - kDiff));
     }
 
     private void conveyorIn() {
@@ -156,6 +161,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     @Override
     public void periodic() {
+        System.out.println("conveyer: " + mCurrentConveyorState + "\nShooter: " + mCurrentShooterState);
+
         switch (mCurrentShooterState) {
             case NONE:
             shooterOff();
@@ -168,6 +175,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 break;
             
         }
+
         switch (mCurrentConveyorState) {
             case IN:
             conveyorIn();
