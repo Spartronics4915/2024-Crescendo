@@ -273,4 +273,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         };
     }
 
+    @Override
+    public void resetTrigger() {
+        currentToSetPoint();
+    }
+
 }

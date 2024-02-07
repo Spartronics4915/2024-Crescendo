@@ -282,5 +282,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         };
     }
 
+    @Override
+    public void resetTrigger() {
+        currentToSetPoint();
+    }
+
     //#endregion
 }

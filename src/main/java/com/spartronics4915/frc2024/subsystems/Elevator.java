@@ -251,6 +251,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         };
     }
 
+    @Override
+    public void resetTrigger() {
+        resetTarget();
+    }
+
     // #endregion
 
 }

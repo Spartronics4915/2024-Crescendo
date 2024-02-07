@@ -24,6 +24,7 @@ public interface EncoderStartup {
                     for (EncoderStartupSettings settings : subsys.getEncoderSettings()) {
                         settings.encoderStartup();
                     }
+                    subsys.resetTrigger();
                 }
             }
 
@@ -44,4 +45,9 @@ public interface EncoderStartup {
     }
     
     public EncoderStartupSettings[] getEncoderSettings(); 
+
+    /**
+     * this runs when the reset is complete
+     */
+    public void resetTrigger(); 
 }
