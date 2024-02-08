@@ -50,29 +50,29 @@ public class RobotContainer {
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
     private static final CommandXboxController mOperatorController = new CommandXboxController(kOperatorControllerPort);
 
-    private static final Intake mIntake = Intake.getInstance();
-    private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
+    // private static final Intake mIntake = Intake.getInstance();
+    // private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
     private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
 
-    private static final ShooterWrist mShooter = ShooterWrist.getInstance();
-    private static final Elevator mElevator = Elevator.getInstance();
+    // private static final ShooterWrist mShooter = ShooterWrist.getInstance();
+    // private static final Elevator mElevator = Elevator.getInstance();
 
-    private static final TrapezoidSimulator mSimulator;
+    // private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
 
-    static {
-        ModeSwitchSubsystems.add(mIntakeWrist);
-        ModeSwitchSubsystems.add(mShooter);
-        ModeSwitchSubsystems.add(mElevator);
+    // static {
+    //     ModeSwitchSubsystems.add(mIntakeWrist);
+    //     ModeSwitchSubsystems.add(mShooter);
+    //     ModeSwitchSubsystems.add(mElevator);
 
-        ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
-        list.add(mIntakeWrist);
-        list.add(mShooter);
-        list.add(mElevator);
-        mSimulator = new TrapezoidSimulator(list);
+    //     ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
+    //     list.add(mIntakeWrist);
+    //     list.add(mShooter);
+    //     list.add(mElevator);
+    //     mSimulator = new TrapezoidSimulator(list);
 
-        ModeSwitchSubsystems.add(mElevator);
-    }
+    //     ModeSwitchSubsystems.add(mElevator);
+    // }
 
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
@@ -93,30 +93,30 @@ public class RobotContainer {
     private void configureBindings() {
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
-                .onTrue(mIntake.setStateCommand(IntakeState.IN))
-                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+        // mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
+        //         .onTrue(mIntake.setStateCommand(IntakeState.IN))
+        //         .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
-                .onTrue(mIntake.setStateCommand(IntakeState.OUT))
-                .onFalse(mIntake.setStateCommand(IntakeState.OFF));
+        // mOperatorController.rightTrigger(kOperatorTriggerDeadband) // TODO: change
+        //         .onTrue(mIntake.setStateCommand(IntakeState.OUT))
+        //         .onFalse(mIntake.setStateCommand(IntakeState.OFF));
 
-        mDriverController.leftTrigger(kDriverTriggerDeadband)
-                .whileTrue(new LockOnCommand());
-        
-        mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        // mDriverController.leftTrigger(kDriverTriggerDeadband)
+        //         .whileTrue(new LockOnCommand());
+        // 
+        // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
+        // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
-        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        // mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        // mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
+        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
-        mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
-        mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
-        mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
-        mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP        
+        // mOperatorController.a().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.GROUNDPICKUP));
+        // mOperatorController.y().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.SOURCE));
+        // mOperatorController.x().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.AMP));
+        // mOperatorController.b().onTrue(mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW)); //TEMP        
     }
 
     public Command getAutonomousCommand() {
