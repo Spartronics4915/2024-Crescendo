@@ -16,24 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightDevice extends SubsystemBase {
-    /* TODO
-     * assign each limelight a static ip
-     * rest api to set limelight names without web display
-     * flash alice
-     * finalize pipelines and backup
-     * add ifCoral to constructor
-     * measure pose offsets for talos and implement
-     * calibrate limelights
-     * tune detector pipeline
-     * use low resolution on neural networks
-     * figure out how to get that nice high resolution camera stream
-     * the coral takes 3-4 seconds to boot up, find a workaround for this!
-     */
 
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
     private final String mName;
-    private final boolean mValid;
+    private boolean mValid = false;
     private VisionPipelines mPipeline;
     private final boolean mHasCoral;
     private final Field2d mField;
@@ -45,12 +32,18 @@ public class LimelightDevice extends SubsystemBase {
     public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
-        mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
+        checkIfValid();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
         LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
         mHasCoral = hasCoral;
         createShuffleboard();
+    }
+
+    public void checkIfValid() {
+        if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
+            mValid = true;
+        }
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
@@ -203,6 +196,10 @@ public class LimelightDevice extends SubsystemBase {
 
     public VisionPipelines getVisionPipeline() {
         return mPipeline;
+    }
+
+    public boolean isValid() {
+        return mValid;
     }
 
     /**

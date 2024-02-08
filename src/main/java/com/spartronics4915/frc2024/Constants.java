@@ -164,8 +164,7 @@ public final class Constants {
     public static final class Vision {
         public enum VisionPipelines {
             FIDUCIALS_3D (0, false),
-            DETECTOR_NOTE (1, true),
-            DETECTOR_ROBOT (2, true);
+            DETECTOR_NOTE (1, true);
             public final int pipeline;
             public final boolean isDetector;
             private VisionPipelines(int pipeline, boolean isDetector) {
