@@ -31,7 +31,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private SparkPIDController mPid;
     private RelativeEncoder mEncoder;
 
-    private TrapezoidProfile mmmmmmmmmmTrapezoid;
+    private TrapezoidProfile mmmmmmmmmmmTrapezoid;
 
     private State mCurrentState;
     private Rotation2d mTarget;// = new Rotation2d(Math.PI * 3);
@@ -56,7 +56,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         mMotor.burnFlash();
         // Initializes the Trapezoid
-        mmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
+        mmmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
         // Initializes the PID
         mPid = mMotor.getPIDController();
@@ -78,11 +78,20 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         initShuffle();
     }
 
-    private void initShuffle() {
-        var mEntries = ElevatorTabManager.getEnumMap(this);
-        mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
-        mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
-        mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
+    @Override
+    public void periodic() {
+        if (mIsManual) { // Manual
+            manualControlUpdate();
+        }
+        // Not-manual
+        mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
+                GeneralConstants.kUpdateTime,
+                mCurrentState,
+                // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                new State(mTarget.getRotations(), 0));
+        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+
+        updateShuffle();
     }
 
     // #region encoder & feed foward
@@ -99,20 +108,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
     // #endregion
 
-    @Override
-    public void periodic() {
-        if (mIsManual) { // Manual
-            manualControlUpdate();
-        }
-        // Not-manual
-        mCurrentState = mmmmmmmmmmTrapezoid.calculate(
-                GeneralConstants.kUpdateTime,
-                mCurrentState,
-                // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                new State(mTarget.getRotations(), 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
-
-        updateShuffle();
+    // #region Shuffleboard
+    private void initShuffle() {
+        var mEntries = ElevatorTabManager.getEnumMap(this);
+        mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
+        mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
+        mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
     }
 
     private void updateShuffle() {
@@ -120,7 +121,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
     }
+    // #endregion
 
+    // #region Bunch of random getters
     @Override
     public State getSetPoint() {
         return new State(mCurrentState.position / kMetersToRotation, 0.0);
@@ -147,6 +150,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public double getDistance() {
         return getHeight();
     }
+
+    // #endregion
 
     // #region Maunel Manuel Manueal Manael Manual Stuff (5th times the charm)
 
@@ -237,10 +242,27 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return A static instance of the elevator subsystem
      */
     public static Elevator getInstance() {
-        if (mInstance == null) {
+        if (mInstance == null)
             mInstance = new Elevator();
-        }
         return mInstance;
+    }
+
+    /**
+     * If you ever need to not get an instance of the elevator subsystem, use this
+     * @return null
+     */
+    public static Elevator dontGetInstance() {
+        return null;
+    }
+
+    /**
+     * getInstance for gambling addicts. 50% of the time you will get the instance but the other 50% you won't
+     * @return A static instance of the elevator subsystem OR null
+     */
+    public static Elevator mightGetInstance() {
+        if (Math.random() < .2) // Actually less than 50% because the house always wins
+            return getInstance();
+        return null;
     }
 
     // #endregion
