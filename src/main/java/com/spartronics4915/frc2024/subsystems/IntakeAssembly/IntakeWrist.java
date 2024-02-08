@@ -212,6 +212,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         TrapezoidMotionProfileUpdate();
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
+        handleLimitSwitch();
     }
     
     public boolean needSoftLimit(){
