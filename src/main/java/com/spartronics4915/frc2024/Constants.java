@@ -164,9 +164,8 @@ public final class Constants {
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
-            public static final class ManualConstants { //speed of manual movements, 
-                
-            }
+            public static final int kLimitSwitchChannel = 4;
+            public static final double kLimitSwitchEncoderReading = 0;
         }
 
         public static final class ElevatorConstants {

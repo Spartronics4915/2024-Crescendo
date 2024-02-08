@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,6 +59,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         private Elevator mElevatorSubsystem = Elevator.getInstance();
 
+        private DigitalInput mLimitSwitch;
+
         //#region ShuffleBoardEntries
 
         private GenericEntry mManualControlEntry;
@@ -77,6 +80,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         kFeedforwardCalc = initFeedForward();
         
         mEncoder.setPosition(0.0);
+
+        mLimitSwitch = initLimitSwitch();
 
         currentToSetPoint();
         
@@ -131,6 +136,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private ArmFeedforward initFeedForward(){
         var out = new ArmFeedforward(kArmFeedForward.kS(), kArmFeedForward.kG(), kArmFeedForward.kV(), kArmFeedForward.kA());
         
+        return out;
+    }
+
+    private DigitalInput initLimitSwitch(){
+        DigitalInput out = new DigitalInput(kLimitSwitchChannel);
+
         return out;
     }
 
@@ -244,6 +255,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         );
         
         mWristPIDController.setReference(mCurrState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
+    }
+
+    private void handleLimitSwitch(){
+        if (mLimitSwitch.get()) {
+            mEncoder.setPosition(kLimitSwitchEncoderReading);
+            currentToSetPoint();
+        }
     }
 
     //#endregion
