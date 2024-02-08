@@ -158,6 +158,8 @@ public final class Constants {
                 SimType.Elevator,
                 new Translation2d(103 / 100d, 27 / 100d));
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026, .0156, 7, 102); // HACK untested
+            public static final int kLimitSwitchChannel = 1025672;
+            public static final float kLimitSwitchGoto = 0f; // Where the elevator will go to if the limit switch is triggered
         }
     }
 

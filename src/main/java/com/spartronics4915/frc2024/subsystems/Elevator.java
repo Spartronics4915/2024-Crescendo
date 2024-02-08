@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -44,6 +45,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorSetPointEntry;
     private GenericEntry mElevatorHeightEntry;
     private GenericEntry mElevatorManualControlEntry;
+
+    private DigitalInput limitSwitch;
     // #endregion
 
     public Elevator() {
@@ -75,6 +78,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Sets the current state and target
         resetTarget();
 
+        // Sets up the Limit Switch
+        limitSwitch = new DigitalInput(0);
+
         initShuffle();
     }
 
@@ -84,12 +90,20 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             manualControlUpdate();
         }
         // Not-manual
-        mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
-                GeneralConstants.kUpdateTime,
-                mCurrentState,
-                // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                new State(mTarget.getRotations(), 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+        if (limitSwitch.get()) {
+            mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
+                    GeneralConstants.kUpdateTime,
+                    mCurrentState,
+                    new State(kLimitSwitchGoto, 0));
+            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+        } else {
+            mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
+                    GeneralConstants.kUpdateTime,
+                    mCurrentState,
+                    // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                    new State(mTarget.getRotations(), 0));
+            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+        }
 
         updateShuffle();
     }
