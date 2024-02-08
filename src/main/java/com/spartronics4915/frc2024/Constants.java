@@ -37,7 +37,7 @@ public final class Constants {
     }
 
     public static final class GeneralConstants {
-        public static final double kUpdateTime = 1/50.0;
+        public static final double kUpdateTime = 1 / 50.0;
     }
 
     public static final class Drive {
@@ -46,7 +46,8 @@ public final class Constants {
         public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(10.0, 0.0, 1.0); // FIXME: placeholder values
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
-        public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+        public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1,
+                0.1);
 
         public static final double kWheelDiameter = Units.inchesToMeters(3.96);
         public static final double kTrackWidth = Units.inchesToMeters(18.75);
@@ -55,10 +56,13 @@ public final class Constants {
                 kTrackWidth / 2, kWheelbase / 2);
 
         public static final double kDriveGearRatio = 6.75 / 1.0; // L2 MK4i
-        public static final double kDriveVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio) / 60.0; // RPM to m/s
-        public static final double kDrivePositionConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio); // rev. to meters
+        public static final double kDriveVelocityConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio)
+                / 60.0; // RPM to m/s
+        public static final double kDrivePositionConversionFactor = ((kWheelDiameter * Math.PI) / kDriveGearRatio); // rev.
+                                                                                                                    // to
+                                                                                                                    // meters
 
-        public static final double kAngleGearRatio =  150.0 / 7.0; // MK4i
+        public static final double kAngleGearRatio = 150.0 / 7.0; // MK4i
         public static final double kAnglePositionConversionFactor = (2 * Math.PI) / (kAngleGearRatio);
 
         // Decrease this value if wheels start to slip with worn out tread. Should be 1.0 with new tread.
@@ -110,8 +114,7 @@ public final class Constants {
                 int encoderID,
                 double encoderOffsetDegrees,
                 double x,
-                double y
-        ) {}
+                double y) {}
     }
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
@@ -125,6 +128,7 @@ public final class Constants {
 
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
+
             private IntakeAssemblyState(Rotation2d wristAngle, double elevatorHeight) {
                 this.wristAngle = wristAngle;
                 ElevatorHeight = elevatorHeight;
@@ -148,7 +152,7 @@ public final class Constants {
         
         public static final class IntakeWristConstants { // [ ] Intake Wrist constants
 
-            //TODO Make Units Clear
+            // TODO Make Units Clear
 
             public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
@@ -162,28 +166,35 @@ public final class Constants {
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
 
-            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK untested values
 
             public static final int kLimitSwitchChannel = 4;
             public static final double kLimitSwitchEncoderReading = 0;
+            public static final class ManualConstants { // speed of manual movements,
+
+            }
         }
 
         public static final class ElevatorConstants {
-            public static final MotorConstants kMotorConstants = new MotorConstants(20 // TODO: add follower motor
-            , MotorType.kBrushless, false, IdleMode.kBrake, 40);
+            public static final MotorConstants kMotorConstants = new MotorConstants(10, MotorType.kBrushless, false,
+                    IdleMode.kBrake, 40);
+            public static final MotorConstants kFollowerConstants = new MotorConstants(11, MotorType.kBrushless, false,
+                    IdleMode.kBrake, 40); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
-                "Elevator",
-                1.0,
-                90.0,
-                20.0,
-                new Color8Bit(Color.kMediumPurple),
-                SimType.Elevator,
-                new Translation2d(103 / 100d, 27 / 100d));
-            public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026, .0156, 7, 102); // HACK untested
+                    "Elevator",
+                    1.0,
+                    90.0,
+                    20.0,
+                    new Color8Bit(Color.kMediumPurple),
+                    SimType.Elevator,
+                    new Translation2d(103 / 100d, 27 / 100d));
+            public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
+                    .0156, 7, 102); // HACK untested
             public static final int kLimitSwitchChannel = 1025672;
-            public static final float kLimitSwitchGoto = 0f; // Where the elevator will go to if the limit switch is triggered
+            public static final float kLimitSwitchGoto = 0f; // Where the elevator will go to if the limit switch is
+                                                             // triggered
         }
     }
 
@@ -211,8 +222,6 @@ public final class Constants {
 
         public static final int kLimitSwitchChannel = -1;
         public static final double kLimitSwitchEncoderReading = 0;
-
-
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants

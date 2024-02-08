@@ -29,6 +29,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private static Elevator mInstance;
 
     private CANSparkMax mMotor;
+    private CANSparkMax mFollower;
     private SparkPIDController mPid;
     private RelativeEncoder mEncoder;
 
@@ -47,6 +48,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorManualControlEntry;
 
     private DigitalInput limitSwitch;
+
     // #endregion
 
     public Elevator() {
@@ -56,6 +58,14 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mMotor.setInverted(kMotorConstants.motorIsInverted());
         mMotor.setIdleMode(kMotorConstants.idleMode());
         mMotor.setSmartCurrentLimit(kMotorConstants.currentLimit());
+
+        // Initializes the follower
+        mFollower = new CANSparkMax(kFollowerConstants.motorID(), kFollowerConstants.motorType());
+        mFollower.restoreFactoryDefaults();
+        mFollower.setInverted(kFollowerConstants.motorIsInverted());
+        mFollower.setIdleMode(kFollowerConstants.idleMode());
+        mFollower.setSmartCurrentLimit(kFollowerConstants.currentLimit());
+        mFollower.follow(mMotor);
 
         mMotor.burnFlash();
         // Initializes the Trapezoid
@@ -90,8 +100,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             manualControlUpdate();
         }
         // Not-manual
-        if (limitSwitch.get()) mTarget = Rotation2d.fromRotations(kLimitSwitchGoto);
-        
+        if (limitSwitch.get())
+            mTarget = Rotation2d.fromRotations(kLimitSwitchGoto);
+
         mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
