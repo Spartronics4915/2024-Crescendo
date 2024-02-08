@@ -110,6 +110,19 @@ public class SwerveModule {
         return new SwerveModulePosition(mDriveEncoder.getPosition(), getAngle());
     }
 
+    private void setIdleMode(IdleMode mode) {
+        mDriveMotor.setIdleMode(mode);
+        mAngleMotor.setIdleMode(mode);
+    }
+
+    public void setCoastMode() {
+        setIdleMode(IdleMode.kCoast);
+    }
+
+    public void setBrakeMode() {
+        setIdleMode(IdleMode.kBrake);
+    }
+
     public Translation2d getLocation() {
         return new Translation2d(mX, mY);
     }
