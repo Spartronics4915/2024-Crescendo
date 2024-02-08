@@ -103,7 +103,7 @@ public class AutoAimFunctions {
 
         return new Rotation3d(0, 
             Math.asin(kRelHeight/dist), 
-            targetPos.toTranslation2d().getAngle().getRadians()
+            targetPos.toTranslation2d().getAngle().getRadians() //0deg = looking at red alliance, 90 is amp direction
         );
     }
 }
