@@ -90,20 +90,14 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             manualControlUpdate();
         }
         // Not-manual
-        if (limitSwitch.get()) {
-            mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
-                    GeneralConstants.kUpdateTime,
-                    mCurrentState,
-                    new State(kLimitSwitchGoto, 0));
-            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
-        } else {
-            mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
-                    GeneralConstants.kUpdateTime,
-                    mCurrentState,
-                    // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                    new State(mTarget.getRotations(), 0));
-            mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
-        }
+        if (limitSwitch.get()) mTarget = Rotation2d.fromRotations(kLimitSwitchGoto);
+        
+        mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
+                GeneralConstants.kUpdateTime,
+                mCurrentState,
+                // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
+                new State(mTarget.getRotations(), 0));
+        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
 
         updateShuffle();
     }
