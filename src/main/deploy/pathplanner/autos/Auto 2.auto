@@ -1,0 +1,31 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 2 Path 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 2 Path 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Auto 2 Path 3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -12,10 +12,11 @@ import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
 
-public class Intake extends SubsystemBase implements Loggable {
+public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static enum IntakeState {
         IN, LOAD, OUT, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
@@ -66,6 +67,10 @@ public class Intake extends SubsystemBase implements Loggable {
         pid.setD(kPIDValues.d());
 
         return pid;
+    }
+
+    public boolean getBeamBreakStatus(){
+        return mBeamBreak.get();
     }
 
     /**
@@ -156,5 +161,10 @@ public class Intake extends SubsystemBase implements Loggable {
                 break;
         }
         updateShuffleboard();
+    }
+
+    @Override
+    public void modeSwitchAction() {
+        mCurrentState = IntakeState.OFF;
     }
 }

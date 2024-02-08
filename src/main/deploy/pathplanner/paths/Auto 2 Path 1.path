@@ -1,0 +1,64 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.9491127601760698,
+        "y": 6.714131412466122
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.477009028880695,
+        "y": 7.331063581770021
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.86160958516972,
+        "y": 6.960897180036119
+      },
+      "prevControl": {
+        "x": 2.3664095144124353,
+        "y": 6.737135903530049
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Auto 2 Shoot 1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 4.0,
+        "maxAcceleration": 11.0853,
+        "maxAngularVelocity": 900.0,
+        "maxAngularAcceleration": 2220.0
+      }
+    }
+  ],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 11.0853,
+    "maxAngularVelocity": 900.0,
+    "maxAngularAcceleration": 2220.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -7.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

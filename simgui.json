@@ -16,6 +16,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/Amp": "Command",
+      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
       "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
@@ -44,6 +46,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "Shuffleboard": {
         "IntakeWrist": {
           "Wrist": {
@@ -72,6 +77,15 @@
     }
   },
   "NetworkTables Info": {
+    "Connections": {
+      "open": true
+    },
+    "DartClient_23203894@1": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    },
     "visible": true
   },
   "Plot": {

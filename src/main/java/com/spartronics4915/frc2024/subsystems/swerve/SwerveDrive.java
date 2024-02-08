@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,6 +94,10 @@ public class SwerveDrive extends SubsystemBase {
                     return false;
                 },
                 this);
+
+        new Trigger(DriverStation::isDisabled)
+                .onTrue(runOnce(this::setCoastMode))
+                .onFalse(runOnce(this::setBrakeMode));
 
         setDefaultCommand(teleopDriveCommand());
     }
@@ -178,6 +183,18 @@ public class SwerveDrive extends SubsystemBase {
                 return Math.signum(x) * Math.pow(x, 2);
             }
         };
+    }
+
+    public void setBrakeMode() {
+        for (SwerveModule m : mModules) {
+            m.setBrakeMode();
+        }
+    }
+
+    public void setCoastMode() {
+        for (SwerveModule m : mModules) {
+            m.setCoastMode();
+        }
     }
 
     /**
@@ -301,6 +318,10 @@ public class SwerveDrive extends SubsystemBase {
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
+    }
+
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+        return ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeeds(), getAngle());
     }
 
     public SwerveModule[] getSwerveModules() {
