@@ -76,16 +76,16 @@ public final class Constants {
         public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
-                5, 6, 13, 96.680, kWheelbase / 2, kTrackWidth / 2);
+                3, 4, 11, 0.0, kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackLeft = new ModuleConstants(
-                7, 8, 14, 15.645, -kWheelbase / 2, kTrackWidth / 2);
+                5, 6, 12, 0.0, -kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackRight = new ModuleConstants(
-                9, 10, 11, 119.268, -kWheelbase / 2, -kTrackWidth / 2);
+                7, 8, 13, 0.0, -kWheelbase / 2, -kTrackWidth / 2);
 
         public static final ModuleConstants kFrontRight = new ModuleConstants(
-                3, 4, 12, 166.816, kWheelbase / 2, -kTrackWidth / 2);
+                9, 10, 14, 0.0, kWheelbase / 2, -kTrackWidth / 2);
 
         public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
