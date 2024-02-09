@@ -49,8 +49,8 @@ public final class Constants {
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
         public static final double kWheelDiameter = Units.inchesToMeters(3.96);
-        public static final double kTrackWidth = Units.inchesToMeters(18.75);
-        public static final double kWheelbase = Units.inchesToMeters(23.75);
+        public static final double kTrackWidth = Units.inchesToMeters(22.475);
+        public static final double kWheelbase = Units.inchesToMeters(22.475);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
