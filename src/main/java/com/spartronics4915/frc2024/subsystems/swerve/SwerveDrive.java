@@ -236,6 +236,7 @@ public class SwerveDrive extends SubsystemBase {
      * Decouples the rotation control from any drive commands.
      */
     public void decoupleRotation() {
+        resetAngleController();
         setDesiredAngle(getAngle());
         mRotationIsIndependent = true;
     }
@@ -266,6 +267,10 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void setDesiredAngle(final Rotation2d angle) {
         mDesiredAngle = angle;
+    }
+
+    private void resetAngleController() {
+        mAngleController.reset();
     }
 
     private SwerveModulePosition[] getModulePositions() {
