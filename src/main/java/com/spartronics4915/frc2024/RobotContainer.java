@@ -94,7 +94,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        // mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         // mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
         //         .onTrue(mIntake.setStateCommand(IntakeState.IN))

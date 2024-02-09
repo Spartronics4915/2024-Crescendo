@@ -32,10 +32,9 @@ public class LimelightDevice extends SubsystemBase {
     public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
-        checkIfValid();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
-        LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+        checkIfValid();
         mHasCoral = hasCoral;
         createShuffleboard();
     }
@@ -43,6 +42,8 @@ public class LimelightDevice extends SubsystemBase {
     public void checkIfValid() {
         if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
             mValid = true;
+            LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+            // LimelightHelpers.setLEDMode_ForceOff(mName);
         }
     }
 
@@ -86,6 +87,11 @@ public class LimelightDevice extends SubsystemBase {
     public Pose2d getBotPose2d() {
         if (!mValid) return new Pose2d();
         return LimelightHelpers.getBotPose2d(mName);
+    }
+
+    private Pose2d getBotPose2d_wpiBlue() {
+        if (!mValid) return new Pose2d();
+        return LimelightHelpers.getBotPose2d_wpiBlue(mName);
     }
 //#endregion
 
@@ -206,6 +212,7 @@ public class LimelightDevice extends SubsystemBase {
      * Switching pipelines takes 0.15 to 0.4 seconds
      */
     public void setVisionPipeline(VisionPipelines pipeline) {
+        if (!mValid) return;
         if (pipeline.isDetector && !mHasCoral) {
             System.out.println("WARNING! attempted to switch to pipeline " + mPipeline + " but there is no coral!");
             return;
@@ -218,7 +225,7 @@ public class LimelightDevice extends SubsystemBase {
 
 //#region Shuffleboard
     public void updateFieldPose() {
-        mField.setRobotPose(getBotPose2d());
+        mField.setRobotPose(getBotPose2d_wpiBlue());
     }
 
     public String getFormattedStringTxTy() {
