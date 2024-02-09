@@ -31,7 +31,9 @@ import static com.spartronics4915.frc2024.Constants.OI.kStickDeadband;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
 
 public class SwerveDrive extends SubsystemBase {
@@ -54,7 +56,9 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveDrivePoseEstimator mPoseEstimator;
     private final Notifier mOdometryThread = new Notifier(this::updateOdometry);
-    private final ReentrantLock mPoseEstimatorLock = new ReentrantLock();
+    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock(); // TODO: should this be fair?
+    private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
+    private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -305,14 +309,14 @@ public class SwerveDrive extends SubsystemBase {
      * Adds a vision measurement to the pose estimator.
      */
     public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
-        mPoseEstimatorLock.lock();
+        mPoseEstimatorWriteLock.lock();
         try {
             mPoseEstimator.addVisionMeasurement(cameraPose, t);
         } catch (Exception e) {
-            mPoseEstimatorLock.unlock();
+            mPoseEstimatorWriteLock.unlock();
             throw e;
         }
-        mPoseEstimatorLock.unlock();
+        mPoseEstimatorWriteLock.unlock();
     }
 
     /**
@@ -320,14 +324,14 @@ public class SwerveDrive extends SubsystemBase {
      */
     public Pose2d getPose() {
         Pose2d out;
-        mPoseEstimatorLock.lock();
+        mPoseEstimatorReadLock.lock();
         try {
             out = mPoseEstimator.getEstimatedPosition();
         } catch (Exception e) {
-            mPoseEstimatorLock.unlock();
+            mPoseEstimatorReadLock.unlock();
             throw e;
         }
-        mPoseEstimatorLock.unlock();
+        mPoseEstimatorReadLock.unlock();
         return out;
     }
 
@@ -335,9 +339,9 @@ public class SwerveDrive extends SubsystemBase {
      * Resets the pose estimator to the specified position.
      */
     public void resetPose(final Pose2d newPose) {
-        mPoseEstimatorLock.lock();
+        mPoseEstimatorWriteLock.lock();
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
-        mPoseEstimatorLock.unlock();
+        mPoseEstimatorWriteLock.unlock();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -361,14 +365,14 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private void updateOdometry() {
-        mPoseEstimatorLock.lock();
+        mPoseEstimatorWriteLock.lock();
         try {
             mPoseEstimator.update(getAngle(), getModulePositions());
         } catch (Exception e) {
-            mPoseEstimatorLock.unlock();
+            mPoseEstimatorWriteLock.unlock();
             throw e;
         }
-        mPoseEstimatorLock.unlock();
+        mPoseEstimatorWriteLock.unlock();
     }
 
     @Override
