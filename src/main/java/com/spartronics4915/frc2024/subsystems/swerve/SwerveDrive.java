@@ -306,7 +306,12 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
         mPoseEstimatorLock.lock();
-        mPoseEstimator.addVisionMeasurement(cameraPose, t);
+        try {
+            mPoseEstimator.addVisionMeasurement(cameraPose, t);
+        } catch (Exception e) {
+            mPoseEstimatorLock.unlock();
+            throw e;
+        }
         mPoseEstimatorLock.unlock();
     }
 
