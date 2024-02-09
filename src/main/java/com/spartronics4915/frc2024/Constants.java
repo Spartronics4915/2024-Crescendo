@@ -92,6 +92,8 @@ public final class Constants {
                 .map((mc) -> new Translation2d(mc.x(), mc.y()))
                 .toArray(Translation2d[]::new));
 
+        public static final double kOdometryUpdatePeriod = 0.01;
+
         public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, true);
         public static final HolonomicPathFollowerConfig kPPConfig = new HolonomicPathFollowerConfig(
                 new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),

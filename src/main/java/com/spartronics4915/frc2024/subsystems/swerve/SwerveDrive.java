@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -30,6 +31,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kStickDeadband;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 public class SwerveDrive extends SubsystemBase {
@@ -51,6 +53,8 @@ public class SwerveDrive extends SubsystemBase {
     private boolean mRotationIsIndependent;
 
     private final SwerveDrivePoseEstimator mPoseEstimator;
+    private final Notifier mOdometryThread = new Notifier(this::updateOdometry);
+    private final ReentrantLock mPoseEstimatorLock = new ReentrantLock();
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -79,6 +83,8 @@ public class SwerveDrive extends SubsystemBase {
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
                     stateStdDevs, visionMeasurementStdDevs);
         }
+
+        mOdometryThread.startPeriodic(kOdometryUpdatePeriod);
 
         AutoBuilder.configureHolonomic(
                 this::getPose,
@@ -299,21 +305,34 @@ public class SwerveDrive extends SubsystemBase {
      * Adds a vision measurement to the pose estimator.
      */
     public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
+        mPoseEstimatorLock.lock();
         mPoseEstimator.addVisionMeasurement(cameraPose, t);
+        mPoseEstimatorLock.unlock();
     }
 
     /**
      * Gets the pose estimator's estimated pose.
      */
     public Pose2d getPose() {
-        return mPoseEstimator.getEstimatedPosition();
+        Pose2d out;
+        mPoseEstimatorLock.lock();
+        try {
+            out = mPoseEstimator.getEstimatedPosition();
+        } catch (Exception e) {
+            mPoseEstimatorLock.unlock();
+            throw e;
+        }
+        mPoseEstimatorLock.unlock();
+        return out;
     }
 
     /**
      * Resets the pose estimator to the specified position.
      */
     public void resetPose(final Pose2d newPose) {
+        mPoseEstimatorLock.lock();
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
+        mPoseEstimatorLock.unlock();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -336,9 +355,20 @@ public class SwerveDrive extends SubsystemBase {
         return mIMU;
     }
 
+    private void updateOdometry() {
+        mPoseEstimatorLock.lock();
+        try {
+            mPoseEstimator.update(getAngle(), getModulePositions());
+        } catch (Exception e) {
+            mPoseEstimatorLock.unlock();
+            throw e;
+        }
+        mPoseEstimatorLock.unlock();
+    }
+
     @Override
     public void periodic() {
-        mPoseEstimator.update(getAngle(), getModulePositions());
+        updateOdometry();
         boolean logSwerveModules = true;
         if (logSwerveModules) {
             for(int i = 0; i < 4; i ++){
