@@ -29,6 +29,7 @@ public class MovingAutoAimCommand extends Command{
         this.mSwerve = SwerveDrive.getInstance();
         this.mShooterWrist = ShooterWrist.getInstance();
         this.kTarget = mTarget;
+        addRequirements(mSwerve, mShooterWrist);
     }
 
     
