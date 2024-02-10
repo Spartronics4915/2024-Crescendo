@@ -108,6 +108,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
 
+        mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), 0));
+
         mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
