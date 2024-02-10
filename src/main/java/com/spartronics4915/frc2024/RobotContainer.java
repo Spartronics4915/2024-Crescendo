@@ -52,16 +52,16 @@ import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSub
 import java.util.ArrayList;
 
 public class RobotContainer {
-    private enum SubsystemFlags{
-        IntakeWristFlag (true),
-        IntakeFlag (false),
-        ShooterFlag (false),
-        ShooterWristFlag (true),
-        ElevatorFlag (true);
+    // private enum SubsystemFlags{
+    //     IntakeWristFlag (true),
+    //     IntakeFlag (false),
+    //     ShooterFlag (false),
+    //     ShooterWristFlag (true),
+    //     ElevatorFlag (true);
 
-        private final boolean isUsed;
-        private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
-    }
+    //     private final boolean isUsed;
+    //     private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
+    // }
 
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
     private static final CommandXboxController mOperatorController = new CommandXboxController(kOperatorControllerPort);
@@ -83,32 +83,26 @@ public class RobotContainer {
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
-        if (SubsystemFlags.IntakeWristFlag.isUsed){
-            mIntakeWrist = IntakeWrist.getInstance();;
-            ModeSwitchSubsystems.add(mIntakeWrist);
-            list.add(mIntakeWrist);
-        } else mIntakeWrist = null;
+        mIntakeWrist = IntakeWrist.getInstance();;
+        ModeSwitchSubsystems.add(mIntakeWrist);
+        list.add(mIntakeWrist);
+        
 
-        if (SubsystemFlags.IntakeFlag.isUsed){
-            mIntake = Intake.getInstance();
-            ModeSwitchSubsystems.add(mIntake);
-        } else mIntake = null;
+        mIntake = Intake.getInstance();
+        ModeSwitchSubsystems.add(mIntake);
+        
 
-        if (SubsystemFlags.ShooterWristFlag.isUsed){
-            mShooterWrist = ShooterWrist.getInstance();
-            ModeSwitchSubsystems.add(mShooterWrist);
-            list.add(mShooterWrist);
-        } else mShooterWrist = null;
+        mShooterWrist = ShooterWrist.getInstance();
+        ModeSwitchSubsystems.add(mShooterWrist);
+        list.add(mShooterWrist);
 
-        if (SubsystemFlags.ShooterFlag.isUsed){
-            mShooter = Shooter.getInstance();
-        } else mShooter = null;
+        mShooter = Shooter.getInstance();
+        
 
-        if (SubsystemFlags.ElevatorFlag.isUsed){
-            mElevator = Elevator.getInstance();
-            ModeSwitchSubsystems.add(mElevator);
-            list.add(mElevator);
-        } else mElevator = null;
+        mElevator = Elevator.getInstance();
+        ModeSwitchSubsystems.add(mElevator);
+        list.add(mElevator);
+        
 
         mSimulator = new TrapezoidSimulator(list);
 
@@ -132,35 +126,25 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        if (SubsystemFlags.ShooterWristFlag.isUsed) {
             mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
-        if (SubsystemFlags.IntakeWristFlag.isUsed) {
             mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
 
-        if (SubsystemFlags.ElevatorFlag.isUsed) {
             mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
             mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        }
 
-        if (SubsystemFlags.IntakeWristFlag.isUsed && SubsystemFlags.ElevatorFlag.isUsed) {
             var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
             mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
             mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
             mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
             mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
-        }
         
-        if (SubsystemFlags.ShooterFlag.isUsed) {
             mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
             mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
             mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
             mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
-        }
 
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
