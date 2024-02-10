@@ -207,6 +207,9 @@ public final class Constants {
         
         public static final double kAimedAtTargetThreshold = 1/60; //6 degrees
 
+        public static final int kLimitSwitchChannel = -1;
+        public static final double kLimitSwitchEncoderReading = 0;
+
 
     }
 
