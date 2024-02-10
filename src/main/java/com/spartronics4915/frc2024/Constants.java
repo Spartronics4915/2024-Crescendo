@@ -178,8 +178,9 @@ public final class Constants {
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
                     .0156, 7, 102); // HACK untested
             public static final int kLimitSwitchChannel = 1025672;
-            public static final float kLimitSwitchGoto = 0f; // Where the elevator will go to if the limit switch is
+            public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
+            public static final double kMinimumManualRotations = 0.1;
         }
     }
 

@@ -98,13 +98,14 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
+            mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
         }
         // Not-manual
         if (limitSwitch.get())
             mTarget = Rotation2d.fromRotations(kLimitSwitchGoto);
 
         mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), 0));
-        
+
         mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
