@@ -33,6 +33,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
@@ -216,7 +217,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getHeight() > kMeterSafetyLimit);
+        return (mElevatorSubsystem.getSetPoint().position / kMetersToRotation  > kMeterSafetyLimit);
     }
     
     private double getFeedForwardValue(){
@@ -249,6 +250,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
+
+        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit()) { //CHECKUP meant to actively prevent overshoot
+            mRotSetPoint = kMaxAngleAmp;
+        }
+        
         mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             mCurrState,
