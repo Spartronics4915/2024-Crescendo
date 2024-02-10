@@ -83,6 +83,8 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         alice.updateFieldPose();
         bob.updateFieldPose();
+        alice.profilePipelineSwitching();
+        bob.profilePipelineSwitching();
         if (!alice.isValid()) alice.checkIfValid();
         if (!bob.isValid()) bob.checkIfValid();
     }

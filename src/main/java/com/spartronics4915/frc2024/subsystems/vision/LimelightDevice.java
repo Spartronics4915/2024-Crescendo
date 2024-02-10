@@ -150,7 +150,6 @@ public class LimelightDevice extends SubsystemBase {
         LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
         LimelightHelpers.LimelightTarget_Detector[] detected = llresults.targetingResults.targets_Detector;
         int detectedCount = detected.length;
-        if (detectedCount > 0) profilePipelineSwitching(false);
         return detectedCount;
     }
 
@@ -213,12 +212,14 @@ public class LimelightDevice extends SubsystemBase {
      */
     public void setVisionPipeline(VisionPipelines pipeline) {
         if (!mValid) return;
+        if (intervalSet == false) System.out.println("Switching pipelines when interval is not set!");
         if (pipeline.isDetector && !mHasCoral) {
             System.out.println("WARNING! attempted to switch to pipeline " + mPipeline + " but there is no coral!");
             return;
         }
         mPipeline = pipeline;
-        if (!pipeline.isDetector) profilePipelineSwitching(true);
+        timestamp = Timer.getFPGATimestamp();
+        intervalSet = false;
         LimelightHelpers.setPipelineIndex(mName, pipeline.pipeline);
     }
 //#endregion
@@ -253,20 +254,26 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     private double timestamp = 0.0;
-    private boolean timestampSet = false;
+    // private boolean timestampSet = false;
     private boolean intervalSet = true;
     private double interval = 0.0;
     private double timesSwitched = 0.0;
     private double totalInterval = 0.0;
 
-    private void profilePipelineSwitching(boolean end) {
-        if (!end && !timestampSet) {
-            timestamp = Timer.getFPGATimestamp();
-            timestampSet = true;
-            intervalSet = false;
-        } else if (end && !intervalSet) {
+    public void profilePipelineSwitching() {
+        // if (!end && !timestampSet) {
+        //     timestamp = Timer.getFPGATimestamp();
+        //     timestampSet = true;
+        //     intervalSet = false;
+        // } else if (end && !intervalSet) {
+        //     interval = (Timer.getFPGATimestamp() - timestamp);
+        //     timestampSet = false;
+        //     intervalSet = true;
+        //     timesSwitched++;
+        //     totalInterval += interval;
+        // }
+        if (!intervalSet && (LimelightHelpers.getCurrentPipelineIndex(mName) == mPipeline.pipeline))  {
             interval = (Timer.getFPGATimestamp() - timestamp);
-            timestampSet = false;
             intervalSet = true;
             timesSwitched++;
             totalInterval += interval;
