@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
+import java.util.Optional;
+
 public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, TrapezoidSubsystemInterface {
     // #region all the variables and stuff
     private static Elevator mInstance;
@@ -277,10 +279,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * getInstance for gambling addicts. 50% of the time you will get the instance but the other 50% you won't
      * @return A static instance of the elevator subsystem OR null
      */
-    public static Elevator mightGetInstance() {
+    public static Optional<Elevator> mightGetInstance() {
         if (Math.random() < .2) // Actually less than 50% because the house always wins
-            return getInstance();
-        return null;
+            return Optional.of(getInstance());
+        return Optional.empty();
     }
 
     // #endregion
