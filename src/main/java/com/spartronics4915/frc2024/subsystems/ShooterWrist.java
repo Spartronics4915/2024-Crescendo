@@ -19,6 +19,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +28,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +57,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private boolean mManualMovement = false; //used to pause position setting to avoid conflict (if using Trapezoid movment due to the constant calls)
 
+    private DigitalInput mLimitSwitch;
+
     private GenericEntry mShooterSetPointEntry;
     private GenericEntry mShooterEncoderReadingEntry;
     private GenericEntry mShooterManualControlEntry;
@@ -74,6 +78,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mPidController = initPID(ShooterWristConstants.kPIDconstants);
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(ShooterWristConstants.kTrapzoidConstants);
+        mLimitSwitch = initLimitSwitch();
         
         kFeedforwardCalc = initFeedForward();
 
@@ -126,6 +131,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private ArmFeedforward initFeedForward(){
         var out = new ArmFeedforward(kWristFeedForward.kS(), kWristFeedForward.kG(), kWristFeedForward.kV(), kWristFeedForward.kA());
         
+        return out;
+    }
+
+    private DigitalInput initLimitSwitch(){
+        DigitalInput out = new DigitalInput(kLimitSwitchChannel);
         return out;
     }
 
@@ -199,6 +209,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
+        handleLimitSwitch();
         //will add things here if trapezoid motion profiles get used
     }
     
@@ -235,6 +246,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         );
         
         mPidController.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
+    }
+
+    private void handleLimitSwitch(){
+        if (mLimitSwitch.get()) {
+            mEncoder.setPosition(kLimitSwitchEncoderReading);
+        }
     }
 
     //#endregion

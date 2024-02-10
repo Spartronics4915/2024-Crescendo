@@ -181,6 +181,9 @@ public final class Constants {
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
 
+        public static final int kLimitSwitchChannel = -1;
+        public static final double kLimitSwitchEncoderReading = 0;
+
 
     }
 
