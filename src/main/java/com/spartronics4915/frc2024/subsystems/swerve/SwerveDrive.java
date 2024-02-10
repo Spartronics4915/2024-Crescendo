@@ -66,6 +66,7 @@ public class SwerveDrive extends SubsystemBase {
         mModules = new SwerveModule[] { mFrontLeft, mBackLeft, mBackRight, mFrontRight };
 
         mIMU = new Pigeon2(kPigeon2ID);
+        mIMU.reset();
 
         mIsFieldRelative = true;
 
