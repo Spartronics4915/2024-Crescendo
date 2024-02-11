@@ -152,7 +152,7 @@ public class SwerveDrive extends SubsystemBase {
 
             @Override
             public void execute() {
-                final var dc = RobotContainer.getDriverController();
+                final var dc = RobotContainer.getOperatorController();
                 ChassisSpeeds cs = new ChassisSpeeds();
 
                 final double inputxraw = dc.getLeftY() * -1.0;

@@ -53,6 +53,9 @@
         "open": true
       },
       "Shuffleboard": {
+        "Elevator": {
+          "open": true
+        },
         "IntakeWrist": {
           "Wrist": {
             "Amp": {
@@ -88,7 +91,8 @@
     },
     "Server": {
       "open": true
-    }
+    },
+    "visible": true
   },
   "NetworkTables View": {
     "visible": false

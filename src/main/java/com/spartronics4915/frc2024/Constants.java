@@ -119,12 +119,12 @@ public final class Constants {
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
         public enum IntakeAssemblyState{ //TODO find constants
-            GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 0.0),
-            STOW (Rotation2d.fromDegrees(170.0), 0.0),
-            AMP (Rotation2d.fromDegrees(10.0), 0.0),
-            LOAD (Rotation2d.fromDegrees(190.0), 0.0),
-            SOURCE (Rotation2d.fromDegrees(120.0), 0.0),
-            MANUAL (Rotation2d.fromDegrees(0.0), 0.0); //CHECKUP is this needed?
+            GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 1.0),
+            STOW (Rotation2d.fromDegrees(170.0), 2.0),
+            AMP (Rotation2d.fromDegrees(10.0), 0.5),
+            LOAD (Rotation2d.fromDegrees(190.0), 1.2),
+            SOURCE (Rotation2d.fromDegrees(120.0), 0.75),
+            MANUAL (Rotation2d.fromDegrees(0.0), -0.1); //CHECKUP is this needed?
 
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
@@ -147,7 +147,7 @@ public final class Constants {
                     public static final double kOutSpeed = -0.3; // placeholder
                     public static final double kOffSpeed = 0;
 
-                    public static final int kIntakeBeamBreakID = 0; //placeholder
+                    public static final int kIntakeBeamBreakID = 3; //placeholder
                 }
         
         public static final class IntakeWristConstants { // [ ] Intake Wrist constants
@@ -164,7 +164,7 @@ public final class Constants {
 
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(120); //only when above the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); //FIXME used for sim
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70); //FIXME used for sim
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK untested values
 
@@ -176,9 +176,9 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            public static final MotorConstants kMotorConstants = new MotorConstants(10, MotorType.kBrushless, false,
+            public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40);
-            public static final MotorConstants kFollowerConstants = new MotorConstants(11, MotorType.kBrushless, false,
+            public static final MotorConstants kFollowerConstants = new MotorConstants(21, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final double kMetersToRotation = 1; // Conversion rate
@@ -186,13 +186,13 @@ public final class Constants {
                     "Elevator",
                     1.0,
                     90.0,
-                    20.0,
+                    5.0,
                     new Color8Bit(Color.kMediumPurple),
                     SimType.Elevator,
-                    new Translation2d(103 / 100d, 27 / 100d));
+                    new Translation2d(2, 0));
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
                     .0156, 7, 102); // HACK untested
-            public static final int kLimitSwitchChannel = 1025672;
+            public static final int kLimitSwitchChannel = 2;
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinimumManualRotations = 0.1;
@@ -221,14 +221,14 @@ public final class Constants {
         
         public static final double kAimedAtTargetThreshold = 1/60; //6 degrees
 
-        public static final int kLimitSwitchChannel = -1;
+        public static final int kLimitSwitchChannel = 1;
         public static final double kLimitSwitchEncoderReading = 0;
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants
-        public static final MotorConstants kShooterMotorConstants = new MotorConstants(3, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(2, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(1, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(24, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(25, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(26, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.1, 0.0, 0.0, 0.0); //TODO find these values
         public static final double kOffSpeed = 0.0; //unsure if this is necessary
         public static final double kShootSpeed = 1.0; //placeholder
