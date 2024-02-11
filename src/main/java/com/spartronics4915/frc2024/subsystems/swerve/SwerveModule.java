@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.RobotBase;
 
+import com.spartronics4915.frc2024.Constants.Drive.ModuleConstants;
+import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.util.*;
 
 import static com.spartronics4915.frc2024.Constants.Drive.*;
@@ -96,13 +98,16 @@ public class SwerveModule {
         }
     }
 
+    double canCoderAngle = 0.0;
+
     /**
      * Only works in simulation.
      */
     public void setPosition(SwerveModulePosition pos) {
         if (RobotBase.isSimulation()) {
             mDriveEncoder.setPosition(pos.distanceMeters);
-            mCANCoder.setPosition(pos.angle.getRotations());
+            if (Robot.isSimulation()) canCoderAngle = pos.angle.getRotations();
+            else mCANCoder.setPosition(pos.angle.getRotations());
         }
     }
 
@@ -128,7 +133,7 @@ public class SwerveModule {
     }
 
     private Rotation2d getAngle() {
-        return Rotation2d.fromRotations(mCANCoder.getPosition().getValue());
+        return Rotation2d.fromRotations((Robot.isSimulation()) ? canCoderAngle : mCANCoder.getPosition().getValue());
     }
 
     public Rotation2d getAbsoluteAngle() {
