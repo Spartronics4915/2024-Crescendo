@@ -6,6 +6,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,6 +40,8 @@ public class SwerveSim extends SubsystemBase {
         return field;
     }
 
+    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+
     @Override
     public void simulationPeriodic() {
 
@@ -52,7 +56,6 @@ public class SwerveSim extends SubsystemBase {
         else {
             lastTime = Timer.getFPGATimestamp();
         }
-
 
         // Now it is time to update the module states
         // We are going to update to
@@ -72,14 +75,18 @@ public class SwerveSim extends SubsystemBase {
             }
         }
 
+        var statesList = swerveDrive.getModuleDesiredStates();
+
         if (validStates) {
 
-            ChassisSpeeds currChassisSpeed = kinematics.toChassisSpeeds(swerveDrive.getModuleDesiredStates());
+            ChassisSpeeds currChassisSpeed = kinematics.toChassisSpeeds(statesList);
 
             Pigeon2SimState simState = IMU.getSimState();
             simState.addYaw(Rotation2d.fromRadians(currChassisSpeed.omegaRadiansPerSecond).getDegrees() * dT);
 
         }
+
+        publisher.accept(statesList);
 
         Pose2d currPose = swerveDrive.getPose();
         field.setRobotPose(currPose);

@@ -67,11 +67,9 @@
             }
           },
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
-        "open": true,
         "simCanvas": {
           "Wrist": {
             "Wrist": {
@@ -93,9 +91,6 @@
       "open": true
     },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {
