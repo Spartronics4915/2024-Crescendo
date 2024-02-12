@@ -153,7 +153,7 @@ public class RobotContainer {
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         mOperatorController.button(13)
-                .whileTrue(new MovingAutoAimCommand(new Translation3d(0, 0, 10)));
+                .whileTrue(new MovingAutoAimCommand(new Translation3d(5, 5, 2)));
 
         mDriverController.a()
                 .whileTrue(new ToggleDetectorCommand());

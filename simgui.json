@@ -23,6 +23,8 @@
       "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
+      "/Shuffleboard/VisionTab/alice field": "Field2d",
+      "/Shuffleboard/VisionTab/bob field": "Field2d",
       "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
       "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
       "/SmartDashboard/field": "Field2d",

@@ -50,8 +50,9 @@ public class MovingAutoAimCommand extends Command{
             System.out.println(mSwerve.getPose());
             return;
         }
+        System.out.println(AimingPoint);
         var angles = getShooterAngle(AimingPoint.get());
-        mSwerve.setDesiredAngle(new Rotation2d(angles.getZ()));
+        mSwerve.setDesiredAngle(new Rotation2d(0.0));
         mShooterWrist.setRotationSetPoint(new Rotation2d(angles.getY()));
         super.execute();
     }

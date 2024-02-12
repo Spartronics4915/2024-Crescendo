@@ -53,8 +53,8 @@ public final class Constants {
                 0.1);
 
         public static final double kWheelDiameter = Units.inchesToMeters(3.96);
-        public static final double kTrackWidth = Units.inchesToMeters(18.75);
-        public static final double kWheelbase = Units.inchesToMeters(23.75);
+        public static final double kTrackWidth = Units.inchesToMeters(22.475);
+        public static final double kWheelbase = Units.inchesToMeters(22.475);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
@@ -83,16 +83,16 @@ public final class Constants {
         public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
-                5, 6, 13, 96.680, kWheelbase / 2, kTrackWidth / 2);
+                3, 4, 11, -91.318, kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackLeft = new ModuleConstants(
-                7, 8, 14, 15.645, -kWheelbase / 2, kTrackWidth / 2);
+                5, 6, 12, 74.268, -kWheelbase / 2, kTrackWidth / 2);
 
         public static final ModuleConstants kBackRight = new ModuleConstants(
-                9, 10, 11, 119.268, -kWheelbase / 2, -kTrackWidth / 2);
+                7, 8, 13, 286.699, -kWheelbase / 2, -kTrackWidth / 2);
 
         public static final ModuleConstants kFrontRight = new ModuleConstants(
-                3, 4, 12, 166.816, kWheelbase / 2, -kTrackWidth / 2);
+                9, 10, 14, 166.377, kWheelbase / 2, -kTrackWidth / 2);
 
         public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
