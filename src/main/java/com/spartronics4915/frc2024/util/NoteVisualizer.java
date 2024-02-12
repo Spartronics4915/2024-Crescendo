@@ -84,7 +84,7 @@ public class NoteVisualizer {
     }
 
     public static Command visualizeTrajectoryCommand(){
-        return Commands.defer(() ->{
+        return Commands.defer(() ->{ //this is because the class needs to be created when it needs to visualize the note so it properly captures the position / angles of the robot
             return NoteVisualizer.shoot().visualizeTrajectory();
         }, Set.of());
     }
