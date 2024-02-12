@@ -247,7 +247,7 @@ public final class Constants {
     }
 
     public static final class AutoAimConstants {
-        public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 2);
+        public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 1.9812);
 
         public static final double kShooterSpeed = 18.0; //needs to be in m/s
         public static final double kShooterHeight = 0.0;
