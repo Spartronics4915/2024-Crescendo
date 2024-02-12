@@ -67,6 +67,7 @@ public class SwerveDrive extends SubsystemBase {
         {
             final var pc = kAngleControllerPIDConstants;
             mAngleController = new PIDController(pc.p(), pc.i(), pc.d());
+            mAngleController.enableContinuousInput(0, Math.PI * 2);
         }
 
         mRotationIsIndependent = false;
@@ -134,6 +135,7 @@ public class SwerveDrive extends SubsystemBase {
         }
 
         if (rotationIndependent) {
+            
             var ac_c = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
             // System.out.println(ac_c);
             _speeds.omegaRadiansPerSecond = ac_c;

@@ -52,11 +52,17 @@ public class MovingAutoAimCommand extends Command{
         }
         var targetPos = aimingPoint.get() ;
         var ShooterAngle = getShooterAngle(targetPos);
-        mSwerve.setDesiredAngle(Rotation2d.fromRotations(getChassisAngle(targetPos).getRotations() + 0.5));
         mShooterWrist.setRotationSetPoint(ShooterAngle);
 
+        var botAngle = Rotation2d.fromRotations(
+            (getChassisAngle(targetPos).getRotations() + //base rotations 0 --> 360 
+            0.5) //reverses the direction (ie now the back is facing the target)
+        );
 
-        System.out.println(getChassisAngle(targetPos));
+        mSwerve.setDesiredAngle(botAngle);
+        System.out.println(botAngle);
+
+
         super.execute();
     }
 
