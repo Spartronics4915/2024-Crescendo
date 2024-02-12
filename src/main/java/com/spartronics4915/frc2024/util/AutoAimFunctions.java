@@ -60,7 +60,7 @@ public class AutoAimFunctions {
         var c4 = (pow(ax) + pow(ay) + pow(az))/4.0;
         var c3 = ax * vx + ay * vy + az * vz;
         var c2 = pow(vx) + px * ax + pow(vy) + py * ay + pow(vz)+ pz * az - pow(s);
-        var c1 = 2 * (px * vx + py * vy+pz * vz);
+        var c1 = 2 * (px * vx + py * vy + pz * vz);
         var c0 = pow(px) + pow(py) + pow(pz);
 
         // get real, non negative roots:
@@ -107,7 +107,7 @@ public class AutoAimFunctions {
     }
 
     public static Rotation2d getChassisAngle(Translation3d targetPos) {
-        var r = targetPos.toTranslation2d().getAngle().getRotations();
+        var r = targetPos.toTranslation2d().getAngle().getRotations() + 0.5;
         return Rotation2d.fromRotations((r < 0) ? 1 + r : r);
     }
 }
