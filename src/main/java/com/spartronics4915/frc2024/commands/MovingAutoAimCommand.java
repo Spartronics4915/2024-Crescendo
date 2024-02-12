@@ -64,9 +64,7 @@ public class MovingAutoAimCommand extends Command{
             0.0
         )), new Rotation3d()));
 
-        var botAngle = Rotation2d.fromRotations(
-            (getChassisAngle(targetPos).getRotations()) //base rotations 0 --> 360 //reverses the direction (ie now the back is facing the target)
-        );
+        var botAngle = getChassisAngle(targetPos); //base rotations 0 --> 360 //reverses the direction (ie now the back is facing the target)
 
         mSwerve.setDesiredAngle(botAngle); //error of ~15 degres when moving
         // System.out.println(mSwerve.getAngle().getDegrees());

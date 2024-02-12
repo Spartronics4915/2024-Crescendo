@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
@@ -22,6 +23,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import java.util.stream.*;
 
 public class SwerveSim extends SubsystemBase {
 
@@ -49,7 +51,10 @@ public class SwerveSim extends SubsystemBase {
         return field;
     }
 
-    StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
+    StructArrayPublisher<SwerveModuleState> desiredStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct).publish();
+    StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyCurrentStates", SwerveModuleState.struct).publish();
+
+    DoublePublisher rotationPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getDoubleTopic("swerve Rotation").publish();
     StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Pose3d.struct).publish();
     StructPublisher<Pose3d> cameraOverridePub = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("cameraOverride", Pose3d.struct).publish();
     
@@ -77,7 +82,7 @@ public class SwerveSim extends SubsystemBase {
             SwerveModuleState currDesiredState = m.getDesiredState();
             if (currDesiredState != null) {
                 double newPosDist = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
-                Rotation2d newPosAngle = currDesiredState.angle; // hack but good enough for sim
+                Rotation2d newPosAngle =currDesiredState.angle; // hack but good enough for sim
                 var newPos = new SwerveModulePosition(newPosDist, newPosAngle);
                 m.setPosition(newPos);
             } else {
@@ -97,12 +102,17 @@ public class SwerveSim extends SubsystemBase {
 
         }
 
-        publisher.accept(statesList);
+        currStatespublisher.accept(Stream.of(swerveDrive.getSwerveModules()).map((m) -> {
+            return m.getState();
+        }).toArray(SwerveModuleState[]::new));
+        desiredStatespublisher.accept(swerveDrive.getModuleDesiredStates());
+
         targetPublisher.accept(new Pose3d(kAutoAimTarget, new Rotation3d()));
 
         Pose2d currPose = swerveDrive.getPose();
         field.setRobotPose(currPose);
 
+        rotationPublisher.accept(swerveDrive.getAngle().getDegrees() % 360);
         cameraOverridePub.accept(new Pose3d(-0.75, 1.95 + (1.8)*1, 1.5, new Rotation3d(0, Rotation2d.fromDegrees(10).getRadians(), 0)));
     }
 
