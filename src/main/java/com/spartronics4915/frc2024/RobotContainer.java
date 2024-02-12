@@ -30,6 +30,7 @@ import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
+import com.spartronics4915.frc2024.util.NoteVisualizer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
@@ -56,6 +57,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
 import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class RobotContainer {
     // private enum SubsystemFlags{
@@ -154,6 +156,11 @@ public class RobotContainer {
             mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
 
         mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+
+        mOperatorController.button(10).whileTrue(Commands.defer(() -> {
+            var vis = NoteVisualizer.shoot();
+            return vis.visualizeTrajectory();
+        }, Set.of()));
 
         mOperatorController.button(13)
                 .whileTrue(new MovingAutoAimCommand(kAutoAimTarget));

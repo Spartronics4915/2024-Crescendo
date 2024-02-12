@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class SwerveSim extends SubsystemBase {
@@ -48,7 +50,7 @@ public class SwerveSim extends SubsystemBase {
     }
 
     StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-    StructPublisher<Translation3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Translation3d.struct).publish();
+    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Pose3d.struct).publish();
     @Override
     public void simulationPeriodic() {
 
@@ -94,7 +96,7 @@ public class SwerveSim extends SubsystemBase {
         }
 
         publisher.accept(statesList);
-        targetPublisher.accept(kAutoAimTarget);
+        targetPublisher.accept(new Pose3d(kAutoAimTarget, new Rotation3d()));
 
         Pose2d currPose = swerveDrive.getPose();
         field.setRobotPose(currPose);
