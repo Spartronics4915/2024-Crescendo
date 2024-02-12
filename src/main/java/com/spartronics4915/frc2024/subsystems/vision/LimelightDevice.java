@@ -16,23 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightDevice extends SubsystemBase {
-    /* TODO
-     * assign each limelight a static ip
-     * rest api to set limelight names without web display
-     * flash alice
-     * finalize pipelines and backup
-     * add ifCoral to constructor
-     * measure pose offsets for talos and implement
-     * calibrate limelights
-     * tune detector pipeline
-     * use low resolution on neural networks
-     * figure out how to get that nice high resolution camera stream
-     */
 
     public static record VisionMeasurement(Pose3d pose, double timestamp) {}
 
     private final String mName;
-    private final boolean mValid;
+    private boolean mValid = false;
     private VisionPipelines mPipeline;
     private final boolean mHasCoral;
     private final Field2d mField;
@@ -44,13 +32,19 @@ public class LimelightDevice extends SubsystemBase {
     public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
-        mValid = !NetworkTableInstance.getDefault().getTable(formattedName).getKeys().isEmpty();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
-        // mPipeline = ((name.equals("alice")) ? VisionPipelines.ALICE_TEMP_NOTE_DETECTOR : VisionPipelines.FIDUCIALS_3D);
-        LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+        checkIfValid();
         mHasCoral = hasCoral;
         createShuffleboard();
+    }
+
+    public void checkIfValid() {
+        if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
+            mValid = true;
+            LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+            // LimelightHelpers.setLEDMode_ForceOff(mName);
+        }
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
@@ -93,6 +87,11 @@ public class LimelightDevice extends SubsystemBase {
     public Pose2d getBotPose2d() {
         if (!mValid) return new Pose2d();
         return LimelightHelpers.getBotPose2d(mName);
+    }
+
+    private Pose2d getBotPose2d_wpiBlue() {
+        if (!mValid) return new Pose2d();
+        return LimelightHelpers.getBotPose2d_wpiBlue(mName);
     }
 //#endregion
 
@@ -205,10 +204,15 @@ public class LimelightDevice extends SubsystemBase {
         return mPipeline;
     }
 
+    public boolean isValid() {
+        return mValid;
+    }
+
     /**
      * Switching pipelines takes 0.15 to 0.4 seconds
      */
     public void setVisionPipeline(VisionPipelines pipeline) {
+        if (!mValid) return;
         if (pipeline.isDetector && !mHasCoral) {
             System.out.println("WARNING! attempted to switch to pipeline " + mPipeline + " but there is no coral!");
             return;
@@ -221,7 +225,7 @@ public class LimelightDevice extends SubsystemBase {
 
 //#region Shuffleboard
     public void updateFieldPose() {
-        mField.setRobotPose(getBotPose2d());
+        mField.setRobotPose(getBotPose2d_wpiBlue());
     }
 
     public String getFormattedStringTxTy() {

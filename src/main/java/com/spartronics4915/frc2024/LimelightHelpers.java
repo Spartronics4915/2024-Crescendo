@@ -397,7 +397,7 @@ public class LimelightHelpers {
     private static Pose2d toPose2D(double[] inData){
         if(inData.length < 6)
         {
-            System.err.println("Bad LL 2D Pose Data!");
+            // System.err.println("Bad LL 2D Pose Data!"); HACK
             return new Pose2d();
         }
         Translation2d tran2d = new Translation2d(inData[0], inData[1]);
@@ -765,7 +765,7 @@ public class LimelightHelpers {
         try {
             results = mapper.readValue(getJSONDump(limelightName), LimelightResults.class);
         } catch (JsonProcessingException e) {
-            System.err.println("lljson error: " + e.getMessage());
+            // System.err.println("lljson error: " + e.getMessage()); HACK
         }
 
         long end = System.nanoTime();

@@ -97,13 +97,15 @@ public class AutoAimFunctions {
         return Optional.of(out);
     }
 
-    public static Rotation3d getShooterAngle(Translation3d targetPos){ //this is the position of the speaker centered around the robot
+    public static Rotation2d getShooterAngle(Translation3d targetPos){ //this is the position of the speaker centered around the robot
         double kRelHeight = targetPos.getZ();
         double dist = targetPos.getNorm();
 
-        return new Rotation3d(0, 
-            Math.asin(kRelHeight/dist), 
-            targetPos.toTranslation2d().getAngle().getRadians() //0deg = looking at red alliance, 90 is amp direction
-        );
+        return new Rotation2d(Math.asin(kRelHeight/dist));
+    }
+
+    public static Rotation2d getChassisAngle(Translation3d targetPos) {
+        var r = targetPos.toTranslation2d().getAngle().getRotations();
+        return Rotation2d.fromRotations((r < 0) ? 1 + r : r);
     }
 }

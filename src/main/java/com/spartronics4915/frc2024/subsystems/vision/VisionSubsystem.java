@@ -2,9 +2,11 @@ package com.spartronics4915.frc2024.subsystems.vision;
 
 import java.util.Optional;
 
+import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
@@ -17,10 +19,12 @@ public class VisionSubsystem extends SubsystemBase {
         alice = new LimelightDevice("alice", true);
         bob = new LimelightDevice("bob", false);
     }
-
+    
     public static VisionSubsystem getInstance() {
         if (mInstance == null) {
             mInstance = new VisionSubsystem();
+            BootCoralCommand bootCoral = new BootCoralCommand();
+            CommandScheduler.getInstance().schedule(bootCoral);
         }
         return mInstance;
     }
@@ -77,7 +81,9 @@ public class VisionSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        getAlice().updateFieldPose();
-        getBob().updateFieldPose();
+        alice.updateFieldPose();
+        bob.updateFieldPose();
+        if (!alice.isValid()) alice.checkIfValid();
+        if (!bob.isValid()) bob.checkIfValid();
     }
 }

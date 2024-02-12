@@ -41,19 +41,22 @@ public class MovingAutoAimCommand extends Command{
     
     @Override
     public void execute() {
-        var AimingPoint = movingAutoAim(
+        var aimingPoint = movingAutoAim(
             mSwerve.getPose(), 
             mSwerve.getFieldRelativeSpeeds(), 
             kTarget
         );
-        if (AimingPoint.isEmpty()) {
+        if (aimingPoint.isEmpty()) {
             System.out.println(mSwerve.getPose());
             return;
         }
-        System.out.println(AimingPoint);
-        var angles = getShooterAngle(AimingPoint.get());
-        mSwerve.setDesiredAngle(new Rotation2d(0.0));
-        mShooterWrist.setRotationSetPoint(new Rotation2d(angles.getY()));
+        var targetPos = aimingPoint.get() ;
+        var ShooterAngle = getShooterAngle(targetPos);
+        mSwerve.setDesiredAngle(Rotation2d.fromRotations(getChassisAngle(targetPos).getRotations() + 0.5));
+        mShooterWrist.setRotationSetPoint(ShooterAngle);
+
+
+        System.out.println(getChassisAngle(targetPos));
         super.execute();
     }
 

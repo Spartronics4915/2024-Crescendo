@@ -13,6 +13,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
@@ -40,11 +41,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
 import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
@@ -153,7 +156,7 @@ public class RobotContainer {
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         mOperatorController.button(13)
-                .whileTrue(new MovingAutoAimCommand(new Translation3d(5, 5, 2)));
+                .whileTrue(new MovingAutoAimCommand(kAutoAimTarget));
 
         mDriverController.a()
                 .whileTrue(new ToggleDetectorCommand());

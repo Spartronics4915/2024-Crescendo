@@ -1,5 +1,7 @@
 package com.spartronics4915.frc2024.subsystems.swerve;
 
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -8,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +19,7 @@ import com.ctre.phoenix6.sim.Pigeon2SimState;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 public class SwerveSim extends SubsystemBase {
 
@@ -41,7 +45,7 @@ public class SwerveSim extends SubsystemBase {
     }
 
     StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
-
+    StructPublisher<Translation3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Translation3d.struct).publish();
     @Override
     public void simulationPeriodic() {
 
@@ -87,6 +91,7 @@ public class SwerveSim extends SubsystemBase {
         }
 
         publisher.accept(statesList);
+        targetPublisher.accept(kAutoAimTarget);
 
         Pose2d currPose = swerveDrive.getPose();
         field.setRobotPose(currPose);

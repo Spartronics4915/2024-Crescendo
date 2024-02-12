@@ -24,8 +24,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
@@ -46,7 +50,7 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
-        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(5.0, 1.5, 2.0); // tuned good enough
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(5.0, 0, 0); // tuned good enough
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1,
@@ -243,6 +247,8 @@ public final class Constants {
     }
 
     public static final class AutoAimConstants {
+        public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 2);
+
         public static final double kShooterSpeed = 18.0; //needs to be in m/s
         public static final double kShooterHeight = 0.0;
         public static final double kMaxDistance = 10.0; //Needs units, the maximum relative distance a target can be from the robot for autoaim 
@@ -252,9 +258,7 @@ public final class Constants {
     public static final class Vision {
         public enum VisionPipelines {
             FIDUCIALS_3D (0, false),
-            DETECTOR_NOTE (1, true),
-            DETECTOR_ROBOT (2, true),
-            ALICE_TEMP_NOTE_DETECTOR (4, true); //HACK keep until alice is flashed
+            DETECTOR_NOTE (1, true);
             public final int pipeline;
             public final boolean isDetector;
             private VisionPipelines(int pipeline, boolean isDetector) {
