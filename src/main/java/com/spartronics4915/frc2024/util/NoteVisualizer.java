@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
+import java.util.Set;
 import java.util.function.*;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
@@ -25,7 +26,7 @@ public class NoteVisualizer {
         return posI.plus(velI.times(seconds)).plus(accel.times(seconds*seconds).times(0.5));
     }
 
-    private static Translation3d nullPosition = new Translation3d(0, 0, -10); 
+    private static Translation3d nullPosition = new Translation3d(0, 0, -1); 
 
     public final Translation3d initalPos;
     public final Translation3d initialVel;
@@ -82,11 +83,17 @@ public class NoteVisualizer {
         notePublisher.accept(new Pose3d(pos, new Rotation3d(0, 0, 0)));
     }
 
+    public static Command visualizeTrajectoryCommand(){
+        return Commands.defer(() ->{
+            return NoteVisualizer.shoot().visualizeTrajectory();
+        }, Set.of());
+    }
 
-    public Command visualizeTrajectory(){
+    public Command visualizeTrajectory(){ 
         final Timer timer = new Timer();
         timer.start(); 
-        return Commands.deadline(Commands.waitUntil(() -> getAtTime(initalPos, initialVel, accel, timer.get()).getZ() < 0), 
+        System.out.println("visualizing trajectory");
+        return Commands.deadline(Commands.waitUntil(() -> getAtTime(initalPos, initialVel, accel, timer.get()).getZ() < -3), 
             Commands.runEnd(() -> {
                 publishPos(getAtTime(initalPos, initialVel, accel, timer.get()));
             }, () -> {

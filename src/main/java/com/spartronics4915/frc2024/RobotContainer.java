@@ -182,10 +182,13 @@ public class RobotContainer {
         
         // return new PathPlannerAuto("Test Auto");
         NamedCommands.registerCommand("autoAimfor3", Commands.deadline(Commands.waitSeconds(3), new MovingAutoAimCommand(kStageTarget)));
-        NamedCommands.registerCommand("visualizeShot", Commands.deadline(Commands.waitSeconds(3), NoteVisualizer.shoot().visualizeTrajectory()));
+        NamedCommands.registerCommand("visualizeShot", Commands.deadline(Commands.waitSeconds(3), NoteVisualizer.visualizeTrajectoryCommand()));
 
         // return new PathPlannerAuto("Path 1 Only");
         
-        return new PathPlannerAuto("shoot test");
+        return Commands.sequence(
+            new PathPlannerAuto("shoot test"),
+            Commands.print("done!")
+        );
     }
 }
