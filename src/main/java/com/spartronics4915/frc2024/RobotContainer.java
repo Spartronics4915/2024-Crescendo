@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kStageTarget;
 import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
@@ -164,7 +165,7 @@ public class RobotContainer {
         }, Set.of()));
 
         mOperatorController.button(13)
-                .whileTrue(new MovingAutoAimCommand(kAutoAimTarget));
+                .whileTrue(new MovingAutoAimCommand(kStageTarget));
 
         mDriverController.a()
                 .whileTrue(new ToggleDetectorCommand());
@@ -180,7 +181,7 @@ public class RobotContainer {
         // return Commands.sequence(initPose, driveBackwards, holdStill);
         
         // return new PathPlannerAuto("Test Auto");
-        NamedCommands.registerCommand("autoAimfor3", Commands.deadline(Commands.waitSeconds(3), new MovingAutoAimCommand(kAutoAimTarget)));
+        NamedCommands.registerCommand("autoAimfor3", Commands.deadline(Commands.waitSeconds(3), new MovingAutoAimCommand(kStageTarget)));
         NamedCommands.registerCommand("visualizeShot", Commands.deadline(Commands.waitSeconds(3), NoteVisualizer.shoot().visualizeTrajectory()));
 
         // return new PathPlannerAuto("Path 1 Only");

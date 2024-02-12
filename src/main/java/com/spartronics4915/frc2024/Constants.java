@@ -247,6 +247,19 @@ public final class Constants {
     }
 
     public static final class AutoAimConstants {
+        public enum Targets{
+            TEMP_TARGET (new Translation3d(0.2286, 5.5, 2.0));
+
+            public final Translation3d targetPosition;
+            private Targets(Translation3d targetPosition){
+                this.targetPosition = targetPosition;
+            }
+        }
+        public static final Translation3d kStageTarget;
+        static{
+            kStageTarget = Targets.TEMP_TARGET.targetPosition; //TODO add alliance checker
+        }
+
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
 
