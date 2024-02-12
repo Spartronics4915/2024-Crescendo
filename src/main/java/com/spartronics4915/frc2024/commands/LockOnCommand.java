@@ -29,12 +29,18 @@ public class LockOnCommand extends Command {
     
     @Override
     public void execute() {
-        mSwerve.setDesiredAngle(mSwerve.getAngle().rotateBy(Rotation2d.fromDegrees(-mLimelight.getTx())));
+        double pipelineIndex = mLimelight.getTruePipelineIndex();
+        Rotation2d swerveAngle = mSwerve.getAngle();
+        Rotation2d limelightAngle = Rotation2d.fromDegrees(-mLimelight.getTx());
+        Rotation2d desiredAngle = Rotation2d.fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
+        System.out.println("LOCKON:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
+        if ((pipelineIndex == 1) && mLimelight.getTv()) mSwerve.setDesiredAngle(desiredAngle);
     }
 
     @Override
     public void end(boolean interrupted) {
         mSwerve.recoupleRotation();
+        System.out.println("LOCKON:\nended; interrupted = " + interrupted);
         mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
     }
 }

@@ -30,11 +30,14 @@ public class BootCoralCommand extends Command {
                 mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
                 booting = true;
                 bootTime = Timer.getFPGATimestamp();
-                System.out.println("[BOOTCORAL] booting " + bootTime);
+                System.out.println("[BOOTCORAL] booting at " + bootTime);
             } else if (!booted) {
                 double currentTime = Timer.getFPGATimestamp();
-                if ((currentTime - bootTime) > 5) {booted = true;
-                System.out.println("[BOOTCORAL] booted");
+                double timeElapsed = currentTime - bootTime;
+                if (mLimelight.getTruePipelineIndex() == 1 || (timeElapsed > 8)) {
+                    booted = true;
+                    System.out.println("[BOOTCORAL] booted in " + timeElapsed);
+                    if (timeElapsed > 8) System.out.println("[BOOTCORAL] timed out on bootup");
                 }
             }
         }

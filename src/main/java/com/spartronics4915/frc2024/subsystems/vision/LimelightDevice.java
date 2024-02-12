@@ -203,6 +203,10 @@ public class LimelightDevice extends SubsystemBase {
         return mPipeline;
     }
 
+    public double getTruePipelineIndex() {
+        return LimelightHelpers.getCurrentPipelineIndex(mName);
+    }
+
     public boolean isValid() {
         return mValid;
     }
