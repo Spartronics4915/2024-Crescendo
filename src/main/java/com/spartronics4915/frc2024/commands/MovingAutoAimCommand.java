@@ -41,17 +41,18 @@ public class MovingAutoAimCommand extends Command{
     
     @Override
     public void execute() {
-        var AimingPoint = movingAutoAim(
+        var aimingPoint = movingAutoAim(
             mSwerve.getPose(), 
             mSwerve.getFieldRelativeSpeeds(), 
             kTarget
         );
-        if (AimingPoint.isEmpty()) {
+        if (aimingPoint.isEmpty()) {
+            System.out.println(mSwerve.getPose());
             return;
         }
-        var angles = getShooterAngle(AimingPoint.get());
-        mSwerve.setDesiredAngle(new Rotation2d(angles.getZ()));
-        mShooterWrist.setRotationSetPoint(new Rotation2d(angles.getY()));
+        var targetPos = aimingPoint.get() ;
+        mSwerve.setDesiredAngle(Rotation2d.fromRotations(getChassisAngle(targetPos).getRotations() + 0.5));
+        mShooterWrist.setRotationSetPoint(getShooterAngle(targetPos)); //BUG 350 --> 10 spins 360 degrees
         super.execute();
     }
 
