@@ -8,11 +8,8 @@
     "Other Devices": {
       "SPARK MAX [1]": {
         "header": {
-          "open": true
+          "open": false
         }
-      },
-      "window": {
-        "visible": false
       }
     }
   },
@@ -21,13 +18,10 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout`/Amp": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
-      "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
-      "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
       "/Shuffleboard/VisionTab/alice field": "Field2d",
       "/Shuffleboard/VisionTab/bob field": "Field2d",
-      "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
-      "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
       "/SmartDashboard/field": "Field2d",
+      "/SmartDashboard/ghostMechanism": "Mechanism2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
     },
     "windows": {
@@ -51,32 +45,28 @@
   },
   "NetworkTables": {
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
       "Shuffleboard": {
         "Elevator": {
-          "open": true
+          "open": false
         },
         "IntakeWrist": {
           "Wrist": {
             "Amp": {
-              "open": true
+              "open": false
             },
-            "open": true,
+            "open": false,
             "stow": {
-              "open": true
+              "open": false
             }
           },
-          "open": true
+          "open": false
         }
       },
       "SmartDashboard": {
-        "open": true,
         "simCanvas": {
           "Wrist": {
             "Wrist": {
-              "open": true
+              "open": false
             }
           }
         }
@@ -84,33 +74,9 @@
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "DartClient_23203894@1": {
-      "open": true
-    },
-    "Server": {
-      "open": true
+      "open": false
     },
     "visible": true
-  },
-  "Plot": {
-    "Plot <0>": {
-      "plots": [
-        {
-          "backgroundColor": [
-            0.0,
-            0.0,
-            0.0,
-            0.8500000238418579
-          ],
-          "height": 326
-        }
-      ],
-      "window": {
-        "visible": false
-      }
-    }
   }
 }

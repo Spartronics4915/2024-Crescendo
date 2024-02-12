@@ -37,7 +37,7 @@ public class MovingAutoAimCommand extends Command{
         addRequirements(mShooterWrist);
     }
 
-    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("SimStuff").getStructTopic("MAA", Pose3d.struct).publish();
+    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("MAA", Pose3d.struct).publish();
     
     @Override
     public void initialize() {

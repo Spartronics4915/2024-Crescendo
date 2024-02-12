@@ -9,15 +9,20 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ScheduleCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
 import java.util.Set;
 import java.util.function.*;
 
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
@@ -30,6 +35,7 @@ public class NoteVisualizer {
 
     private final Translation3d initalPos;
     private final Translation3d initialVel;
+    private final Pose2d launchPosition;
     private final Translation3d accel = new Translation3d(0, 0, kGravity);
 
     Predicate<Translation3d> isValidPos;
@@ -46,6 +52,7 @@ public class NoteVisualizer {
         
         initialVel = aimingPoint.div(aimingPoint.getNorm()).times(kShooterSpeed);
         System.out.println(initialVel);
+        launchPosition = SwerveDrive.getInstance().getPose();
     }
 
     private static NoteVisualizer shoot(){
@@ -57,7 +64,9 @@ public class NoteVisualizer {
             swerve.getAngle().getRadians()
         );
 
-        var temp = new Translation3d(1.0, 0.0, 0.0).rotateBy(x);
+        var temp = new Translation3d(1.0, 0.0, 0.0);
+        temp = temp.rotateBy(x);
+
         var outputAngle = new Translation3d(
             temp.getX(), 
             temp.getY(), 
@@ -79,6 +88,8 @@ public class NoteVisualizer {
 
     static StructPublisher<Pose3d> notePublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("noteVis", Pose3d.struct).publish();
 
+    static StructPublisher<Pose2d> launchPosPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("launchPosition", Pose2d.struct).publish();
+
     private static void publishPos(Translation3d pos){
         notePublisher.accept(new Pose3d(pos, new Rotation3d(0, 0, 0)));
     }
@@ -92,10 +103,13 @@ public class NoteVisualizer {
     public Command visualizeTrajectory(){ 
         final Timer timer = new Timer();
         timer.start(); 
-        System.out.println("visualizing trajectory");
+        System.out.println("visualizing trajectory");        
+        
+
         return Commands.deadline(Commands.waitUntil(() -> getAtTime(initalPos, initialVel, accel, timer.get()).getZ() < -3), 
             Commands.runEnd(() -> {
                 publishPos(getAtTime(initalPos, initialVel, accel, timer.get()));
+                launchPosPublisher.accept(launchPosition);
             }, () -> {
                 publishPos(nullPosition);
             })
