@@ -51,6 +51,8 @@ public class SwerveSim extends SubsystemBase {
 
     StructArrayPublisher<SwerveModuleState> publisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyStates", SwerveModuleState.struct).publish();
     StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Pose3d.struct).publish();
+    StructPublisher<Pose3d> cameraOverridePub = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("cameraOverride", Pose3d.struct).publish();
+    
     @Override
     public void simulationPeriodic() {
 
@@ -100,6 +102,8 @@ public class SwerveSim extends SubsystemBase {
 
         Pose2d currPose = swerveDrive.getPose();
         field.setRobotPose(currPose);
+
+        cameraOverridePub.accept(new Pose3d(-0.75, 1.95 + (1.8)*1, 1.5, new Rotation3d(0, Rotation2d.fromDegrees(10).getRadians(), 0)));
     }
 
 }
