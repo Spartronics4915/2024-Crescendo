@@ -30,7 +30,6 @@ public class MovingAutoAimCommand extends Command{
     }
 
     public MovingAutoAimCommand(Translation3d mTarget) {
-        System.out.println("call here?");
         this.mSwerve = SwerveDrive.getInstance();
         this.mShooterWrist = ShooterWrist.getInstance();
         this.kTarget = mTarget;
