@@ -14,8 +14,8 @@ public class VisionSubsystem extends SubsystemBase {
     private final LimelightDevice bob;
 
     private VisionSubsystem() {
-        alice = new LimelightDevice("alice");
-        bob = new LimelightDevice("bob");
+        alice = new LimelightDevice("alice", true);
+        bob = new LimelightDevice("bob", false);
     }
 
     public static VisionSubsystem getInstance() {
@@ -53,7 +53,7 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<Pose3d> getPose() {
         LimelightDevice preferred = getPreferredLimelight();
-        if (preferred.canSeeTags())
+        if (preferred.getTv())
             return Optional.of(preferred.getBotPose3d());
         return Optional.empty();
     }
@@ -79,7 +79,5 @@ public class VisionSubsystem extends SubsystemBase {
     public void periodic() {
         getAlice().updateFieldPose();
         getBob().updateFieldPose();
-        getAlice().updateAccelerometer();
-        getBob().updateAccelerometer();
     }
 }

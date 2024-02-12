@@ -156,7 +156,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mManualDelta = deltaPosition;
     }
 
-    private void setRotationSetPoint(Rotation2d angle){
+    public void setRotationSetPoint(Rotation2d angle){
         mTargetRotation2d = angle;
     }
 

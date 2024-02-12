@@ -12,150 +12,98 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.function.*;
+
+import org.ddogleg.solver.Polynomial;
+
+
+
 public class AutoAimFunctions {
 
     private static double pow(double a){return Math.pow(a, 2);}
-    private static boolean check(double a) {return Double.isFinite(a) && a > 0;}
 
     /**
-     * @param robotPose robots position on the field
-     * @param velocity the robots velocity on the field
-     * @param Target the targets position on the field
-     * @return Translation3d representing target position at collision
-     * 
-     * based on this equation: 
-     * https://www.wolframalpha.com/input?i2d=true&i=solve+Power%5B%7C%7C%7BSubscript%5Bp%2Cx%5D%2CSubscript%5Bp%2Cy%5D%2CSubscript%5Bp%2Cz%5D%7D%2B%7BSubscript%5Bu%2Cx%5D%2CSubscript%5Bu%2Cy%5D%2CSubscript%5Bu%2Cz%5D%7D*Subscript%5Bv%2Cs%5D*Subscript%5Bt%2Cc%5D%7C%7C%2C2%5D%3DPower%5B%5C%2840%29Subscript%5Bv%2Cn%5D*Subscript%5Bt%2Cc%5D%5C%2841%29%2C2%5D++for+Subscript%5Bt%2Cc%5D
+     * based on this white paper and using an external library "ddogleg" to find the roots of the polynomial
+     * https://docs.google.com/document/d/1TKhiXzLMHVjDPX3a3U0uMvaiW1jWQWUmYpICjIDeMSA/edit
+     * @param robotPose
+     * @param velocity
+     * @param targetPos
+     * @param targetZ
+     * @return an aiming point for the shooter, relative to the shooter on the robot
      */
-    public static Optional<Translation3d> movingAutoAim2(
-        Pose2d robotPose, 
-        ChassisSpeeds velocity, 
-        Translation2d targetPos, 
-        double targetZ
+    public static Optional<Translation3d> movingAutoAim(
+        final Pose2d robotPose, // m, field
+        final ChassisSpeeds velocity, //m/s, field 
+        final Translation3d targetPos //m, field
     ){
-        var p = targetPos.minus(robotPose.getTranslation()); //position of target relative to robot
-        var pz = targetZ - kShooterHeight;
+        //varaiable declarations so they match the formulas
 
-        var TempVelocity = new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond);
-        var u = TempVelocity.div(TempVelocity.getNorm()).times(-1.0); //reversing the direction of the unit velocity vector so its relative to the robot //no z component
-        var vs = TempVelocity.getNorm(); //speaker velocity
-        var vn = kShooterSpeed;
-        var uz = 0;
+        var p = targetPos.toTranslation2d().minus(robotPose.getTranslation());
 
-        if (vs == 0.0) {
-            return Optional.of(new Translation3d(targetPos.getX(), targetPos.getY(), targetZ));
-        }
-        
+        double px = p.getX();
+        double py = p.getY();
+        double pz = targetPos.getZ() - kShooterHeight;
 
-        var sqrtPart = Math.sqrt(
-            pow(vs) * pow(-2 * p.getX() * u.getX() - 2 * p.getY() * u.getY() - 2 * pz * uz) - 
-            4 * (-pow(p.getX()) - pow(p.getY()) - pow(pz)) * (pow(vn) - pow(vs) * pow(u.getX()) - pow(vs) * pow(u.getY()) - pow(vs) * pow(uz))
-        );
+        var v = new Translation2d(velocity.vxMetersPerSecond, velocity.vyMetersPerSecond);
 
-        var t1 = 
-            ((-1) * vs * (-2 * p.getX() * u.getX() - 2 * p.getY() * u.getY() - 2 * pz * uz) - sqrtPart) / 
-            (2 * (pow(vn) - pow(vs)*pow(u.getX()) - pow(vs)*pow(u.getY()) - pow(vs)*pow(uz)));
+        double vx = -v.getX();
+        double vy = -v.getY();
+        double vz = 0;
 
-        var t2 = 
-            ((-1) * vs * (-2 * p.getX() * u.getX() - 2 * p.getY() * u.getY() - 2 * pz * uz) + sqrtPart) / 
-            (2 * (pow(vn) - pow(vs)*pow(u.getX()) - pow(vs)*pow(u.getY()) - pow(vs)*pow(uz)));
+        double ax = 0;
+        double ay = 0;
+        double az = 0-kGravity; //relative to the robot the speaker will be accelerating upwards
 
-        double t = 0.0;
-        if (!check(t1) && !check(t2)) {
+        double s = kShooterSpeed;
+
+        //calculating the coefficients, the number is the exponent
+
+        var c4 = (pow(ax) + pow(ay) + pow(az))/4.0;
+        var c3 = ax * vx + ay * vy + az * vz;
+        var c2 = pow(vx) + px * ax + pow(vy) + py * ay + pow(vz)+ pz * az - pow(s);
+        var c1 = 2 * (px * vx + py * vy+pz * vz);
+        var c0 = pow(px) + pow(py) + pow(pz);
+
+        // get real, non negative roots:
+
+        var possibleRoots = PolynomialRootFinder.getRealRoots(Polynomial.wrap(c0,c1,c2,c3,c4));
+        if (!possibleRoots.isPresent()) {
             return Optional.empty();
-        }else if (!check(t1) || !check(t2)){
-            t = check(t1) ? t1 : t2;
-        }else{
-            t = Math.min(t1, t2);
+        }
+        var realRootList = possibleRoots.get();
+        realRootList.removeIf((r) -> r < 0); //remove collision times before the present
+        
+        if (realRootList.size() <= 0){
+            return Optional.empty();
+        }
+        double tc = realRootList.get(0); //earliest collision time
+        for (int i = 0; i < Math.min(realRootList.size(), 5); i++) {
+            var r = realRootList.get(i);
+            if (r > 0) {
+                tc = Math.min(r, tc);
+            }
         }
 
-        Translation2d outXY = p.plus(TempVelocity.times(t));
-        Translation3d out = new Translation3d(outXY.getX(), outXY.getY(), targetZ);
-        
+        //translate collision time (tc) to target position
+
+        Translation3d out = 
+            new Translation3d(px, py, pz)
+            .plus(new Translation3d(vx, vy, vz).times(tc))
+            .plus(new Translation3d(ax, ay, az).times(pow(tc) * 0.5));
+
         if (out.getNorm() > kMaxDistance) {
             return Optional.empty();
         }
 
-        //TODO make sure you understand this
-        return Optional.of(out); //relative to robot
+        return Optional.of(out);
     }
 
-    public static Optional<Translation3d> movingAutoAim3(){
-        
-        
-        
-        return Optional.empty();
-    }
-
-    public static double[] quarticRootSolver(double a, double b, double c, double d, double e){
-
-        double d0 = pow(c) - 3*b*d + 12*a*e;
-        double d1 = 2 * Math.pow(c, 3) - 9*b*c*d + 27*pow(b)*e + 27*a*pow(d) - 72*a*c*e;
-
-        double p = (8*a*c - 3*b*pow(b)) / (8*pow(a));
-        double q = (Math.pow(b, 3) - 4*a*b*c + 8*pow(a)*d) / (Math.pow(a, 3) * 8);
-
-        double Q = Math.cbrt((d1 + Math.sqrt(pow(d1)-4*Math.pow(d1, 3)))/2.0);
-        double S = (0.5) * Math.sqrt( (-2/3.0)*p + (1 / (3*a))*(Q+(d0/Q)));
-        //TODO special case formulas
-
-        double sc1 = -b/(4*a); 
-        double sc2 = (0.5) * Math.sqrt(-4 * pow(S) - 2 * p + q / S); 
-
-        double x1 = sc1 - S + sc2;
-        double x2 = sc1 - S - sc2;
-        double x3 = sc1 + S + sc2;
-        double x4 = sc1 + S - sc2;
-
-        return new double[]{x1, x2, x3, x4};
-    }
-
-    public static Optional<Translation2d> movingAutoAim(
-        Translation2d speakPos, //S0
-        Translation2d speakVel //V0
-    ){
-        //the inputs are intended to be relative to the robot in terms of position and velocity, (ie if the robot was moving towards the speaker the speaker would have a velocity going towards the origin)
-        //uses code from: https://stackoverflow.com/a/22117046/21621189, look in comments for errors and edge cases accounted for
-
-        //a desmos visualization: https://www.desmos.com/calculator/ejg6jrsodq
-
-        //FIXME account with vertical motion 
-
-
-        double a = pow(speakVel.getX()) + pow(speakVel.getY()) - pow(kShooterSpeed);
-        double b = 2 * ((speakPos.getX() * speakVel.getX()) + (speakPos.getY() * speakVel.getY()) /*- (P1.getX() * speakVel.getX()) - (P1.getY() * speakVel.getY())*/);
-        double c = pow(speakPos.getX()) + pow(speakPos.getY()); /*+ (P1.x * P1.x) + (P1.y * P1.y) - (2 * P1.x * P0.x) - (2 * P1.y * P0.y)*/;
-        
-        if (a == 0) return Optional.empty();
-        
-        double t1 = (-b + Math.sqrt((b * b) - (4 * a * c))) / (2 * a);
-        double t2 = (-b - Math.sqrt((b * b) - (4 * a * c))) / (2 * a);
-
-        double t; //t = time at collision (from 0) in time unit of speakVel 
-
-        if (!check(t1) && !check(t2)) {
-            return Optional.empty();
-        }else if (!check(t1) || !check(t2)){
-            t = check(t1) ? t1 : t2;
-        }else{
-            t = Math.min(t1, t2);
-        }
-
-        Translation2d out = speakPos.plus(speakVel.times(t));
-
-        return Optional.of(out); //outputs the speakerPos at the collision time relative to the robot, (rotation is based on the same as the input translate2ds)
-    }
-
-    public static boolean isSafeShot(Translation2d target){
-        return (target.getNorm() > kMaxDistance);
-    }
-
-    public static Rotation3d getShooterAngleUnsafe(Translation3d targetPos){ //this is the position of the speaker centered around the robot
-        double kRelHeight = targetPos.getZ() - kShooterHeight;
+    public static Rotation3d getShooterAngle(Translation3d targetPos){ //this is the position of the speaker centered around the robot
+        double kRelHeight = targetPos.getZ();
         double dist = targetPos.getNorm();
 
         return new Rotation3d(0, 
             Math.asin(kRelHeight/dist), 
-            targetPos.toTranslation2d().getAngle().getRadians()
+            targetPos.toTranslation2d().getAngle().getRadians() //0deg = looking at red alliance, 90 is amp direction
         );
     }
 }
