@@ -5,9 +5,13 @@ import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import static com.spartronics4915.frc2024.util.AutoAimFunctions.*;
 
@@ -33,6 +37,7 @@ public class MovingAutoAimCommand extends Command{
         addRequirements(mShooterWrist);
     }
 
+    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("SimStuff").getStructTopic("MAA", Pose3d.struct).publish();
     
     @Override
     public void initialize() {
@@ -53,6 +58,12 @@ public class MovingAutoAimCommand extends Command{
         var targetPos = aimingPoint.get() ;
         var ShooterAngle = getShooterAngle(targetPos);
         mShooterWrist.setRotationSetPoint(ShooterAngle);
+
+        targetPublisher.accept(new Pose3d(targetPos.plus(new Translation3d(
+            mSwerve.getPose().getTranslation().getX(),
+            mSwerve.getPose().getTranslation().getY(),
+            0.0
+        )), new Rotation3d()));
 
         var botAngle = Rotation2d.fromRotations(
             (getChassisAngle(targetPos).getRotations() + //base rotations 0 --> 360 
