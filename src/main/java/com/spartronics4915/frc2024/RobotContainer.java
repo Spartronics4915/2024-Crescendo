@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
@@ -179,9 +180,11 @@ public class RobotContainer {
         // return Commands.sequence(initPose, driveBackwards, holdStill);
         
         // return new PathPlannerAuto("Test Auto");
+        NamedCommands.registerCommand("autoAimfor3", Commands.deadline(Commands.waitSeconds(3), new MovingAutoAimCommand(kAutoAimTarget)));
+        NamedCommands.registerCommand("visualizeShot", Commands.deadline(Commands.waitSeconds(3), NoteVisualizer.shoot().visualizeTrajectory()));
 
         // return new PathPlannerAuto("Path 1 Only");
         
-        return new PathPlannerAuto("Auto 2");
+        return new PathPlannerAuto("shoot test");
     }
 }
