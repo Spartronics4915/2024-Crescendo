@@ -47,7 +47,6 @@ public class MovingAutoAimCommand extends Command{
             kTarget
         );
         if (aimingPoint.isEmpty()) {
-            System.out.println(mSwerve.getPose());
             return;
         }
         var targetPos = aimingPoint.get() ;
@@ -60,7 +59,6 @@ public class MovingAutoAimCommand extends Command{
         );
 
         mSwerve.setDesiredAngle(botAngle);
-        System.out.println(botAngle);
 
 
         super.execute();

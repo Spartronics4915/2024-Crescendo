@@ -153,7 +153,7 @@ public class RobotContainer {
             mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
             mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
 
-        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         mOperatorController.button(13)
                 .whileTrue(new MovingAutoAimCommand(kAutoAimTarget));

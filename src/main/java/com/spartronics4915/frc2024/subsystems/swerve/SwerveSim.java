@@ -38,6 +38,9 @@ public class SwerveSim extends SubsystemBase {
         swerveModules = swerveDrive.getSwerveModules();
         lastTime = 0;
         SmartDashboard.putData("field", field);
+
+        var obj = field.getObject("target");
+        obj.setPose(new Pose2d(kAutoAimTarget.toTranslation2d(), new Rotation2d(0)));
     }
 
     public Field2d getField() {
