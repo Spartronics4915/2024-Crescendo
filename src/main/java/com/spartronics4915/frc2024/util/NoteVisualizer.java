@@ -28,13 +28,13 @@ public class NoteVisualizer {
 
     private static Translation3d nullPosition = new Translation3d(0, 0, -1); 
 
-    public final Translation3d initalPos;
-    public final Translation3d initialVel;
-    public final Translation3d accel = new Translation3d(0, 0, kGravity);
+    private final Translation3d initalPos;
+    private final Translation3d initialVel;
+    private final Translation3d accel = new Translation3d(0, 0, kGravity);
 
     Predicate<Translation3d> isValidPos;
     
-    public NoteVisualizer(final Translation3d aimingPoint, final Pose2d robotPos) {
+    private NoteVisualizer(final Translation3d aimingPoint, final Pose2d robotPos) {
         super();
 
         initalPos = new Translation3d(
@@ -48,7 +48,7 @@ public class NoteVisualizer {
         System.out.println(initialVel);
     }
 
-    public static NoteVisualizer shoot(){
+    private static NoteVisualizer shoot(){
         var swerve = SwerveDrive.getInstance();
 
         var x = new Rotation3d(

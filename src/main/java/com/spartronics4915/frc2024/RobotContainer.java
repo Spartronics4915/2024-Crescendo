@@ -159,10 +159,7 @@ public class RobotContainer {
 
         mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        mOperatorController.button(10).whileTrue(Commands.defer(() -> {
-            var vis = NoteVisualizer.shoot();
-            return vis.visualizeTrajectory();
-        }, Set.of()));
+        mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
 
         mOperatorController.button(13)
                 .whileTrue(new MovingAutoAimCommand(kStageTarget));
