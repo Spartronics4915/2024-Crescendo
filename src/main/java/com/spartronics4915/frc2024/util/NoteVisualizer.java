@@ -56,16 +56,11 @@ public class NoteVisualizer {
             swerve.getAngle().getRadians()
         );
 
-        System.out.println(x.getZ());
-        System.out.println(x.getY());
-        double aimX = Math.cos(x.getZ());
-        double aimY = Math.sin(x.getZ());
-        double aimZ = Math.sin(x.getY()); //vertical value
-
+        var temp = new Translation3d(1.0, 0.0, 0.0).rotateBy(x);
         var outputAngle = new Translation3d(
-            Double.isNaN(aimX) ? 0.0 : aimX, 
-            Double.isNaN(aimY) ? 0.0 : aimY, 
-            Double.isNaN(aimZ) ? 0.0 : aimZ
+            temp.getX(), 
+            temp.getY(), 
+            -temp.getZ()
         );
 
         outputAngle = outputAngle.div(outputAngle.getNorm()).times(kShooterSpeed).plus(new Translation3d(
