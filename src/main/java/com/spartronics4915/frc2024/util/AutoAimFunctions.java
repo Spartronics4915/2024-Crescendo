@@ -90,9 +90,9 @@ public class AutoAimFunctions {
             .plus(new Translation3d(vx, vy, vz).times(tc))
             .plus(new Translation3d(ax, ay, az).times(pow(tc) * 0.5));
 
-        if (out.getNorm() > kMaxDistance) {
-            return Optional.empty();
-        }
+        // if (out.getNorm() > kMaxDistance) {
+        //     return Optional.empty();
+        // }
 
         return Optional.of(out);
     }

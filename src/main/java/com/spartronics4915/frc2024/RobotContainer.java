@@ -14,6 +14,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
@@ -33,6 +34,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -150,8 +152,8 @@ public class RobotContainer {
 
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        mDriverController.leftTrigger(kDriverTriggerDeadband)
-                .whileTrue(new LockOnCommand());
+        mOperatorController.button(13)
+                .whileTrue(new MovingAutoAimCommand(new Translation3d(0, 0, 10)));
 
         mDriverController.a()
                 .whileTrue(new ToggleDetectorCommand());

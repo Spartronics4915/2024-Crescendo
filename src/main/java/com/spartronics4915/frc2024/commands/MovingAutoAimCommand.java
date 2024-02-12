@@ -29,7 +29,7 @@ public class MovingAutoAimCommand extends Command{
         this.mSwerve = SwerveDrive.getInstance();
         this.mShooterWrist = ShooterWrist.getInstance();
         this.kTarget = mTarget;
-        addRequirements(mSwerve, mShooterWrist);
+        addRequirements(mShooterWrist);
     }
 
     
@@ -47,6 +47,7 @@ public class MovingAutoAimCommand extends Command{
             kTarget
         );
         if (AimingPoint.isEmpty()) {
+            System.out.println(mSwerve.getPose());
             return;
         }
         var angles = getShooterAngle(AimingPoint.get());
