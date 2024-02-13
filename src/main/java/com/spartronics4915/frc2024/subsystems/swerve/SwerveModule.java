@@ -71,7 +71,7 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState state) {
         mDrivePID.setReference(state.speedMetersPerSecond,
-                ControlType.kVelocity);
+                ControlType.kSmartVelocity, 1);
         mAnglePID.setReference(state.angle.getRadians(),
                 ControlType.kPosition);
 
@@ -149,10 +149,10 @@ public class SwerveModule {
 
         final var pid = motor.getPIDController();
         final var pc = kDrivePIDFConstants;
-        pid.setP(pc.p());
-        pid.setI(pc.i());
-        pid.setD(pc.d());
-        pid.setFF(pc.ff());
+        pid.setP(pc.p(), 1);
+        pid.setI(pc.i(), 1);
+        pid.setD(pc.d(), 1);
+        pid.setFF(pc.ff(), 1);
         pid.setSmartMotionMaxVelocity(kMaxSpeed, 1);
         pid.setSmartMotionMaxAccel(kMaxAcceleration, 1);
 
