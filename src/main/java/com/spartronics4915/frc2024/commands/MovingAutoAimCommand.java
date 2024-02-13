@@ -56,7 +56,7 @@ public class MovingAutoAimCommand extends Command{
         }
         var targetPos = aimingPoint.get() ;
         var ShooterAngle = getShooterAngle(targetPos);
-        mShooterWrist.setRotationSetPoint(ShooterAngle);
+        mShooterWrist.publicSetRotationSetPoint(ShooterAngle);
 
         targetPublisher.accept(new Pose3d(targetPos.plus(new Translation3d(
             mSwerve.getPose().getTranslation().getX(),

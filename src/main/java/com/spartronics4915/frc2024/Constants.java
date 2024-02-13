@@ -168,6 +168,8 @@ public final class Constants {
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //HACK DO NOT TEST WITH THESE VALUES
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //HACK DO NOT TEST WITH THESE VALUES
 
+            public static final double kInToOutRotations = 1.0;
+            
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafetyLimit = 1.0; //HACK untested
@@ -218,6 +220,8 @@ public final class Constants {
                 this.shooterAngle = shooterAngle;
             }
         }
+
+        public static double kInToOutRotations = 1.0;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(11, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //don't test with these values

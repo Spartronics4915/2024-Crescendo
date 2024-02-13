@@ -153,11 +153,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
-        mManualDelta = deltaPosition;
+        mManualDelta = deltaPosition.times(kInToOutRotations);
     }
 
-    public void setRotationSetPoint(Rotation2d angle){
+    private void setRotationSetPoint(Rotation2d angle){
         mTargetRotation2d = angle;
+    }
+
+    public void publicSetRotationSetPoint(Rotation2d angle){
+        setRotationSetPoint(angle.times(kInToOutRotations));
     }
 
     private void setState(ShooterWristState newState){
@@ -254,7 +258,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void handleLimitSwitch(){
         if (mLimitSwitch.get()) {
-            mEncoder.setPosition(kLimitSwitchEncoderReading);
+            mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
         }
     }
 

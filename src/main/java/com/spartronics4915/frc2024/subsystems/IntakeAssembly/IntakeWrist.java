@@ -169,12 +169,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
-        mManualDelta = deltaPosition;
+        mManualDelta = deltaPosition.times(kInToOutRotations);
     }
 
     private void setState(IntakeAssemblyState newState){
         mManualMovement = false;
-        setRotationSetPoint(newState.wristAngle);
+        setRotationSetPoint(newState.wristAngle.times(kInToOutRotations));
     }
 
     //#endregion
@@ -266,7 +266,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void handleLimitSwitch(){
         if (mLimitSwitch.get()) {
-            mEncoder.setPosition(kLimitSwitchEncoderReading);
+            mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
         }
     }
 
@@ -281,7 +281,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     @Override
     public State getSetPoint() {
-        return new State(mCurrState.position - 0.5, mCurrState.velocity);
+        return new State(mCurrState.position/kInToOutRotations - 0.5, mCurrState.velocity);
     }
 
     @Override
