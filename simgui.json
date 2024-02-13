@@ -25,6 +25,7 @@
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
       "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
       "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
     },
