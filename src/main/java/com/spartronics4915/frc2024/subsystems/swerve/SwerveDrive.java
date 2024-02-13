@@ -72,6 +72,7 @@ public class SwerveDrive extends SubsystemBase {
         {
             final var pc = kAngleControllerPIDConstants;
             mAngleController = new PIDController(pc.p(), pc.i(), pc.d());
+            mAngleController.enableContinuousInput(0, Math.PI * 2);
         }
 
         mRotationIsIndependent = false;
