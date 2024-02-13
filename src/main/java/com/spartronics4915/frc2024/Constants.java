@@ -51,8 +51,8 @@ public final class Constants {
                 0.1);
 
         public static final double kWheelDiameter = Units.inchesToMeters(3.87);
-        public static final double kTrackWidth = Units.inchesToMeters(18.75);
-        public static final double kWheelbase = Units.inchesToMeters(23.75);
+        public static final double kTrackWidth = Units.inchesToMeters(22.475);
+        public static final double kWheelbase = Units.inchesToMeters(22.475);
         public static final double kChassisRadius = Math.hypot(
                 kTrackWidth / 2, kWheelbase / 2);
 
