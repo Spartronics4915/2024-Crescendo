@@ -51,7 +51,7 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
-        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(5.0, 0, 0); // tuned good enough
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(5.0, 1.5, 2.0); // tuned good enough
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1,
