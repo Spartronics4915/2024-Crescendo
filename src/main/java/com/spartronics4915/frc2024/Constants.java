@@ -23,6 +23,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -202,8 +204,8 @@ public final class Constants {
         }
 
         public static final class PoseOffsetConstants {
-            public static final Pose3d kAlicePoseOffset = new Pose3d(); // placeholder
-            public static final Pose3d kBobPoseOffset = new Pose3d(); // placeholder
+            public static final Transform3d kAlicePoseOffset = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // placeholder
+            public static final Transform3d kBobPoseOffset = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // placeholder
         }
     }
     public static final class ShooterWristConstants {

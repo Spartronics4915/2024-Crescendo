@@ -401,8 +401,8 @@ public class SwerveDrive extends SubsystemBase {
 
         // This code causes the robot to crash
         
-        // final var vs = VisionSubsystem.getInstance();
-        // vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
-        // vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+        final var vs = VisionSubsystem.getInstance();
+        vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
+        vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
     }
 }

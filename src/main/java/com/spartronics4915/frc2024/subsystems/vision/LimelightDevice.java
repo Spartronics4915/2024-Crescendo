@@ -3,11 +3,13 @@ package com.spartronics4915.frc2024.subsystems.vision;
 import java.util.Optional;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
+import com.spartronics4915.frc2024.Constants.Vision.PoseOffsetConstants;
 import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -24,6 +26,7 @@ public class LimelightDevice extends SubsystemBase {
     private VisionPipelines mPipeline;
     private final boolean mHasCoral;
     private final Field2d mField;
+    private final Transform3d offset;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
@@ -32,6 +35,8 @@ public class LimelightDevice extends SubsystemBase {
     public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
+        if (name.equals("alice")) offset = PoseOffsetConstants.kAlicePoseOffset.inverse();
+        else offset = PoseOffsetConstants.kBobPoseOffset.inverse();
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
         checkIfValid();
@@ -52,7 +57,7 @@ public class LimelightDevice extends SubsystemBase {
             return Optional.empty();
         }
         double[] botpose = LimelightHelpers.getBotPose_wpiBlue(mName);
-        Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(botpose[3], botpose[4], botpose[5]));
+        Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(botpose[3], botpose[4], botpose[5])).transformBy(offset);
         double timestamp = Timer.getFPGATimestamp() - (botpose[6]/1000.0);
         return Optional.of(new VisionMeasurement(pose, timestamp));
     }
