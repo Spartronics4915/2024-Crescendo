@@ -129,7 +129,8 @@ public class RobotContainer {
         mAutoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
-        ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
+        ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
+        overviewTab.add(mAutoChooser);
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
         configureBindings();
