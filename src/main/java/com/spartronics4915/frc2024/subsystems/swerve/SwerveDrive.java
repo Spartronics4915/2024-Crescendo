@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.PubSubOption;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,6 +59,8 @@ public class SwerveDrive extends SubsystemBase {
     private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock(); // TODO: should this be fair?
     private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
+
+    private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("RobotPose", Pose2d.struct).publish();
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -389,17 +394,20 @@ public class SwerveDrive extends SubsystemBase {
                 String moduleTag = "Module " + i + " encoder : ";
                 double encoderReading = mModules[i].getPosition().angle.getDegrees();
                 SmartDashboard.putNumber(moduleTag, encoderReading);
-
+                
                 String moduleTagRaw = "Module " + i + " encoder raw: ";
                 double encoderReadingRaw = mModules[i].getAbsoluteAngle().getDegrees();
                 SmartDashboard.putNumber(moduleTagRaw, encoderReadingRaw);
             }
         }
 
+        var pose = getPose();
+        
+        mRobotPoseLogger.accept(pose);
         SmartDashboard.putNumber("IMU Yaw Degrees", getAngle().getDegrees());
-        SmartDashboard.putNumber("Pose Yaw Degrees", getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("Pose x", getPose().getX());
-        SmartDashboard.putNumber("Pose y", getPose().getY());
+        SmartDashboard.putNumber("Pose Yaw Degrees", pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Pose x", pose.getX());
+        SmartDashboard.putNumber("Pose y", pose.getY());
 
         // This code causes the robot to crash
         

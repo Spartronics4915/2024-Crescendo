@@ -67,7 +67,7 @@ public class ShuffleBoard {
             EnumMap<WristSubsystemEntries, GenericEntry> out = new EnumMap<>(WristSubsystemEntries.class);
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                 .getTab(tabName)
-                .getLayout(tabName+"layout`", BuiltInLayouts.kList)
+                .getLayout(tabName+"layout", BuiltInLayouts.kList)
                 .withSize(2, 2);
         
             putEntry(out, WristSubsystemEntries.WristSetPoint, -1.0, mShuffleBoardTab, WristSubsystemEntries.WristSetPoint.entryName);
@@ -85,7 +85,7 @@ public class ShuffleBoard {
     
 
     public static class ShooterTabManager{
-        public static String tabName = "Intake";
+        public static String tabName = "Shooter";
 
         public static enum ShooterSubsystemEntries{
             ShooterState ("Shooter-State"),
@@ -127,7 +127,7 @@ public class ShuffleBoard {
             EnumMap<ShooterWristSubsystemEntries, GenericEntry> out = new EnumMap<>(ShooterWristSubsystemEntries.class);
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                 .getTab(tabName)
-                .getLayout(tabName+"layout`", BuiltInLayouts.kList)
+                .getLayout(tabName+"layout", BuiltInLayouts.kList)
                 .withSize(2, 2);
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterSetPoint, -1.0, mShuffleBoardTab, ShooterWristSubsystemEntries.ShooterSetPoint.entryName);
@@ -157,7 +157,7 @@ public class ShuffleBoard {
             EnumMap<ElevatorSubsystemEntries, GenericEntry> out = new EnumMap<>(ElevatorSubsystemEntries.class);
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                 .getTab(tabName)
-                .getLayout(tabName+"layout`", BuiltInLayouts.kList)
+                .getLayout(tabName+"layout", BuiltInLayouts.kList)
                 .withSize(2, 2);
         
             putEntry(out, ElevatorSubsystemEntries.ElevatorSetPoint, -1.0, mShuffleBoardTab, ElevatorSubsystemEntries.ElevatorSetPoint.entryName);
