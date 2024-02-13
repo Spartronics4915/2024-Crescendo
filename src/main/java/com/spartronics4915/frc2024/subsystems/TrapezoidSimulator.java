@@ -2,6 +2,8 @@ package com.spartronics4915.frc2024.subsystems;
 
 import java.util.ArrayList;
 
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -47,6 +49,9 @@ public class TrapezoidSimulator extends SubsystemBase{
     public TrapezoidSimulator(ArrayList<TrapezoidSimulatorInterface> inputSimObjs) {
 
         simCanvas = new Mechanism2d(4, 4,  new Color8Bit("#1f0038"));
+        MechanismLigament2d elevator = null;
+        MechanismLigament2d wrist = null;
+
         for (TrapezoidSimulatorInterface simObj : inputSimObjs) {
             var settings = simObj.getSettings();
             var simLigament = new MechanismLigament2d(
@@ -60,11 +65,22 @@ public class TrapezoidSimulator extends SubsystemBase{
             var simBase = simCanvas.getRoot(
                 settings.name, 
                 settings.rootPos.getX(), 
-                settings.rootPos.getY()
+                settings.rootPos.getY() + 0.05
             );
+
+            if (simObj instanceof IntakeWrist) {
+                wrist = simLigament;
+            }
+            if (simObj instanceof Elevator) {
+                elevator = simLigament;
+            }
 
             simBase.append(simLigament);
             mSimulatedObjects.add(new SimulatorObject(simObj, simLigament, settings.type));
+        }
+
+        if (wrist != null && elevator != null) {
+            elevator.append(wrist);
         }
     } 
     

@@ -12,9 +12,11 @@ import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
@@ -29,11 +31,13 @@ import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveSim;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
+import com.spartronics4915.frc2024.util.NoteVisualizer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -47,6 +51,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kStageTarget;
 import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
@@ -55,6 +61,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
 import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class RobotContainer {
     // private enum SubsystemFlags{
@@ -82,9 +89,10 @@ public class RobotContainer {
     private static final Elevator mElevator;
 
     private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
-
+    
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
+
     private final VisionSubsystem mVision;
 
     static {
@@ -114,7 +122,7 @@ public class RobotContainer {
 
         mSimulator = new TrapezoidSimulator(list);
 
-    //     ModeSwitchSubsystems.add(mElevator);
+        ModeSwitchSubsystems.add(mElevator);
     }
 
     public RobotContainer() {
@@ -136,27 +144,35 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-            mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-            mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-            mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-            mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
-            mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(1)));
-            mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
 
-            var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
-            mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
-            mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
-            mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
-            mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
+        var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
+        mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
+        mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
+        mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
+        mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
+    
+        mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
+        mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
+
+        mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
+        mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
+
+        mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
+
+        mOperatorController.button(13)
+                .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
+
+        mDriverController.a()
+                .whileTrue(new ToggleDetectorCommand());
         
-            mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
-            mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
-
-            mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
-            mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
-
-        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+    mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());

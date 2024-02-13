@@ -281,16 +281,16 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     @Override
     public State getSetPoint() {
-        return new State(mCurrState.position - 0.25, mCurrState.velocity);
+        return new State(mCurrState.position - 0.5, mCurrState.velocity);
     }
 
     @Override
     public SimulatorSettings getSettings() {
         return new SimulatorSettings(
             "Wrist", 
-            1.0, 
+            0.5,
             0.0, 
-            20.0,
+            5.0,
             new Color8Bit(Color.kBlueViolet), 
             SimType.Angle, 
             new Translation2d(0.20, 1.5)
