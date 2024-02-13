@@ -21,6 +21,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -248,7 +249,10 @@ public final class Constants {
 
     public static final class AutoAimConstants {
         public enum Targets{
-            TEMP_TARGET (new Translation3d(0.2286, 5.5, 2.0));
+            TEMP_TARGET (new Translation3d(0.2286, 5.5, 2.0)),
+            BLUE_SPEAKER (new Translation3d(0.2286, 5.5, 2.0)),
+            RED_SPEAKER (new Translation3d(0.2286, 5.5, 2.0)); //GET RED SPEAKER POSITION
+
 
             public final Translation3d targetPosition;
             private Targets(Translation3d targetPosition){
@@ -257,7 +261,22 @@ public final class Constants {
         }
         public static final Translation3d kStageTarget;
         static{
-            kStageTarget = Targets.TEMP_TARGET.targetPosition; //TODO add alliance checker
+            if (DriverStation.getAlliance().isPresent()){
+                switch (DriverStation.getAlliance().get()) {
+                    case Blue:
+                        kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
+                        break;
+                    case Red:
+                        kStageTarget = Targets.RED_SPEAKER.targetPosition;
+                        break;
+                    default:
+                        kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
+                        break;
+                }
+            }else{
+
+                kStageTarget = Targets.TEMP_TARGET.targetPosition; //TODO add alliance checker
+            }
         }
 
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
