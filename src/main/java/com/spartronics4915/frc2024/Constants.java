@@ -19,6 +19,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,13 +44,13 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
-        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(10.0, 0.0, 1.0); // FIXME: placeholder values
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(5.0, 1.5, 2.0); // tuned good enough
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1,
                 0.1);
 
-        public static final double kWheelDiameter = Units.inchesToMeters(3.96);
+        public static final double kWheelDiameter = Units.inchesToMeters(3.87);
         public static final double kTrackWidth = Units.inchesToMeters(18.75);
         public static final double kWheelbase = Units.inchesToMeters(23.75);
         public static final double kChassisRadius = Math.hypot(
@@ -95,6 +96,8 @@ public final class Constants {
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
                 .map((mc) -> new Translation2d(mc.x(), mc.y()))
                 .toArray(Translation2d[]::new));
+
+        public static final double kOdometryUpdatePeriod = 0.01;
 
         public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, true);
         public static final HolonomicPathFollowerConfig kPPConfig = new HolonomicPathFollowerConfig(
@@ -199,7 +202,24 @@ public final class Constants {
         }
     }
 
-    public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
+    public static final class Vision {
+        public enum VisionPipelines {
+            FIDUCIALS_3D (0, false),
+            DETECTOR_NOTE (1, true);
+            public final int pipeline;
+            public final boolean isDetector;
+            private VisionPipelines(int pipeline, boolean isDetector) {
+                this.pipeline = pipeline;
+                this.isDetector = isDetector;
+            }
+        }
+
+        public static final class PoseOffsetConstants {
+            public static final Pose3d kAlicePoseOffset = new Pose3d(); // placeholder
+            public static final Pose3d kBobPoseOffset = new Pose3d(); // placeholder
+        }
+    }
+    public static final class ShooterWristConstants {
         public enum ShooterWristState{ //Mostly for debug
             SubwooferShot(Rotation2d.fromDegrees(90));
 

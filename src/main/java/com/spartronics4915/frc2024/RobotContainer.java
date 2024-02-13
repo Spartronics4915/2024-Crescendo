@@ -13,7 +13,9 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -37,6 +39,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -78,6 +81,7 @@ public class RobotContainer {
 
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
+    private final VisionSubsystem mVision;
 
     static {
 
@@ -106,15 +110,14 @@ public class RobotContainer {
 
         mSimulator = new TrapezoidSimulator(list);
 
-        ModeSwitchSubsystems.add(mElevator);
+    //     ModeSwitchSubsystems.add(mElevator);
     }
 
     public RobotContainer() {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
+        mVision = VisionSubsystem.getInstance();
         configureBindings();
-
-        VisionSubsystem.getInstance(); // ensures VisionSubsystem is created so the limelights log (for debug)
     }
 
     public static CommandXboxController getDriverController() {

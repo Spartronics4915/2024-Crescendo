@@ -12,13 +12,14 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -27,8 +28,9 @@ import static edu.wpi.first.math.MathUtil.applyDeadband;
 import static com.spartronics4915.frc2024.Constants.Drive.*;
 import static com.spartronics4915.frc2024.Constants.OI.kStickDeadband;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Stream;
 
 public class SwerveDrive extends SubsystemBase {
@@ -50,6 +52,10 @@ public class SwerveDrive extends SubsystemBase {
     private boolean mRotationIsIndependent;
 
     private final SwerveDrivePoseEstimator mPoseEstimator;
+    private final Notifier mOdometryThread = new Notifier(this::updateOdometry);
+    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock(); // TODO: should this be fair?
+    private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
+    private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -60,6 +66,7 @@ public class SwerveDrive extends SubsystemBase {
         mModules = new SwerveModule[] { mFrontLeft, mBackLeft, mBackRight, mFrontRight };
 
         mIMU = new Pigeon2(kPigeon2ID);
+        mIMU.reset();
 
         mIsFieldRelative = true;
 
@@ -79,6 +86,8 @@ public class SwerveDrive extends SubsystemBase {
                     stateStdDevs, visionMeasurementStdDevs);
         }
 
+        mOdometryThread.startPeriodic(kOdometryUpdatePeriod);
+
         AutoBuilder.configureHolonomic(
                 this::getPose,
                 this::resetPose,
@@ -93,6 +102,10 @@ public class SwerveDrive extends SubsystemBase {
                     return false;
                 },
                 this);
+
+        new Trigger(DriverStation::isDisabled)
+                .onTrue(runOnce(this::setCoastMode))
+                .onFalse(runOnce(this::setBrakeMode));
 
         setDefaultCommand(teleopDriveCommand());
     }
@@ -180,6 +193,18 @@ public class SwerveDrive extends SubsystemBase {
         };
     }
 
+    public void setBrakeMode() {
+        for (SwerveModule m : mModules) {
+            m.setBrakeMode();
+        }
+    }
+
+    public void setCoastMode() {
+        for (SwerveModule m : mModules) {
+            m.setCoastMode();
+        }
+    }
+
     /**
      * Toggles whether the robot will drive field relative by default.
      */
@@ -219,6 +244,7 @@ public class SwerveDrive extends SubsystemBase {
      * Decouples the rotation control from any drive commands.
      */
     public void decoupleRotation() {
+        resetAngleController();
         setDesiredAngle(getAngle());
         mRotationIsIndependent = true;
     }
@@ -249,6 +275,10 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void setDesiredAngle(final Rotation2d angle) {
         mDesiredAngle = angle;
+    }
+
+    private void resetAngleController() {
+        mAngleController.reset();
     }
 
     private SwerveModulePosition[] getModulePositions() {
@@ -282,21 +312,39 @@ public class SwerveDrive extends SubsystemBase {
      * Adds a vision measurement to the pose estimator.
      */
     public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
-        mPoseEstimator.addVisionMeasurement(cameraPose, t);
+        mPoseEstimatorWriteLock.lock();
+        try {
+            mPoseEstimator.addVisionMeasurement(cameraPose, t);
+        } catch (Exception e) {
+            mPoseEstimatorWriteLock.unlock();
+            throw e;
+        }
+        mPoseEstimatorWriteLock.unlock();
     }
 
     /**
      * Gets the pose estimator's estimated pose.
      */
     public Pose2d getPose() {
-        return mPoseEstimator.getEstimatedPosition();
+        Pose2d out;
+        mPoseEstimatorReadLock.lock();
+        try {
+            out = mPoseEstimator.getEstimatedPosition();
+        } catch (Exception e) {
+            mPoseEstimatorReadLock.unlock();
+            throw e;
+        }
+        mPoseEstimatorReadLock.unlock();
+        return out;
     }
 
     /**
      * Resets the pose estimator to the specified position.
      */
     public void resetPose(final Pose2d newPose) {
+        mPoseEstimatorWriteLock.lock();
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
+        mPoseEstimatorWriteLock.unlock();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -319,9 +367,20 @@ public class SwerveDrive extends SubsystemBase {
         return mIMU;
     }
 
+    private void updateOdometry() {
+        mPoseEstimatorWriteLock.lock();
+        try {
+            mPoseEstimator.update(getAngle(), getModulePositions());
+        } catch (Exception e) {
+            mPoseEstimatorWriteLock.unlock();
+            throw e;
+        }
+        mPoseEstimatorWriteLock.unlock();
+    }
+
     @Override
     public void periodic() {
-        mPoseEstimator.update(getAngle(), getModulePositions());
+        updateOdometry();
         boolean logSwerveModules = true;
         if (logSwerveModules) {
             for(int i = 0; i < 4; i ++){
