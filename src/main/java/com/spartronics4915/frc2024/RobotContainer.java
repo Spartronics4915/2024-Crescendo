@@ -33,6 +33,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -52,6 +54,8 @@ import java.util.ArrayList;
 public class RobotContainer {
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
     private static final CommandXboxController mOperatorController = new CommandXboxController(kOperatorControllerPort);
+
+    private final SendableChooser<Command> mAutoChooser;
 
     // private static final Intake mIntake = Intake.getInstance();
     // private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
@@ -79,6 +83,9 @@ public class RobotContainer {
     // }
 
     public RobotContainer() {
+        mAutoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", mAutoChooser);
+
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
@@ -128,18 +135,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // Pose2d newPose = new Pose2d(new Translation2d(3, 3), new Rotation2d());
-        // Command initPose = Commands.runOnce(() -> mSwerveDrive.resetPose(newPose));
-        // Command driveBackwards = new DriveStraightCommands.DriveStraightFixedDistance(mSwerveDrive, new Rotation2d(),
-        //         2, new TrapezoidProfile.Constraints(0.5, 0.5 / 2));
-        // Command holdStill = Commands.run(() -> mSwerveDrive.drive(
-        //         new ChassisSpeeds(0, 0, 0), false));
-        // return Commands.sequence(initPose, driveBackwards, holdStill);
-        
-        // return new PathPlannerAuto("Test Auto");
-
-        // return new PathPlannerAuto("Path 1 Only");
-        
-        return new PathPlannerAuto("Auto 2");
+        return mAutoChooser.getSelected();
     }
 }

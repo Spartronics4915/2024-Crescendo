@@ -73,12 +73,13 @@ public class SwerveDrive extends SubsystemBase {
         {
             final var pc = kAngleControllerPIDConstants;
             mAngleController = new PIDController(pc.p(), pc.i(), pc.d());
+            mAngleController.enableContinuousInput(0, Math.PI * 2);
         }
 
         mRotationIsIndependent = false;
 
         {
-            final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+            final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.9, 0.9, 0.9);
             final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
 
             // TODO: change initial pose estimate
