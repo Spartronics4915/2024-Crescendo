@@ -217,7 +217,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getSetPoint().position / kMetersToRotation  > kMeterSafetyLimit);
+        return (mRotSetPoint.getRotations() / kMetersToRotation  > kMeterSafetyLimit);
     }
     
     private double getFeedForwardValue(){
@@ -283,7 +283,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     @Override
-    public State getSetPoint() {
+    public State getSimulatedSetPoint() {
         return new State(mCurrState.position/kInToOutRotations - 0.5, mCurrState.velocity);
     }
 

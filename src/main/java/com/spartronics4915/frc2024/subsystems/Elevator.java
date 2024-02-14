@@ -155,7 +155,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     // #region Bunch of random getters
     @Override
-    public State getSetPoint() {
+    public State getSimulatedSetPoint() {
         return new State(mCurrentState.position / kMetersToRotation, 0.0);
     }
 

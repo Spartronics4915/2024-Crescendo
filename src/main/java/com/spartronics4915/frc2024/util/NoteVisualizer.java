@@ -60,7 +60,7 @@ public class NoteVisualizer {
 
         var x = new Rotation3d(
             0.0,
-            Rotation2d.fromRotations(ShooterWrist.getInstance().getSetPoint().position).getRadians(), 
+            Rotation2d.fromRotations(ShooterWrist.getInstance().getSimulatedSetPoint().position).getRadians(), 
             swerve.getAngle().getRadians()
         );
 

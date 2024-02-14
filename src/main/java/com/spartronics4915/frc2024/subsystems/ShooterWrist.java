@@ -272,7 +272,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     @Override
-    public State getSetPoint() {
+    public State getSimulatedSetPoint() {
         return new State(0.5 - mCurrentState.position, 0.0);
     }
 

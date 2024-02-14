@@ -32,7 +32,7 @@ public class TrapezoidSimulator extends SubsystemBase{
     ) {}
 
     public interface TrapezoidSimulatorInterface {
-        public State getSetPoint();
+        public State getSimulatedSetPoint();
         public SimulatorSettings getSettings();
     }
 
@@ -90,10 +90,10 @@ public class TrapezoidSimulator extends SubsystemBase{
             SmartDashboard.putData("simCanvas", simCanvas);
             switch (simobj.type) {
                 case Angle:
-                    simobj.visual.setAngle(Rotation2d.fromRotations(simobj.object.getSetPoint().position)); //Units might need to be fixed
+                    simobj.visual.setAngle(Rotation2d.fromRotations(simobj.object.getSimulatedSetPoint().position)); //Units might need to be fixed
                     break;
                 case Elevator:
-                    simobj.visual.setLength(simobj.object.getSetPoint().position);
+                    simobj.visual.setLength(simobj.object.getSimulatedSetPoint().position);
                     break;
                 default:
                     break;
