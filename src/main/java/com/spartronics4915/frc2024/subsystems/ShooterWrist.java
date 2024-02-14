@@ -259,6 +259,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private void handleLimitSwitch(){
         if (mLimitSwitch.get()) {
             mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+            if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations - 0.025) {
+                mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+            }
         }
     }
 
