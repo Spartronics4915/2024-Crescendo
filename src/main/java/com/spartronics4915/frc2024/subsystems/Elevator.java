@@ -50,6 +50,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
     private DigitalInput limitSwitch;
 
+    private boolean startupHome = false;
+
     // #endregion
 
     public Elevator() {
@@ -105,6 +107,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) {
                     mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
                 }
+                startupHome = true;
             }
             
             @Override

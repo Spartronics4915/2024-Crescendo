@@ -63,6 +63,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         private DigitalInput mLimitSwitch;
 
+        private boolean startupHome = false;
+
         //#region ShuffleBoardEntries
 
         private GenericEntry mManualControlEntry;
@@ -157,8 +159,9 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
                     mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 }
+                startupHome = true;
             }
-            
+
             @Override
             public boolean isFinished() {
                 return true;

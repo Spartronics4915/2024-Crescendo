@@ -65,6 +65,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterEncoderReadingEntry;
     private GenericEntry mShooterManualControlEntry;
 
+    private boolean startupHome = false;
+
     //#endregion
 
     public static ShooterWrist getInstance() {
@@ -101,8 +103,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
                     mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 }
+                startupHome = true;
             }
-            
+
             @Override
             public boolean isFinished() {
                 return true;
