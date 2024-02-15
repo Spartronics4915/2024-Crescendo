@@ -164,6 +164,8 @@ public final class Constants {
 
             // TODO Make Units Clear
 
+            public static double kLimitSwitchTriggerOffset = -0.025;
+
             public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //TODO Tune
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //TODO Tune
