@@ -334,7 +334,7 @@ public final class Constants {
         public static final Color kDefaultBlingColor = Color.kGold;
         public static final Color kDefaultBlingColorSecondary = Color.kRoyalBlue;
         public static final boolean kIsInFancyMode = true;
-        public static final boolean kSpam = true;
+        public static final boolean kSpam = false;
     }
     public enum BlingModes {
         OFF,
