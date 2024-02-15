@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Not-manual
         if (limitSwitch.get() && Robot.isReal()){
             mEncoder.setPosition(kLimitSwitchGoto * kMetersToRotation);
-            if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation - 0.025) {
+            if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset ) {
                 
                 mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
             }

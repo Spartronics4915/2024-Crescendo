@@ -164,7 +164,7 @@ public final class Constants {
 
             // TODO Make Units Clear
 
-            public static double kLimitSwitchTriggerOffset = -0.025;
+            public static final double kLimitSwitchTriggerOffset = -0.025;
 
             public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //TODO Tune
@@ -207,6 +207,9 @@ public final class Constants {
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
                     .0156, 7, 102); // HACK untested
             public static final int kLimitSwitchChannel = 2;
+
+            public static final double kLimitSwitchTriggerOffset = -0.025;
+
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinimumManualRotations = 0.1;
@@ -240,6 +243,8 @@ public final class Constants {
 
         public static final int kLimitSwitchChannel = 1;
         public static final double kLimitSwitchEncoderReading = 0;
+
+        public static final double kLimitSwitchTriggerOffset = -0.025;
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants
