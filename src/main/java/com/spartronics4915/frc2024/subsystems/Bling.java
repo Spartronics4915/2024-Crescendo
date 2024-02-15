@@ -38,7 +38,7 @@ public class Bling extends SubsystemBase {
   /**
    * Constructor for bling subsystem with default settings as set in Constants
    */
-  public Bling() {
+  private Bling() {
     mMode = kDefaultBlingMode;
     mPrimary = kDefaultBlingColor;
     mSecondary = kDefaultBlingColorSecondary;

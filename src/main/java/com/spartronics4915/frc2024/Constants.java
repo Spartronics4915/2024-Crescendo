@@ -204,8 +204,8 @@ public final class Constants {
         }
 
         public static final class PoseOffsetConstants {
-            public static final Transform3d kAlicePoseOffset = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // placeholder
-            public static final Transform3d kBobPoseOffset = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0)); // placeholder
+            public static final Transform3d kAlicePoseOffset = new Transform3d(); //new Transform3d(-0.22, -0.1, 0, new Rotation3d(0, 0, 0)); // placeholder
+            public static final Transform3d kBobPoseOffset = new Transform3d(); //new Transform3d(-0.35, -0.1, 0, new Rotation3d(0, 0, Units.degreesToRadians(180))); // placeholder
         }
     }
     public static final class ShooterWristConstants {

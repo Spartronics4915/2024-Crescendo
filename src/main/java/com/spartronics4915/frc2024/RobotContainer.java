@@ -5,6 +5,7 @@
 package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
+import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.Elevator;
@@ -68,11 +69,8 @@ public class RobotContainer {
 
     // private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
-<<<<<<< HEAD
     private final VisionSubsystem mVision;
   private final Bling mBling;
-=======
->>>>>>> bling
 
     // static {
     //     ModeSwitchSubsystems.add(mIntakeWrist);
@@ -95,7 +93,8 @@ public class RobotContainer {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
-        mBling = new Bling();
+        mBling = Bling.getInstance();
+        mBling.setMode(BlingModes.OFF);
         configureBindings();
     }
 
@@ -108,7 +107,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        // mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
         // mOperatorController.leftTrigger(kOperatorTriggerDeadband) // TODO: change
         //         .onTrue(mIntake.setStateCommand(IntakeState.IN))
@@ -121,8 +120,8 @@ public class RobotContainer {
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
 
-        mDriverController.a()
-                .whileTrue(new ToggleDetectorCommand());
+        // mDriverController.a()
+        //         .whileTrue(new ToggleDetectorCommand());
         // mDriverController.leftTrigger(kDriverTriggerDeadband)
         //         .whileTrue(new LockOnCommand());
         // 

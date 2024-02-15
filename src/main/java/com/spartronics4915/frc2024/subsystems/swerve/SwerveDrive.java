@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -79,8 +81,8 @@ public class SwerveDrive extends SubsystemBase {
         mRotationIsIndependent = false;
 
         {
-            final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.9, 0.9, 0.9);
-            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+            final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
+            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.9, 0.9, 0.9);
 
             // TODO: change initial pose estimate
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
@@ -379,9 +381,14 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.unlock();
     }
 
+    StructPublisher<Pose2d> posePublish = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("robot pose", Pose2d.struct).publish();
+
     @Override
     public void periodic() {
         updateOdometry();
+
+        posePublish.accept(getPose());
+
         boolean logSwerveModules = true;
         if (logSwerveModules) {
             for(int i = 0; i < 4; i ++){
