@@ -64,11 +64,15 @@ public class RobotContainer {
 
     // private static final ShooterWrist mShooter = ShooterWrist.getInstance();
     // private static final Elevator mElevator = Elevator.getInstance();
+    // private static final Bling mBling = Bling.getInstance();
 
     // private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
+<<<<<<< HEAD
     private final VisionSubsystem mVision;
   private final Bling mBling;
+=======
+>>>>>>> bling
 
     // static {
     //     ModeSwitchSubsystems.add(mIntakeWrist);
