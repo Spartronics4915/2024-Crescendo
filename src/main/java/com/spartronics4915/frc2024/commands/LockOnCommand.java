@@ -7,6 +7,7 @@ import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,8 +48,7 @@ public class LockOnCommand extends Command {
         if (!loaded) mBling.setColor(Color.kWhite);
         else if (loaded && mLimelight.getTv()) {
             mSwerve.setDesiredAngle(desiredAngle);
-            double percent = (30.0 - Math.abs(tx)) / 100.0;
-            if (percent > 100.0) percent = 100.0;
+            double percent = MathUtil.clamp((30.0 - Math.abs(tx)) / 30.0, 0.0, 1.0);
             Color color = Bling.mix(Color.kLime, Color.kOrange, percent);
             mBling.setColor(color);
         } else mBling.setColor(Color.kRed);
