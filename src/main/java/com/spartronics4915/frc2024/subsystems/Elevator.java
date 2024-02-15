@@ -106,6 +106,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                     mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
                 }
             }
+            
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
         });
 
 

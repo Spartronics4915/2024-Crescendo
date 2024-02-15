@@ -102,6 +102,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                     mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 }
             }
+            
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
         });
     }
 

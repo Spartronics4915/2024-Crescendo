@@ -158,6 +158,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                     mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 }
             }
+            
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
         });
 
         return out;
