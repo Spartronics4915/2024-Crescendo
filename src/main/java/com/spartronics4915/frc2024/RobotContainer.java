@@ -122,7 +122,7 @@ public class RobotContainer {
         list.add(mShooterWrist);
 
         mShooter = Shooter.getInstance();
-        
+        ModeSwitchSubsystems.add(mShooter);
 
         mElevator = Elevator.getInstance();
         ModeSwitchSubsystems.add(mElevator);
