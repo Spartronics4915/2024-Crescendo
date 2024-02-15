@@ -34,6 +34,8 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.*; 
 import java.util.function.*;
 
@@ -85,6 +87,22 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         currentToSetPoint();
 
         initShuffleBoard();
+
+        new Trigger(mLimitSwitch::get).onTrue(new Command() {
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
+            public void execute() {
+                mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+                if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+                    mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                }
+            }
+        });
     }
 
     //#region init functions
@@ -257,12 +275,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void handleLimitSwitch(){
-        if (mLimitSwitch.get()) {
-            mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-            if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
-                mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-            }
-        }
+        // switching with triggers
+        // if (mLimitSwitch.get()) {
+        //     mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+        //     if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+        //         mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+        //     }
+        // }
     }
 
     //#endregion

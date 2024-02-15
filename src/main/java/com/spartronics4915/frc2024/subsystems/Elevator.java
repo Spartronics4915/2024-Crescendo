@@ -21,6 +21,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
 
@@ -91,6 +92,23 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Sets up the Limit Switch
         limitSwitch = new DigitalInput(0);
 
+        new Trigger(limitSwitch::get).onTrue(new Command() {
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
+            public void execute() {
+                mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
+                if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) {
+                    mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
+                }
+            }
+        });
+
+
         initShuffle();
     }
 
@@ -101,14 +119,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
         }
         // Not-manual
-        if (limitSwitch.get() && Robot.isReal()){
-            mEncoder.setPosition(kLimitSwitchGoto * kMetersToRotation);
-            if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset ) {
+        // switching with trigger
+        // if (limitSwitch.get() && Robot.isReal()){
+        //     mEncoder.setPosition(kLimitSwitchGoto * kMetersToRotation);
+        //     if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset ) {
                 
-                mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
-            }
+        //         mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
+        //     }
             
-        }
+        // }
 
         mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
 

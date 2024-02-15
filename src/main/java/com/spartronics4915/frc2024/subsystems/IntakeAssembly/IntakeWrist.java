@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -143,6 +144,22 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private DigitalInput initLimitSwitch(){
         DigitalInput out = new DigitalInput(kLimitSwitchChannel);
 
+        new Trigger(out::get).onTrue(new Command() {
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+
+            @Override
+            public void execute() {
+                mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+                if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+                    mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                }
+            }
+        });
+
         return out;
     }
 
@@ -265,12 +282,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     private void handleLimitSwitch(){
-        if (mLimitSwitch.get()) {
-            mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-            if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
-                mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-            }
-        }
+        // switching with trigger
+        // if (mLimitSwitch.get()) {
+        //     mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+        //     if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+        //         mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+        //     }
+        // }
     }
 
     //#endregion
