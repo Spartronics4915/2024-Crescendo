@@ -363,6 +363,14 @@ public class SwerveDrive extends SubsystemBase {
         return mIMU;
     }
 
+    public void resetYaw() {
+        mIMU.reset();
+    }
+
+    public Command resetYawCommand() {
+        return runOnce(this::resetYaw);
+    }
+
     private void updateOdometry() {
         mPoseEstimatorWriteLock.lock();
         try {
