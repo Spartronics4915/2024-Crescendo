@@ -17,18 +17,21 @@ import com.spartronics4915.frc2024.Constants.BlingModes;
 
 import static com.spartronics4915.frc2024.Constants.BlingConstants.*;
 
+import java.util.Optional;
+
 /**
  * Subsystem for Bling
  */
 public class Bling extends SubsystemBase {
+  private static Bling mInstance;
+
   private final AddressableLED led;
   private final AddressableLEDBuffer ledBuffer;
-
   private Constants.BlingModes mMode;
   private Color mPrimary;
   private Color mSecondary;
   private int mFrame;
-
+  private Optional<BlingModes> test = Optional.empty();
   private boolean mSetSecondary;
 
 
@@ -257,5 +260,15 @@ public class Bling extends SubsystemBase {
    */
   private void setPixel(int index, double r, double g, double b) {
     ledBuffer.setRGB(index, (int) (r*kBrightness*255.0), (int) (g*kBrightness*255.0), (int) (b*kBrightness*255.0));
+  }
+
+    /**
+    * @return A static instance of the elevator subsystem
+    */
+    public static Bling getInstance() {
+      if (mInstance == null) {
+          mInstance = new Bling();
+      }
+      return mInstance;
   }
 }
