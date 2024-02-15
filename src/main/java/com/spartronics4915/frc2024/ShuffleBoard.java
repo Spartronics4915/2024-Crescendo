@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class ShuffleBoard {
-    public static String UserTab = Shuffleboard.kBaseTableName; //anything the drivers need to see should be on this tab
+    public static String UserTab = "Overview"; //anything the drivers need to see should be on this tab
     public static String DebugTab = "Debug"; //anything that will need to be referenced for debugging should be on this tab
 
     public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue, ShuffleboardContainer shuffleContainer, String name){
