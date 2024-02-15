@@ -40,14 +40,17 @@ public class LockOnCommand extends Command {
         double pipelineIndex = mLimelight.getTruePipelineIndex();
         boolean loaded = pipelineIndex == 1;
         Rotation2d swerveAngle = mSwerve.getAngle();
-        Rotation2d limelightAngle = Rotation2d.fromDegrees(-mLimelight.getTxLowpass());
+        double tx = mLimelight.getTxLowpass();
+        Rotation2d limelightAngle = Rotation2d.fromDegrees(-tx);
         Rotation2d desiredAngle = Rotation2d.fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
         System.out.println("LOCKON:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
         if (!loaded) mBling.setColor(Color.kWhite);
         else if (loaded && mLimelight.getTv()) {
             mSwerve.setDesiredAngle(desiredAngle);
-            if (Math.abs(mLimelight.getTx()) < 2) mBling.setColor(Color.kLime);
-            else mBling.setColor(Color.kYellow);
+            double percent = (30.0 - Math.abs(tx)) / 100.0;
+            if (percent > 100.0) percent = 100.0;
+            Color color = Bling.mix(Color.kLime, Color.kOrange, percent);
+            mBling.setColor(color);
         } else mBling.setColor(Color.kRed);
     }
 
