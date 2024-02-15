@@ -38,6 +38,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.NoteVisualizer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -56,6 +57,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kStageTarget;
@@ -142,6 +144,10 @@ public class RobotContainer {
         //         return Optional.empty();
         //     }
         // }, -1));
+
+        new Trigger(() -> {return mPDP.getFaults().Brownout;}).onTrue(Commands.runOnce(() -> {
+            DriverStation.reportError("BROWNOUT DETECTED", false);
+        }));
     }
 
     public RobotContainer() {
