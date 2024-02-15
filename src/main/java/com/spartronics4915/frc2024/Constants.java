@@ -252,7 +252,7 @@ public final class Constants {
     public static final class ShooterConstants { // [ ] Shooter Constants
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(24, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(25, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(26, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(26, MotorType.kBrushless, false, IdleMode.kCoast, 20); //placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.1, 0.0, 0.0, 0.0); //TODO find these values
         public static final double kOffSpeed = 0.0; //unsure if this is necessary
         public static final double kShootSpeed = 1.0; //placeholder
