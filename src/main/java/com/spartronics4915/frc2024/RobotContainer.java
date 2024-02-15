@@ -5,6 +5,7 @@
 package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
+import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
 import com.spartronics4915.frc2024.subsystems.Bling;
@@ -22,6 +23,8 @@ import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
+import com.spartronics4915.frc2024.subsystems.Bling.BlingMCwithPriority;
+import com.spartronics4915.frc2024.subsystems.Bling.BlingMC;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
@@ -35,6 +38,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.NoteVisualizer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -45,6 +49,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -62,6 +67,7 @@ import static com.spartronics4915.frc2024.Constants.OI.kOperatorTriggerDeadband;
 import static com.spartronics4915.frc2024.util.ModeSwitchInterface.ModeSwitchSubsystems;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Set;
 
 public class RobotContainer {
@@ -96,6 +102,8 @@ public class RobotContainer {
 
     private final VisionSubsystem mVision;
 
+    private static final PowerDistribution mPDP = new PowerDistribution();
+
     static {
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
@@ -124,6 +132,14 @@ public class RobotContainer {
         mSimulator = new TrapezoidSimulator(list);
 
         ModeSwitchSubsystems.add(mElevator);
+        
+        // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
+        //     if (mPDP.getStickyFaults().Brownout) {
+        //         return Optional.of(new BlingMC(BlingModes.PULSE_SWITCH, Color.kRed, Color.kDarkRed));
+        //     } else {
+        //         return Optional.empty();
+        //     }
+        // }, -1));
     }
 
     public RobotContainer() {
