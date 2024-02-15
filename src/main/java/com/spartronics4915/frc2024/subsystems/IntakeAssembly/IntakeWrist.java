@@ -156,9 +156,9 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             @Override
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-                if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+                // if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-                }
+                // }
                 startupHome = true;
             }
 

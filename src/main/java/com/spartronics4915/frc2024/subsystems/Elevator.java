@@ -104,9 +104,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             @Override
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
-                if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) {
+                // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
-                }
+                // }
                 startupHome = true;
             }
             

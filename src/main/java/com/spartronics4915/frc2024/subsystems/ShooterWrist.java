@@ -100,9 +100,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             @Override
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-                if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
+                // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-                }
+                // }
                 startupHome = true;
             }
 
