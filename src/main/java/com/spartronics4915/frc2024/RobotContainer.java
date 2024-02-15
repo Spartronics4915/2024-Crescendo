@@ -6,6 +6,7 @@ package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -67,6 +68,7 @@ public class RobotContainer {
     // private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
     private final VisionSubsystem mVision;
+  private final Bling mBling;
 
     // static {
     //     ModeSwitchSubsystems.add(mIntakeWrist);
@@ -89,6 +91,7 @@ public class RobotContainer {
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
+        mBling = new Bling();
         configureBindings();
     }
 
