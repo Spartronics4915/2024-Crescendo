@@ -157,7 +157,7 @@ public final class Constants {
                     public static final double kOutSpeed = -0.3; // placeholder
                     public static final double kOffSpeed = 0;
 
-                    public static final int kIntakeBeamBreakID = 3; //placeholder
+                    public static final int kIntakeBeamBreakID = 0; //placeholder
                 }
         
         public static final class IntakeWristConstants { // [ ] Intake Wrist constants
@@ -206,7 +206,7 @@ public final class Constants {
                     new Translation2d(2, 0));
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
                     .0156, 7, 102); // HACK untested
-            public static final int kLimitSwitchChannel = 2;
+            public static final int kLimitSwitchChannel = 3;
 
             public static final double kLimitSwitchTriggerOffset = -0.025;
 
@@ -243,7 +243,7 @@ public final class Constants {
         
         public static final double kAimedAtTargetThreshold = 1/60; //6 degrees
 
-        public static final int kLimitSwitchChannel = 1;
+        public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = 0;
 
         public static final double kLimitSwitchTriggerOffset = -0.025;
