@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
@@ -14,9 +15,13 @@ import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.PIDFConstants;
 
+import java.util.Optional;
+
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
@@ -63,6 +68,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
 
+        Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
+            if (hasSpunUp()) {
+                return Optional.empty();
+            }
+            return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
+        }, 1));
+    
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){
