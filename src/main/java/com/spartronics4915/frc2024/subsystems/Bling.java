@@ -4,6 +4,10 @@
 
 package com.spartronics4915.frc2024.subsystems;
 
+import java.util.LinkedList;
+import java.util.Optional;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -17,8 +21,6 @@ import com.spartronics4915.frc2024.Constants.BlingModes;
 
 import static com.spartronics4915.frc2024.Constants.BlingConstants.*;
 
-import java.util.Optional;
-
 /**
  * Subsystem for Bling
  */
@@ -31,14 +33,23 @@ public class Bling extends SubsystemBase {
   private Color mPrimary;
   private Color mSecondary;
   private int mFrame;
-  private Optional<BlingModes> test = Optional.empty();
   private boolean mSetSecondary;
 
+  private static LinkedList<BlingMCwithPriority> list = new LinkedList<BlingMCwithPriority>();
+  public record BlingMCwithPriority(Supplier<Optional<BlingMC>> mc, int priority) {}
+  public record BlingMC(BlingModes mode, Color primary, Color secondary) {}
+
+  public static void addToLinkedList(BlingMCwithPriority add) {
+    list.add(add);
+    list.sort((a,b) -> {
+      return a.priority() - b.priority();
+    });
+  }
 
   /**
    * Constructor for bling subsystem with default settings as set in Constants
    */
-  public Bling() {
+  private Bling() {
     mMode = kDefaultBlingMode;
     mPrimary = kDefaultBlingColor;
     mSecondary = kDefaultBlingColorSecondary;
@@ -113,12 +124,17 @@ public class Bling extends SubsystemBase {
    * @param newColor The new bling color
    */
   public void setColor(Color newColor) {
-    if (mSetSecondary) this.mSecondary = newColor;
-    else this.mPrimary = newColor;
-    mSetSecondary = false;
+    this.mPrimary = newColor;
+  }
+  public void setSecondary(Color newColor) {
+    this.mSecondary = newColor;
   }
   public Command setColorCommand(Color newColor) {
-    return runOnce(() -> setColor(newColor));
+    return runOnce(() -> {
+      if (mSetSecondary) setSecondary(newColor);
+      else setColor(newColor);
+      mSetSecondary = false;
+    });
   }
   public Command setSecondaryColorCommand() {
     return runOnce(() -> mSetSecondary = true);
@@ -144,7 +160,8 @@ public class Bling extends SubsystemBase {
    * Updates the LEDS.
    */
   public void update() {
-    System.out.println("Bling - " + mMode + ", " + mPrimary + ", " + mSecondary);
+    if (kIsInFancyMode) ughhhhhhhhhhhhh();
+    if (kSpam) System.out.println("Bling - " + mMode + ", " + mPrimary + ", " + mSecondary);
     switch (mMode) {
       case OFF -> setAllLeds(0, 0, 0);
       case SOLID -> setAllLeds(mPrimary.red, mPrimary.green, mPrimary.blue);
@@ -187,6 +204,17 @@ public class Bling extends SubsystemBase {
     led.setData(ledBuffer);
   }
 
+  /**
+   * does stuff
+   * @return
+   */
+  private BlingMC ughhhhhhhhhhhhh() {
+    for (BlingMCwithPriority blingMCwithPriority : list) {
+      if (blingMCwithPriority.mc().get().isPresent()) 
+        return blingMCwithPriority.mc().get().get();
+    }
+    return new BlingMC(BlingModes.OFF, Color.kBlack, Color.kBlack);
+  }
 
   public static Color getAllianceColor() {
     if (DriverStation.getAlliance().isPresent())
@@ -262,13 +290,19 @@ public class Bling extends SubsystemBase {
     ledBuffer.setRGB(index, (int) (r*kBrightness*255.0), (int) (g*kBrightness*255.0), (int) (b*kBrightness*255.0));
   }
 
-    /**
-    * @return A static instance of the elevator subsystem
-    */
-    public static Bling getInstance() {
+  /**
+  * @return A static instance of the elevator subsystem
+  */
+  public static Bling getInstance() {
       if (mInstance == null) {
           mInstance = new Bling();
       }
       return mInstance;
+  }
+
+  public void setBling(BlingMC mc) {
+    setMode(mc.mode());
+    setColor(mc.primary());
+    setSecondary(mc.secondary());
   }
 }
