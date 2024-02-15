@@ -102,6 +102,8 @@ public class RobotContainer {
 
     private final VisionSubsystem mVision;
 
+    private final Bling mBling = Bling.getInstance();
+
     private static final PowerDistribution mPDP = new PowerDistribution();
 
     static {
