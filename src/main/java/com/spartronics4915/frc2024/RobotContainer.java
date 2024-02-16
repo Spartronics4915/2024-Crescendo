@@ -169,11 +169,13 @@ public class RobotContainer {
         return mOperatorController;
     }
 
-    private void configureBindings() {
+    private void configureBindings() { // TODO: format these nicely
         mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
         mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
 
         mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
         mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
