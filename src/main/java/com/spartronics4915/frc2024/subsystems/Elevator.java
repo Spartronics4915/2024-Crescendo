@@ -51,6 +51,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private DigitalInput limitSwitch;
 
     private boolean startupHome = false;
+    private boolean mHoming = false;
+
 
     // #endregion
 
@@ -108,6 +110,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                     mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
                 // }
                 startupHome = true;
+                mHoming = false;
+                mIsManual = false;
             }
             
             @Override
@@ -124,7 +128,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
-            mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
+            if (!mHoming) mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
         }
         // Not-manual
         // switching with trigger
@@ -136,11 +140,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         //     }
             
         // }
+        if (!mHoming) {
+            mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
 
-        mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
-
-        mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), 0));
-
+            mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), 0));
+        }
+        
         mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
@@ -221,6 +226,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mManualDelta = deltaPosition;
     }
 
+    private void homeMotor(Rotation2d angleDelta){
+        mHoming = true;
+        setManualDelta(angleDelta);
+    }
+
     /**
      * Command for manual movement
      * @param angleDelta
@@ -230,6 +240,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             if (!Robot.isSimulation())
                 resetTarget();
             mIsManual = false;
+        });
+    }
+
+    public Command homeMotorCommand(Rotation2d angleDelta){
+        return runOnce(() -> {
+            homeMotor(angleDelta);
         });
     }
 

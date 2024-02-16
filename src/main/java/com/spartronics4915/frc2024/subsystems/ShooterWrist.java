@@ -66,6 +66,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterManualControlEntry;
 
     private boolean startupHome = false;
+    private boolean mHoming = false;
 
     //#endregion
 
@@ -103,6 +104,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 // }
+                mHoming = false;
+                mManualMovement = false;
                 startupHome = true;
             }
 
@@ -182,6 +185,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mManualDelta = deltaPosition.times(kInToOutRotations);
     }
 
+    private void homeMotor(Rotation2d deltaPosition){
+        mHoming = true;
+        setManualDelta(deltaPosition);
+    }
+
     private void setRotationSetPoint(Rotation2d angle){
         mTargetRotation2d = angle;
     }
@@ -231,6 +239,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         );
     }
 
+    public Command homeMotorCommand(Rotation2d angleDelta){
+        return runOnce(() ->{
+            homeMotor(angleDelta);
+        });
+    }
+
     //#endregion
 
     //#region periodic functions
@@ -262,11 +276,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
     
     private void manualControlUpdate(){ //HACK untested
-
-        if (mTargetRotation2d.getRotations() % 1.0 - kMaxAngle.getRotations() > 0 && mManualDelta.getRotations() > 0) { //CHECKUP might not work
-            mManualDelta = Rotation2d.fromRotations(0);
-        } else if (mTargetRotation2d.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
-            mManualDelta =  Rotation2d.fromRotations(0);
+        if (!mHoming){
+            if (mTargetRotation2d.getRotations() % 1.0 - kMaxAngle.getRotations() > 0 && mManualDelta.getRotations() > 0) { //CHECKUP might not work
+                mManualDelta = Rotation2d.fromRotations(0);
+            } else if (mTargetRotation2d.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
+                mManualDelta =  Rotation2d.fromRotations(0);
+            }
         }
         mTargetRotation2d = Rotation2d.fromRadians(mTargetRotation2d.getRadians() + mManualDelta.getRadians());
     }

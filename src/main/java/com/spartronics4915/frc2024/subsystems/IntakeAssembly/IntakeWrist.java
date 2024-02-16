@@ -62,6 +62,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         private Elevator mElevatorSubsystem = Elevator.getInstance();
 
         private DigitalInput mLimitSwitch;
+        private boolean mHoming = false;
 
         private boolean startupHome = false;
 
@@ -159,6 +160,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 // if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
                 // }
+                mManualMovement = false;
+                mHoming = false;
                 startupHome = true;
             }
 
@@ -202,12 +205,23 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         setRotationSetPoint(newState.wristAngle.times(kInToOutRotations));
     }
 
+    private void homeMotor(Rotation2d deltaPosition){
+        mHoming = true;
+        setManualDelta(deltaPosition);
+    }
+
     //#endregion
 
     //#region Commands
     public Command setStateCommand(IntakeAssemblyState newState){
         return Commands.runOnce(() -> {
             setState(newState);
+        });
+    }
+
+    public Command homingCommand(Rotation2d angleDelta){
+        return this.runOnce(() -> {
+            homeMotor(angleDelta);
         });
     }
 
@@ -261,13 +275,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void manualControlUpdate(){ //HACK untested
 
-        if (mManualDelta.getRotations() > 0) { //CHECKUP might not work
+        if (mManualDelta.getRotations() > 0 && !mHoming) { //CHECKUP might not work
             if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
                 mManualDelta = Rotation2d.fromRotations(0);
             } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
                 mManualDelta = Rotation2d.fromRotations(0);
             }
-        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0) {
+        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
             mManualDelta =  Rotation2d.fromRotations(0);
         }
         mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
@@ -276,7 +290,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
 
-        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit()) { //CHECKUP meant to actively prevent overshoot
+        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
             mRotSetPoint = kMaxAngleAmp;
         }
         
