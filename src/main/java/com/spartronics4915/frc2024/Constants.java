@@ -4,8 +4,6 @@ import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 
 import java.util.stream.Stream;
 
-import org.ddogleg.solver.RootFinderType;
-
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -302,7 +300,7 @@ public final class Constants {
         public static final double kShooterHeight = 0.0;
         public static final double kMaxDistance = 10.0; //Needs units, the maximum relative distance a target can be from the robot for autoaim 
         public static final double kGravity = -9.8;
-        public static final RootFinderType kRootFinderType = RootFinderType.STURM;
+        public static final int kIterations = 45;
     }
     public static final class Vision {
         public enum VisionPipelines {

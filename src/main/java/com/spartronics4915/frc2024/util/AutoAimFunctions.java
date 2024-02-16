@@ -13,9 +13,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.function.*;
 
-import org.ddogleg.solver.Polynomial;
-
-
 
 public class AutoAimFunctions {
 
@@ -65,7 +62,7 @@ public class AutoAimFunctions {
 
         // get real, non negative roots:
 
-        var possibleRoots = PolynomialRootFinder.getRealRoots(Polynomial.wrap(c0,c1,c2,c3,c4));
+        var possibleRoots = PolynomialRootFinder.getRealRoots(c0,c1,c2,c3,c4);
         if (!possibleRoots.isPresent()) {
             return Optional.empty();
         }

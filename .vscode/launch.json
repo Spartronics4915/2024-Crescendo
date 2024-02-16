@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "PolynomialRootFinder",
+      "request": "launch",
+      "mainClass": "com.spartronics4915.frc2024.util.PolynomialRootFinder",
+      "projectName": "2024-Crescendo"
+    },
+    {
+      "type": "java",
       "name": "AutoAimFunctions",
       "request": "launch",
       "mainClass": "com.spartronics4915.frc2024.util.AutoAimFunctions",
