@@ -56,11 +56,16 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
-        mConveyorMotor = constructMotor(kConveyorMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
+        mConveyorMotor = constructMotor(kConveyorMotorConstants);
+
         //mShooterFollowMotor.follow(mShooterMotor, true);
         mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
         mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
+
+        mShooterMotor.burnFlash();
+        mShooterFollowMotor.burnFlash();
+        mConveyorMotor.burnFlash();
 
         mShooterEncoder =  mShooterMotor.getEncoder();
 
@@ -83,7 +88,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         motor.setInverted(motorValues.motorIsInverted());
         motor.setIdleMode(motorValues.idleMode());
         motor.setSmartCurrentLimit(motorValues.currentLimit());
-        motor.burnFlash();
         return motor;
     }
 
