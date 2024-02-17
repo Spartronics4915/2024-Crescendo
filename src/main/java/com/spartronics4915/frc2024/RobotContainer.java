@@ -90,11 +90,11 @@ public class RobotContainer {
 
     // private static final Intake mIntake = Intake.getInstance();
     
-    private static final IntakeWrist mIntakeWrist;
-    private static final Intake mIntake;
+    // private static final IntakeWrist mIntakeWrist;
+    // private static final Intake mIntake;
     private static final ShooterWrist mShooterWrist;
     private static final Shooter mShooter;
-    private static final Elevator mElevator;
+    // private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
     
@@ -111,13 +111,13 @@ public class RobotContainer {
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
         
-        mIntakeWrist = IntakeWrist.getInstance();;
-        ModeSwitchSubsystems.add(mIntakeWrist);
-        list.add(mIntakeWrist);
+        // mIntakeWrist = IntakeWrist.getInstance();;
+        // ModeSwitchSubsystems.add(mIntakeWrist);
+        // list.add(mIntakeWrist);
         
 
-        mIntake = Intake.getInstance();
-        ModeSwitchSubsystems.add(mIntake);
+        // mIntake = Intake.getInstance();
+        // ModeSwitchSubsystems.add(mIntake);
         
 
         mShooterWrist = ShooterWrist.getInstance();
@@ -127,14 +127,14 @@ public class RobotContainer {
         mShooter = Shooter.getInstance();
         ModeSwitchSubsystems.add(mShooter);
 
-        mElevator = Elevator.getInstance();
-        ModeSwitchSubsystems.add(mElevator);
-        list.add(mElevator);
+        // mElevator = Elevator.getInstance();
+        // ModeSwitchSubsystems.add(mElevator);
+        // list.add(mElevator);
         
 
         mSimulator = new TrapezoidSimulator(list);
 
-        ModeSwitchSubsystems.add(mElevator);
+        // ModeSwitchSubsystems.add(mElevator);
         
         // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
         //     if (mPDP.getStickyFaults().Brownout) {
@@ -173,22 +173,21 @@ public class RobotContainer {
 
 
     private void configureBindings() { // TODO: format these nicely
-        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-
+        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
+        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
+        // mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
+        // mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
         mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
+        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
+        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
 
-        var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
-        mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
-        mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
-        mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
-        mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
+        // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
+        // mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
+        // mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
+        // mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
+        // mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
     
         mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
@@ -196,17 +195,18 @@ public class RobotContainer {
         mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
         mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
 
-        mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
+    //     mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
 
-        mOperatorController.button(13)
-                .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
+    //     mOperatorController.button(13)
+    //             .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
 
-    mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
-        // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
-        // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
+    //     mDriverController.a()
+    //             .whileTrue(new ToggleDetectorCommand());
+        
+    // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        mDriverController.leftTrigger(kDriverTriggerDeadband)
-                .whileTrue(new LockOnCommand());
+    //     mDriverController.leftTrigger(kDriverTriggerDeadband)
+    //             .whileTrue(new LockOnCommand());
     }
 
     public Command getAutonomousCommand() {
