@@ -160,7 +160,7 @@ public class Bling extends SubsystemBase {
    * Updates the LEDS.
    */
   public void update() {
-    if (kIsInFancyMode) ughhhhhhhhhhhhh();
+    if (kIsInFancyMode) setBling(ughhhhhhhhhhhhh());
     if (kSpam) System.out.println("Bling - " + mMode + ", " + mPrimary + ", " + mSecondary);
     switch (mMode) {
       case OFF -> setAllLeds(0, 0, 0);
