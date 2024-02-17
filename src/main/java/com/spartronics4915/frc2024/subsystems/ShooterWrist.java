@@ -103,6 +103,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                    updateCurrStateToReal();
                 // }
                 mHoming = false;
                 mManualMovement = false;
@@ -204,8 +205,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void currentToSetPoint(){
-        mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
+        updateCurrStateToReal();
         setRotationSetPoint(getEncoderPosReading()); //TODO clamp for safety? for now will have force boolean
+    }
+
+    private void updateCurrStateToReal(){
+        mCurrentState = new State(getEncoderPosReading().getRotations(), 0.0);
     }
 
     public boolean atTarget(){

@@ -108,6 +108,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
                 // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
+                    updateCurrStateToReal();
                 // }
                 startupHome = true;
                 mHoming = false;
@@ -299,8 +300,12 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * Sets the target position to the motor's current position so nobody gets punched in the face
      */
     public void resetTarget() {
-        this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
+        updateCurrStateToReal();
         mTarget = getEncoderPosReading();
+    }
+
+    private void updateCurrStateToReal(){
+        this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
     }
 
     // #endregion

@@ -159,6 +159,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
                 // if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                     mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                    updateCurrStateToReal();
                 // }
                 mManualMovement = false;
                 mHoming = false;
@@ -187,8 +188,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     private void currentToSetPoint(){
-        mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
+        updateCurrStateToReal();
         setRotationSetPoint(getEncoderPosReading());
+    }
+
+    private void updateCurrStateToReal(){
+        mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
     }
     
     private void setRotationSetPoint(Rotation2d angle){
