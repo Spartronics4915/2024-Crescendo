@@ -45,6 +45,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         //PID controller setup
         mPIDController = constructPIDController(mMotor, kPIDconstants);
 
+        mMotor.burnFlash();
+
         //beam break setup
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
     }
@@ -55,7 +57,6 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         motor.setInverted(motorValues.motorIsInverted());
         motor.setIdleMode(motorValues.idleMode());
         motor.setSmartCurrentLimit(motorValues.currentLimit());
-        motor.burnFlash();
         return motor;
     }
 

@@ -88,6 +88,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         mLimitSwitch = initLimitSwitch();
 
+        mWristMotor.burnFlash();
+
         currentToSetPoint();
         
         shuffleInit();
@@ -108,7 +110,6 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         motor.setInverted(motorValues.motorIsInverted());
         motor.setIdleMode(motorValues.idleMode());
         motor.setSmartCurrentLimit(motorValues.currentLimit());
-        motor.burnFlash();
         return motor;
     }
 
