@@ -3,11 +3,16 @@ package com.spartronics4915.frc2024.subsystems.vision;
 import java.util.Optional;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
+import com.spartronics4915.frc2024.Constants.Vision.PoseOffsetConstants;
 import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -24,6 +29,9 @@ public class LimelightDevice extends SubsystemBase {
     private VisionPipelines mPipeline;
     private final boolean mHasCoral;
     private final Field2d mField;
+    private final Transform3d offset;
+    private final Transform2d offset2d;
+    private final SlewRateLimiter mRateLimiter;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
@@ -32,10 +40,14 @@ public class LimelightDevice extends SubsystemBase {
     public LimelightDevice(String name, boolean hasCoral) {
         String formattedName = "limelight-" + name;
         mName = formattedName;
+        if (name.equals("alice")) offset = PoseOffsetConstants.kAlicePoseOffset.inverse();
+        else offset = PoseOffsetConstants.kBobPoseOffset.inverse();
+        offset2d = new Transform2d(offset.getTranslation().toTranslation2d(), offset.getRotation().toRotation2d());
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
         checkIfValid();
         mHasCoral = hasCoral;
+        mRateLimiter = new SlewRateLimiter(246);
         createShuffleboard();
     }
 
@@ -47,12 +59,17 @@ public class LimelightDevice extends SubsystemBase {
         }
     }
 
+    public boolean pipelineLoaded() {
+        return (((int) LimelightHelpers.getCurrentPipelineIndex(mName)) == mPipeline.pipeline);
+    }
+
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (!getTv() || mPipeline.isDetector) {
+        if (!getTv() || mPipeline.isDetector || !pipelineLoaded()) {
             return Optional.empty();
         }
+        // if (numberOfTagsSeen() < 2) return Optional.empty();
         double[] botpose = LimelightHelpers.getBotPose_wpiBlue(mName);
-        Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(botpose[3], botpose[4], botpose[5]));
+        Pose3d pose = new Pose3d(botpose[0], botpose[1], botpose[2], new Rotation3d(Units.degreesToRadians(botpose[3]), Units.degreesToRadians(botpose[4]), Units.degreesToRadians(botpose[5]))).transformBy(offset);
         double timestamp = Timer.getFPGATimestamp() - (botpose[6]/1000.0);
         return Optional.of(new VisionMeasurement(pose, timestamp));
     }
@@ -60,6 +77,10 @@ public class LimelightDevice extends SubsystemBase {
 //#region Limelight Values
     public double getTx() {
         return LimelightHelpers.getTX(mName);
+    }
+
+    public double getTxLowpass() {
+        return mRateLimiter.calculate(getTx());
     }
     
     public double getTy() {
@@ -91,7 +112,7 @@ public class LimelightDevice extends SubsystemBase {
 
     private Pose2d getBotPose2d_wpiBlue() {
         if (!mValid) return new Pose2d();
-        return LimelightHelpers.getBotPose2d_wpiBlue(mName);
+        return LimelightHelpers.getBotPose2d_wpiBlue(mName);//.transformBy(offset2d);
     }
 //#endregion
 
@@ -291,7 +312,10 @@ public class LimelightDevice extends SubsystemBase {
     public double getAverageProfiledInterval() {
         return totalInterval / timesSwitched;
     }
-    
+
+    public double[] getFieldBotpose() {
+        return new double[]{LimelightHelpers.getBotPose_wpiBlue(mName)[0], LimelightHelpers.getBotPose_wpiBlue(mName)[1], Units.degreesToRadians(LimelightHelpers.getBotPose_wpiBlue(mName)[5])};
+    }
 
     public String shuffleboardFormattedName(String title) {
         String name = mName.split("-")[1];
@@ -299,6 +323,16 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public void createShuffleboard() {
+        ShuffleboardTab botposes = Shuffleboard.getTab("Botposes");
+        botposes.addDouble(mName + " botpose 0", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[0];});
+        botposes.addDouble(mName + " botpose 1", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[1];});
+        botposes.addDouble(mName + " botpose 2", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[2];});
+        botposes.addDouble(mName + " botpose 3", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[3];});
+        botposes.addDouble(mName + " botpose 4", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[4];});
+        botposes.addDouble(mName + " botpose 5", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[5];});
+        botposes.addDouble(mName + " botpose 6", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[6];});
+        botposes.addDoubleArray(mName + " botpose pose", () -> {return getFieldBotpose();});
+
         ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
         final int offset = (mName.equals("limelight-bob") ? 5 : 0);
         tab.add(shuffleboardFormattedName("field"),

@@ -19,7 +19,6 @@ import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
-import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -97,14 +96,14 @@ public class RobotContainer {
     private static final Shooter mShooter;
     private static final Elevator mElevator;
 
-    private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
+    private final SwerveDrive mSwerveDrive;
     
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
 
     private final VisionSubsystem mVision;
 
-    private final Bling mBling = Bling.getInstance();
+    private final Bling mBling;
 
     private static final PowerDistribution mPDP = new PowerDistribution();
 
@@ -151,6 +150,7 @@ public class RobotContainer {
     }
 
     public RobotContainer() {
+        mSwerveDrive = SwerveDrive.getInstance();
         mAutoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
@@ -158,6 +158,8 @@ public class RobotContainer {
         overviewTab.add(mAutoChooser);
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
+        mBling = Bling.getInstance();
+        mBling.setMode(BlingModes.OFF);
         configureBindings();
     }
 
@@ -169,11 +171,13 @@ public class RobotContainer {
         return mOperatorController;
     }
 
+
     private void configureBindings() { // TODO: format these nicely
         mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
         mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+
         mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
         mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
 
@@ -197,10 +201,9 @@ public class RobotContainer {
         mOperatorController.button(13)
                 .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
 
-        mDriverController.a()
-                .whileTrue(new ToggleDetectorCommand());
-        
     mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
+        // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
@@ -208,5 +211,14 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return mAutoChooser.getSelected();
+        // var a = AutoBuilder.buildAuto("Path 1 Only");
+        // System.out.println("AUTO START");
+        // System.out.println(a);
+        // System.out.println("AUTO END");
+        // return Commands.sequence(
+        //     Commands.print("starting auto"),
+        //     a,
+        //     Commands.print("ending")
+        // );
     }
 }
