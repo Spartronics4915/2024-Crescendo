@@ -154,6 +154,8 @@ public class SwerveDrive extends SubsystemBase {
             _speeds.omegaRadiansPerSecond = ac_c;
         }
 
+        System.out.println(_speeds);
+
         final var moduleStates = kKinematics.toSwerveModuleStates(_speeds);
 
         final var moduleStatesIterator = List.of(moduleStates).iterator();
@@ -172,7 +174,7 @@ public class SwerveDrive extends SubsystemBase {
 
             @Override
             public void execute() {
-                final var dc = RobotContainer.getOperatorController();
+                final var dc = RobotContainer.getDriverController();
                 ChassisSpeeds cs = new ChassisSpeeds();
 
                 final double inputxraw = dc.getLeftY() * -1.0;
