@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
 
-        //mShooterFollowMotor.follow(mShooterMotor, true);
+        // mShooterFollowMotor.follow(mShooterMotor, true);
         mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
         mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
 
@@ -73,12 +73,12 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
 
-        Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
-            if (hasSpunUp()) {
-                return Optional.empty();
-            }
-            return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
-        }, 1));
+        // Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
+        //     if (hasSpunUp()) {
+        //         return Optional.empty();
+        //     }
+        //     return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
+        // }, 1));
     
     }
 
@@ -138,13 +138,20 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     private void shooterOff() {
-        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-kOffSpeed, ControlType.kVelocity);
+        mShooterMotor.set(kOffSpeed);
+        mShooterFollowMotor.set(-kOffSpeed);
+
+        // mPIDControllerLead.setReference(kOffSpeed * 100, ControlType.kVelocity);
+        // mPIDControllerFollow.setReference(kOffSpeed * 100, ControlType.kVelocity);
+
     }
 
     private void shooterOn() {
-        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
+        mShooterMotor.set(kShootSpeed);
+        mShooterFollowMotor.set(-kShootSpeed);
+
+        // mPIDControllerLead.setReference(kShootSpeed * 100, ControlType.kVelocity);
+        // mPIDControllerFollow.setReference(kShootSpeed * 100, ControlType.kVelocity);
     }
 
     private void conveyorIn() {
@@ -201,6 +208,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
             
         }
         updateShuffleboard();
+
+
     }
 
     @Override
