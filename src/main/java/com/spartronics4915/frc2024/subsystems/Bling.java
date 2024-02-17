@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import com.spartronics4915.frc2024.Constants;
 import com.spartronics4915.frc2024.Constants.BlingModes;
 
@@ -25,6 +26,7 @@ import static com.spartronics4915.frc2024.Constants.BlingConstants.*;
  * Subsystem for Bling
  */
 public class Bling extends SubsystemBase {
+  //#region variables and such
   private static Bling mInstance;
 
   private final AddressableLED led;
@@ -35,16 +37,12 @@ public class Bling extends SubsystemBase {
   private int mFrame;
   private boolean mSetSecondary;
 
+  // Fancy Mode List
   private static LinkedList<BlingMCwithPriority> list = new LinkedList<BlingMCwithPriority>();
   public record BlingMCwithPriority(Supplier<Optional<BlingMC>> mc, int priority) {}
   public record BlingMC(BlingModes mode, Color primary, Color secondary) {}
 
-  public static void addToLinkedList(BlingMCwithPriority add) {
-    list.add(add);
-    list.sort((a,b) -> {
-      return a.priority() - b.priority();
-    });
-  }
+  //#endregion
 
   /**
    * Constructor for bling subsystem with default settings as set in Constants
@@ -66,6 +64,8 @@ public class Bling extends SubsystemBase {
     shuffleboardFunc();
   }
 
+  //#region periodically
+
   @Override
   public void simulationPeriodic() {
     mFrame++;
@@ -77,84 +77,6 @@ public class Bling extends SubsystemBase {
     mFrame++;
     update();
   }
-
-  public void shuffleboardFunc() {
-    var tab = Shuffleboard.getTab("bling");
-    tab.add("reset", this.resetCommand());
-    tab.add("off", this.setModeCommand(BlingModes.OFF));
-    tab.add("solid", this.setModeCommand(BlingModes.SOLID));
-    tab.add("solid #2", this.setModeCommand(BlingModes.SOLID_SECONDARY));
-    tab.add("gradient", this.setModeCommand(BlingModes.GRADIENT));
-    tab.add("gradient reversed", this.setModeCommand(BlingModes.GRADIENT_REVERSED));
-    tab.add("pulse", this.setModeCommand(BlingModes.PULSE));
-    tab.add("pulse switch", this.setModeCommand(BlingModes.PULSE_SWITCH));
-    tab.add("around", this.setModeCommand(BlingModes.AROUND));
-    tab.add("around w/ #2 bg", this.setModeCommand(BlingModes.AROUND_SECONDARY_BG));
-
-    tab.add("warn", this.setModeCommand(BlingModes.WARNING));
-    tab.add("ERROR", this.setModeCommand(BlingModes.ERROR));
-
-    tab.add("set secondary", this.setSecondaryColorCommand());
-
-    tab.add("red", this.setColorCommand(Color.kRed));
-    tab.add("orange", this.setColorCommand(Color.kOrange));
-    tab.add("yellow", this.setColorCommand(Color.kYellow));
-    tab.add("green", this.setColorCommand(Color.kGreen));
-    tab.add("blue", this.setColorCommand(Color.kBlue));
-    tab.add("cyan", this.setColorCommand(Color.kCyan));
-    tab.add("magenta", this.setColorCommand(Color.kMagenta));
-    tab.add("white", this.setColorCommand(Color.kWhite));
-    tab.add("alliance color", this.setColorCommand(getAllianceColor()));
-  }
-
-
-  /**
-   * Sets the bling mode
-   * @param newMode The new Bling Mode for the lighting
-   */
-  public void setMode(BlingModes newMode) {
-    this.mMode = newMode;
-  }
-  public Command setModeCommand(BlingModes newMode) {
-    return runOnce(() -> setMode(newMode));
-  }
-
-  /**
-   * Sets the current color, if setSecondary is true then sets secondary color.
-   * @param newColor The new bling color
-   */
-  public void setColor(Color newColor) {
-    this.mPrimary = newColor;
-  }
-  public void setSecondary(Color newColor) {
-    this.mSecondary = newColor;
-  }
-  public Command setColorCommand(Color newColor) {
-    return runOnce(() -> {
-      if (mSetSecondary) setSecondary(newColor);
-      else setColor(newColor);
-      mSetSecondary = false;
-    });
-  }
-  public Command setSecondaryColorCommand() {
-    return runOnce(() -> mSetSecondary = true);
-  }
-
-  /**
-   * Resets settings such as color and bling mode to defaults
-   */
-  public void reset() {
-      mMode = kDefaultBlingMode;
-      mPrimary = kDefaultBlingColor;
-      mSecondary = kDefaultBlingColorSecondary;
-
-      mSetSecondary = false;
-      mFrame = 0;
-  }
-  public Command resetCommand() {
-    return runOnce(this::reset);
-  }
-
 
   /**
    * Updates the LEDS.
@@ -205,7 +127,7 @@ public class Bling extends SubsystemBase {
   }
 
   /**
-   * does stuff
+   * The *fancy* mode stuff
    * @return
    */
   private BlingMC ughhhhhhhhhhhhh() {
@@ -216,12 +138,100 @@ public class Bling extends SubsystemBase {
     return new BlingMC(BlingModes.OFF, Color.kBlack, Color.kBlack);
   }
 
+  //#endregion
+
+  public void shuffleboardFunc() {
+    var tab = Shuffleboard.getTab("bling");
+    tab.add("reset", this.resetCommand());
+    tab.add("off", this.setModeCommand(BlingModes.OFF));
+    tab.add("solid", this.setModeCommand(BlingModes.SOLID));
+    tab.add("solid #2", this.setModeCommand(BlingModes.SOLID_SECONDARY));
+    tab.add("gradient", this.setModeCommand(BlingModes.GRADIENT));
+    tab.add("gradient reversed", this.setModeCommand(BlingModes.GRADIENT_REVERSED));
+    tab.add("pulse", this.setModeCommand(BlingModes.PULSE));
+    tab.add("pulse switch", this.setModeCommand(BlingModes.PULSE_SWITCH));
+    tab.add("around", this.setModeCommand(BlingModes.AROUND));
+    tab.add("around w/ #2 bg", this.setModeCommand(BlingModes.AROUND_SECONDARY_BG));
+
+    tab.add("warn", this.setModeCommand(BlingModes.WARNING));
+    tab.add("ERROR", this.setModeCommand(BlingModes.ERROR));
+
+    tab.add("set secondary", this.setSecondaryColorCommand());
+
+    tab.add("red", this.setColorCommand(Color.kRed));
+    tab.add("orange", this.setColorCommand(Color.kOrange));
+    tab.add("yellow", this.setColorCommand(Color.kYellow));
+    tab.add("green", this.setColorCommand(Color.kGreen));
+    tab.add("blue", this.setColorCommand(Color.kBlue));
+    tab.add("cyan", this.setColorCommand(Color.kCyan));
+    tab.add("magenta", this.setColorCommand(Color.kMagenta));
+    tab.add("white", this.setColorCommand(Color.kWhite));
+    tab.add("alliance color", this.setColorCommand(getAllianceColor()));
+  }
+
+  //#region Set mode, set bling, set colors, etc
+
+  /**
+   * Sets the bling mode
+   * @param newMode The new Bling Mode for the lighting
+   */
+  public void setMode(BlingModes newMode) {
+    this.mMode = newMode;
+  }
+  public Command setModeCommand(BlingModes newMode) {
+    return runOnce(() -> setMode(newMode));
+  }
+
+  /**
+   * Sets the current color, if setSecondary is true then sets secondary color.
+   * @param newColor The new bling color
+   */
+  public void setColor(Color newColor) {
+    this.mPrimary = newColor;
+  }
+  public void setSecondary(Color newColor) {
+    this.mSecondary = newColor;
+  }
+  public Command setColorCommand(Color newColor) {
+    return runOnce(() -> {
+      if (mSetSecondary) setSecondary(newColor);
+      else setColor(newColor);
+      mSetSecondary = false;
+    });
+  }
+  public Command setSecondaryColorCommand() {
+    return runOnce(() -> mSetSecondary = true);
+  }
+
+  public void setBling(BlingMC mc) {
+    setMode(mc.mode());
+    setColor(mc.primary());
+    setSecondary(mc.secondary());
+  }
+
+  /**
+   * Resets settings such as color and bling mode to defaults
+   */
+  public void reset() {
+      mMode = kDefaultBlingMode;
+      mPrimary = kDefaultBlingColor;
+      mSecondary = kDefaultBlingColorSecondary;
+
+      mSetSecondary = false;
+      mFrame = 0;
+  }
+  public Command resetCommand() {
+    return runOnce(this::reset);
+  }
+
+  //#endregion
+
+  //#region Color Functions
   public static Color getAllianceColor() {
     if (DriverStation.getAlliance().isPresent())
       return DriverStation.getAlliance().get().equals(Alliance.Blue) ? Color.kRoyalBlue : Color.kRed;
     return Color.kYellow; // No Color
   }
-
 
   /**from www.java2s.com
   * Mixes two colours.
@@ -247,6 +257,9 @@ public class Bling extends SubsystemBase {
     return (Math.min(Math.max(a * percent + b * (1.0 - percent),0),1));
   }
 
+  //#endregion
+
+  //#region Set LED or Strip
 
   /**
    * Sets the color of all the LEDS in the String.
@@ -290,6 +303,8 @@ public class Bling extends SubsystemBase {
     ledBuffer.setRGB(index, (int) (r*kBrightness*255.0), (int) (g*kBrightness*255.0), (int) (b*kBrightness*255.0));
   }
 
+  //#endregion
+
   /**
   * @return A static instance of the elevator subsystem
   */
@@ -300,9 +315,15 @@ public class Bling extends SubsystemBase {
       return mInstance;
   }
 
-  public void setBling(BlingMC mc) {
-    setMode(mc.mode());
-    setColor(mc.primary());
-    setSecondary(mc.secondary());
+  /**
+   * Add a BlingMC with priority to the fancy mode list
+   * @param add What BlingMCwithPriority to add
+   */
+  public static void addToLinkedList(BlingMCwithPriority add) {
+    list.add(add);
+    list.sort((a,b) -> {
+      return a.priority() - b.priority();
+    });
   }
+
 }
