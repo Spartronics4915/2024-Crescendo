@@ -72,15 +72,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mFollower.setSmartCurrentLimit(kFollowerConstants.currentLimit());
         mFollower.follow(mMotor);
 
-        mMotor.burnFlash();
         // Initializes the Trapezoid
         mmmmmmmmmmmTrapezoid = new TrapezoidProfile(kZoidConstants);
 
         // Initializes the PID
         mPid = mMotor.getPIDController();
-        mPid.setP(0);
-        mPid.setI(0);
-        mPid.setD(0);
+        mPid.setP(kPIDConstants.p());
+        mPid.setI(kPIDConstants.i());
+        mPid.setD(kPIDConstants.d());
+
+        mMotor.burnFlash();
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 
         // Sets up the encoder
