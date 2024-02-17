@@ -324,17 +324,17 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public void createShuffleboard() {
-        if (RobotBase.isReal()) {
-            ShuffleboardTab botposes = Shuffleboard.getTab("Botposes");
-            botposes.addDouble(mName + " botpose 0", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[0];});
-            botposes.addDouble(mName + " botpose 1", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[1];});
-            botposes.addDouble(mName + " botpose 2", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[2];});
-            botposes.addDouble(mName + " botpose 3", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[3];});
-            botposes.addDouble(mName + " botpose 4", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[4];});
-            botposes.addDouble(mName + " botpose 5", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[5];});
-            botposes.addDouble(mName + " botpose 6", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[6];});
-            botposes.addDoubleArray(mName + " botpose pose", () -> {return getFieldBotpose();});
-        }
+        // if (RobotBase.isReal()) {
+        //     ShuffleboardTab botposes = Shuffleboard.getTab("Botposes");
+        //     botposes.addDouble(mName + " botpose 0", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[0];});
+        //     botposes.addDouble(mName + " botpose 1", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[1];});
+        //     botposes.addDouble(mName + " botpose 2", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[2];});
+        //     botposes.addDouble(mName + " botpose 3", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[3];});
+        //     botposes.addDouble(mName + " botpose 4", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[4];});
+        //     botposes.addDouble(mName + " botpose 5", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[5];});
+        //     botposes.addDouble(mName + " botpose 6", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[6];});
+        //     botposes.addDoubleArray(mName + " botpose pose", () -> {return getFieldBotpose();});
+        // }
 
         ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
         final int offset = (mName.equals("limelight-bob") ? 5 : 0);
