@@ -232,13 +232,13 @@ public final class Constants {
 
         public static double kInToOutRotations = 36.0;
 
-        public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false, IdleMode.kBrake, 40); //placeholder
-        public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0, 0); //don't test with these values
+        public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false, IdleMode.kBrake, 5); //placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); //don't test with these values
         public static final Constraints kTrapzoidConstants = new Constraints(5.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
 
         
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(90 * kInToOutRotations); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(5 * kInToOutRotations); //FIXME used for sim
+        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations() * kInToOutRotations); //only when above the safety height
+        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations() * kInToOutRotations); //FIXME used for sim
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
         
@@ -253,7 +253,7 @@ public final class Constants {
     public static final class ShooterConstants { // [ ] Shooter Constants
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false, IdleMode.kCoast, 20); //placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false, IdleMode.kCoast, 40); //placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(1, 0.0, 0.0, 0.0); //TODO find these values
         public static final double kOffSpeed = 0.0; //unsure if this is necessary
         public static final double kShootSpeed = 1.0; //placeholder

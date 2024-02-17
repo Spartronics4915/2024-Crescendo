@@ -117,6 +117,7 @@ public class ShuffleBoard {
         public static enum ShooterWristSubsystemEntries{
             ShooterSetPoint ("ShooterSetPoint"),
             ShooterEncoderReading("ShooterEncoderReading"),
+            ShooterDelta("ShooterDelta"),
             ShooterManualControl ("ShooterManual");
 
             private String entryName;
@@ -135,6 +136,10 @@ public class ShuffleBoard {
             putEntry(out, ShooterWristSubsystemEntries.ShooterManualControl, false, mShuffleBoardTab, ShooterWristSubsystemEntries.ShooterManualControl.entryName);
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterEncoderReading, -1.0, mShuffleBoardTab, ShooterWristSubsystemEntries.ShooterEncoderReading.entryName);
+
+            putEntry(out, ShooterWristSubsystemEntries.ShooterDelta, 0.0, mShuffleBoardTab, ShooterWristSubsystemEntries.ShooterDelta.entryName);
+
+            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
 
             return out;
         }
