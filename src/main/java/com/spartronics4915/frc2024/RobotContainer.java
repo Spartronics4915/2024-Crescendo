@@ -15,7 +15,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
-import com.spartronics4915.frc2024.commands.ToggleDetectorCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -61,7 +60,7 @@ public class RobotContainer {
 
     // private static final Intake mIntake = Intake.getInstance();
     // private static final IntakeWrist mIntakeWrist = IntakeWrist.getInstance();
-    private static final SwerveDrive mSwerveDrive = SwerveDrive.getInstance();
+    private final SwerveDrive mSwerveDrive;
 
     // private static final ShooterWrist mShooter = ShooterWrist.getInstance();
     // private static final Elevator mElevator = Elevator.getInstance();
@@ -87,6 +86,7 @@ public class RobotContainer {
     // }
 
     public RobotContainer() {
+        mSwerveDrive = SwerveDrive.getInstance();
         mAutoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
@@ -121,11 +121,6 @@ public class RobotContainer {
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
 
-        // mDriverController.a()
-        //         .whileTrue(new ToggleDetectorCommand());
-        // mDriverController.leftTrigger(kDriverTriggerDeadband)
-        //         .whileTrue(new LockOnCommand());
-        // 
         // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
         // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
@@ -143,5 +138,14 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return mAutoChooser.getSelected();
+        // var a = AutoBuilder.buildAuto("Path 1 Only");
+        // System.out.println("AUTO START");
+        // System.out.println(a);
+        // System.out.println("AUTO END");
+        // return Commands.sequence(
+        //     Commands.print("starting auto"),
+        //     a,
+        //     Commands.print("ending")
+        // );
     }
 }

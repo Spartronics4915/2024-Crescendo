@@ -1,11 +1,6 @@
 package com.spartronics4915.frc2024.subsystems.vision;
 
-import java.util.Optional;
-
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
-import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
-
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 

@@ -112,7 +112,7 @@ public class LimelightDevice extends SubsystemBase {
 
     private Pose2d getBotPose2d_wpiBlue() {
         if (!mValid) return new Pose2d();
-        return LimelightHelpers.getBotPose2d_wpiBlue(mName).transformBy(offset2d);
+        return LimelightHelpers.getBotPose2d_wpiBlue(mName);//.transformBy(offset2d);
     }
 //#endregion
 
