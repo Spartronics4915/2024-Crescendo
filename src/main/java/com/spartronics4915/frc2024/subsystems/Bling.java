@@ -132,8 +132,8 @@ public class Bling extends SubsystemBase {
    */
   private BlingMC ughhhhhhhhhhhhh() {
     for (BlingMCwithPriority blingMCwithPriority : list) {
-      if (blingMCwithPriority.mc().get().isPresent()) 
-        return blingMCwithPriority.mc().get().get();
+      Optional<BlingMC> x = blingMCwithPriority.mc().get();
+      if (x.isPresent()) return x.get();
     }
     return new BlingMC(BlingModes.OFF, Color.kBlack, Color.kBlack);
   }
