@@ -94,7 +94,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         resetTarget();
 
         // Sets up the Limit Switch
-        limitSwitch = new DigitalInput(0);
+        limitSwitch = new DigitalInput(kLimitSwitchChannel);
 
         new Trigger(limitSwitch::get).onTrue(new Command() {
 
