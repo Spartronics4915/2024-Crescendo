@@ -8,11 +8,13 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -141,7 +143,7 @@ public class Bling extends SubsystemBase {
   //#endregion
 
   public void shuffleboardFunc() {
-    var tab = Shuffleboard.getTab("bling");
+    ShuffleboardTab tab = Shuffleboard.getTab("bling");
     tab.add("reset", this.resetCommand());
     tab.add("off", this.setModeCommand(BlingModes.OFF));
     tab.add("solid", this.setModeCommand(BlingModes.SOLID));
@@ -254,7 +256,7 @@ public class Bling extends SubsystemBase {
    * @return Mixed numbers
    */
   private static double mixNumsForColors(double a, double b, double percent) {
-    return (Math.min(Math.max(a * percent + b * (1.0 - percent),0),1));
+    return MathUtil.clamp(a * percent + b * (1.0 - percent),0,1);
   }
 
   //#endregion
