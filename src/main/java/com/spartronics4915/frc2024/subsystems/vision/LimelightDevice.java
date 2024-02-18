@@ -323,6 +323,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public void createShuffleboard() {
+        /**
         ShuffleboardTab botposes = Shuffleboard.getTab("Botposes");
         botposes.addDouble(mName + " botpose 0", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[0];});
         botposes.addDouble(mName + " botpose 1", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[1];});
@@ -380,6 +381,7 @@ public class LimelightDevice extends SubsystemBase {
         tab.addDouble(shuffleboardFormattedName("avg interval"),
             () -> {return getAverageProfiledInterval();})
             .withPosition(4 + offset, 3);
+            */
         }
 //#endregion
 }

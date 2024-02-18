@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
@@ -32,6 +33,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -87,7 +89,10 @@ public class RobotContainer {
 
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
-        mAutoChooser = AutoBuilder.buildAutoChooser();
+        NamedCommands.registerCommand("autoAimfor3", Commands.none());
+        NamedCommands.registerCommand("visualizeShot", Commands.none());
+
+        mAutoChooser = AutoBuilder.buildAutoChooser("");
         SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
         ShuffleboardTab overviewTab = Shuffleboard.getTab("Overview");
@@ -137,15 +142,22 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        // return Commands.repeatingSequence(Commands.print("running"));
+        // return new DriveStraightCommands.DriveStraightFixedDistance(mSwerveDrive, new Rotation2d(), 10.0, new Constraints(1.0, 1.0)); //HACK
         return mAutoChooser.getSelected();
         // var a = AutoBuilder.buildAuto("Path 1 Only");
         // System.out.println("AUTO START");
         // System.out.println(a);
         // System.out.println("AUTO END");
         // return Commands.sequence(
-        //     Commands.print("starting auto"),
-        //     a,
-        //     Commands.print("ending")
+        //     Commands.waitSeconds(1.0),
+        //     Commands.print("starting auto in 3"),
+        //     Commands.print("starting auto in 2"),
+        //     Commands.print("starting auto in 1"),
+        //     new PathPlannerAuto("Path 1 Only"),
+        //     Commands.print("ending in 3"),
+        //     Commands.print("ending in 2"),
+        //     Commands.print("ending in 1")
         // );
     }
 }

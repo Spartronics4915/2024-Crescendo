@@ -144,7 +144,7 @@ public class Bling extends SubsystemBase {
    * Updates the LEDS.
    */
   public void update() {
-    System.out.println("Bling - " + mMode + ", " + mPrimary + ", " + mSecondary);
+    // System.out.println("Bling - " + mMode + ", " + mPrimary + ", " + mSecondary);
     switch (mMode) {
       case OFF -> setAllLeds(0, 0, 0);
       case SOLID -> setAllLeds(mPrimary.red, mPrimary.green, mPrimary.blue);
