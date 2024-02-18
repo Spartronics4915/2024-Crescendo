@@ -106,11 +106,13 @@ public class SwerveDrive extends SubsystemBase {
                 },
                 this);
 
-        new Trigger(DriverStation::isDisabled)
-                .onTrue(runOnce(this::setCoastMode))
-                .onFalse(runOnce(this::setBrakeMode));
+        //HACK commenting this out makes autos work
+        // new Trigger(DriverStation::isDisabled)
+        //         .onTrue(runOnce(this::setCoastMode))
+        //         .onFalse(runOnce(this::setBrakeMode));
 
         setDefaultCommand(teleopDriveCommand());
+        System.out.println("swerve finished constructing");
     }
 
     /**
@@ -131,12 +133,14 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void driveRobotRelative(final ChassisSpeeds speeds) {
+        System.out.println("driving from driveRobotRelative()");
         drive(speeds, false);
     }
 
     // FIXME: field relative drives faster than robot relative (??)
     // FIXME: need to make field relative based on pose and mirror based on alliance
     private void drive(final ChassisSpeeds speeds, final boolean fieldRelative, final boolean rotationIndependent) {
+        System.out.println("driving with " + speeds);
         final ChassisSpeeds _speeds;
         if (fieldRelative) {
             _speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
@@ -187,6 +191,7 @@ public class SwerveDrive extends SubsystemBase {
                 // cs.vyMetersPerSecond = 1;
                 // cs.omegaRadiansPerSecond = 0;
 
+                System.out.println("calling drive in teleop command");
                 drive(cs, mIsFieldRelative);
             }
 

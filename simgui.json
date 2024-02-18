@@ -22,11 +22,38 @@
       "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
       "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
       "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
+      "/Shuffleboard/bling/ERROR": "Command",
+      "/Shuffleboard/bling/alliance color": "Command",
+      "/Shuffleboard/bling/around": "Command",
+      "/Shuffleboard/bling/around w/ #2 bg": "Command",
+      "/Shuffleboard/bling/blue": "Command",
+      "/Shuffleboard/bling/cyan": "Command",
+      "/Shuffleboard/bling/gradient": "Command",
+      "/Shuffleboard/bling/gradient reversed": "Command",
+      "/Shuffleboard/bling/green": "Command",
+      "/Shuffleboard/bling/magenta": "Command",
+      "/Shuffleboard/bling/off": "Command",
+      "/Shuffleboard/bling/orange": "Command",
+      "/Shuffleboard/bling/pulse": "Command",
+      "/Shuffleboard/bling/pulse switch": "Command",
+      "/Shuffleboard/bling/red": "Command",
+      "/Shuffleboard/bling/reset": "Command",
+      "/Shuffleboard/bling/set secondary": "Command",
+      "/Shuffleboard/bling/solid": "Command",
+      "/Shuffleboard/bling/solid #2": "Command",
+      "/Shuffleboard/bling/warn": "Command",
+      "/Shuffleboard/bling/white": "Command",
+      "/Shuffleboard/bling/yellow": "Command",
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
     },
     "windows": {
+      "/SmartDashboard/Auto Chooser": {
+        "window": {
+          "visible": true
+        }
+      },
       "/SmartDashboard/field": {
         "bottom": 1476,
         "height": 8.210550308227539,
@@ -47,9 +74,6 @@
   },
   "NetworkTables": {
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
       "Shuffleboard": {
         "IntakeWrist": {
           "Wrist": {
@@ -62,10 +86,12 @@
             }
           },
           "open": true
-        },
-        "open": true
+        }
       },
       "SmartDashboard": {
+        "Auto Chooser": {
+          "open": true
+        },
         "open": true,
         "simCanvas": {
           "Wrist": {
