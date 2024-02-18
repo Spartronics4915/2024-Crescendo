@@ -1,0 +1,64 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7383447610301813,
+        "y": 4.421172965972306
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5403423808221242,
+        "y": 3.9917557994456647
+      },
+      "isLocked": false,
+      "linkedName": "Bottom Start"
+    },
+    {
+      "anchor": {
+        "x": 2.3989282085707027,
+        "y": 4.148704649744465
+      },
+      "prevControl": {
+        "x": 1.8282535266993611,
+        "y": 4.644685737173673
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Bottom Note IE"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.2,
+      "constraints": {
+        "maxVelocity": 4.5,
+        "maxAcceleration": 11.0853,
+        "maxAngularVelocity": 100.0,
+        "maxAngularAcceleration": 2220.0
+      }
+    }
+  ],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 11.0853,
+    "maxAngularVelocity": 900.0,
+    "maxAngularAcceleration": 2220.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -3.696681923436922,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -60.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
