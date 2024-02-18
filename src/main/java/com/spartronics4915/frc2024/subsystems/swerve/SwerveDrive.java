@@ -155,8 +155,6 @@ public class SwerveDrive extends SubsystemBase {
             _speeds.omegaRadiansPerSecond = ac_c;
         }
 
-        System.out.println(_speeds);
-
         final var moduleStates = kKinematics.toSwerveModuleStates(_speeds);
 
         final var moduleStatesIterator = List.of(moduleStates).iterator();
