@@ -176,9 +176,9 @@ public final class Constants {
 
             public static final double kMeterSafetyLimit = 1.0; //HACK tested in sim
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90 * kWristToRotationsRate); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170 * kWristToRotationsRate); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70 * kWristToRotationsRate); 
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170); //only when below the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70); 
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK untested values
 
