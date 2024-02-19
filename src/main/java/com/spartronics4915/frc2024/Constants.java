@@ -201,7 +201,7 @@ public final class Constants {
         public static final class ElevatorConstants {
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40);
-            public static final MotorConstants kFollowerConstants = new MotorConstants(21, MotorType.kBrushless, false,
+            public static final MotorConstants kFollowerConstants = new MotorConstants(23, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
@@ -245,8 +245,22 @@ public final class Constants {
                 IdleMode.kBrake, 0); // placeholder
         
         
-        
-        
+    
+        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations()); //only when above the safety height
+        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); //FIXME used for sim
+
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
+                                                                                                                   // untested
+                                                                                                                   // values
+
+        public static final double kAimedAtTargetThreshold = 1 / 60; // 6 degrees
+
+        public static final int kLimitSwitchChannel = 5;
+        public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(66).getRotations();
+
+        public static final double kLimitSwitchTriggerOffset = -0.025;
+
+                
         public static final PIDConstants kPIDconstants; // don't test with these values
         static{
             final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
@@ -274,19 +288,6 @@ public final class Constants {
         }
 
         
-        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations()); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); //FIXME used for sim
-
-        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
-                                                                                                                   // untested
-                                                                                                                   // values
-
-        public static final double kAimedAtTargetThreshold = 1 / 60; // 6 degrees
-
-        public static final int kLimitSwitchChannel = 5;
-        public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(66).getRotations();
-
-        public static final double kLimitSwitchTriggerOffset = -0.025;
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants
