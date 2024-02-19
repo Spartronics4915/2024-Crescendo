@@ -247,19 +247,17 @@ public final class Constants {
             }
         }
 
-        public static double kInToOutRotations = 36.0;
+        public static double kShooterToMotorRotations = 36.0;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 5); // placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); // don't test with these values
-        public static final Constraints kTrapzoidConstants = new Constraints(5.0, 1.0); // HACK DO NOT TEST WITH THESE
-                                                                                        // VALUES
 
         public static final Rotation2d kMaxAngle = Rotation2d
-                .fromRotations(Rotation2d.fromDegrees(90).getRotations() * kInToOutRotations); // only when above the
+                .fromRotations(Rotation2d.fromDegrees(90).getRotations()); // only when above the
                                                                                                // safety height
         public static final Rotation2d kMinAngle = Rotation2d
-                .fromRotations(Rotation2d.fromDegrees(0).getRotations() * kInToOutRotations); // FIXME used for sim
+                .fromRotations(Rotation2d.fromDegrees(0).getRotations()); // FIXME used for sim
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested

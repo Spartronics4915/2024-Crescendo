@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
 import com.spartronics4915.frc2024.Constants.GeneralConstants;
+import com.spartronics4915.frc2024.Constants.ShooterConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
@@ -38,6 +39,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.*; 
 import java.util.function.*;
+
+import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
 
 
 public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
@@ -82,9 +85,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     public ShooterWrist() {
         super();
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
-        mPidController = initPID(ShooterWristConstants.kPIDconstants);
+        mPidController = initPID();
         mEncoder = initEncoder();
-        kTrapezoidProfile = initTrapezoid(ShooterWristConstants.kTrapzoidConstants);
+        kTrapezoidProfile = initTrapezoid();
         mLimitSwitch = initLimitSwitch();
         
         kFeedforwardCalc = initFeedForward();
@@ -104,9 +107,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+                mEncoder.setPosition(kLimitSwitchEncoderReading*kShooterToMotorRotations);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                    mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kShooterToMotorRotations);
                     updateCurrStateToReal();
                 // }
                 mHoming = false;
@@ -140,12 +143,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID(PIDConstants kPIDValues){
+    private SparkPIDController initPID(){
         SparkPIDController pid = mWristMotor.getPIDController();
 
-        pid.setP(kPIDValues.p());
-        pid.setI(kPIDValues.i());
-        pid.setD(kPIDValues.d());
+        
+        final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
+        final double motorRotationsNeedingFullPower = shooterRotationsNeedingFullPower * ShooterWristConstants.kShooterToMotorRotations;
+        final double maxMotorPowerSetting = 1;
+        final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
+        pid.setP(P);
+        pid.setI(0);
+        pid.setD(0);
 
         //CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         //position Conversion not needed by using rotation2d
@@ -157,8 +165,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return mWristMotor.getEncoder();
     }
 
-    private TrapezoidProfile initTrapezoid(Constraints constraints) {
-        return new TrapezoidProfile(new Constraints(constraints.maxVelocity, constraints.maxAcceleration));
+    private TrapezoidProfile initTrapezoid() {
+
+        // The number of seconds that we expect the shooter to go from in to Max
+        final double timeMinToMaxSeconds = 10;
+        // How long we expect the shooter to take to get to full speed
+        final double timeToFullSpeedSeconds = 1;
+        final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations() - ShooterWristConstants.kMinAngle.getRotations();
+        final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
+        final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
+
+        return new TrapezoidProfile(new Constraints(maxWristVelocity, maxWristAcceleration));
     }
 
 
@@ -187,7 +204,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
-        mManualDelta = deltaPosition.times(kInToOutRotations);
+        mManualDelta = deltaPosition.times(kShooterToMotorRotations);
     }
 
     private void homeMotor(Rotation2d deltaPosition){
@@ -200,7 +217,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public void publicSetRotationSetPoint(Rotation2d angle){
-        setRotationSetPoint(angle.times(kInToOutRotations));
+        setRotationSetPoint(angle.times(kShooterToMotorRotations));
     }
 
     private void setState(ShooterWristState newState){
@@ -282,7 +299,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterSetPointEntry.setDouble(mTargetRotation2d.getDegrees());
         mShooterEncoderReadingEntry.setDouble(getEncoderPosReading().getDegrees());
         mShooterManualControlEntry.setBoolean(mManualMovement);
-        mShooterDelta.setDouble(mManualDelta.times(1/kInToOutRotations).getDegrees());
+        mShooterDelta.setDouble(mManualDelta.times(1/kShooterToMotorRotations).getDegrees());
     }
 
     private double getFeedForwardValue(){
