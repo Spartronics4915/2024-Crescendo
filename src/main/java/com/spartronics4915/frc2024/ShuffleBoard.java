@@ -130,7 +130,8 @@ public class ShuffleBoard {
 
         public static enum ShooterWristSubsystemEntries {
             ShooterSetPoint("ShooterSetPoint"), ShooterEncoderReading("ShooterEncoderReading"), ShooterDelta(
-                    "ShooterDelta"), ShooterManualControl("ShooterManual");
+                    "ShooterDelta"), ShooterManualControl("ShooterManual"),
+                    WristAppliedOutput("WristAppliedOutput");
 
             private String entryName;
 
@@ -144,7 +145,7 @@ public class ShuffleBoard {
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                     .getTab(tabName)
                     .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+                    .withSize(3, 3);
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterSetPoint, -1.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterSetPoint.entryName);
@@ -157,6 +158,10 @@ public class ShuffleBoard {
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterDelta, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterDelta.entryName);
+
+            putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
+                    ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
+
 
             mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
             mShuffleBoardTab.add("Set to 45 degrees",

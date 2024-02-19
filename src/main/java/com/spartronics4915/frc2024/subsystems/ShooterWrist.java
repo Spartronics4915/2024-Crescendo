@@ -68,6 +68,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterEncoderReadingEntry;
     private GenericEntry mShooterManualControlEntry;
     private GenericEntry mShooterDelta;
+    private GenericEntry mAppliedOutput;
 
     private boolean startupHome = false;
     private boolean mHoming = false;
@@ -132,6 +133,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterEncoderReadingEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterEncoderReading);
         mShooterManualControlEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterManualControl);
         mShooterDelta = mEntries.get(ShooterWristSubsystemEntries.ShooterDelta);
+        mAppliedOutput = mEntries.get(ShooterWristSubsystemEntries.WristAppliedOutput);
     }
 
     private CANSparkMax initMotor(MotorConstants motorValues) {
@@ -306,6 +308,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterEncoderReadingEntry.setDouble(getWristAngle().getDegrees());
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
+        mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
+        
     }
 
     private double getFeedForwardValue() {
