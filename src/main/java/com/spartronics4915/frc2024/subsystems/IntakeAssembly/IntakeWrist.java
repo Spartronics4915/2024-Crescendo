@@ -267,10 +267,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     
     private double getFeedForwardValue(){
 
-        return kFeedforwardCalc.calculate(
-            getWristAngle().getRadians(), 
-            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
-        );
+        // return kFeedforwardCalc.calculate(
+        //     getWristAngle().getRadians(), 
+        //     (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
+        // );
+        return 0.0;
     }
     
     private void updateShuffleboard() {
