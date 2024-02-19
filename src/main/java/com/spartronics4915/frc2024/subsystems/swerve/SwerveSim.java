@@ -36,40 +36,53 @@ public class SwerveSim extends SubsystemBase {
     public SwerveSim(SwerveDrive swerveDrive) {
 
         this.swerveDrive = swerveDrive;
-        kinematics = swerveDrive.getSwerveDriveKinematics();
-        field = new Field2d();
-
-        swerveModules = swerveDrive.getSwerveModules();
         lastTime = 0;
+        field = new Field2d();
         SmartDashboard.putData("field", field);
 
         var obj = field.getObject("target");
         obj.setPose(new Pose2d(kAutoAimTarget.toTranslation2d(), new Rotation2d(0)));
+
+        if (this.swerveDrive != null) {
+
+            kinematics = swerveDrive.getSwerveDriveKinematics();
+            swerveModules = swerveDrive.getSwerveModules();
+        }
+
     }
 
     public Field2d getField() {
         return field;
     }
 
-    StructArrayPublisher<SwerveModuleState> desiredStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct).publish();
-    StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructArrayTopic("MyCurrentStates", SwerveModuleState.struct).publish();
+    StructArrayPublisher<SwerveModuleState> desiredStatespublisher = NetworkTableInstance.getDefault()
+            .getTable("simStuff").getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct).publish();
+    StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff")
+            .getStructArrayTopic("MyCurrentStates", SwerveModuleState.struct).publish();
 
-    DoublePublisher rotationPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getDoubleTopic("swerve Rotation").publish();
-    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("Target", Pose3d.struct).publish();
-    StructPublisher<Pose3d> cameraOverridePub = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("cameraOverride", Pose3d.struct).publish();
-    
+    DoublePublisher rotationPublisher = NetworkTableInstance.getDefault().getTable("simStuff")
+            .getDoubleTopic("swerve Rotation").publish();
+    StructPublisher<Pose3d> targetPublisher = NetworkTableInstance.getDefault().getTable("simStuff")
+            .getStructTopic("Target", Pose3d.struct).publish();
+    StructPublisher<Pose3d> cameraOverridePub = NetworkTableInstance.getDefault().getTable("simStuff")
+            .getStructTopic("cameraOverride", Pose3d.struct).publish();
+
     @Override
     public void simulationPeriodic() {
 
         double dT = Timer.getFPGATimestamp() - lastTime;
         boolean validStates = true;
+
+        if(swerveDrive == null) {
+            return;
+        }
+        
         Pigeon2 IMU = swerveDrive.getIMU();
 
         if (lastTime == 0) {
             lastTime = Timer.getFPGATimestamp();
             return;
-        }
-        else {
+        } else {
             lastTime = Timer.getFPGATimestamp();
         }
 
@@ -77,12 +90,12 @@ public class SwerveSim extends SubsystemBase {
         // We are going to update to
 
         for (SwerveModule m : swerveModules) {
-            // FIXME: No rotation in sim. Might just be a result of using the keyboard as a joystick. 
+            // FIXME: No rotation in sim. Might just be a result of using the keyboard as a joystick.
             // Update the state
             SwerveModuleState currDesiredState = m.getDesiredState();
             if (currDesiredState != null) {
                 double newPosDist = m.getPosition().distanceMeters + dT * currDesiredState.speedMetersPerSecond;
-                Rotation2d newPosAngle =currDesiredState.angle; // hack but good enough for sim
+                Rotation2d newPosAngle = currDesiredState.angle; // hack but good enough for sim
                 var newPos = new SwerveModulePosition(newPosDist, newPosAngle);
                 m.setPosition(newPos);
             } else {
@@ -113,7 +126,8 @@ public class SwerveSim extends SubsystemBase {
         field.setRobotPose(currPose);
 
         rotationPublisher.accept(swerveDrive.getAngle().getDegrees() % 360);
-        cameraOverridePub.accept(new Pose3d(-0.75, 1.95 + (1.8)*1, 1.5, new Rotation3d(0, Rotation2d.fromDegrees(10).getRadians(), 0)));
+        cameraOverridePub.accept(new Pose3d(-0.75, 1.95 + (1.8) * 1, 1.5,
+                new Rotation3d(0, Rotation2d.fromDegrees(10).getRadians(), 0)));
     }
 
 }
