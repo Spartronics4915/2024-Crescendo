@@ -286,12 +286,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private double getFeedForwardValue(){
-
-        // return kFeedforwardCalc.calculate(
-        //     getEncoderPosReading().getRadians(), 
-        //     (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
-        // );
-        return 0.0;
+        return kFeedforwardCalc.calculate(
+            getEncoderPosReading().getRadians() / kInToOutRotations, 
+            (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
+        );
+        // return 0.0;
     }
     
     private void manualControlUpdate(){ //HACK untested
