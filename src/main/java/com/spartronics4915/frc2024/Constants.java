@@ -344,7 +344,7 @@ public final class Constants {
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
 
         public static final double kShooterSpeed = 18.0; // needs to be in m/s
-        public static final double kShooterHeight = 0.0;
+        public static final double kShooterHeight = 0.1681988 ;
         public static final double kMaxDistance = 10.0; // Needs units, the maximum relative distance a target can be
                                                         // from the robot for autoaim
         public static final double kGravity = -9.8;
