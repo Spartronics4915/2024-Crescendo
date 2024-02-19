@@ -311,25 +311,25 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void manualControlUpdate() { // HACK untested
-        if (!mHoming) {
-            if (mTargetRotation2d.getRotations() % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { // CHECKUP
-                                                                                                                        // might
-                                                                                                                        // not
-                                                                                                                        // work
-                System.out.println(mTargetRotation2d.getDegrees() % 1.0);
-                System.out.println(kMaxAngle.getRotations());
-                System.out.println("reset max");
-                mTargetRotation2d = kMaxAngle;
-            } else if (mTargetRotation2d.getRotations() % 1.0 < kMinAngle.getRotations()
-                    && mManualDelta.getRotations() < 0) {
-                System.out.println(mTargetRotation2d.getDegrees() % 1.0);
-                System.out.println(kMinAngle.getRotations());
-                System.out.println("reset low");
-                mTargetRotation2d = kMinAngle;
-            } else {
-                mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
-            }
-        }
+        // if (!mHoming) {
+        //     if (mTargetRotation2d.getRotations() % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { // CHECKUP
+        //                                                                                                                 // might
+        //                                                                                                                 // not
+        //                                                                                                                 // work
+        //         System.out.println(mTargetRotation2d.getDegrees() % 1.0);
+        //         System.out.println(kMaxAngle.getRotations());
+        //         System.out.println("reset max");
+        //         mTargetRotation2d = kMaxAngle;
+        //     } else if (mTargetRotation2d.getRotations() % 1.0 < kMinAngle.getRotations()
+        //             && mManualDelta.getRotations() < 0) {
+        //         System.out.println(mTargetRotation2d.getDegrees() % 1.0);
+        //         System.out.println(kMinAngle.getRotations());
+        //         System.out.println("reset low");
+        //         mTargetRotation2d = kMinAngle;
+        //     } else {
+        //         mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
+        //     }
+        // }
     }
 
     private void TrapezoidMotionProfileUpdate() {
