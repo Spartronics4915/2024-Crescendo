@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
@@ -132,6 +133,11 @@ public class RobotContainer {
         mSimulator = new TrapezoidSimulator(list);
 
         // ModeSwitchSubsystems.add(mElevator);
+
+        NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+        NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+        NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+        NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
 
         // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
         // if (mPDP.getStickyFaults().Brownout) {
