@@ -41,6 +41,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private ConveyorState mCurrentConveyorState;
 
     private GenericEntry mShooterStateWidget;
+    private GenericEntry mShooterSpeedWidget;
     private GenericEntry mConveyerStateWidget;
 
 
@@ -72,6 +73,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         var mEntries = ShooterTabManager.getEnumMap(this);
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
+        mShooterSpeedWidget = mEntries.get(ShooterSubsystemEntries.ShooterSpeed);
 
         // Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
         //     if (hasSpunUp()) {
@@ -138,20 +140,20 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     private void shooterOff() {
-        mShooterMotor.set(kOffSpeed);
-        mShooterFollowMotor.set(-kOffSpeed);
+        // mShooterMotor.set(kOffSpeed);
+        // mShooterFollowMotor.set(-kOffSpeed);
 
-        // mPIDControllerLead.setReference(kOffSpeed * 100, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(kOffSpeed * 100, ControlType.kVelocity);
+        mPIDControllerLead.setReference(kOffSpeed , ControlType.kVelocity);
+        mPIDControllerFollow.setReference(kOffSpeed , ControlType.kVelocity);
 
     }
 
     private void shooterOn() {
-        mShooterMotor.set(kShootSpeed);
-        mShooterFollowMotor.set(-kShootSpeed);
+        // mShooterMotor.set(kShootSpeed);
+        // mShooterFollowMotor.set(-kShootSpeed);
 
-        // mPIDControllerLead.setReference(kShootSpeed * 100, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(kShootSpeed * 100, ControlType.kVelocity);
+        mPIDControllerLead.setReference(kShootSpeed , ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kShootSpeed -kDiff), ControlType.kVelocity);
     }
 
     private void conveyorIn() {
@@ -174,6 +176,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     public void updateShuffleboard() {
         mShooterStateWidget.setString(mCurrentShooterState.name());
         mConveyerStateWidget.setString(mCurrentConveyorState.name());
+        mShooterSpeedWidget.setDouble(mShooterEncoder.getVelocity());
     }
 
     @Override

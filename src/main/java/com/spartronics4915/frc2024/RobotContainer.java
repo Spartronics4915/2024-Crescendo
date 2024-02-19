@@ -170,7 +170,7 @@ public class RobotContainer {
         mVision = VisionSubsystem.getInstance();
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
-        configureBindings();
+        // configureBindings();
     }
 
     public static CommandXboxController getDriverController() {

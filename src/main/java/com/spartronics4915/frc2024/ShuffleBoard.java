@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.Elevator;
@@ -15,6 +16,7 @@ import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -28,7 +30,8 @@ public class ShuffleBoard {
 
     public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
             ShuffleboardContainer shuffleContainer, String name) {
-        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0).getEntry());
+        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
+                .withProperties(Map.of("Label position", "LEFT")).getEntry());
     }
 
     public static class IntakeTabManager {
@@ -99,7 +102,7 @@ public class ShuffleBoard {
         public static String tabName = "Shooter";
 
         public static enum ShooterSubsystemEntries {
-            ShooterState("Shooter-State"), ConveyorState("Conveyor-State");
+            ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Shooter-Speed");
 
             private String entryName;
 
@@ -118,6 +121,9 @@ public class ShuffleBoard {
             putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE.name(), mShooterOverview,
                     ShooterSubsystemEntries.ShooterState.entryName);
 
+            putEntry(out, ShooterSubsystemEntries.ShooterSpeed, 0.0, mShooterOverview,
+                    ShooterSubsystemEntries.ShooterSpeed.entryName);
+
             putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(), mShooterOverview,
                     ShooterSubsystemEntries.ConveyorState.entryName);
 
@@ -130,8 +136,7 @@ public class ShuffleBoard {
 
         public static enum ShooterWristSubsystemEntries {
             ShooterSetPoint("ShooterSetPoint"), ShooterEncoderReading("ShooterEncoderReading"), ShooterDelta(
-                    "ShooterDelta"), ShooterManualControl("ShooterManual"),
-                    WristAppliedOutput("WristAppliedOutput");
+                    "ShooterDelta"), ShooterManualControl("ShooterManual"), WristAppliedOutput("WristAppliedOutput");
 
             private String entryName;
 
@@ -162,12 +167,28 @@ public class ShuffleBoard {
             putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
 
-
-            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
+            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder())
+                    .withProperties(Map.of("Label position", "HIDDEN"));
             mShuffleBoardTab.add("Set to 45 degrees",
-                    subsystem.runOnce(() -> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(45))));
+                    subsystem.runOnce(() -> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(45))))
+                    .withProperties(Map.of("Label position", "HIDDEN"));
 
             return out;
+        }
+
+        public static void addMotorControlWidget(ShooterWrist subsystem) {
+            ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                    .getTab(tabName)
+                    .getLayout("Motor Control", BuiltInLayouts.kList)
+                    .withSize(3, 3);
+
+            GenericEntry angleTarget = mShuffleBoardWidget.add("Target Angle", 45)
+                    .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 90)).getEntry();
+
+            mShuffleBoardWidget.add("Set to target",
+                    subsystem.runOnce(() -> subsystem
+                            .publicSetRotationSetPoint(Rotation2d.fromDegrees(angleTarget.getDouble(45)))));
+
         }
     }
 
