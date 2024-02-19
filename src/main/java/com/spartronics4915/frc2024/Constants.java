@@ -51,7 +51,11 @@ public final class Constants {
     public static final class Drive {
         public static final int kPigeon2ID = 2;
 
-        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(9.0, 0.0, 0.0); //new PIDConstants(5.0, 1.5, 2.0); // tuned good enough
+        public static final PIDConstants kAngleControllerPIDConstants = new PIDConstants(9.0, 0.0, 0.0); // new
+                                                                                                         // PIDConstants(5.0,
+                                                                                                         // 1.5, 2.0);
+                                                                                                         // // tuned
+                                                                                                         // good enough
 
         public static final Matrix<N3, N1> kStateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
         public static final Matrix<N3, N1> kVisionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1,
@@ -84,8 +88,10 @@ public final class Constants {
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
         public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
 
-        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(0.0, 0.0, 0.0, 0.2); // placeholder values
-        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder values
+        public static final PIDFConstants kDrivePIDFConstants = new PIDFConstants(0.0, 0.0, 0.0, 0.2); // placeholder
+                                                                                                       // values
+        public static final PIDFConstants kAnglePIDFConstants = new PIDFConstants(1.0, 0.0, 0.5, 0.0); // placeholder
+                                                                                                       // values
 
         public static final ModuleConstants kFrontLeft = new ModuleConstants(
                 3, 4, 11, -91.318, kWheelbase / 2, kTrackWidth / 2);
@@ -101,8 +107,8 @@ public final class Constants {
 
         public static final SwerveDriveKinematics kKinematics = new SwerveDriveKinematics(
                 (Translation2d[]) Stream.of(new ModuleConstants[] { kFrontLeft, kBackLeft, kBackRight, kFrontRight })
-                .map((mc) -> new Translation2d(mc.x(), mc.y()))
-                .toArray(Translation2d[]::new));
+                        .map((mc) -> new Translation2d(mc.x(), mc.y()))
+                        .toArray(Translation2d[]::new));
 
         public static final double kOdometryUpdatePeriod = 0.01;
 
@@ -128,13 +134,12 @@ public final class Constants {
     }
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
-        public enum IntakeAssemblyState{ //TODO find constants
-            GROUNDPICKUP (Rotation2d.fromDegrees(90.0), 1.0),
-            STOW (Rotation2d.fromDegrees(170.0), 0.0),
-            AMP (Rotation2d.fromDegrees(90.0), 0.5),
-            LOAD (Rotation2d.fromDegrees(190.0), 0.0),
-            SOURCE (Rotation2d.fromDegrees(120.0), 0.75),
-            MANUAL (Rotation2d.fromDegrees(0.0), -0.1); //CHECKUP is this needed?
+        public enum IntakeAssemblyState { // TODO find constants
+            GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), STOW(Rotation2d.fromDegrees(170.0), 0.0), AMP(
+                    Rotation2d.fromDegrees(90.0), 0.5), LOAD(Rotation2d.fromDegrees(190.0), 0.0), SOURCE(
+                            Rotation2d.fromDegrees(120.0), 0.75), MANUAL(Rotation2d.fromDegrees(0.0), -0.1); // CHECKUP
+                                                                                                             // is this
+                                                                                                             // needed?
 
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
@@ -143,47 +148,59 @@ public final class Constants {
                 this.wristAngle = wristAngle;
                 ElevatorHeight = elevatorHeight;
             }
-            
-        }
-        
-        public static final class IntakeConstants {// [ ] Intake constants
-                    public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-        
-                    public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); //HACK Tune, and test
-                    
-        
-                    public static final double kInSpeed = 0.2; // placeholder
-                    public static final double kLoadSpeed = 0.2; //placeholder
-                    public static final double kOutSpeed = -0.3; // placeholder
-                    public static final double kOffSpeed = 0;
 
-                    public static final int kIntakeBeamBreakID = 0; //placeholder
-                }
-        
+        }
+
+        public static final class IntakeConstants {// [ ] Intake constants
+            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false,
+                    IdleMode.kBrake, 40);
+
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); // HACK Tune, and test
+
+            public static final double kInSpeed = 0.2; // placeholder
+            public static final double kLoadSpeed = 0.2; // placeholder
+            public static final double kOutSpeed = -0.3; // placeholder
+            public static final double kOffSpeed = 0;
+
+            public static final int kIntakeBeamBreakID = 0; // placeholder
+        }
+
         public static final class IntakeWristConstants { // [ ] Intake Wrist constants
 
             // TODO Make Units Clear
 
             public static final double kLimitSwitchTriggerOffset = -0.025;
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false, IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //TODO Tune
-            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //TODO Tune
+            public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false,
+                    IdleMode.kBrake, 40);
+            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); // TODO Tune
+            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); // TODO Tune
 
             public static final double kInToOutRotations = 1.0;
-            
+
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final double kMeterSafetyLimit = 1.0; //HACK tested in sim
+            public static final double kMeterSafetyLimit = 1.0; // HACK tested in sim
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90 * kInToOutRotations); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170 * kInToOutRotations); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70 * kInToOutRotations); 
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90 * kInToOutRotations); // only when
+                                                                                                          // above the
+                                                                                                          // safety
+                                                                                                          // height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170 * kInToOutRotations); // only
+                                                                                                              // when
+                                                                                                              // below
+                                                                                                              // the
+                                                                                                              // safety
+                                                                                                              // height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70 * kInToOutRotations);
 
-            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK untested values
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
+                                                                                                                     // untested
+                                                                                                                     // values
 
             public static final int kLimitSwitchChannel = 4;
             public static final double kLimitSwitchEncoderReading = 0;
+
             public static final class ManualConstants { // speed of manual movements,
 
             }
@@ -219,12 +236,12 @@ public final class Constants {
     }
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
-        public enum ShooterWristState{ //Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(90)), //TODO find Value
-            HOMING(Rotation2d.fromDegrees(180)),
-            STOW(Rotation2d.fromDegrees(90));
+        public enum ShooterWristState { // Mostly for debug
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(90)), // TODO find Value
+            HOMING(Rotation2d.fromDegrees(180)), STOW(Rotation2d.fromDegrees(90));
 
             public final Rotation2d shooterAngle;
+
             private ShooterWristState(Rotation2d shooterAngle) {
                 this.shooterAngle = shooterAngle;
             }
@@ -232,17 +249,23 @@ public final class Constants {
 
         public static double kInToOutRotations = 36.0;
 
-        public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false, IdleMode.kBrake, 5); //placeholder
-        public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); //don't test with these values
-        public static final Constraints kTrapzoidConstants = new Constraints(5.0, 1.0); //HACK DO NOT TEST WITH THESE VALUES
+        public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
+                IdleMode.kBrake, 5); // placeholder
+        public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); // don't test with these values
+        public static final Constraints kTrapzoidConstants = new Constraints(5.0, 1.0); // HACK DO NOT TEST WITH THESE
+                                                                                        // VALUES
 
-        
-        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations() * kInToOutRotations); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations() * kInToOutRotations); //FIXME used for sim
+        public static final Rotation2d kMaxAngle = Rotation2d
+                .fromRotations(Rotation2d.fromDegrees(90).getRotations() * kInToOutRotations); // only when above the
+                                                                                               // safety height
+        public static final Rotation2d kMinAngle = Rotation2d
+                .fromRotations(Rotation2d.fromDegrees(0).getRotations() * kInToOutRotations); // FIXME used for sim
 
-        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); //HACK untested values
-        
-        public static final double kAimedAtTargetThreshold = 1/60; //6 degrees
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
+                                                                                                                   // untested
+                                                                                                                   // values
+
+        public static final double kAimedAtTargetThreshold = 1 / 60; // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = 0;
@@ -251,34 +274,39 @@ public final class Constants {
     }
 
     public static final class ShooterConstants { // [ ] Shooter Constants
-        public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless, false, IdleMode.kCoast, 30); //placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false, IdleMode.kCoast, 40); //placeholder
-        public static final PIDFConstants kPIDconstants = new PIDFConstants(1, 0.0, 0.0, 0.0); //TODO find these values
-        public static final double kOffSpeed = 0.0; //unsure if this is necessary
-        public static final double kShootSpeed = 1.0; //placeholder
+        public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false,
+                IdleMode.kCoast, 30); // placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,
+                false, IdleMode.kCoast, 30); // placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
+                IdleMode.kCoast, 40); // placeholder
+        public static final PIDFConstants kPIDconstants = new PIDFConstants(1, 0.0, 0.0, 0.0); // TODO find these values
+        public static final double kOffSpeed = 0.0; // unsure if this is necessary
+        public static final double kShootSpeed = 1.0; // placeholder
         public static final double kDiff = 0.05;
-        public static final double kConveyorInSpeed = 1.0; //placeholder
-        public static final double kConveyorOutSpeed = 1.0; //placeholder
+        public static final double kConveyorInSpeed = 1.0; // placeholder
+        public static final double kConveyorOutSpeed = 1.0; // placeholder
 
         public static final double kTargetRPM = 1;
     }
 
     public static final class AutoAimConstants {
-        public enum Targets{
-            TEMP_TARGET (new Translation3d(0.2286, 5.5, 2.0)),
-            BLUE_SPEAKER (new Translation3d(0.2286, 5.5, 2.0)),
-            RED_SPEAKER (new Translation3d(0.2286, 5.5, 2.0)); //GET RED SPEAKER POSITION
-
+        public enum Targets {
+            TEMP_TARGET(new Translation3d(0.2286, 5.5, 2.0)), BLUE_SPEAKER(
+                    new Translation3d(0.2286, 5.5, 2.0)), RED_SPEAKER(new Translation3d(0.2286, 5.5, 2.0)); // GET RED
+                                                                                                            // SPEAKER
+                                                                                                            // POSITION
 
             public final Translation3d targetPosition;
-            private Targets(Translation3d targetPosition){
+
+            private Targets(Translation3d targetPosition) {
                 this.targetPosition = targetPosition;
             }
         }
+
         public static final Translation3d kStageTarget;
-        static{
-            if (DriverStation.getAlliance().isPresent()){
+        static {
+            if (DriverStation.getAlliance().isPresent()) {
                 switch (DriverStation.getAlliance().get()) {
                     case Blue:
                         kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
@@ -290,27 +318,30 @@ public final class Constants {
                         kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
                         break;
                 }
-            }else{
+            } else {
 
-                kStageTarget = Targets.TEMP_TARGET.targetPosition; //TODO add alliance checker
+                kStageTarget = Targets.TEMP_TARGET.targetPosition; // TODO add alliance checker
             }
         }
 
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
 
-        public static final double kShooterSpeed = 18.0; //needs to be in m/s
+        public static final double kShooterSpeed = 18.0; // needs to be in m/s
         public static final double kShooterHeight = 0.0;
-        public static final double kMaxDistance = 10.0; //Needs units, the maximum relative distance a target can be from the robot for autoaim 
+        public static final double kMaxDistance = 10.0; // Needs units, the maximum relative distance a target can be
+                                                        // from the robot for autoaim
         public static final double kGravity = -9.8;
         public static final int kIterations = 45;
     }
+
     public static final class Vision {
         public enum VisionPipelines {
-            FIDUCIALS_3D (0, false),
-            DETECTOR_NOTE (1, true);
+            FIDUCIALS_3D(0, false), DETECTOR_NOTE(1, true);
+
             public final int pipeline;
             public final boolean isDetector;
+
             private VisionPipelines(int pipeline, boolean isDetector) {
                 this.pipeline = pipeline;
                 this.isDetector = isDetector;
@@ -318,8 +349,13 @@ public final class Constants {
         }
 
         public static final class PoseOffsetConstants {
-            public static final Transform3d kAlicePoseOffset = new Transform3d(); //new Transform3d(-0.22, -0.1, 0, new Rotation3d(0, 0, 0)); // placeholder
-            public static final Transform3d kBobPoseOffset = new Transform3d(); //new Transform3d(-0.35, -0.1, 0, new Rotation3d(0, 0, Units.degreesToRadians(180))); // placeholder
+            public static final Transform3d kAlicePoseOffset = new Transform3d(); // new Transform3d(-0.22, -0.1, 0, new
+                                                                                  // Rotation3d(0, 0, 0)); //
+                                                                                  // placeholder
+            public static final Transform3d kBobPoseOffset = new Transform3d(); // new Transform3d(-0.35, -0.1, 0, new
+                                                                                // Rotation3d(0, 0,
+                                                                                // Units.degreesToRadians(180))); //
+                                                                                // placeholder
         }
     }
 
@@ -337,17 +373,8 @@ public final class Constants {
         public static final boolean kIsInFancyMode = true;
         public static final boolean kSpam = false;
     }
+
     public enum BlingModes {
-        OFF,
-        SOLID,
-        SOLID_SECONDARY,
-        GRADIENT,
-        GRADIENT_REVERSED,
-        PULSE,
-        PULSE_SWITCH,
-        AROUND,
-        AROUND_SECONDARY_BG,
-        WARNING,
-        ERROR
+        OFF, SOLID, SOLID_SECONDARY, GRADIENT, GRADIENT_REVERSED, PULSE, PULSE_SWITCH, AROUND, AROUND_SECONDARY_BG, WARNING, ERROR
     }
 }
