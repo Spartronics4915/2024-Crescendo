@@ -29,23 +29,14 @@ public class IntakeAssemblyCommands {
     }
     
     public static Command ComplexSetState(IntakeAssemblyState newState){
-        Command additionCommand = Commands.none();
-        
-        switch (newState) {
-            case SOURCE:
-                additionCommand = mIntake.setStateCommand(IntakeState.IN);
-                break;
-            case GROUNDPICKUP:
-                additionCommand = mIntake.setStateCommand(IntakeState.IN);
-                break;
-            default:
-                additionCommand = mIntake.setStateCommand(IntakeState.OFF);
-                break;
-        }
 
         return Commands.parallel(
             setState(newState),
-            additionCommand
+            switch (newState) {
+                case SOURCE -> mIntake.setStateCommand(IntakeState.IN);
+                case GROUNDPICKUP -> mIntake.setStateCommand(IntakeState.IN);
+                default -> mIntake.setStateCommand(IntakeState.OFF);
+            }
         );
     }
 
