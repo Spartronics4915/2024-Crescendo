@@ -321,23 +321,23 @@ public final class Constants {
             }
         }
 
-        public static final Translation3d kStageTarget;
+        public static final Translation3d kSpeakerTarget;
         static {
             if (DriverStation.getAlliance().isPresent()) {
                 switch (DriverStation.getAlliance().get()) {
                     case Blue:
-                        kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
+                        kSpeakerTarget = Targets.BLUE_SPEAKER.targetPosition;
                         break;
                     case Red:
-                        kStageTarget = Targets.RED_SPEAKER.targetPosition;
+                        kSpeakerTarget = Targets.RED_SPEAKER.targetPosition;
                         break;
                     default:
-                        kStageTarget = Targets.BLUE_SPEAKER.targetPosition;
+                        kSpeakerTarget = Targets.BLUE_SPEAKER.targetPosition;
                         break;
                 }
             } else {
 
-                kStageTarget = Targets.TEMP_TARGET.targetPosition; // TODO add alliance checker
+                kSpeakerTarget = Targets.TEMP_TARGET.targetPosition; // TODO add alliance checker
             }
         }
 

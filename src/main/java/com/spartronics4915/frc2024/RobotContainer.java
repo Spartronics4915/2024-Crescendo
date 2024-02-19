@@ -60,7 +60,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
-import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kStageTarget;
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kSpeakerTarget;
 import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
