@@ -97,7 +97,12 @@ public class AutoComponents {
         return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
     }
 
-    public static Command stationaryAimAndShoot() {
+    public static Command stationaryAimAndShootSequential() {
         return Commands.sequence(stationaryAutoAim(), shootFromLoaded());
+    }
+
+    public static Command stationaryAimAndShootParallel() {
+        return Commands.parallel(Commands.waitUntil(mShooter::hasSpunUp), stationaryAutoAim())
+                .andThen(shootFromLoaded());
     }
 }

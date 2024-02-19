@@ -138,6 +138,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
         NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
         NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+        NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
 
         // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
         // if (mPDP.getStickyFaults().Brownout) {
