@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.0426537238616644,
+        "y": 6.994255916222675
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.8863445419198543,
+        "y": 6.344444227349993
+      },
+      "isLocked": false,
+      "linkedName": "Garage Midpoint 1"
+    },
+    {
+      "anchor": {
+        "x": 2.182352826244115,
+        "y": 6.028702057404115
+      },
+      "prevControl": {
+        "x": 2.142885055000881,
+        "y": 6.275375627674332
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Garage Midpoint 2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 0.45,
+    "maxAcceleration": 1.109,
+    "maxAngularVelocity": 900.0,
+    "maxAngularAcceleration": 2220.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -152.54107439145136,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -92.3510610643297,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
