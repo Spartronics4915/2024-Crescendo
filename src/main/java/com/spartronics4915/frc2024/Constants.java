@@ -243,7 +243,35 @@ public final class Constants {
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
-        public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); // don't test with these values
+        
+        
+        
+        
+        public static final PIDConstants kPIDconstants; // don't test with these values
+        static{
+            final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
+            final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
+                    * ShooterWristConstants.kWristToRotationsRate);
+            final double maxMotorPowerSetting = 1;
+            final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower/2;
+
+            kPIDconstants = new PIDConstants(P, 0.0, 0.0);
+        }
+
+        public static final Constraints kConstraints;
+
+        static{
+             // The number of seconds that we expect the shooter to go from in to Max
+            final double timeMinToMaxSeconds = 10;
+            // How long we expect the shooter to take to get to full speed
+            final double timeToFullSpeedSeconds = 1;
+            final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
+                    - ShooterWristConstants.kMinAngle.getRotations();
+            final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
+            final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
+
+            kConstraints = new Constraints(maxWristVelocity, maxWristAcceleration);
+        }
 
         
         public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations()); //only when above the safety height
