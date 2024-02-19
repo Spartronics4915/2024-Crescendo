@@ -21,72 +21,57 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.*;
 
 public class AutoComponents {
-    private SwerveDrive mDriveBase;
-    private Intake mIntake;
-    private IntakeAssemblyCommands mIntakeAssmebly;
-    
-    private Shooter mShooter; //TODO placeholder
-    private ShooterWrist mShooterWrist;
+    private static SwerveDrive mSwerve = SwerveDrive.getInstance();
+    private static Intake mIntake = Intake.getInstance();
 
-    public AutoComponents(SwerveDrive mDriveBase, Intake mIntake, IntakeAssemblyCommands mIntakeAssmebly, Shooter mShooter, ShooterWrist mShooterWrist) {
-        this.mDriveBase = mDriveBase;
-        this.mIntake = mIntake;
-        this.mIntakeAssmebly = mIntakeAssmebly;
-        this.mShooter = mShooter;
-        this.mShooterWrist = mShooterWrist;
-    }
-    
-    public Command loadIntoShooter(){
+    private static Shooter mShooter; // TODO placeholder
+    private static ShooterWrist mShooterWrist;
+
+    private AutoComponents() {};
+
+    public static Command loadIntoShooter() {
         return Commands.sequence(
-            Commands.parallel(
-                mIntake.setStateCommand(IntakeState.OFF),
-                mIntakeAssmebly.setState(IntakeAssemblyState.LOAD)
-            ),
-            Commands.waitUntil(mIntakeAssmebly::atTarget),
+                Commands.parallel(
+                        mIntake.setStateCommand(IntakeState.OFF),
+                        IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)),
+                Commands.waitUntil(IntakeAssemblyCommands::atTarget),
 
-            mIntake.setStateCommand(IntakeState.LOAD),
-            Commands.waitUntil(() -> {return !mIntake.getBeamBreakStatus();}),
-
-            mIntake.setStateCommand(IntakeState.OFF)
-        );
+                mIntake.setStateCommand(IntakeState.LOAD),
+                Commands.waitUntil(() -> {
+                    return !mIntake.getBeamBreakStatus();
+                }),
+                mIntake.setStateCommand(IntakeState.OFF));
     }
 
-    public Command shootFromLoaded(){
+    public static Command shootFromLoaded() {
         return Commands.sequence(
-            mShooter.setShooterStateCommand(ShooterState.ON),
-            Commands.waitUntil(mShooter::hasSpunUp),
-            mShooter.setConveyorStateCommand(ConveyorState.IN)
-        );
-    }
-
-    public Command shooterAim(Supplier<Rotation2d> aimSupplier){
-        return Commands.sequence(
-            Commands.deadline(
-                Commands.waitUntil(() -> mShooter.hasSpunUp() && mShooterWrist.atTarget()),
                 mShooter.setShooterStateCommand(ShooterState.ON),
-                mShooterWrist.angleToSupplierCommand(aimSupplier)
-            )
-        );
+                Commands.waitUntil(mShooter::hasSpunUp),
+                mShooter.setConveyorStateCommand(ConveyorState.IN));
     }
 
-    public Command groundToIntake(){
+    public static Command shooterAim(Supplier<Rotation2d> aimSupplier) {
         return Commands.sequence(
-            mIntakeAssmebly.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
-            Commands.waitUntil(mIntakeAssmebly::atTarget),
-
-            Commands.waitUntil(mIntake::getBeamBreakStatus),
-            mIntakeAssmebly.ComplexSetState(IntakeAssemblyState.LOAD)
-        );
+                Commands.deadline(
+                        Commands.waitUntil(() -> mShooter.hasSpunUp() && mShooterWrist.atTarget()),
+                        mShooter.setShooterStateCommand(ShooterState.ON),
+                        mShooterWrist.angleToSupplierCommand(aimSupplier)));
     }
 
-    public Command resetToGround(){
+    public static Command groundToIntake() {
         return Commands.sequence(
-            Commands.parallel(
-                mIntake.setStateCommand(IntakeState.OFF),
-                mIntakeAssmebly.setState(IntakeAssemblyState.GROUNDPICKUP)
-            ),
-            Commands.waitUntil(mIntakeAssmebly::atTarget)
-        );
+                IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
+                Commands.waitUntil(IntakeAssemblyCommands::atTarget),
+                Commands.waitUntil(mIntake::getBeamBreakStatus),
+                IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.LOAD));
+    }
+
+    public static Command resetToGround() {
+        return Commands.sequence(
+                Commands.parallel(
+                        mIntake.setStateCommand(IntakeState.OFF),
+                        IntakeAssemblyCommands.setState(IntakeAssemblyState.GROUNDPICKUP)),
+                Commands.waitUntil(IntakeAssemblyCommands::atTarget));
     }
 
     /**
@@ -94,9 +79,8 @@ public class AutoComponents {
      * @param aimCalculator takes in the pose of robot, velocity, and outputs a rotation3D
      * @return
      */
-    public Command AimAndShoot(BiFunction<Pose2d, ChassisSpeeds, Rotation3d> aimCalculator){
-        
-        return Commands.none(); //TODO placeholder, shooter and swerve
+    public static Command AimAndShoot(BiFunction<Pose2d, ChassisSpeeds, Rotation3d> aimCalculator) {
+        return Commands.none(); // TODO placeholder, shooter and swerve
     }
 
 }

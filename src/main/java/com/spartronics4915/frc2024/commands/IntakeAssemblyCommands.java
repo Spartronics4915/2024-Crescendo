@@ -11,28 +11,24 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeAssemblyCommands {
-    private IntakeWrist mWrist;
-    private Intake mIntake;
-    private Elevator mElevator;
-    
-    public IntakeAssemblyCommands(IntakeWrist mWrist, Intake mIntake, Elevator mElevator) {
-        this.mWrist = mWrist;
-        this.mIntake = mIntake;
-        this.mElevator = mElevator;
-    }
+    private static IntakeWrist mWrist = IntakeWrist.getInstance();
+    private static Intake mIntake = Intake.getInstance();
+    private static Elevator mElevator = Elevator.getInstance();
 
-    public Command setState(IntakeAssemblyState newState){
+    private IntakeAssemblyCommands() {};
+    
+    public static Command setState(IntakeAssemblyState newState){
         return Commands.parallel(
             mElevator.setTargetCommand(newState),
             mWrist.setStateCommand(newState)
         );
     }
 
-    public boolean atTarget(){
+    public static boolean atTarget(){
         return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.015);
     }
     
-    public Command ComplexSetState(IntakeAssemblyState newState){
+    public static Command ComplexSetState(IntakeAssemblyState newState){
         Command additionCommand = Commands.none();
         
         switch (newState) {
