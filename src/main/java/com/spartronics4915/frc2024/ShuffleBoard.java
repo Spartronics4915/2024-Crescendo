@@ -102,7 +102,7 @@ public class ShuffleBoard {
         public static String tabName = "Shooter";
 
         public static enum ShooterSubsystemEntries {
-            ShooterState("Shooter-State"), ConveyorState("Conveyor-State");
+            ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Shooter-Speed");
 
             private String entryName;
 
@@ -120,6 +120,9 @@ public class ShuffleBoard {
 
             putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE.name(), mShooterOverview,
                     ShooterSubsystemEntries.ShooterState.entryName);
+
+            putEntry(out, ShooterSubsystemEntries.ShooterSpeed, 0.0, mShooterOverview,
+                    ShooterSubsystemEntries.ShooterSpeed.entryName);
 
             putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(), mShooterOverview,
                     ShooterSubsystemEntries.ConveyorState.entryName);

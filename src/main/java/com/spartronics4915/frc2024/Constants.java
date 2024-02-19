@@ -298,12 +298,12 @@ public final class Constants {
                 IdleMode.kCoast, 40); // placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(1, 0.0, 0.0, 0.0); // TODO find these values
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
-        public static final double kShootSpeed = 1.0; // placeholder
-        public static final double kDiff = 0.05;
+        public static final double kShootSpeed = 5600; // placeholder
+        public static final double kDiff = 50;
         public static final double kConveyorInSpeed = 1.0; // placeholder
         public static final double kConveyorOutSpeed = 1.0; // placeholder
 
-        public static final double kTargetRPM = 1;
+        public static final double kTargetRPM = 5500;
     }
 
     public static final class AutoAimConstants {
