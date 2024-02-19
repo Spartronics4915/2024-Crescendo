@@ -78,8 +78,7 @@ public class AutoComponents {
      * @param aimCalculator takes in the pose of robot, velocity, and outputs a rotation3D
      * @return
      */
-    public static Command AimAndShoot(BiFunction<Pose2d, ChassisSpeeds, Rotation3d> aimCalculator) {
+    public static Command aimAndShoot(BiFunction<Pose2d, ChassisSpeeds, Rotation3d> aimCalculator) {
         return Commands.none(); // TODO placeholder, shooter and swerve
     }
-
 }
