@@ -170,15 +170,15 @@ public final class Constants {
             public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); //TODO Tune
             public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); //TODO Tune
 
-            public static final double kInToOutRotations = 1.0;
+            public static final double kWristToRotationsRate = 1.0;
             
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafetyLimit = 1.0; //HACK tested in sim
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90 * kInToOutRotations); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170 * kInToOutRotations); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70 * kInToOutRotations); 
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90 * kWristToRotationsRate); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170 * kWristToRotationsRate); //only when below the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70 * kWristToRotationsRate); 
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK untested values
 
@@ -230,7 +230,7 @@ public final class Constants {
             }
         }
 
-        public static double kInToOutRotations = 36.0;
+        public static double kWristToRotationsRate = 36.0;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false, IdleMode.kBrake, 5); //placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); //don't test with these values

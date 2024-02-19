@@ -104,9 +104,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
+                mEncoder.setPosition(kLimitSwitchEncoderReading*kWristToRotationsRate);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
+                    mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kWristToRotationsRate);
                     updateCurrStateToReal();
                 // }
                 mHoming = false;
@@ -187,7 +187,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
-        mManualDelta = deltaPosition.times(kInToOutRotations);
+        mManualDelta = deltaPosition.times(kWristToRotationsRate);
     }
 
     private void homeMotor(Rotation2d deltaPosition){
@@ -200,7 +200,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public void publicSetRotationSetPoint(Rotation2d angle){
-        setRotationSetPoint(angle.times(kInToOutRotations));
+        setRotationSetPoint(angle.times(kWristToRotationsRate));
     }
 
     private void setState(ShooterWristState newState){
@@ -282,12 +282,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterSetPointEntry.setDouble(mTargetRotation2d.getDegrees());
         mShooterEncoderReadingEntry.setDouble(getEncoderPosReading().getDegrees());
         mShooterManualControlEntry.setBoolean(mManualMovement);
-        mShooterDelta.setDouble(mManualDelta.times(1/kInToOutRotations).getDegrees());
+        mShooterDelta.setDouble(mManualDelta.times(1/kWristToRotationsRate).getDegrees());
     }
 
     private double getFeedForwardValue(){
         return kFeedforwardCalc.calculate(
-            getEncoderPosReading().getRadians() / kInToOutRotations, 
+            getEncoderPosReading().getRadians() / kWristToRotationsRate, 
             (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
         );
         // return 0.0;
@@ -295,12 +295,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     
     private void manualControlUpdate(){ //HACK untested
         if (!mHoming){
-            if (mTargetRotation2d.getRotations() / kInToOutRotations % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { //CHECKUP might not work
+            if (mTargetRotation2d.getRotations() / kWristToRotationsRate % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { //CHECKUP might not work
                 System.out.println(mTargetRotation2d.getDegrees() % 1.0);
                 System.out.println(kMaxAngle.getRotations());
                 System.out.println("reset max");
                 mManualDelta = Rotation2d.fromRotations(0);
-            } else if (mTargetRotation2d.getRotations() / kInToOutRotations % 1.0 < kMinAngle.getRotations() && mManualDelta.getRotations() < 0) {
+            } else if (mTargetRotation2d.getRotations() / kWristToRotationsRate % 1.0 < kMinAngle.getRotations() && mManualDelta.getRotations() < 0) {
                 System.out.println(mTargetRotation2d.getDegrees() % 1.0);
                 System.out.println( kMinAngle.getRotations());
                 System.out.println("reset low");
@@ -339,7 +339,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     @Override
     public State getSimulatedSetPoint() {
-        return new State(0.5 - mCurrentState.position/kInToOutRotations, 0.0);
+        return new State(0.5 - mCurrentState.position/kWristToRotationsRate, 0.0);
     }
 
     @Override
