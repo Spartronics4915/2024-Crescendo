@@ -129,11 +129,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void initShuffleBoard() {
         var mEntries = ShooterWristTabManager.getEnumMap(this);
+        ShooterWristTabManager.addMotorControlWidget(this);
+        
         mShooterSetPointEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterSetPoint);
         mShooterEncoderReadingEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterEncoderReading);
         mShooterManualControlEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterManualControl);
         mShooterDelta = mEntries.get(ShooterWristSubsystemEntries.ShooterDelta);
         mAppliedOutput = mEntries.get(ShooterWristSubsystemEntries.WristAppliedOutput);
+
+
     }
 
     private CANSparkMax initMotor(MotorConstants motorValues) {
