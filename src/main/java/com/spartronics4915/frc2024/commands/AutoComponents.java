@@ -11,10 +11,15 @@ import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +31,18 @@ public class AutoComponents {
 
     private static Shooter mShooter; // TODO placeholder
     private static ShooterWrist mShooterWrist;
+
+    public static final Translation3d TAG_4 = new Translation3d(Units.inchesToMeters(652.73),
+            Units.inchesToMeters(218.42), Units.inchesToMeters(57.13));
+
+    public static final Translation3d TAG_7 = new Translation3d(Units.inchesToMeters(-1.5),
+            Units.inchesToMeters(218.42), Units.inchesToMeters(57.13));
+
+    public static final Translation3d RED_SPEAKER = new Translation3d(TAG_4.getX() + Units.inchesToMeters(9.055),
+            TAG_4.getY(), Units.inchesToMeters(80.515));
+
+    public static final Translation3d BLUE_SPEAKER = new Translation3d(TAG_7.getX() - Units.inchesToMeters(9.055),
+            TAG_7.getY(), Units.inchesToMeters(80.515));
 
     private AutoComponents() {};
 
@@ -73,12 +90,14 @@ public class AutoComponents {
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget));
     }
 
-    /**
-     * 
-     * @param aimCalculator takes in the pose of robot, velocity, and outputs a rotation3D
-     * @return
-     */
-    public static Command aimAndShoot(BiFunction<Pose2d, ChassisSpeeds, Rotation3d> aimCalculator) {
-        return Commands.none(); // TODO placeholder, shooter and swerve
+    public static Command stationaryAutoAim() {
+        final var alliance = DriverStation.getAlliance().get();
+        final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
+        final var aac = new MovingAutoAimCommand(speaker);
+        return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+    }
+
+    public static Command stationaryAimAndShoot() {
+        return Commands.sequence(stationaryAutoAim(), shootFromLoaded());
     }
 }
