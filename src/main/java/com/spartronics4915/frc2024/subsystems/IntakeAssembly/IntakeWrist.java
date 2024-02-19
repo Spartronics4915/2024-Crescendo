@@ -1,5 +1,6 @@
 package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -282,24 +283,29 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void manualControlUpdate(){ //HACK untested
 
-        if (mManualDelta.getRotations() > 0 && !mHoming) { //CHECKUP might not work
-            if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
-                mManualDelta = Rotation2d.fromRotations(0);
-            } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
-                mManualDelta = Rotation2d.fromRotations(0);
-            }
-        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
-            mManualDelta =  Rotation2d.fromRotations(0);
-        }
+        // if (mManualDelta.getRotations() > 0 && !mHoming) { //CHECKUP might not work
+        //     if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
+        //         mManualDelta = Rotation2d.fromRotations(0);
+        //     } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
+        //         mManualDelta = Rotation2d.fromRotations(0);
+        //     }
+        // } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
+        //     mManualDelta =  Rotation2d.fromRotations(0);
+        // }
         mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
     }
 
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
 
-        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
-            mRotSetPoint = kMaxAngleAmp;
-        }
+        if (!mHoming)
+            mRotSetPoint = Rotation2d.fromRotations(
+                MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngle.getRotations(), (needSoftLimit()) ? kMaxAngleAmp.getRotations() : kMaxAngleGround.getRotations())
+            );
+
+        // if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
+        //     mRotSetPoint = kMaxAngleAmp;
+        // }
         
         mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,

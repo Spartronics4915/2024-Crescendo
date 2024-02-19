@@ -21,7 +21,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -333,6 +333,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void TrapezoidMotionProfileUpdate() {
+        if (!mHoming)
+            mTargetRotation2d = Rotation2d.fromRotations(
+                MathUtil.clamp(mTargetRotation2d.getRotations(), kMinAngle.getRotations(), kMaxAngle.getRotations())
+            );
+
         // CHECKUP not sure if this will work
         mCurrentState = kTrapezoidProfile.calculate(
                 GeneralConstants.kUpdateTime,
