@@ -159,7 +159,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchEncoderReading*kWristToRotationsRate);
                 // if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kWristToRotationsRate);
+                    mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading);
                     updateCurrStateToReal();
                 // }
                 mManualMovement = false;
@@ -180,8 +180,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     //#region Component Functions
     
-    private Rotation2d getEncoderPosReading(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
-        return Rotation2d.fromRotations(mEncoder.getPosition()); //CHECKUP Failure Point?
+    private Rotation2d getWristAngle(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
+        return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); //CHECKUP Failure Point?
     }
 
     private double getEncoderVelReading(){
@@ -190,11 +190,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void currentToSetPoint(){
         updateCurrStateToReal();
-        setRotationSetPoint(getEncoderPosReading());
+        setRotationSetPoint(getWristAngle());
     }
 
     private void updateCurrStateToReal(){
-        mCurrState = new State(getEncoderPosReading().getRotations(), 0.0);
+        mCurrState = new State(getWristAngle().getRotations(), 0.0);
     }
     
     private void setRotationSetPoint(Rotation2d angle){
@@ -203,12 +203,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     private void setManualDelta(Rotation2d deltaPosition){
         mManualMovement = true;
-        mManualDelta = deltaPosition.times(kWristToRotationsRate);
+        mManualDelta = deltaPosition;
     }
 
     private void setState(IntakeAssemblyState newState){
         mManualMovement = false;
-        setRotationSetPoint(newState.wristAngle.times(kWristToRotationsRate));
+        setRotationSetPoint(newState.wristAngle);
     }
 
     private void homeMotor(Rotation2d deltaPosition){
@@ -243,7 +243,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
         
     public boolean atTargetState(double rotationThreshold){
-        return (Math.abs(getEncoderPosReading().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold);
+        return (Math.abs(getWristAngle().getRotations() - mRotSetPoint.getRotations()) < rotationThreshold);
     }
 
     //#endregion
@@ -268,7 +268,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private double getFeedForwardValue(){
 
         return kFeedforwardCalc.calculate(
-            getEncoderPosReading().getRadians(), 
+            getWristAngle().getRadians(), 
             (getEncoderVelReading() / 60.0) * 2 * Math.PI //convert from RPM --> Rads/s
         );
     }
@@ -276,18 +276,18 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private void updateShuffleboard() {
         mManualControlEntry.setBoolean(mManualMovement);
         mWristSetPointEntry.setDouble(mRotSetPoint.getDegrees());
-        mEncoderEntry.setDouble(getEncoderPosReading().getDegrees());
+        mEncoderEntry.setDouble(getWristAngle().getDegrees());
     }
 
     private void manualControlUpdate(){ //HACK untested
 
         if (mManualDelta.getRotations() > 0 && !mHoming) { //CHECKUP might not work
-            if (needSoftLimit() && (mRotSetPoint.getRotations() / kWristToRotationsRate % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
+            if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
                 mManualDelta = Rotation2d.fromRotations(0);
-            } else if (mRotSetPoint.getRotations() / kWristToRotationsRate % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
+            } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
                 mManualDelta = Rotation2d.fromRotations(0);
             }
-        } else if (mRotSetPoint.getRotations() / kWristToRotationsRate % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
+        } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
             mManualDelta =  Rotation2d.fromRotations(0);
         }
         mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
@@ -296,7 +296,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private void TrapezoidMotionProfileUpdate(){
         //CHECKUP not sure if this will work
 
-        if (mRotSetPoint.getRotations() / kWristToRotationsRate % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
+        if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
             mRotSetPoint = kMaxAngleAmp;
         }
         
@@ -306,7 +306,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             new State(mRotSetPoint.getRotations(), 0)
         );
         
-        mWristPIDController.setReference(mCurrState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
+        mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
     private void handleLimitSwitch(){
@@ -330,7 +330,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     @Override
     public State getSimulatedSetPoint() {
-        return new State(mCurrState.position/kWristToRotationsRate - 0.5, mCurrState.velocity);
+        return new State(mCurrState.position - 0.5, mCurrState.velocity);
     }
 
     @Override
