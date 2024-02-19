@@ -148,7 +148,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         
         final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
-        final double motorRotationsNeedingFullPower = shooterRotationsNeedingFullPower * ShooterWristConstants.kShooterToMotorRotations;
+        final double motorRotationsNeedingFullPower = shooterRotationsNeedingFullPower * ShooterWristConstants.kWristToRotationsRate;
         final double maxMotorPowerSetting = 1;
         final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
         pid.setP(P);
