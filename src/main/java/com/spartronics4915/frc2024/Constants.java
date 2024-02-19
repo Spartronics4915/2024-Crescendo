@@ -242,7 +242,7 @@ public final class Constants {
         public static double kWristToRotationsRate = 36.0;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
-                IdleMode.kBrake, 5); // placeholder
+                IdleMode.kBrake, 0); // placeholder
         public static final PIDConstants kPIDconstants = new PIDConstants(0.5, 0, 0); // don't test with these values
 
         

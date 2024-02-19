@@ -155,10 +155,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         pid.setOutputRange(-0.2, 0.2);
 
         final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
-        final double motorRotationsNeedingFullPower = shooterRotationsNeedingFullPower
-                * ShooterWristConstants.kWristToRotationsRate;
+        final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
+                * ShooterWristConstants.kWristToRotationsRate);
         final double maxMotorPowerSetting = 1;
-        final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
+        final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower/2;
         pid.setP(P);
         pid.setI(0);
         pid.setD(0);
@@ -257,6 +257,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     public Command resetEncoder() {
         return runOnce(() -> {
+            System.out.println("Reset encoder Called");
             mEncoder.setPosition(0.0);
             mCurrentState = new State(0.0, 0.0);
             currentToSetPoint();
@@ -356,7 +357,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         // TODO: Make this conversion its own method?
 
         mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0,
-                getFeedForwardValue());
+                0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 

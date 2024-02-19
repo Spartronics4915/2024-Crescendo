@@ -30,7 +30,8 @@ public class ShuffleBoard {
 
     public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
             ShuffleboardContainer shuffleContainer, String name) {
-        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0).getEntry());
+        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
+                .withProperties(Map.of("Label position", "LEFT")).getEntry());
     }
 
     public static class IntakeTabManager {
@@ -163,9 +164,11 @@ public class ShuffleBoard {
             putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
 
-            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
+            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder())
+                    .withProperties(Map.of("Label position", "HIDDEN"));
             mShuffleBoardTab.add("Set to 45 degrees",
-                    subsystem.runOnce(() -> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(45))));
+                    subsystem.runOnce(() -> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(45))))
+                    .withProperties(Map.of("Label position", "HIDDEN"));
 
             return out;
         }
@@ -180,7 +183,8 @@ public class ShuffleBoard {
                     .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 90)).getEntry();
 
             mShuffleBoardWidget.add("Set to target",
-            subsystem.runOnce(()-> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(angleTarget.getDouble(45)))));
+                    subsystem.runOnce(() -> subsystem
+                            .publicSetRotationSetPoint(Rotation2d.fromDegrees(angleTarget.getDouble(45)))));
 
         }
     }
