@@ -34,13 +34,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": null
+                        "name": "intake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": null
+                        "name": "load"
                       }
                     }
                   ]
@@ -72,13 +72,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": null
+                        "name": "intake"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": null
+                        "name": "load"
                       }
                     }
                   ]
@@ -90,7 +90,7 @@
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "aimAndShoot"
           }
         }
       ]
