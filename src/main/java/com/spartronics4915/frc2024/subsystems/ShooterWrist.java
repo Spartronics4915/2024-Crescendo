@@ -296,12 +296,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     
     private void manualControlUpdate(){ //HACK untested
         if (!mHoming){
-            if (mTargetRotation2d.getRotations() % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { //CHECKUP might not work
+            if (mTargetRotation2d.getRotations() / kInToOutRotations % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { //CHECKUP might not work
                 System.out.println(mTargetRotation2d.getDegrees() % 1.0);
                 System.out.println(kMaxAngle.getRotations());
                 System.out.println("reset max");
                 mManualDelta = Rotation2d.fromRotations(0);
-            } else if (mTargetRotation2d.getRotations() % 1.0 < kMinAngle.getRotations() && mManualDelta.getRotations() < 0) {
+            } else if (mTargetRotation2d.getRotations() / kInToOutRotations % 1.0 < kMinAngle.getRotations() && mManualDelta.getRotations() < 0) {
                 System.out.println(mTargetRotation2d.getDegrees() % 1.0);
                 System.out.println( kMinAngle.getRotations());
                 System.out.println("reset low");
@@ -318,8 +318,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             mCurrentState,
             new State(mTargetRotation2d.getRotations(), 0)
         );
-        
-        // mPidController.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
+
+        mPidController.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
     private void handleLimitSwitch(){
@@ -340,7 +340,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     @Override
     public State getSimulatedSetPoint() {
-        return new State(0.5 - mCurrentState.position, 0.0);
+        return new State(0.5 - mCurrentState.position/kInToOutRotations, 0.0);
     }
 
     @Override
