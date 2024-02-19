@@ -327,7 +327,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //         System.out.println("reset low");
         //         mTargetRotation2d = kMinAngle;
         //     } else {
-        //         mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
+                mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
         //     }
         // }
     }
