@@ -13,9 +13,12 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +35,7 @@ public class LimelightDevice extends SubsystemBase {
     private final Transform3d offset;
     private final Transform2d offset2d;
     private final SlewRateLimiter mRateLimiter;
+    private final GenericEntry ignoreVisionReadings;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
@@ -48,6 +52,10 @@ public class LimelightDevice extends SubsystemBase {
         checkIfValid();
         mHasCoral = hasCoral;
         mRateLimiter = new SlewRateLimiter(246);
+        ShuffleboardTab overview = Shuffleboard.getTab("Overview");
+        ignoreVisionReadings = overview.add("Ignore " + formattedName + " vision readings", false)
+                                       .withWidget(BuiltInWidgets.kToggleButton)
+                                       .getEntry();
         createShuffleboard();
     }
 
@@ -64,7 +72,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (!getTv() || mPipeline.isDetector || !pipelineLoaded()) {
+        if (ignoreVisionReadings.getBoolean(false) || !getTv() || mPipeline.isDetector || !pipelineLoaded()) {
             return Optional.empty();
         }
         // if (numberOfTagsSeen() < 2) return Optional.empty();
@@ -313,8 +321,14 @@ public class LimelightDevice extends SubsystemBase {
         return totalInterval / timesSwitched;
     }
 
+    public double[] getWpiBlueBotPoseArray() {
+        if (!mValid) return new double[7];
+        return LimelightHelpers.getBotPose_wpiBlue(mName);
+    }
+
     public double[] getFieldBotpose() {
-        return new double[]{LimelightHelpers.getBotPose_wpiBlue(mName)[0], LimelightHelpers.getBotPose_wpiBlue(mName)[1], Units.degreesToRadians(LimelightHelpers.getBotPose_wpiBlue(mName)[5])};
+        double[] botpose = getWpiBlueBotPoseArray();
+        return new double[]{botpose[0], botpose[1], Units.degreesToRadians(botpose[5])};
     }
 
     public String shuffleboardFormattedName(String title) {
@@ -324,13 +338,13 @@ public class LimelightDevice extends SubsystemBase {
 
     public void createShuffleboard() {
         ShuffleboardTab botposes = Shuffleboard.getTab("Botposes");
-        botposes.addDouble(mName + " botpose 0", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[0];});
-        botposes.addDouble(mName + " botpose 1", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[1];});
-        botposes.addDouble(mName + " botpose 2", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[2];});
-        botposes.addDouble(mName + " botpose 3", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[3];});
-        botposes.addDouble(mName + " botpose 4", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[4];});
-        botposes.addDouble(mName + " botpose 5", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[5];});
-        botposes.addDouble(mName + " botpose 6", () -> {return LimelightHelpers.getBotPose_wpiBlue(mName)[6];});
+        botposes.addDouble(mName + " botpose 0", () -> {return getWpiBlueBotPoseArray()[0];});
+        botposes.addDouble(mName + " botpose 1", () -> {return getWpiBlueBotPoseArray()[1];});
+        botposes.addDouble(mName + " botpose 2", () -> {return getWpiBlueBotPoseArray()[2];});
+        botposes.addDouble(mName + " botpose 3", () -> {return getWpiBlueBotPoseArray()[3];});
+        botposes.addDouble(mName + " botpose 4", () -> {return getWpiBlueBotPoseArray()[4];});
+        botposes.addDouble(mName + " botpose 5", () -> {return getWpiBlueBotPoseArray()[5];});
+        botposes.addDouble(mName + " botpose 6", () -> {return getWpiBlueBotPoseArray()[6];});
         botposes.addDoubleArray(mName + " botpose pose", () -> {return getFieldBotpose();});
 
         ShuffleboardTab tab = Shuffleboard.getTab("VisionTab");
