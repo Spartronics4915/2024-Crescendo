@@ -205,7 +205,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void setState(ShooterWristState newState){
         mManualMovement = false;
-        setRotationSetPoint(newState.shooterAngle);
+        publicSetRotationSetPoint(newState.shooterAngle);
     }
 
     private void currentToSetPoint(){
