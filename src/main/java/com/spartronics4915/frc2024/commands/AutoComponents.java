@@ -35,7 +35,6 @@ public class AutoComponents {
                         mIntake.setStateCommand(IntakeState.OFF),
                         IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget),
-
                 mIntake.setStateCommand(IntakeState.LOAD),
                 Commands.waitUntil(() -> {
                     return !mIntake.getBeamBreakStatus();
