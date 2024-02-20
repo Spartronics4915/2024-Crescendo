@@ -24,206 +24,235 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class ShuffleBoard {
-    public static String UserTab = "Overview"; // anything the drivers need to see should be on this tab
-    public static String DebugTab = "Debug"; // anything that will need to be referenced for debugging should be on this
-                                             // tab
+        public static String UserTab = "Overview"; // anything the drivers need to see should be on this tab
+        public static String DebugTab = "Debug"; // anything that will need to be referenced for debugging should be on
+                                                 // this
+                                                 // tab
 
-    public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
-            ShuffleboardContainer shuffleContainer, String name) {
-        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
-                .withProperties(Map.of("Label position", "LEFT")).getEntry());
-    }
-
-    public static class IntakeTabManager {
-        public static String tabName = "Intake";
-
-        public static enum IntakeSubsystemEntries {
-            IntakeState("State");
-
-            private String entryName;
-
-            private IntakeSubsystemEntries(String entryName) {
-                this.entryName = entryName;
-            }
+        public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
+                        ShuffleboardContainer shuffleContainer, String name) {
+                map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
+                                .withProperties(Map.of("Label position", "LEFT")).getEntry());
         }
 
-        public static EnumMap<IntakeSubsystemEntries, GenericEntry> getEnumMap(Intake subsystem) {
-            EnumMap<IntakeSubsystemEntries, GenericEntry> out = new EnumMap<>(IntakeSubsystemEntries.class);
-            ShuffleboardLayout mIntakeOverview = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout("Intake", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+        public static class IntakeTabManager {
+                public static String tabName = "Intake";
 
-            putEntry(out, IntakeSubsystemEntries.IntakeState, IntakeState.NONE.toString(), mIntakeOverview,
-                    IntakeSubsystemEntries.IntakeState.entryName);
+                public static enum IntakeSubsystemEntries {
+                        IntakeState("State"), IntakeVelocity("IntakeVelocity");
 
-            return out;
-        }
-    }
+                        private String entryName;
 
-    public static class IntakeWristTabManager {
-        public static String tabName = "IntakeWrist";
+                        private IntakeSubsystemEntries(String entryName) {
+                                this.entryName = entryName;
+                        }
+                }
 
-        public static enum WristSubsystemEntries {
-            WristSetPoint("WristSetPoint"), WristEncoderReading("WristEncoderReading"), WristManualControl(
-                    "WristManual");
+                public static EnumMap<IntakeSubsystemEntries, GenericEntry> getEnumMap(Intake subsystem) {
+                        EnumMap<IntakeSubsystemEntries, GenericEntry> out = new EnumMap<>(IntakeSubsystemEntries.class);
+                        ShuffleboardLayout mIntakeOverview = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout("Intake", BuiltInLayouts.kList)
+                                        .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
 
-            private String entryName;
+                        putEntry(out, IntakeSubsystemEntries.IntakeState, IntakeState.NONE.toString(), mIntakeOverview,
+                                        IntakeSubsystemEntries.IntakeState.entryName);
+                        putEntry(out, IntakeSubsystemEntries.IntakeVelocity, 0, mIntakeOverview,
+                                        IntakeSubsystemEntries.IntakeVelocity.entryName);
 
-            private WristSubsystemEntries(String entryName) {
-                this.entryName = entryName;
-            }
-        }
+                        return out;
+                }
 
-        public static EnumMap<WristSubsystemEntries, GenericEntry> getEnumMap(IntakeWrist subsystem) {
-            EnumMap<WristSubsystemEntries, GenericEntry> out = new EnumMap<>(WristSubsystemEntries.class);
-            ShuffleboardLayout mShuffleBoardTab = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+                public static void addMotorControlWidget(Intake subsystem) {
+                        ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout("Motor Control", BuiltInLayouts.kList)
+                                        .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
 
-            putEntry(out, WristSubsystemEntries.WristSetPoint, -1.0, mShuffleBoardTab,
-                    WristSubsystemEntries.WristSetPoint.entryName);
+                        GenericEntry speedTarget = mShuffleBoardWidget.add("Target Speed", 0)
+                                        .withWidget(BuiltInWidgets.kNumberSlider)
+                                        .withProperties(Map.of("min", -0.5, "max", 0.5)).getEntry();
 
-            putEntry(out, WristSubsystemEntries.WristManualControl, false, mShuffleBoardTab,
-                    WristSubsystemEntries.WristManualControl.entryName);
+                        mShuffleBoardWidget.add("Set to speed",
+                                        subsystem.runOnce(() -> subsystem.setPctgSpeed(speedTarget.getDouble(0))));
 
-            putEntry(out, WristSubsystemEntries.WristEncoderReading, -1.0, mShuffleBoardTab,
-                    WristSubsystemEntries.WristEncoderReading.entryName);
-
-            mShuffleBoardTab.add("stow", subsystem.setStateCommand(IntakeAssemblyState.STOW));
-            mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
-
-            return out;
-        }
-    }
-
-    public static class ShooterTabManager {
-        public static String tabName = "Shooter";
-
-        public static enum ShooterSubsystemEntries {
-            ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Shooter-Speed");
-
-            private String entryName;
-
-            private ShooterSubsystemEntries(String entryName) {
-                this.entryName = entryName;
-            }
-        }
-
-        public static EnumMap<ShooterSubsystemEntries, GenericEntry> getEnumMap(Shooter subsystem) {
-            EnumMap<ShooterSubsystemEntries, GenericEntry> out = new EnumMap<>(ShooterSubsystemEntries.class);
-            ShuffleboardLayout mShooterOverview = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout("Shooter", BuiltInLayouts.kList)
-                    .withSize(2, 2);
-
-            putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE.name(), mShooterOverview,
-                    ShooterSubsystemEntries.ShooterState.entryName);
-
-            putEntry(out, ShooterSubsystemEntries.ShooterSpeed, 0.0, mShooterOverview,
-                    ShooterSubsystemEntries.ShooterSpeed.entryName);
-
-            putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(), mShooterOverview,
-                    ShooterSubsystemEntries.ConveyorState.entryName);
-
-            return out;
-        }
-    }
-
-    public static class ShooterWristTabManager {
-        public static String tabName = "ShooterWrist";
-
-        public static enum ShooterWristSubsystemEntries {
-            ShooterSetPoint("ShooterSetPoint"), ShooterEncoderReading("ShooterEncoderReading"), ShooterDelta(
-                    "ShooterDelta"), ShooterManualControl("ShooterManual"), WristAppliedOutput("WristAppliedOutput");
-
-            private String entryName;
-
-            private ShooterWristSubsystemEntries(String entryName) {
-                this.entryName = entryName;
-            }
-        }
-
-        public static EnumMap<ShooterWristSubsystemEntries, GenericEntry> getEnumMap(ShooterWrist subsystem) {
-            EnumMap<ShooterWristSubsystemEntries, GenericEntry> out = new EnumMap<>(ShooterWristSubsystemEntries.class);
-            ShuffleboardLayout mShuffleBoardTab = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
-
-            putEntry(out, ShooterWristSubsystemEntries.ShooterSetPoint, -1.0, mShuffleBoardTab,
-                    ShooterWristSubsystemEntries.ShooterSetPoint.entryName);
-
-            putEntry(out, ShooterWristSubsystemEntries.ShooterManualControl, false, mShuffleBoardTab,
-                    ShooterWristSubsystemEntries.ShooterManualControl.entryName);
-
-            putEntry(out, ShooterWristSubsystemEntries.ShooterEncoderReading, -1.0, mShuffleBoardTab,
-                    ShooterWristSubsystemEntries.ShooterEncoderReading.entryName);
-
-            putEntry(out, ShooterWristSubsystemEntries.ShooterDelta, 0.0, mShuffleBoardTab,
-                    ShooterWristSubsystemEntries.ShooterDelta.entryName);
-
-            putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
-                    ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
-
-            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder())
-                    .withProperties(Map.of("Label position", "HIDDEN"));
-            mShuffleBoardTab.add("Set to 45 degrees",
-                    subsystem.runOnce(() -> subsystem.publicSetRotationSetPoint(Rotation2d.fromDegrees(45))))
-                    .withProperties(Map.of("Label position", "HIDDEN"));
-
-            return out;
-        }
-
-        public static void addMotorControlWidget(ShooterWrist subsystem) {
-            ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout("Motor Control", BuiltInLayouts.kList)
-                    .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
-
-            GenericEntry angleTarget = mShuffleBoardWidget.add("Target Angle", 45)
-                    .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 90)).getEntry();
-
-            mShuffleBoardWidget.add("Set to target",
-                    subsystem.runOnce(() -> subsystem
-                            .publicSetRotationSetPoint(Rotation2d.fromDegrees(angleTarget.getDouble(45)))));
+                }
 
         }
-    }
 
-    public static class ElevatorTabManager {
-        public static String tabName = "Elevator";
+        public static class IntakeWristTabManager {
+                public static String tabName = "IntakeWrist";
 
-        public static enum ElevatorSubsystemEntries {
-            ElevatorSetPoint("ElevatorSetPoint"), ElevatorHeight("ElevatorHeight"), ElevatorManualControl(
-                    "ElevatorManual");
+                public static enum WristSubsystemEntries {
+                        WristSetPoint("WristSetPoint"), WristEncoderReading("WristEncoderReading"), WristManualControl(
+                                        "WristManual");
 
-            private String entryName;
+                        private String entryName;
 
-            private ElevatorSubsystemEntries(String entryName) {
-                this.entryName = entryName;
-            }
+                        private WristSubsystemEntries(String entryName) {
+                                this.entryName = entryName;
+                        }
+                }
+
+                public static EnumMap<WristSubsystemEntries, GenericEntry> getEnumMap(IntakeWrist subsystem) {
+                        EnumMap<WristSubsystemEntries, GenericEntry> out = new EnumMap<>(WristSubsystemEntries.class);
+                        ShuffleboardLayout mShuffleBoardTab = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout(tabName + "layout", BuiltInLayouts.kList)
+                                        .withSize(2, 2);
+
+                        putEntry(out, WristSubsystemEntries.WristSetPoint, -1.0, mShuffleBoardTab,
+                                        WristSubsystemEntries.WristSetPoint.entryName);
+
+                        putEntry(out, WristSubsystemEntries.WristManualControl, false, mShuffleBoardTab,
+                                        WristSubsystemEntries.WristManualControl.entryName);
+
+                        putEntry(out, WristSubsystemEntries.WristEncoderReading, -1.0, mShuffleBoardTab,
+                                        WristSubsystemEntries.WristEncoderReading.entryName);
+
+                        mShuffleBoardTab.add("stow", subsystem.setStateCommand(IntakeAssemblyState.STOW));
+                        mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
+
+                        return out;
+                }
         }
 
-        public static EnumMap<ElevatorSubsystemEntries, GenericEntry> getEnumMap(Elevator subsystem) {
-            EnumMap<ElevatorSubsystemEntries, GenericEntry> out = new EnumMap<>(ElevatorSubsystemEntries.class);
-            ShuffleboardLayout mShuffleBoardTab = Shuffleboard
-                    .getTab(tabName)
-                    .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+        public static class ShooterTabManager {
+                public static String tabName = "Shooter";
 
-            putEntry(out, ElevatorSubsystemEntries.ElevatorSetPoint, -1.0, mShuffleBoardTab,
-                    ElevatorSubsystemEntries.ElevatorSetPoint.entryName);
+                public static enum ShooterSubsystemEntries {
+                        ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Shooter-Speed");
 
-            putEntry(out, ElevatorSubsystemEntries.ElevatorManualControl, false, mShuffleBoardTab,
-                    ElevatorSubsystemEntries.ElevatorManualControl.entryName);
+                        private String entryName;
 
-            putEntry(out, ElevatorSubsystemEntries.ElevatorHeight, -1.0, mShuffleBoardTab,
-                    ElevatorSubsystemEntries.ElevatorHeight.entryName);
+                        private ShooterSubsystemEntries(String entryName) {
+                                this.entryName = entryName;
+                        }
+                }
 
-            return out;
+                public static EnumMap<ShooterSubsystemEntries, GenericEntry> getEnumMap(Shooter subsystem) {
+                        EnumMap<ShooterSubsystemEntries, GenericEntry> out = new EnumMap<>(
+                                        ShooterSubsystemEntries.class);
+                        ShuffleboardLayout mShooterOverview = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout("Shooter", BuiltInLayouts.kList)
+                                        .withSize(2, 2);
+
+                        putEntry(out, ShooterSubsystemEntries.ShooterState, ShooterState.NONE.name(), mShooterOverview,
+                                        ShooterSubsystemEntries.ShooterState.entryName);
+
+                        putEntry(out, ShooterSubsystemEntries.ShooterSpeed, 0.0, mShooterOverview,
+                                        ShooterSubsystemEntries.ShooterSpeed.entryName);
+
+                        putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(),
+                                        mShooterOverview,
+                                        ShooterSubsystemEntries.ConveyorState.entryName);
+
+                        return out;
+                }
         }
-    }
+
+        public static class ShooterWristTabManager {
+                public static String tabName = "ShooterWrist";
+
+                public static enum ShooterWristSubsystemEntries {
+                        ShooterSetPoint("ShooterSetPoint"), ShooterEncoderReading(
+                                        "ShooterEncoderReading"), ShooterDelta(
+                                                        "ShooterDelta"), ShooterManualControl(
+                                                                        "ShooterManual"), WristAppliedOutput(
+                                                                                        "WristAppliedOutput");
+
+                        private String entryName;
+
+                        private ShooterWristSubsystemEntries(String entryName) {
+                                this.entryName = entryName;
+                        }
+                }
+
+                public static EnumMap<ShooterWristSubsystemEntries, GenericEntry> getEnumMap(ShooterWrist subsystem) {
+                        EnumMap<ShooterWristSubsystemEntries, GenericEntry> out = new EnumMap<>(
+                                        ShooterWristSubsystemEntries.class);
+                        ShuffleboardLayout mShuffleBoardTab = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout(tabName + "layout", BuiltInLayouts.kList)
+                                        .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
+
+                        putEntry(out, ShooterWristSubsystemEntries.ShooterSetPoint, -1.0, mShuffleBoardTab,
+                                        ShooterWristSubsystemEntries.ShooterSetPoint.entryName);
+
+                        putEntry(out, ShooterWristSubsystemEntries.ShooterManualControl, false, mShuffleBoardTab,
+                                        ShooterWristSubsystemEntries.ShooterManualControl.entryName);
+
+                        putEntry(out, ShooterWristSubsystemEntries.ShooterEncoderReading, -1.0, mShuffleBoardTab,
+                                        ShooterWristSubsystemEntries.ShooterEncoderReading.entryName);
+
+                        putEntry(out, ShooterWristSubsystemEntries.ShooterDelta, 0.0, mShuffleBoardTab,
+                                        ShooterWristSubsystemEntries.ShooterDelta.entryName);
+
+                        putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
+                                        ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
+
+                        mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder())
+                                        .withProperties(Map.of("Label position", "HIDDEN"));
+                        mShuffleBoardTab.add("Set to 45 degrees",
+                                        subsystem.runOnce(() -> subsystem
+                                                        .publicSetRotationSetPoint(Rotation2d.fromDegrees(45))))
+                                        .withProperties(Map.of("Label position", "HIDDEN"));
+
+                        return out;
+                }
+
+                public static void addMotorControlWidget(ShooterWrist subsystem) {
+                        ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout("Motor Control", BuiltInLayouts.kList)
+                                        .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
+
+                        GenericEntry angleTarget = mShuffleBoardWidget.add("Target Angle", 45)
+                                        .withWidget(BuiltInWidgets.kNumberSlider)
+                                        .withProperties(Map.of("min", 0, "max", 90)).getEntry();
+
+                        mShuffleBoardWidget.add("Set to target",
+                                        subsystem.runOnce(() -> subsystem
+                                                        .publicSetRotationSetPoint(Rotation2d
+                                                                        .fromDegrees(angleTarget.getDouble(45)))));
+
+                }
+        }
+
+        public static class ElevatorTabManager {
+                public static String tabName = "Elevator";
+
+                public static enum ElevatorSubsystemEntries {
+                        ElevatorSetPoint("ElevatorSetPoint"), ElevatorHeight("ElevatorHeight"), ElevatorManualControl(
+                                        "ElevatorManual");
+
+                        private String entryName;
+
+                        private ElevatorSubsystemEntries(String entryName) {
+                                this.entryName = entryName;
+                        }
+                }
+
+                public static EnumMap<ElevatorSubsystemEntries, GenericEntry> getEnumMap(Elevator subsystem) {
+                        EnumMap<ElevatorSubsystemEntries, GenericEntry> out = new EnumMap<>(
+                                        ElevatorSubsystemEntries.class);
+                        ShuffleboardLayout mShuffleBoardTab = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout(tabName + "layout", BuiltInLayouts.kList)
+                                        .withSize(2, 2);
+
+                        putEntry(out, ElevatorSubsystemEntries.ElevatorSetPoint, -1.0, mShuffleBoardTab,
+                                        ElevatorSubsystemEntries.ElevatorSetPoint.entryName);
+
+                        putEntry(out, ElevatorSubsystemEntries.ElevatorManualControl, false, mShuffleBoardTab,
+                                        ElevatorSubsystemEntries.ElevatorManualControl.entryName);
+
+                        putEntry(out, ElevatorSubsystemEntries.ElevatorHeight, -1.0, mShuffleBoardTab,
+                                        ElevatorSubsystemEntries.ElevatorHeight.entryName);
+
+                        return out;
+                }
+        }
 
 }

@@ -18,7 +18,7 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstan
 
 public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static enum IntakeState {
-        IN, LOAD, OUT, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
+        IN, LOAD, OUT, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
 
     private static Intake mInstance;
@@ -37,6 +37,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         var EntryMap = IntakeTabManager.getEnumMap(this);
         mIntakeStateWidget = EntryMap.get(IntakeSubsystemEntries.IntakeState);
+        IntakeTabManager.addMotorControlWidget(this);
 
         //motor setup 
 
@@ -116,6 +117,17 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         });
     }
 
+    public void setPctgSpeed(double pctg) throws IllegalArgumentException{
+
+        if(Math.abs(pctg)>1) {
+
+            throw new IllegalArgumentException("pctg can't be bigger than 1");
+        }
+        setState(IntakeState.MANUAL);
+        mMotor.set(pctg);
+      
+    }   
+
     private void in() {
         if (mBeamBreak.get()) {
             mCurrentState = IntakeState.OFF;
@@ -156,6 +168,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
                 break;
             case OFF:
                 off();
+                break;
+            case MANUAL:
+            // Speed should already have been set, so don't do anything
                 break;
             case NONE:
                 mMotor.set(0);

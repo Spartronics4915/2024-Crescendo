@@ -22,11 +22,8 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
-
-    
     public static enum ShooterState {
         ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
@@ -44,7 +41,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private GenericEntry mShooterSpeedWidget;
     private GenericEntry mConveyerStateWidget;
 
-
     private final CANSparkMax mShooterMotor;
     private final CANSparkMax mShooterFollowMotor;
     private final CANSparkMax mConveyorMotor;
@@ -52,7 +48,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     private final SparkPIDController mPIDControllerFollow;
 
     private final RelativeEncoder mShooterEncoder;
-  
+
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
@@ -68,7 +64,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterFollowMotor.burnFlash();
         mConveyorMotor.burnFlash();
 
-        mShooterEncoder =  mShooterMotor.getEncoder();
+        mShooterEncoder = mShooterMotor.getEncoder();
 
         var mEntries = ShooterTabManager.getEnumMap(this);
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
@@ -76,15 +72,15 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterSpeedWidget = mEntries.get(ShooterSubsystemEntries.ShooterSpeed);
 
         // Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
-        //     if (hasSpunUp()) {
-        //         return Optional.empty();
-        //     }
-        //     return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
+        // if (hasSpunUp()) {
+        // return Optional.empty();
+        // }
+        // return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
         // }, 1));
-    
+
     }
 
-    private CANSparkMax constructMotor(MotorConstants motorValues){
+    private CANSparkMax constructMotor(MotorConstants motorValues) {
         CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
         motor.setInverted(motorValues.motorIsInverted());
@@ -109,8 +105,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
             mInstance = new Shooter();
         }
         return mInstance;
-    } 
-    
+    }
+
     public ShooterState getShooterState() {
         return mCurrentShooterState;
     }
@@ -119,11 +115,11 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         return mCurrentConveyorState;
     }
 
-    public void setShooterState(ShooterState state){
+    public void setShooterState(ShooterState state) {
         mCurrentShooterState = state;
     }
 
-    public void setConveyorState(ConveyorState state){
+    public void setConveyorState(ConveyorState state) {
         mCurrentConveyorState = state;
     }
 
@@ -143,8 +139,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kOffSpeed);
         // mShooterFollowMotor.set(-kOffSpeed);
 
-        mPIDControllerLead.setReference(kOffSpeed , ControlType.kVelocity);
-        mPIDControllerFollow.setReference(kOffSpeed , ControlType.kVelocity);
+        mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(kOffSpeed, ControlType.kVelocity);
 
     }
 
@@ -152,8 +148,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kShootSpeed);
         // mShooterFollowMotor.set(-kShootSpeed);
 
-        mPIDControllerLead.setReference(kShootSpeed , ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-(kShootSpeed -kDiff), ControlType.kVelocity);
+        mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
     }
 
     private void conveyorIn() {
@@ -168,7 +164,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyorMotor.set(0);
     }
 
-    public boolean hasSpunUp(){
+    public boolean hasSpunUp() {
         return mShooterEncoder.getVelocity() >= kTargetRPM;
     }
 
@@ -183,35 +179,34 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     public void periodic() {
         switch (mCurrentShooterState) {
             case NONE:
-            shooterOff();
+                shooterOff();
                 break;
             case OFF:
-            shooterOff();
+                shooterOff();
                 break;
             case ON:
-            shooterOn();
+                shooterOn();
                 break;
-            
+
         }
         switch (mCurrentConveyorState) {
             case IN:
-            conveyorIn();
+                conveyorIn();
                 break;
             case NONE:
-            conveyorOff();
+                conveyorOff();
                 break;
             case OFF:
-            conveyorOff();
+                conveyorOff();
                 break;
             case OUT:
-            conveyorOut();
+                conveyorOut();
                 break;
             default:
                 break;
-            
+
         }
         updateShuffleboard();
-
 
     }
 
