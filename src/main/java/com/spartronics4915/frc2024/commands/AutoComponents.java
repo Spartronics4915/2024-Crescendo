@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.Set;
 import java.util.function.*;
 
 public class AutoComponents {
@@ -91,10 +93,12 @@ public class AutoComponents {
     }
 
     public static Command stationaryAutoAim() {
-        final var alliance = DriverStation.getAlliance().get();
-        final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
-        final var aac = new MovingAutoAimCommand(speaker);
-        return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+        return Commands.defer(() -> {
+            final var alliance = DriverStation.getAlliance().get();
+            final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
+            final var aac = new MovingAutoAimCommand(speaker);
+            return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+        }, Set.of(mSwerve, mShooterWrist));
     }
 
     public static Command stationaryAimAndShootSequential() {
