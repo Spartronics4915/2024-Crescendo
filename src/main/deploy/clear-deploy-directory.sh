@@ -13,4 +13,4 @@ if [ ! -d /home/lvuser/deploy ]; then
     exit 1;
 fi
 
-rm -r /home/lvuser/deploy
+rm -r /home/lvuser/deploy/*
