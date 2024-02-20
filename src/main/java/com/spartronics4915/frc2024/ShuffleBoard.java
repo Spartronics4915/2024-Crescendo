@@ -150,7 +150,7 @@ public class ShuffleBoard {
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                     .getTab(tabName)
                     .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(3, 3);
+                    .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterSetPoint, -1.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterSetPoint.entryName);
@@ -180,7 +180,7 @@ public class ShuffleBoard {
             ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
                     .getTab(tabName)
                     .getLayout("Motor Control", BuiltInLayouts.kList)
-                    .withSize(3, 3);
+                    .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
 
             GenericEntry angleTarget = mShuffleBoardWidget.add("Target Angle", 45)
                     .withWidget(BuiltInWidgets.kNumberSlider).withProperties(Map.of("min", 0, "max", 90)).getEntry();
