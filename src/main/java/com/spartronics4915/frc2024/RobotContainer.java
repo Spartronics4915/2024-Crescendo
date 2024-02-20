@@ -134,11 +134,6 @@ public class RobotContainer {
 
         // ModeSwitchSubsystems.add(mElevator);
 
-        NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
-        NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-        NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
-        NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
-        NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
 
         // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
         // if (mPDP.getStickyFaults().Brownout) {
@@ -163,6 +158,13 @@ public class RobotContainer {
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
+
+            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+
         } else {
             mAutoChooser = null;
         }
