@@ -116,7 +116,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget, 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue());
 
         updateShuffle();
     }
@@ -130,8 +130,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return (mEncoder.getPosition()); // CHECKUP Failure Point?
     }
 
-    private double getFeedFowardValue() {
-        return mElevatorFeedforward.calculate(getEncoderVelReading());
+    private double getFeedForwardValue() {
+        return 0;
+        //return mElevatorFeedforward.calculate(getEncoderVelReading());
     }
     // #endregion
 
