@@ -199,10 +199,11 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
+            private static final int kMotorLimit = 10;
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
-                    IdleMode.kBrake, 40);
-            public static final MotorConstants kFollowerConstants = new MotorConstants(23, MotorType.kBrushless, false,
-                    IdleMode.kBrake, 40); // HACK untested
+                    IdleMode.kBrake, kMotorLimit);
+            public static final MotorConstants kFollowerConstants = new MotorConstants(23, MotorType.kBrushless, true,
+                    IdleMode.kBrake, kMotorLimit); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
             public static final double kMetersToRotation = 1; // Conversion rate
