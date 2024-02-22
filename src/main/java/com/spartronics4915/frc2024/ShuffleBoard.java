@@ -142,7 +142,9 @@ public class ShuffleBoard {
         public static enum ElevatorSubsystemEntries{
             ElevatorSetPoint ("ElevatorSetPoint"),
             ElevatorHeight("ElevatorHeight"),
-            ElevatorManualControl ("ElevatorManual");
+            ElevatorManualControl ("ElevatorManual"),
+            EncoderRawValue ("RawMain"),
+            FollowerRawValue ("RawFollower");
 
             private String entryName;
             private ElevatorSubsystemEntries(String entryName) {this.entryName = entryName;}
