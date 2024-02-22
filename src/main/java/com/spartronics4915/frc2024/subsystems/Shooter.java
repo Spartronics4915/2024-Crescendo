@@ -17,6 +17,7 @@ import com.spartronics4915.frc2024.util.PIDFConstants;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,11 +26,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
 
     public static enum ShooterState {
-        ON, OFF, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
+        ON, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
 
     public static enum ConveyorState {
-        IN, OUT, OFF, NONE;
+        IN, OUT, OFF, MANUAL, NONE;
     }
 
     private static Shooter mInstance;
@@ -70,6 +71,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
         mShooterSpeedWidget = mEntries.get(ShooterSubsystemEntries.ShooterSpeed);
+
+        ShooterTabManager.addMotorControlWidget(this);
 
         // Bling.addToLinkedList(new Bling.BlingMCwithPriority(() -> {
         // if (hasSpunUp()) {
@@ -123,6 +126,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentConveyorState = state;
     }
 
+    // diff is the reduction in speed for the follower motor
+    public void setShooterManualPctg(double pctg, double diff) {
+        pctg = MathUtil.clamp(pctg, -1, 1);
+        mShooterMotor.set(pctg);
+        mShooterFollowMotor.set(-(pctg - diff));
+
+    }
     public Command setShooterStateCommand(ShooterState state) {
         return runOnce(() -> {
             setShooterState(state);
@@ -187,6 +197,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
             case ON:
                 shooterOn();
                 break;
+            case MANUAL:
+                break;
 
         }
         switch (mCurrentConveyorState) {
@@ -201,6 +213,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 break;
             case OUT:
                 conveyorOut();
+                break;
+            case MANUAL:
                 break;
             default:
                 break;

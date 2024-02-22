@@ -150,6 +150,29 @@ public class ShuffleBoard {
 
                         return out;
                 }
+
+                public static void addMotorControlWidget(Shooter subsystem) {
+                        ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                                        .getTab(tabName)
+                                        .getLayout("Motor Control", BuiltInLayouts.kList)
+                                        .withSize(3, 3).withProperties(Map.of("Label position", "TOP"));
+
+                        GenericEntry speedTarget = mShuffleBoardWidget.add("Target Speed", 0)
+                                        .withWidget(BuiltInWidgets.kNumberSlider)
+                                        .withProperties(Map.of("min", 0, "max", 1)).getEntry();
+
+                        GenericEntry motorDiff = mShuffleBoardWidget.add("Motor speed Difference", 0)
+                                        .withWidget(BuiltInWidgets.kNumberSlider)
+                                        .withProperties(Map.of("min", 0, "max", 0.2)).getEntry();
+                        
+                        mShuffleBoardWidget.add("Set to speed",
+                                        subsystem.runOnce(() -> subsystem.setShooterManualPctg(speedTarget.getDouble(0),
+                                        motorDiff.getDouble(0))));
+
+
+
+                }
+
         }
 
         public static class ShooterWristTabManager {
