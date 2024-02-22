@@ -163,6 +163,10 @@ public class ShuffleBoard {
 
             putEntry(out, ElevatorSubsystemEntries.ElevatorHeight, -1.0, mShuffleBoardTab, ElevatorSubsystemEntries.ElevatorHeight.entryName);
 
+            putEntry(out, ElevatorSubsystemEntries.EncoderRawValue, false, mShuffleBoardTab, ElevatorSubsystemEntries.EncoderRawValue.entryName);
+
+            putEntry(out, ElevatorSubsystemEntries.FollowerRawValue, -1.0, mShuffleBoardTab, ElevatorSubsystemEntries.FollowerRawValue.entryName);
+
             return out;
         }
     }

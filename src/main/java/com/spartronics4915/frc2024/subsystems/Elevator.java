@@ -106,8 +106,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             mTarget = Math.max(mTarget, kMinimumManual);
         }
         // Not-manual
-        if (limitSwitch.get())
-            mTarget = kLimitSwitchGoto;
+        //if (limitSwitch.get())
+          //  mTarget = kLimitSwitchGoto;
 
         mTarget = MathUtil.clamp(mTarget, kMinimumManual, kMaximumRotations);
 
