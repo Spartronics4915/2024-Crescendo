@@ -24,6 +24,11 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class ShuffleBoard {
+    public static enum TelemetryVerbosity {
+        LOW,
+        MEDIUM,
+        HIGH
+    }
 
     public static String UserTab = "Overview"; // anything the drivers need to see should be on this tab
     public static String DebugTab = "Debug"; // anything that will need to be referenced for debugging should be on
