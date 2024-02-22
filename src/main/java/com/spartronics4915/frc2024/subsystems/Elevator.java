@@ -13,8 +13,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.util.TrapezoidSubsystemInterface;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
@@ -38,8 +38,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private TrapezoidProfile mmmmmmmmmmmmTrapezoid;
 
     private State mCurrentState;
-    private Rotation2d mTarget;// = new Rotation2d(Math.PI * 3);
-    private Rotation2d mManualDelta;
+    private double mTarget;// = new Rotation2d(Math.PI * 3);
+    private double mManualDelta;
 
     private ElevatorFeedforward mElevatorFeedforward;
 
@@ -100,19 +100,19 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
-            mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
+            mTarget = Math.max(mTarget, kMinimumManual);
         }
         // Not-manual
         if (limitSwitch.get())
-            mTarget = Rotation2d.fromRotations(kLimitSwitchGoto);
+            mTarget = kLimitSwitchGoto;
 
-        mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
+        mTarget = MathUtil.clamp(mTarget, kMinimumManual, kMaximumRotations);
 
         mCurrentState = mmmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                new State(mTarget.getRotations(), 0));
+                new State(mTarget, 0));
         mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
 
         updateShuffle();
@@ -123,8 +123,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return mEncoder.getVelocity(); // CHECKUP Failure Point?
     }
 
-    private Rotation2d getEncoderPosReading() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()); // CHECKUP Failure Point?
+    private double getEncoderPosReading() {
+        return (mEncoder.getPosition()); // CHECKUP Failure Point?
     }
 
     private double getFeedFowardValue() {
@@ -141,7 +141,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private void updateShuffle() {
-        mElevatorSetPointEntry.setDouble(mTarget.getDegrees() / kMetersToRotation);
+        mElevatorSetPointEntry.setDouble(mTarget / kMetersToRotation);
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
     }
@@ -165,7 +165,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return height of elevator
      */
     public double getHeight() {
-        return getEncoderPosReading().getRotations() / kMetersToRotation;
+        return getEncoderPosReading() / kMetersToRotation;
     }
 
     /**
@@ -180,10 +180,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     // #region Maunel Manuel Manueal Manael Manual Stuff (5th times the charm)
 
     private void manualControlUpdate() {
-        mTarget = Rotation2d.fromRadians(mTarget.getRadians() + mManualDelta.getRadians());
+        mTarget = (mTarget + mManualDelta);
     }
 
-    private void setManualDelta(Rotation2d deltaPosition) {
+    private void setManualDelta(double deltaPosition) {
         mIsManual = true;
         mManualDelta = deltaPosition;
     }
@@ -192,7 +192,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * Command for manual movement
      * @param angleDelta
      */
-    public Command manualRunCommand(Rotation2d angleDelta) {
+    public Command manualRunCommand(double angleDelta) {
         return this.startEnd(() -> setManualDelta(angleDelta), () -> {
             if (!Robot.isSimulation())
                 resetTarget();
@@ -210,7 +210,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(double newTarget) {
         mIsManual = false;
-        mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
+        mTarget = newTarget * kMetersToRotation;
     }
 
     /**
@@ -219,7 +219,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(IntakeAssemblyState intakeAssemblyState) {
         mIsManual = false;
-        mTarget = Rotation2d.fromRotations(intakeAssemblyState.ElevatorHeight * kMetersToRotation);
+        mTarget = (intakeAssemblyState.ElevatorHeight * kMetersToRotation);
     }
 
     /**
@@ -246,7 +246,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * Sets the target position to the motor's current position so nobody gets punched in the face
      */
     public void resetTarget() {
-        this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
+        this.mCurrentState = new State(getEncoderPosReading(), 0);
         mTarget = getEncoderPosReading();
     }
 
