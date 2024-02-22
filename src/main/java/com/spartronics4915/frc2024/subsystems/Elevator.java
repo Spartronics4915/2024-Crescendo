@@ -47,6 +47,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorSetPointEntry;
     private GenericEntry mElevatorHeightEntry;
     private GenericEntry mElevatorManualControlEntry;
+    private GenericEntry mElevatorLeaderPos;
+    private GenericEntry mElevatorFollowerPos;
 
     private DigitalInput limitSwitch;
 
@@ -86,6 +88,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
+
+        // Set Encoders to 0 just for initialization
+        mEncoder.setPosition(0);
+        mFollower.getEncoder().setPosition(0);
 
         // Sets up Feed Foward
         mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(),
@@ -178,12 +184,16 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
         mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
         mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
+        mElevatorLeaderPos = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderPos);
+        mElevatorFollowerPos = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerPos);
     }
 
     private void updateShuffle() {
         mElevatorSetPointEntry.setDouble(mTarget.getDegrees() / kMetersToRotation);
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
+        mElevatorLeaderPos.setDouble(mEncoder.getPosition());
+        mElevatorFollowerPos.setDouble(mFollower.getEncoder().getPosition());
     }
     // #endregion
 

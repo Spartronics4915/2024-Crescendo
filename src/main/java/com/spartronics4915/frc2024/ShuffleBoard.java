@@ -225,7 +225,8 @@ public class ShuffleBoard {
 
                 public static enum ElevatorSubsystemEntries {
                         ElevatorSetPoint("ElevatorSetPoint"), ElevatorHeight("ElevatorHeight"), ElevatorManualControl(
-                                        "ElevatorManual");
+                                        "ElevatorManual"), ElevatorFollowerPos("ElevatorFollowerPos"),
+                                        ElevatorLeaderPos("ElevatorLeaderPos");
 
                         private String entryName;
 
@@ -240,7 +241,7 @@ public class ShuffleBoard {
                         ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                                         .getTab(tabName)
                                         .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                                        .withSize(2, 2);
+                                        .withSize(3, 3).withProperties(Map.of("Label position", "LEFT"));
 
                         putEntry(out, ElevatorSubsystemEntries.ElevatorSetPoint, -1.0, mShuffleBoardTab,
                                         ElevatorSubsystemEntries.ElevatorSetPoint.entryName);
@@ -250,6 +251,12 @@ public class ShuffleBoard {
 
                         putEntry(out, ElevatorSubsystemEntries.ElevatorHeight, -1.0, mShuffleBoardTab,
                                         ElevatorSubsystemEntries.ElevatorHeight.entryName);
+
+                        putEntry(out, ElevatorSubsystemEntries.ElevatorLeaderPos, 0, mShuffleBoardTab,
+                                ElevatorSubsystemEntries.ElevatorLeaderPos.entryName);
+
+                        putEntry(out, ElevatorSubsystemEntries.ElevatorFollowerPos, 0, mShuffleBoardTab,
+                                ElevatorSubsystemEntries.ElevatorFollowerPos.entryName);
 
                         return out;
                 }
