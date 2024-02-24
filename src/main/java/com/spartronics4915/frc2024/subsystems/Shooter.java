@@ -129,8 +129,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     // diff is the reduction in speed for the follower motor
     public void setShooterManualPctg(double pctg, double diff) {
         pctg = MathUtil.clamp(pctg, -1, 1);
-        mShooterMotor.set(pctg);
-        mShooterFollowMotor.set(-(pctg - diff));
+        mPIDControllerLead.setReference(pctg, ControlType.kDutyCycle);
+        mPIDControllerFollow.setReference(-(pctg - diff), ControlType.kDutyCycle);
 
     }
     public Command setShooterStateCommand(ShooterState state) {
