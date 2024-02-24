@@ -93,9 +93,10 @@ public class RobotContainer {
 
     // private static final IntakeWrist mIntakeWrist;
     private static final Intake mIntake;
-    private static final ShooterWrist mShooterWrist;
-    private static final Shooter mShooter;
-    private static final Elevator mElevator;
+
+    // private static final ShooterWrist mShooterWrist;
+    // private static final Shooter mShooter;
+    // private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
 
@@ -119,16 +120,16 @@ public class RobotContainer {
         mIntake = Intake.getInstance();
         ModeSwitchSubsystems.add(mIntake);
 
-        mShooterWrist = ShooterWrist.getInstance();
-        ModeSwitchSubsystems.add(mShooterWrist);
-        list.add(mShooterWrist);
+        // mShooterWrist = ShooterWrist.getInstance();
+        // ModeSwitchSubsystems.add(mShooterWrist);
+        // list.add(mShooterWrist);
 
-        mShooter = Shooter.getInstance();
-        ModeSwitchSubsystems.add(mShooter);
+        // mShooter = Shooter.getInstance();
+        // ModeSwitchSubsystems.add(mShooter);
 
-        mElevator = Elevator.getInstance();
-        ModeSwitchSubsystems.add(mElevator);
-        list.add(mElevator);
+        // mElevator = Elevator.getInstance();
+        // ModeSwitchSubsystems.add(mElevator);
+        // list.add(mElevator);
 
         mSimulator = new TrapezoidSimulator(list);
 
@@ -183,8 +184,8 @@ public class RobotContainer {
     }
 
     private void configureBindings() { // TODO: format these nicely
-        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
-        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
+        // mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
+        // mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
         // mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         // mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
 
@@ -193,8 +194,8 @@ public class RobotContainer {
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.5));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.5));
+        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.5));
+        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.5));
 
         // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator);
         // mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
@@ -202,11 +203,11 @@ public class RobotContainer {
         // mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
         // mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
 
-        mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
-        mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
+        // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
+        // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
-        mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
-        mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
+        // mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
+        // mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
 
         // mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
 
