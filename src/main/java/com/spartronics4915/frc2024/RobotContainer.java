@@ -193,8 +193,8 @@ public class RobotContainer {
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
 
-        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
-        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.5));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.5));
 
         // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator);
         // mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));

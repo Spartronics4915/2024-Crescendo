@@ -251,7 +251,8 @@ public class ShuffleBoard {
         public static enum ElevatorSubsystemEntries {
             ElevatorSetPoint("ElevatorSetPoint"), ElevatorHeight("ElevatorHeight"), ElevatorManualControl(
                     "ElevatorManual"), ElevatorFollowerPos(
-                            "ElevatorFollowerPos"), ElevatorLeaderPos("ElevatorLeaderPos");
+                            "ElevatorFollowerPos"), ElevatorLeaderPos("ElevatorLeaderPos"),
+                            ElevatorLeaderAppliedOutput("LeaderAppliedOutput");
 
             private String entryName;
 
@@ -282,6 +283,9 @@ public class ShuffleBoard {
 
             putEntry(out, ElevatorSubsystemEntries.ElevatorFollowerPos, 0, mShuffleBoardTab,
                     ElevatorSubsystemEntries.ElevatorFollowerPos.entryName);
+
+        putEntry(out, ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput, 0, mShuffleBoardTab,
+                ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput.entryName);
 
             return out;
         }
