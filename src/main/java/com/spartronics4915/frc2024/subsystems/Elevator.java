@@ -115,7 +115,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
                 // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mTarget = (kLimitSwitchGoto * kMetersToRotation);
+                    mTarget = (kLimitSwitchGoto);
                     updateCurrStateToReal();
                 // }
                 startupHome = true;
@@ -160,7 +160,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget, 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue());
+        mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
 
         updateShuffle();
     }
@@ -192,7 +192,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private void updateShuffle() {
-        mElevatorSetPointEntry.setDouble(mTarget / kMetersToRotation);
+        mElevatorSetPointEntry.setDouble(mTarget);
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
         mElevatorLeaderPos.setDouble(mEncoder.getPosition());
@@ -204,7 +204,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     // #region Bunch of random getters
     @Override
     public State getSimulatedSetPoint() {
-        return new State(mCurrentState.position / kMetersToRotation, 0.0);
+        return new State(mCurrentState.position, 0.0);
     }
 
     /**
@@ -219,7 +219,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return height of elevator
      */
     public double getHeight() {
-        return getEncoderPosReading() / kMetersToRotation;
+        return getEncoderPosReading();
     }
 
     /**
@@ -320,7 +320,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private void updateCurrStateToReal(){
-        this.mCurrentState = new State(getEncoderPosReading(), 0);
+        this.mCurrentState = new State(getEncoderPosReading() / kMetersToRotation, 0);
     }
 
     // #endregion
