@@ -49,6 +49,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorManualControlEntry;
     private GenericEntry mElevatorLeaderPos;
     private GenericEntry mElevatorFollowerPos;
+    private GenericEntry mAppliedOutputWidget;
 
     private DigitalInput limitSwitch;
 
@@ -187,6 +188,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
         mElevatorLeaderPos = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderPos);
         mElevatorFollowerPos = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerPos);
+        mAppliedOutputWidget = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput);
     }
 
     private void updateShuffle() {
@@ -195,6 +197,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorManualControlEntry.setBoolean(mIsManual);
         mElevatorLeaderPos.setDouble(mEncoder.getPosition());
         mElevatorFollowerPos.setDouble(mFollower.getEncoder().getPosition());
+        mAppliedOutputWidget.setDouble(mMotor.getAppliedOutput());
     }
     // #endregion
 
@@ -248,8 +251,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * Command for manual movement
      * @param angleDelta
      */
-    public Command manualRunCommand(double angleDelta) {
-        return this.startEnd(() -> setManualDelta(angleDelta), () -> {
+    public Command manualRunCommand(double posDelta) {
+        return this.startEnd(() -> setManualDelta(posDelta), () -> {
             if (!Robot.isSimulation())
                 resetTarget();
             mIsManual = false;
