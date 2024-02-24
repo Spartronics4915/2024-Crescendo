@@ -40,7 +40,8 @@ public class ShuffleBoard {
         public static String tabName = "Intake";
 
         public static enum IntakeSubsystemEntries {
-            IntakeState("State"), IntakeVelocity("IntakeVelocity");
+            IntakeState("State"), IntakeVelocity("IntakeAppliedOutput"), 
+            IntakeManualSetPoint("IntakeManualSetPoint");
 
             private String entryName;
 
@@ -60,6 +61,8 @@ public class ShuffleBoard {
                     IntakeSubsystemEntries.IntakeState.entryName);
             putEntry(out, IntakeSubsystemEntries.IntakeVelocity, 0, mIntakeOverview,
                     IntakeSubsystemEntries.IntakeVelocity.entryName);
+            putEntry(out, IntakeSubsystemEntries.IntakeManualSetPoint, 0, mIntakeOverview,
+                    IntakeSubsystemEntries.IntakeManualSetPoint.entryName);
 
             return out;
         }

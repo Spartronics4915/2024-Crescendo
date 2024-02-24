@@ -26,17 +26,21 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     private IntakeState mCurrentState;
 
     private GenericEntry mIntakeStateWidget;
+    private GenericEntry mManualSetPointWidget;
 
     private final CANSparkMax mMotor;
     private final SparkPIDController mPIDController;
 
     private final DigitalInput mBeamBreak;
 
+    private double manualSetPoint;
+
     private Intake() {
         mCurrentState = IntakeState.OFF;
 
         var EntryMap = IntakeTabManager.getEnumMap(this);
         mIntakeStateWidget = EntryMap.get(IntakeSubsystemEntries.IntakeState);
+        mManualSetPointWidget = EntryMap.get(IntakeSubsystemEntries.IntakeManualSetPoint);
         IntakeTabManager.addMotorControlWidget(this);
 
         //motor setup 
@@ -50,6 +54,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         //beam break setup
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
+
+        manualSetPoint = 0;
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues){
@@ -123,8 +129,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
             throw new IllegalArgumentException("pctg can't be bigger than 1");
         }
+        manualSetPoint = pctg;
         setState(IntakeState.MANUAL);
-        mMotor.set(pctg);
+        mPIDController.setReference(pctg, ControlType.kDutyCycle);
       
     }   
 
@@ -134,24 +141,25 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
             off();
             return;
         }
-        mPIDController.setReference(kInSpeed, ControlType.kVelocity);
+        mPIDController.setReference(kInSpeed, ControlType.kDutyCycle);
     }
 
     private void load() {
-        mPIDController.setReference(kLoadSpeed, ControlType.kVelocity);
+        mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
     }
 
     private void out() {
-        mPIDController.setReference(kOutSpeed, ControlType.kVelocity);
+        mPIDController.setReference(kOutSpeed, ControlType.kDutyCycle);
     }
 
     private void off() {
-        mPIDController.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDController.setReference(kOffSpeed, ControlType.kDutyCycle);
     }
 
     @Override
     public void updateShuffleboard() {
         mIntakeStateWidget.setString(mCurrentState.name());
+        mManualSetPointWidget.setDouble(manualSetPoint);
     }
 
     @Override
@@ -173,8 +181,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
             // Speed should already have been set, so don't do anything
                 break;
             case NONE:
-                mMotor.set(0);
-                break;
+            mPIDController.setReference(0, ControlType.kDutyCycle);
+            break;
         }
         updateShuffleboard();
     }
