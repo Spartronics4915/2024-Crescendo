@@ -96,7 +96,7 @@ public class RobotContainer {
 
     // private static final ShooterWrist mShooterWrist;
     // private static final Shooter mShooter;
-    // private static final Elevator mElevator;
+    private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
 
@@ -127,9 +127,9 @@ public class RobotContainer {
         // mShooter = Shooter.getInstance();
         // ModeSwitchSubsystems.add(mShooter);
 
-        // mElevator = Elevator.getInstance();
-        // ModeSwitchSubsystems.add(mElevator);
-        // list.add(mElevator);
+        mElevator = Elevator.getInstance();
+        ModeSwitchSubsystems.add(mElevator);
+        list.add(mElevator);
 
         mSimulator = new TrapezoidSimulator(list);
 
@@ -172,7 +172,7 @@ public class RobotContainer {
         mVision = VisionSubsystem.getInstance();
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
-        // configureBindings();
+        configureBindings();
     }
 
     public static CommandXboxController getDriverController() {
@@ -186,8 +186,8 @@ public class RobotContainer {
     private void configureBindings() { // TODO: format these nicely
         // mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
         // mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
-        // mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
-        // mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
+        mOperatorController.povRight().whileTrue(mElevator.manualRunCommand(0.1));
+        mOperatorController.povLeft().whileTrue(mElevator.manualRunCommand(-0.1));
 
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
