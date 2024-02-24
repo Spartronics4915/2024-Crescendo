@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9506747935199166,
-      "y": 6.608587659483012
+      "x": 0.7434568701554986,
+      "y": 4.400618027197593
     },
-    "rotation": 60.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Test Path 1"
+            "pathName": "Bottom Start to Bottom Note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Test Path 2"
+            "pathName": "Bottom Note IE to Middle Note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Test Path 3"
+            "pathName": "Middle Note to Top Note"
           }
         }
       ]

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.9491127601760698,
-        "y": 6.714131412466122
+        "x": 1.324426771793104,
+        "y": 5.62148908844521
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.477009028880695,
-        "y": 7.331063581770021
+        "x": 1.5763401492462326,
+        "y": 6.554768510635923
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Mid Start"
     },
     {
       "anchor": {
-        "x": 2.86160958516972,
-        "y": 6.960897180036119
+        "x": 2.5392627042122213,
+        "y": 6.989049280983177
       },
       "prevControl": {
-        "x": 2.3664095144124353,
-        "y": 6.737135903530049
+        "x": 1.7922557582752527,
+        "y": 7.135702911515713
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Auto 2 Shoot 1"
+      "linkedName": "Top Note Initial Entry"
     }
   ],
   "rotationTargets": [],
@@ -33,11 +33,11 @@
     {
       "name": "New Constraints Zone",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 0.15,
       "constraints": {
-        "maxVelocity": 4.0,
+        "maxVelocity": 4.5,
         "maxAcceleration": 11.0853,
-        "maxAngularVelocity": 900.0,
+        "maxAngularVelocity": 100.0,
         "maxAngularAcceleration": 2220.0
       }
     }
@@ -51,14 +51,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -7.0,
+    "rotation": 0.5004760959234671,
     "rotateFast": true
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": 60.0,
+    "rotation": 0,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

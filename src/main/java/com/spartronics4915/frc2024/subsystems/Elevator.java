@@ -13,8 +13,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
@@ -37,8 +37,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private TrapezoidProfile mmmmmmmmmmmTrapezoid;
 
     private State mCurrentState;
-    private Rotation2d mTarget;// = new Rotation2d(Math.PI * 3);
-    private Rotation2d mManualDelta;
+    private double mTarget;// = new Rotation2d(Math.PI * 3);
+    private double mManualDelta;
 
     private ElevatorFeedforward mElevatorFeedforward;
 
@@ -47,6 +47,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorSetPointEntry;
     private GenericEntry mElevatorHeightEntry;
     private GenericEntry mElevatorManualControlEntry;
+    private GenericEntry mElevatorLeaderPos;
+    private GenericEntry mElevatorFollowerPos;
+    private GenericEntry mAppliedOutputWidget;
 
     private DigitalInput limitSwitch;
 
@@ -87,6 +90,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
 
+        // Set Encoders to 0 just for initialization
+        mEncoder.setPosition(0);
+        mFollower.getEncoder().setPosition(0);
+
         // Sets up Feed Foward
         mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(),
                 kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
@@ -108,7 +115,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             public void execute() {
                 mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
                 // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mTarget = Rotation2d.fromRotations(kLimitSwitchGoto * kMetersToRotation);
+                    mTarget = (kLimitSwitchGoto * kMetersToRotation);
                     updateCurrStateToReal();
                 // }
                 startupHome = true;
@@ -130,7 +137,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
-            if (!mHoming) mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), kMinimumManualRotations));
+            if (!mHoming) mTarget = (Math.max(mTarget, kMinimumManualRotations));
         }
         // Not-manual
         // switching with trigger
@@ -143,17 +150,17 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             
         // }
         if (!mHoming) {
-            mTarget = Rotation2d.fromRotations(Math.min(Math.max(mTarget.getRotations(), kMinimumManualRotations),kMaximumRotations));
+            mTarget = MathUtil.clamp(mTarget, kMinimumManualRotations, kMaximumRotations);
 
-            mTarget = Rotation2d.fromRotations(Math.max(mTarget.getRotations(), 0));
+            mTarget = Math.max(mTarget, 0);
         }
         
         mCurrentState = mmmmmmmmmmmTrapezoid.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
-                new State(mTarget.getRotations(), 0));
-        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedFowardValue());
+                new State(mTarget, 0));
+        mPid.setReference(mCurrentState.position, ControlType.kPosition, 0, getFeedForwardValue());
 
         updateShuffle();
     }
@@ -163,12 +170,13 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return mEncoder.getVelocity(); // CHECKUP Failure Point?
     }
 
-    private Rotation2d getEncoderPosReading() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()); // CHECKUP Failure Point?
+    private double getEncoderPosReading() {
+        return (mEncoder.getPosition()); // CHECKUP Failure Point?
     }
 
-    private double getFeedFowardValue() {
-        return mElevatorFeedforward.calculate(getEncoderVelReading());
+    private double getFeedForwardValue() {
+        return 0;
+        //return mElevatorFeedforward.calculate(getEncoderVelReading());
     }
     // #endregion
 
@@ -178,12 +186,18 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorSetPointEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorSetPoint);
         mElevatorHeightEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorHeight);
         mElevatorManualControlEntry = mEntries.get(ElevatorSubsystemEntries.ElevatorManualControl);
+        mElevatorLeaderPos = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderPos);
+        mElevatorFollowerPos = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerPos);
+        mAppliedOutputWidget = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput);
     }
 
     private void updateShuffle() {
-        mElevatorSetPointEntry.setDouble(mTarget.getDegrees() / kMetersToRotation);
+        mElevatorSetPointEntry.setDouble(mTarget / kMetersToRotation);
         mElevatorHeightEntry.setDouble(getHeight());
         mElevatorManualControlEntry.setBoolean(mIsManual);
+        mElevatorLeaderPos.setDouble(mEncoder.getPosition());
+        mElevatorFollowerPos.setDouble(mFollower.getEncoder().getPosition());
+        mAppliedOutputWidget.setDouble(mMotor.getAppliedOutput());
     }
     // #endregion
 
@@ -205,7 +219,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return height of elevator
      */
     public double getHeight() {
-        return getEncoderPosReading().getRotations() / kMetersToRotation;
+        return getEncoderPosReading() / kMetersToRotation;
     }
 
     /**
@@ -220,15 +234,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     // #region Maunel Manuel Manueal Manael Manual Stuff (5th times the charm)
 
     private void manualControlUpdate() {
-        mTarget = Rotation2d.fromRadians(mTarget.getRadians() + mManualDelta.getRadians());
+        mTarget = (mTarget + mManualDelta);
     }
 
-    private void setManualDelta(Rotation2d deltaPosition) {
+    private void setManualDelta(double deltaPosition) {
         mIsManual = true;
         mManualDelta = deltaPosition;
     }
 
-    private void homeMotor(Rotation2d angleDelta){
+    private void homeMotor(double angleDelta){
         mHoming = true;
         setManualDelta(angleDelta);
     }
@@ -237,15 +251,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * Command for manual movement
      * @param angleDelta
      */
-    public Command manualRunCommand(Rotation2d angleDelta) {
-        return this.startEnd(() -> setManualDelta(angleDelta), () -> {
+    public Command manualRunCommand(double posDelta) {
+        return this.startEnd(() -> setManualDelta(posDelta), () -> {
             if (!Robot.isSimulation())
                 resetTarget();
             mIsManual = false;
         });
     }
 
-    public Command homeMotorCommand(Rotation2d angleDelta){
+    public Command homeMotorCommand(double angleDelta){
         return runOnce(() -> {
             homeMotor(angleDelta);
         });
@@ -261,7 +275,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(double newTarget) {
         mIsManual = false;
-        mTarget = Rotation2d.fromRotations(newTarget * kMetersToRotation);
+        mTarget = (newTarget * kMetersToRotation);
     }
 
     /**
@@ -270,7 +284,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(IntakeAssemblyState intakeAssemblyState) {
         mIsManual = false;
-        mTarget = Rotation2d.fromRotations(intakeAssemblyState.ElevatorHeight * kMetersToRotation);
+        mTarget = (intakeAssemblyState.ElevatorHeight * kMetersToRotation);
     }
 
     /**
@@ -284,7 +298,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     public boolean atTargetState(double rotationThreshold){
-        return (Math.abs(getEncoderPosReading().getRotations() - mTarget.getRotations()) < rotationThreshold);
+        return (Math.abs(getEncoderPosReading() - mTarget) < rotationThreshold);
     }
     
     /**
@@ -306,7 +320,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private void updateCurrStateToReal(){
-        this.mCurrentState = new State(getEncoderPosReading().getRotations(), 0);
+        this.mCurrentState = new State(getEncoderPosReading(), 0);
     }
 
     // #endregion

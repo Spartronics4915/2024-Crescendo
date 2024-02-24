@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
@@ -59,7 +60,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
-import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kStageTarget;
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kSpeakerTarget;
 import static com.spartronics4915.frc2024.Constants.Drive.kPPConfig;
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
 import static com.spartronics4915.frc2024.Constants.OI.kOperatorControllerPort;
@@ -73,14 +74,14 @@ import java.util.Set;
 
 public class RobotContainer {
     // private enum SubsystemFlags{
-    //     IntakeWristFlag (true),
-    //     IntakeFlag (false),
-    //     ShooterFlag (false),
-    //     ShooterWristFlag (true),
-    //     ElevatorFlag (true);
+    // IntakeWristFlag (true),
+    // IntakeFlag (false),
+    // ShooterFlag (false),
+    // ShooterWristFlag (true),
+    // ElevatorFlag (true);
 
-    //     private final boolean isUsed;
-    //     private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
+    // private final boolean isUsed;
+    // private SubsystemFlags(boolean isUsed) {this.isUsed = isUsed;}
     // }
 
     private static final CommandXboxController mDriverController = new CommandXboxController(kDriverControllerPort);
@@ -89,15 +90,16 @@ public class RobotContainer {
     private final SendableChooser<Command> mAutoChooser;
 
     // private static final Intake mIntake = Intake.getInstance();
-    
+
     // private static final IntakeWrist mIntakeWrist;
-    // private static final Intake mIntake;
-    private static final ShooterWrist mShooterWrist;
-    private static final Shooter mShooter;
+    private static final Intake mIntake;
+
+    // private static final ShooterWrist mShooterWrist;
+    // private static final Shooter mShooter;
     // private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
-    
+
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
 
@@ -110,57 +112,67 @@ public class RobotContainer {
     static {
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
-        
+
         // mIntakeWrist = IntakeWrist.getInstance();;
         // ModeSwitchSubsystems.add(mIntakeWrist);
         // list.add(mIntakeWrist);
-        
 
-        // mIntake = Intake.getInstance();
-        // ModeSwitchSubsystems.add(mIntake);
-        
+        mIntake = Intake.getInstance();
+        ModeSwitchSubsystems.add(mIntake);
 
-        mShooterWrist = ShooterWrist.getInstance();
-        ModeSwitchSubsystems.add(mShooterWrist);
-        list.add(mShooterWrist);
+        // mShooterWrist = ShooterWrist.getInstance();
+        // ModeSwitchSubsystems.add(mShooterWrist);
+        // list.add(mShooterWrist);
 
-        mShooter = Shooter.getInstance();
-        ModeSwitchSubsystems.add(mShooter);
+        // mShooter = Shooter.getInstance();
+        // ModeSwitchSubsystems.add(mShooter);
 
         // mElevator = Elevator.getInstance();
         // ModeSwitchSubsystems.add(mElevator);
         // list.add(mElevator);
-        
 
         mSimulator = new TrapezoidSimulator(list);
 
         // ModeSwitchSubsystems.add(mElevator);
-        
+
         // Bling.addToLinkedList(new BlingMCwithPriority(() -> {
-        //     if (mPDP.getStickyFaults().Brownout) {
-        //         return Optional.of(new BlingMC(BlingModes.PULSE_SWITCH, Color.kRed, Color.kDarkRed));
-        //     } else {
-        //         return Optional.empty();
-        //     }
+        // if (mPDP.getStickyFaults().Brownout) {
+        // return Optional.of(new BlingMC(BlingModes.PULSE_SWITCH, Color.kRed, Color.kDarkRed));
+        // } else {
+        // return Optional.empty();
+        // }
         // }, -1));
 
-        new Trigger(() -> {return mPDP.getFaults().Brownout;}).onTrue(Commands.runOnce(() -> {
+        new Trigger(() -> {
+            return mPDP.getFaults().Brownout;
+        }).onTrue(Commands.runOnce(() -> {
             DriverStation.reportError("BROWNOUT DETECTED", false);
         }));
     }
 
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
-        mAutoChooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", mAutoChooser);
+        if (mSwerveDrive != null) {
+            mAutoChooser = AutoBuilder.buildAutoChooser();
+            SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
-        ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
-        overviewTab.add(mAutoChooser);
+            ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
+            overviewTab.add(mAutoChooser);
+
+            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+
+        } else {
+            mAutoChooser = null;
+        }
         mSwerveSim = new SwerveSim(mSwerveDrive);
         mVision = VisionSubsystem.getInstance();
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
-        configureBindings();
+        // configureBindings();
     }
 
     public static CommandXboxController getDriverController() {
@@ -171,42 +183,44 @@ public class RobotContainer {
         return mOperatorController;
     }
 
-
     private void configureBindings() { // TODO: format these nicely
-        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
-        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
+        // mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
+        // mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
         // mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(1)));
         // mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-1)));
-        mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
-        mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
 
-        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(2.5)));
-        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(Rotation2d.fromDegrees(-2.5)));
+        if (mSwerveDrive != null) {
+            mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+            mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
+        }
 
-        // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator); 
+        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.5));
+        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.5));
+
+        // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator);
         // mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
         // mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
         // mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
         // mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
-    
-        mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
-        mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
-        mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
-        mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
+        // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
+        // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
-    //     mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
+        // mOperatorController.x().onTrue(mShooter.setConveyorStateCommand(ConveyorState.OFF));
+        // mOperatorController.b().onTrue(mShooter.setConveyorStateCommand(ConveyorState.IN));
 
-    //     mOperatorController.button(13)
-    //             .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
+        // mOperatorController.button(10).whileTrue(NoteVisualizer.visualizeTrajectoryCommand());
 
-    //     mDriverController.a()
-    //             .whileTrue(new ToggleDetectorCommand());
-        
-    // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+        // mOperatorController.button(13)
+        // .whileTrue(new MovingAutoAimCommand(com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget));
 
-    //     mDriverController.leftTrigger(kDriverTriggerDeadband)
-    //             .whileTrue(new LockOnCommand());
+        // mDriverController.a()
+        // .whileTrue(new ToggleDetectorCommand());
+
+        // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
+
+        // mDriverController.leftTrigger(kDriverTriggerDeadband)
+        // .whileTrue(new LockOnCommand());
     }
 
     public Command getAutonomousCommand() {
@@ -216,9 +230,9 @@ public class RobotContainer {
         // System.out.println(a);
         // System.out.println("AUTO END");
         // return Commands.sequence(
-        //     Commands.print("starting auto"),
-        //     a,
-        //     Commands.print("ending")
+        // Commands.print("starting auto"),
+        // a,
+        // Commands.print("ending")
         // );
     }
 }

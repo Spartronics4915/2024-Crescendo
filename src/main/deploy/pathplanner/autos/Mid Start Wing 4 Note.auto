@@ -1,6 +1,12 @@
 {
   "version": 1.0,
-  "startingPose": null,
+  "startingPose": {
+    "position": {
+      "x": 1.3038718330183912,
+      "y": 5.624222646796942
+    },
+    "rotation": 0
+  },
   "command": {
     "type": "sequential",
     "data": {
@@ -8,19 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 2 Path 1"
+            "pathName": "Mid Start to Top Note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 2 Path 2"
+            "pathName": "Top Note IE to Mid CE"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Auto 2 Path 3"
+            "pathName": "Middle Note to Bottom Note"
           }
         }
       ]

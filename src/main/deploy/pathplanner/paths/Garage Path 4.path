@@ -3,47 +3,50 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.7408506609595635,
-        "y": 5.631784308211474
+        "x": 1.4817998866766982,
+        "y": 6.867392196322855
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8588846497094584,
-        "y": 5.631784308211474
+        "x": 2.024481741271176,
+        "y": 6.591117797620211
       },
       "isLocked": false,
-      "linkedName": "Shoot 1"
+      "linkedName": "Garage Midpoint 3"
     },
     {
       "anchor": {
-        "x": 2.8991693869376745,
-        "y": 5.482681125389723
+        "x": 2.3599577968386725,
+        "y": 6.324710341728376
       },
       "prevControl": {
-        "x": 2.331310818998796,
-        "y": 5.482681125389723
+        "x": 2.0244817412711766,
+        "y": 6.9364607959985145
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Shoot 2"
+      "linkedName": "Garage Midpoint 4"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
-    "maxAcceleration": 11.0853,
+    "maxVelocity": 0.45,
+    "maxAcceleration": 1.109,
     "maxAngularVelocity": 900.0,
     "maxAngularAcceleration": 2220.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 53.972626614896384,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null,
-  "useDefaultConstraints": false
+  "previewStartingState": {
+    "rotation": -132.91743472026917,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
 }
