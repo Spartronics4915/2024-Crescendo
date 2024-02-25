@@ -171,20 +171,47 @@ public final class Constants {
 
             public static final double kLimitSwitchTriggerOffset = -0.025;
 
-            public static final MotorConstants kMotorConstants = new MotorConstants(13, MotorType.kBrushless, false,
+            public static final MotorConstants kMotorConstants = new MotorConstants(19, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40);
-            public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); // TODO Tune
-            public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); // TODO Tune
+            // public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); // TODO Tune
+            // public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); // TODO Tune
 
-            public static final double kWristToRotationsRate = 1.0;
+            public static final double kWristToRotationsRate = 44.7631578947;
             
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafetyLimit = 1.0; // HACK tested in sim
 
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(90); //only when above the safety height
+            //TODO find values for this
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(170); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(70); 
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(0); 
+
+            public static final PIDConstants kPIDconstants; // don't test with these values
+            static{
+                final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
+                final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
+                        * ShooterWristConstants.kWristToRotationsRate);
+                final double maxMotorPowerSetting = 1;
+                final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower/2;
+    
+                kPIDconstants = new PIDConstants(P, 0.0, 0.0);
+            }
+    
+            public static final Constraints kConstraints;
+    
+            static{
+                 // The number of seconds that we expect the shooter to go from in to Max
+                final double timeMinToMaxSeconds = 10;
+                // How long we expect the shooter to take to get to full speed
+                final double timeToFullSpeedSeconds = 1;
+                final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
+                        - ShooterWristConstants.kMinAngle.getRotations();
+                final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
+                final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
+    
+                kConstraints = new Constraints(maxWristVelocity, maxWristAcceleration);
+            }
 
             public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                      // untested
@@ -203,7 +230,7 @@ public final class Constants {
             //FIXME turn brake mode back on 
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit);
-            public static final MotorConstants kFollowerConstants = new MotorConstants(23, MotorType.kBrushless, true,
+            public static final MotorConstants kFollowerConstants = new MotorConstants(16, MotorType.kBrushless, true,
                     IdleMode.kBrake, kMotorLimit); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);

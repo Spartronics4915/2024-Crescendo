@@ -164,8 +164,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget, 0));
         // mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
-        System.out.println(mEncoder.getPosition());
-        System.out.println(mFollowerEncoder.getPosition());
+        // System.out.println("main"+mEncoder.getPosition());
+        // System.out.println("follow"+mFollowerEncoder.getPosition()); //TODO: same direction
         updateShuffle();
     }
 

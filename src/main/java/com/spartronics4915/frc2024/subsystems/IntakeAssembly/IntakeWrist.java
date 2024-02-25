@@ -7,7 +7,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleArrayEntry;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -80,12 +84,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     public IntakeWrist() {
         super();
         mWristMotor = initMotor(IntakeWristConstants.kMotorConstants);
-        mWristPIDController = initPID(IntakeWristConstants.kPIDConstants);
+        mWristPIDController = initPID(IntakeWristConstants.kPIDconstants);
         mEncoder = initEncoder();
-        kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kTrapzoidConstraints);
+        kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kConstraints);
         kFeedforwardCalc = initFeedForward();
         
-        mEncoder.setPosition(0.0);
+        mEncoder.setPosition(kMinAngle.getRotations());
 
         mLimitSwitch = initLimitSwitch();
 
@@ -117,6 +121,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private SparkPIDController initPID(PIDConstants kPIDValues){
         SparkPIDController pid = mWristMotor.getPIDController();
 
+        pid.setOutputRange(-0.2, 0.2);
+        System.out.println(kPIDValues);
         pid.setP(kPIDValues.p());
         pid.setI(kPIDValues.i());
         pid.setD(kPIDValues.d());
@@ -233,6 +239,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     public Command setRotationSetpointTesting(double degrees){
         return Commands.runOnce(() -> {
+            System.out.println("setting to: " + degrees);
             setRotationSetPoint(Rotation2d.fromDegrees(degrees));
         });
     }
@@ -267,6 +274,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     //#endregion
 
     //#region periodic functions
+    // private DoubleArrayPublisher test = NetworkTableInstance.getDefault().getTable("lookHereForLogging").getDoubleArrayTopic("stuff").publish(); 
 
     @Override
     public void periodic() {        
@@ -277,6 +285,17 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
         handleLimitSwitch();
+
+        // test.accept(new double[]{
+        //     mWristMotor.getAppliedOutput(), //0
+        //     mWristMotor.getOutputCurrent(), //1
+        //     mEncoder.getPosition(), //2 
+        //     getWristAngle().getDegrees(), //3 real position
+        //     Units.rotationsToDegrees(mCurrState.position), //4 trapazoid position
+        //     mRotSetPoint.getDegrees() - Units.rotationsToDegrees(mCurrState.position), //5 //trapazoid offset
+        //     Units.rotationsToDegrees(mCurrState.position) - getWristAngle().getDegrees() //6 //PID P
+        // });
+        System.out.println(mWristMotor.getAppliedOutput());
     }
     
     public boolean needSoftLimit(){
@@ -329,7 +348,6 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
             mCurrState,
             new State(mRotSetPoint.getRotations(), 0)
         );
-        
         mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 

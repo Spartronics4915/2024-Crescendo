@@ -91,8 +91,8 @@ public class RobotContainer {
 
     // private static final Intake mIntake = Intake.getInstance();
 
-    // private static final IntakeWrist mIntakeWrist;
-    private static final Intake mIntake;
+    private static final IntakeWrist mIntakeWrist;
+    // private static final Intake mIntake;
 
     // private static final ShooterWrist mShooterWrist;
     // private static final Shooter mShooter;
@@ -113,12 +113,12 @@ public class RobotContainer {
 
         ArrayList<TrapezoidSimulatorInterface> list = new ArrayList<>();
 
-        // mIntakeWrist = IntakeWrist.getInstance();;
-        // ModeSwitchSubsystems.add(mIntakeWrist);
-        // list.add(mIntakeWrist);
+        mIntakeWrist = IntakeWrist.getInstance();;
+        ModeSwitchSubsystems.add(mIntakeWrist);
+        list.add(mIntakeWrist);
 
-        mIntake = Intake.getInstance();
-        ModeSwitchSubsystems.add(mIntake);
+        // mIntake = Intake.getInstance();
+        // ModeSwitchSubsystems.add(mIntake);
 
         // mShooterWrist = ShooterWrist.getInstance();
         // ModeSwitchSubsystems.add(mShooterWrist);
