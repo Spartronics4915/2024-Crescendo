@@ -92,9 +92,9 @@ public class RobotContainer {
     // private static final Intake mIntake = Intake.getInstance();
 
     // private static final IntakeWrist mIntakeWrist;
-    // private static final Intake mIntake;
+    private static final Intake mIntake;
 
-    private static final ShooterWrist mShooterWrist;
+    // private static final ShooterWrist mShooterWrist;
     // private static final Shooter mShooter;
     // private static final Elevator mElevator;
 
@@ -117,12 +117,12 @@ public class RobotContainer {
         // ModeSwitchSubsystems.add(mIntakeWrist);
         // list.add(mIntakeWrist);
 
-        // mIntake = Intake.getInstance();
-        // ModeSwitchSubsystems.add(mIntake);
+        mIntake = Intake.getInstance();
+        ModeSwitchSubsystems.add(mIntake);
 
-        mShooterWrist = ShooterWrist.getInstance();
-        ModeSwitchSubsystems.add(mShooterWrist);
-        list.add(mShooterWrist);
+        // mShooterWrist = ShooterWrist.getInstance();
+        // ModeSwitchSubsystems.add(mShooterWrist);
+        // list.add(mShooterWrist);
 
         // mShooter = Shooter.getInstance();
         // ModeSwitchSubsystems.add(mShooter);
@@ -186,8 +186,8 @@ public class RobotContainer {
     private void configureBindings() { // TODO: format these nicely
         // mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
         // mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
-        mOperatorController.povRight().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.1)));
-        mOperatorController.povLeft().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.1)));
+        // mOperatorController.povRight().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.1)));
+        // mOperatorController.povLeft().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.1)));
 
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());

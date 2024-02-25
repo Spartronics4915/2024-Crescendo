@@ -56,6 +56,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private boolean startupHome = false;
     private boolean mHoming = false;
 
+    private RelativeEncoder mFollowerEncoder;
+
 
     // #endregion
 
@@ -89,6 +91,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
+        mFollowerEncoder = mFollower.getEncoder(); //TODO remove this and the print lines
 
         // Set Encoders to 0 just for initialization
         mEncoder.setPosition(0);
@@ -160,8 +163,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget, 0));
-        mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
-
+        // mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
+        System.out.println(mEncoder.getPosition());
+        System.out.println(mFollowerEncoder.getPosition());
         updateShuffle();
     }
 
