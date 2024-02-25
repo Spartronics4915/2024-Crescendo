@@ -158,11 +158,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading*kWristToRotationsRate);
-                // if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading);
-                    updateCurrStateToReal();
-                // }
+                resetEncoder(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
                 mManualMovement = false;
                 mHoming = false;
                 startupHome = true;
@@ -189,13 +185,22 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
 
-    private void currentToSetPoint(){
-        updateCurrStateToReal();
-        setRotationSetPoint(getWristAngle());
+    private void resetEncoder(Rotation2d angle){
+        mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+        currentToSetPoint(angle);
     }
 
-    private void updateCurrStateToReal(){
-        mCurrState = new State(getWristAngle().getRotations(), 0.0);
+    private void currentToSetPoint(){
+        currentToSetPoint(getWristAngle());
+    }
+
+    private void currentToSetPoint(Rotation2d setpoint){
+        updateCurrStateToReal(setpoint);
+        setRotationSetPoint(setpoint);
+    }
+
+    private void updateCurrStateToReal(Rotation2d real){
+        mCurrState = new State(real.getRotations(), 0.0);
     }
     
     private void setRotationSetPoint(Rotation2d angle){
@@ -241,6 +246,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 mManualMovement = false;
             }
         );
+    }
+
+    public Command resetEncoderToAngle(double degrees){
+        return Commands.runOnce(() -> {
+            resetEncoder(Rotation2d.fromDegrees(degrees));
+        });
     }
         
     public boolean atTargetState(double rotationThreshold){

@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import java.util.Set;
+
 public class ShuffleBoard {
 
     public static String UserTab = "Overview"; // anything the drivers need to see should be on this tab
@@ -181,11 +183,15 @@ public class ShuffleBoard {
         public static String tabName = "ShooterWrist";
 
         public static enum ShooterWristSubsystemEntries {
-            ShooterSetPoint("ShooterSetPoint"), ShooterEncoderReading(
-                    "ShooterEncoderReading"), ShooterDelta(
-                            "ShooterDelta"), ShooterManualControl(
-                                    "ShooterManual"), WristAppliedOutput(
-                                            "WristAppliedOutput");
+            ShooterSetPoint("ShooterSetPoint"), 
+            ShooterEncoderReading("ShooterEncoderReading"), 
+            ShooterDelta("ShooterDelta"), 
+            ShooterManualControl("ShooterManual"), 
+            ShooterWristErrorPID("ShooterPIDError"),
+            ShooterWristErrorTrapazoid("ShooterTrapazoidError"), 
+            ShooterWristTarget("ShooterTarget"), 
+
+            WristAppliedOutput("WristAppliedOutput");
 
             private String entryName;
 
@@ -217,8 +223,21 @@ public class ShuffleBoard {
             putEntry(out, ShooterWristSubsystemEntries.WristAppliedOutput, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.WristAppliedOutput.entryName);
 
-            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder())
-                    .withProperties(Map.of("Label position", "HIDDEN"));
+            putEntry(out, ShooterWristSubsystemEntries.ShooterWristErrorPID, 0.0, mShuffleBoardTab,
+                    ShooterWristSubsystemEntries.ShooterWristErrorPID.entryName);
+
+            putEntry(out, ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid, 0.0, mShuffleBoardTab,
+                    ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid.entryName);
+
+            mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
+                    // .withProperties(Map.of("Label position", "HIDDEN"));
+
+            var entry = mShuffleBoardTab.add("wristResetAngle", 0.0).getEntry();
+
+            mShuffleBoardTab.add("resetToAngle", Commands.defer(() -> {return subsystem.resetToAngle(entry.getDouble(0.0));}, Set.of()));
+
+            mShuffleBoardTab.add("setToSendableCHooser", subsystem.setValueFromChooser());
+
             mShuffleBoardTab.add("Set to 45 degrees",
                     subsystem.runOnce(() -> subsystem
                             .publicSetRotationSetPoint(Rotation2d.fromDegrees(45))))

@@ -21,7 +21,10 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
+import java.util.Set;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -69,6 +72,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterManualControlEntry;
     private GenericEntry mShooterDelta;
     private GenericEntry mAppliedOutput;
+    private GenericEntry mShooterWristErrorPID;
+    private GenericEntry mShooterWristErrorTrapazoid;
+
+    private SendableChooser<Rotation2d> chooser;
 
     private boolean startupHome = false;
     private boolean mHoming = false;
@@ -110,8 +117,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
                 // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading);
-                updateCurrStateToReal();
+                currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
                 // }
                 mHoming = false;
                 mManualMovement = false;
@@ -137,7 +143,20 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterDelta = mEntries.get(ShooterWristSubsystemEntries.ShooterDelta);
         mAppliedOutput = mEntries.get(ShooterWristSubsystemEntries.WristAppliedOutput);
 
+        mShooterWristErrorPID = mEntries.get(ShooterWristSubsystemEntries.ShooterWristErrorPID);
+        mShooterWristErrorTrapazoid = mEntries.get(ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid);
 
+        chooser = new SendableChooser<Rotation2d>();
+
+        chooser.addOption("MIN", kMinAngle);
+        chooser.addOption(""+ShooterWristState.SUBWOOFER_SHOT.shooterAngle.getDegrees(), ShooterWristState.SUBWOOFER_SHOT.shooterAngle);
+        chooser.addOption(""+ShooterWristState.HOMING.shooterAngle.getDegrees(), ShooterWristState.HOMING.shooterAngle);
+        chooser.addOption(""+ShooterWristState.Test.shooterAngle.getDegrees(), ShooterWristState.Test.shooterAngle);
+        chooser.addOption(""+ShooterWristState.STOW.shooterAngle.getDegrees(), ShooterWristState.STOW.shooterAngle);
+        chooser.addOption("MAX", kMaxAngle);
+
+
+        SmartDashboard.putData("choose shooterWrist value", chooser);
     }
 
     private CANSparkMax initMotor(MotorConstants motorValues) {
@@ -224,12 +243,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void currentToSetPoint() {
-        updateCurrStateToReal();
-        setRotationSetPoint(getWristAngle()); // TODO clamp for safety? for now will have force boolean
+        currentToSetPoint(getWristAngle());
     }
 
-    private void updateCurrStateToReal() {
-        mCurrentState = new State(getWristAngle().getRotations(), 0.0);
+    private void currentToSetPoint(Rotation2d setpoint) {
+        updateCurrStateToReal(setpoint);
+        System.out.println(setpoint);
+        setRotationSetPoint(setpoint); // TODO clamp for safety? for now will have force boolean
+    }
+
+    private void updateCurrStateToReal(Rotation2d setpoint) {
+        mCurrentState = new State(setpoint.getRotations(), 0.0);
     }
 
     public boolean atTarget() {
@@ -241,11 +265,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #region Commands
 
     public Command resetEncoder() {
+        return resetToAngle(0.0);
+    }
+
+    public Command resetToAngle(double degrees) {
         return runOnce(() -> {
-            System.out.println("Reset encoder Called");
-            mEncoder.setPosition(0.0);
-            mCurrentState = new State(0.0, 0.0);
-            currentToSetPoint();
+            var angle = Rotation2d.fromDegrees(degrees);
+            System.out.println("Reset encoder Called: " + angle.getDegrees());
+            mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+            // mCurrentState = new State(degrees, 0.0);
+            // mTargetRotation2d = Rotation2d.fromDegrees(degrees);
+            currentToSetPoint(angle);
         });
     }
 
@@ -253,6 +283,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return Commands.run(() -> {
             setRotationSetPoint(supplier.get());
         }, this);
+    }
+
+    public Command setValueFromChooser(){
+        return Commands.runOnce(() -> {
+            setRotationSetPoint(chooser.getSelected());
+        });
     }
 
     public Command setStateCommand(ShooterWristState newState) {
@@ -346,8 +382,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         // TODO: Make this conversion its own method?
 
-        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0,
-                0);
+        mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
+        mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
+
+        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 

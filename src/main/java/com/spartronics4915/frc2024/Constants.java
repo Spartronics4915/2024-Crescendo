@@ -200,13 +200,14 @@ public final class Constants {
 
         public static final class ElevatorConstants {
             private static final int kMotorLimit = 10;
+            //FIXME turn brake mode back on 
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit);
             public static final MotorConstants kFollowerConstants = new MotorConstants(23, MotorType.kBrushless, true,
                     IdleMode.kBrake, kMotorLimit); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
-            public static final double kMetersToRotation = 1; // Conversion rate
+            public static final double kMetersToRotation = 0.91 /  59.16750717163086; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
                     "Elevator",
                     1.0,
@@ -230,8 +231,10 @@ public final class Constants {
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(90)), // TODO find Value
-            HOMING(Rotation2d.fromDegrees(180)), STOW(Rotation2d.fromDegrees(90));
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(60)), // TODO find Value
+            HOMING(Rotation2d.fromDegrees(50)),
+            Test(Rotation2d.fromDegrees(30)),
+            STOW(Rotation2d.fromDegrees(20));
 
             public final Rotation2d shooterAngle;
 
@@ -247,7 +250,7 @@ public final class Constants {
         
         
     
-        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(90).getRotations()); //only when above the safety height
+        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(80).getRotations()); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); //FIXME used for sim
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
@@ -268,7 +271,7 @@ public final class Constants {
             final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
                     * ShooterWristConstants.kWristToRotationsRate);
             final double maxMotorPowerSetting = 1;
-            final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower/2;
+            final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
             kPIDconstants = new PIDConstants(P, 0.0, 0.0);
         }
@@ -277,7 +280,7 @@ public final class Constants {
 
         static{
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 10;
+            final double timeMinToMaxSeconds = 0.625;
             // How long we expect the shooter to take to get to full speed
             final double timeToFullSpeedSeconds = 1;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
