@@ -231,6 +231,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         });
     }
 
+    public Command setRotationSetpointTesting(double degrees){
+        return Commands.runOnce(() -> {
+            setRotationSetPoint(Rotation2d.fromDegrees(degrees));
+        });
+    }
+
     public Command homingCommand(Rotation2d angleDelta){
         return this.runOnce(() -> {
             homeMotor(angleDelta);

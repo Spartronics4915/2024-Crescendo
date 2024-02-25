@@ -109,12 +109,20 @@ public class ShuffleBoard {
 
             putEntry(out, WristSubsystemEntries.WristSetPoint, -1.0, mShuffleBoardTab,
                     WristSubsystemEntries.WristSetPoint.entryName);
-
+            
             putEntry(out, WristSubsystemEntries.WristManualControl, false, mShuffleBoardTab,
                     WristSubsystemEntries.WristManualControl.entryName);
 
             putEntry(out, WristSubsystemEntries.WristEncoderReading, -1.0, mShuffleBoardTab,
                     WristSubsystemEntries.WristEncoderReading.entryName);
+
+            var x = mShuffleBoardTab.add("targetSet", 0.0).getEntry();
+
+            mShuffleBoardTab.add("setTargetToAngle", Commands.runOnce(() -> subsystem.setRotationSetpointTesting(x.getDouble(0.0))));
+
+            var y = mShuffleBoardTab.add("resetAngle", 0.0).getEntry();
+
+            mShuffleBoardTab.add("resetToResetAngle", Commands.runOnce(() -> subsystem.resetEncoderToAngle(y.getDouble(0.0))));
 
             mShuffleBoardTab.add("stow", subsystem.setStateCommand(IntakeAssemblyState.STOW));
             mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
