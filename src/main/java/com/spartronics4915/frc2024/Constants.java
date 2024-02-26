@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024;
 
 import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 
 import java.util.stream.Stream;
 
@@ -233,9 +234,18 @@ public final class Constants {
                     IdleMode.kBrake, kMotorLimit);
             public static final MotorConstants kFollowerConstants = new MotorConstants(16, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit); // HACK untested
-            public static final Constraints kZoidConstants = new Constraints(1d, 1d);
-            public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
-            public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
+            
+                    public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
+            
+            public static final Constraints kZoidConstants = new Constraints(
+                0.1d, 
+                0.05d
+            );
+
+            public static final PIDConstants kPIDConstants = new PIDConstants(
+                0.2/(0.05 * kMetersToRotation) /* */, 
+            0, 0);
+
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
                     "Elevator",
                     1.0,
