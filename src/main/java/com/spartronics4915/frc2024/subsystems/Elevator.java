@@ -15,6 +15,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
+import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.kWristToRotationsRate;
 
 import java.util.Set;
 
@@ -97,7 +99,6 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Limit PID Output for Testing
         mPid.setOutputRange(-0.2, 0.2);
 
-        mMotor.burnFlash();
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 
         // Sets up the encoder
@@ -105,15 +106,15 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mFollowerEncoder = mFollower.getEncoder(); //TODO remove this and the print lines
 
         // Set Encoders to 0 just for initialization
-        mEncoder.setPosition(0);
-        mFollower.getEncoder().setPosition(0);
+        resetEncoder(kMinMeters / kMetersToRotation);
+
+        mMotor.burnFlash();
 
         // Sets up Feed Foward
         mElevatorFeedforward = new ElevatorFeedforward(kElevatorFeedFowardConstants.kS(),
                 kElevatorFeedFowardConstants.kG(), kElevatorFeedFowardConstants.kV());
 
         // Sets the current state and target
-        resetTarget();
 
         // Sets up the Limit Switch
         limitSwitch = new DigitalInput(kLimitSwitchChannel);
@@ -127,10 +128,8 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchGoto*kMetersToRotation);
                 // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    mTarget = (kLimitSwitchGoto);
-                    updateCurrStateToReal();
+                    resetEncoder(kLimitSwitchGoto);
                 // }
                 startupHome = true;
                 mHoming = false;
@@ -151,7 +150,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     public void periodic() {
         if (mIsManual) { // Manual
             manualControlUpdate();
-            if (!mHoming) mTarget = (Math.max(mTarget, kMinimumManualRotations));
+            if (!mHoming) mTarget = (Math.max(mTarget, kMinMeters));
         }
         // Not-manual
         // switching with trigger
@@ -164,7 +163,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             
         // }
         if (!mHoming) {
-            mTarget = MathUtil.clamp(mTarget, kMinimumManualRotations, kMaximumRotations);
+            mTarget = MathUtil.clamp(mTarget, kMinMeters, kMaxMeters);
 
             mTarget = Math.max(mTarget, 0);
         }
@@ -206,9 +205,17 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mAppliedOutputWidget = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput);
         mFollowerAppliedOutput = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerAppliedOutput);
         ShuffleboardTab tab = Shuffleboard.getTab(ElevatorTabManager.tabName);
-        var input = tab.add("targetSet", 0.0).getEntry();
+        var inputTarget = tab.add("targetSetValue", 0.0).getEntry();
         
-        tab.add("red", Commands.defer(() -> {return this.setTargetCommand(input.getDouble(0.0));}, Set.of()));
+        tab.add("targetSet", Commands.defer(() -> {return this.setTargetCommand(inputTarget.getDouble(0.0));}, Set.of()));
+
+        var encoderTarget = tab.add("EncoderSetValue", 0.0).getEntry();
+        
+        tab.add("encoderSet", Commands.defer(() -> {
+            return Commands.runOnce(() -> {
+                this.resetEncoder(encoderTarget.getDouble(0.0));
+            });
+        }, Set.of()));
     }
 
     private void updateShuffle() {
@@ -314,6 +321,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public Command setTargetCommand(double newTarget) {
         return runOnce(() -> {
+            System.out.println("setting target " + newTarget);
             setTarget(newTarget);
         });
     }
@@ -337,11 +345,20 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void resetTarget() {
         updateCurrStateToReal();
-        mTarget = getEncoderPosReading();
+    }
+
+    private void resetEncoder(double meters){
+        mEncoder.setPosition(meters * kMetersToRotation);
+        updateCurrStateToReal(meters);
     }
 
     private void updateCurrStateToReal(){
-        this.mCurrentState = new State(getEncoderPosReading() / kMetersToRotation, 0);
+        updateCurrStateToReal(getHeight());
+    }
+    
+    private void updateCurrStateToReal(double meters){
+        mTarget = meters;
+        this.mCurrentState = new State(meters, 0);
     }
 
     // #endregion
