@@ -92,10 +92,10 @@ public class RobotContainer {
     // private static final Intake mIntake = Intake.getInstance();
 
     private static final IntakeWrist mIntakeWrist;
-    // private static final Intake mIntake;
+    private static final Intake mIntake;
 
-    // private static final ShooterWrist mShooterWrist;
-    // private static final Shooter mShooter;
+    private static final ShooterWrist mShooterWrist;
+    private static final Shooter mShooter;
     private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
@@ -117,15 +117,15 @@ public class RobotContainer {
         ModeSwitchSubsystems.add(mIntakeWrist);
         list.add(mIntakeWrist);
 
-        // mIntake = Intake.getInstance();
-        // ModeSwitchSubsystems.add(mIntake);
+        mIntake = Intake.getInstance();
+        ModeSwitchSubsystems.add(mIntake);
 
-        // mShooterWrist = ShooterWrist.getInstance();
-        // ModeSwitchSubsystems.add(mShooterWrist);
-        // list.add(mShooterWrist);
+        mShooterWrist = ShooterWrist.getInstance();
+        ModeSwitchSubsystems.add(mShooterWrist);
+        list.add(mShooterWrist);
 
-        // mShooter = Shooter.getInstance();
-        // ModeSwitchSubsystems.add(mShooter);
+        mShooter = Shooter.getInstance();
+        ModeSwitchSubsystems.add(mShooter);
 
         mElevator = Elevator.getInstance();
         ModeSwitchSubsystems.add(mElevator);
