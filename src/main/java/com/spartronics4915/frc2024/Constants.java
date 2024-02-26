@@ -153,10 +153,10 @@ public final class Constants {
         }
 
         public static final class IntakeConstants {// [ ] Intake constants
-            public static final MotorConstants kMotorConstants = new MotorConstants(12, MotorType.kBrushless, false,
+            public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40);
 
-            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 1.0, 1.0); // HACK Tune, and test
+            public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
             public static final double kInSpeed = 0.2; // placeholder
             public static final double kLoadSpeed = 0.2; // placeholder
@@ -182,7 +182,7 @@ public final class Constants {
             
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final double kMeterSafetyLimit = 1.0; // HACK tested in sim
+            public static final double kMeterSafetyLimit = 0.3; // HACK tested in sim
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(50); //only when above the safety height
@@ -263,7 +263,7 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.1;
-            public static final double kMaxMeters = 0.4; // hack untested
+            public static final double kMaxMeters = 0.43; // hack untested
         }
     }
 
