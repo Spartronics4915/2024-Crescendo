@@ -86,6 +86,10 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mPid.setI(kPIDConstants.i());
         mPid.setD(kPIDConstants.d());
 
+
+        // Limit PID Output for Testing
+        mPid.setOutputRange(-0.2, 0.2);
+
         mMotor.burnFlash();
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 
@@ -223,7 +227,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @return height of elevator
      */
     public double getHeight() {
-        return getEncoderPosReading();
+        return getEncoderPosReading() / kMetersToRotation;
     }
 
     /**

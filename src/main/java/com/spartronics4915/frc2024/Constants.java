@@ -234,7 +234,7 @@ public final class Constants {
                     IdleMode.kBrake, kMotorLimit); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
-            public static final double kMetersToRotation = 0.91 /  59.16750717163086; // Conversion rate
+            public static final double kMetersToRotation = 59.16750717163086 / 0.91; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
                     "Elevator",
                     1.0,

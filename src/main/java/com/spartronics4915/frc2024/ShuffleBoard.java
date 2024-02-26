@@ -333,5 +333,20 @@ public class ShuffleBoard {
             return out;
         }
 
+                public static void addMotorControlWidget(Elevator subsystem) {
+            ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                    .getTab(tabName)
+                    .getLayout("Motor Control", BuiltInLayouts.kList)
+                    .withSize(3, 3).withProperties(Map.of("Label position", "TOP"));
+
+            GenericEntry heightTarget = mShuffleBoardWidget.add("Target Angle", 45)
+                    .withWidget(BuiltInWidgets.kNumberSlider)
+                    .withProperties(Map.of("min",0, "max", 1)).getEntry();
+
+            mShuffleBoardWidget.add("Set to target",
+                    subsystem.runOnce(() -> subsystem
+                            .setTarget(heightTarget.getDouble(45))));
+    }
+
     }
 }
