@@ -105,7 +105,7 @@ public class ShuffleBoard {
             ShuffleboardLayout mShuffleBoardTab = Shuffleboard
                     .getTab(tabName)
                     .getLayout(tabName + "layout", BuiltInLayouts.kList)
-                    .withSize(2, 2);
+                    .withSize(2, 2).withProperties(Map.of("Label position", "LEFT"));
 
             putEntry(out, WristSubsystemEntries.WristSetPoint, -1.0, mShuffleBoardTab,
                     WristSubsystemEntries.WristSetPoint.entryName);
@@ -128,6 +128,22 @@ public class ShuffleBoard {
             mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
 
             return out;
+        }
+
+        public static void addMotorControlWidget(IntakeWrist subsystem) {
+            ShuffleboardLayout mShuffleBoardWidget = Shuffleboard
+                    .getTab(tabName)
+                    .getLayout("Motor Control", BuiltInLayouts.kList)
+                    .withSize(3, 3).withProperties(Map.of("Label position", "TOP"));
+
+            GenericEntry angleTarget = mShuffleBoardWidget.add("Target Angle", 45)
+                    .withWidget(BuiltInWidgets.kNumberSlider)
+                    .withProperties(Map.of("min", -90, "max", 80)).getEntry();
+
+            mShuffleBoardWidget.add("Set to target",
+                    subsystem.runOnce(() -> subsystem
+                            .setRotationSetpointTesting(angleTarget.getDouble(45))));
+
         }
     }
 
@@ -316,6 +332,6 @@ public class ShuffleBoard {
 
             return out;
         }
-    }
 
+    }
 }

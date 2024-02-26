@@ -140,6 +140,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mManualControlEntry = mEntries.get(WristSubsystemEntries.WristManualControl);
         mWristSetPointEntry = mEntries.get(WristSubsystemEntries.WristSetPoint);
         mEncoderEntry = mEntries.get(WristSubsystemEntries.WristEncoderReading);
+
+        IntakeWristTabManager.addMotorControlWidget(this);
     }
 
     private TrapezoidProfile initTrapezoid(Constraints constraints) {
