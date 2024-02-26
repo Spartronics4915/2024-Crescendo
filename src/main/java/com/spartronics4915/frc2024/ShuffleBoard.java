@@ -43,7 +43,8 @@ public class ShuffleBoard {
 
         public static enum IntakeSubsystemEntries {
             IntakeState("State"), IntakeVelocity("IntakeAppliedOutput"), 
-            IntakeManualSetPoint("IntakeManualSetPoint");
+            IntakeManualSetPoint("IntakeManualSetPoint"),
+            IntakeMotorCurrent("IntakeMotorCurrent");
 
             private String entryName;
 
@@ -66,6 +67,8 @@ public class ShuffleBoard {
             putEntry(out, IntakeSubsystemEntries.IntakeManualSetPoint, 0, mIntakeOverview,
                     IntakeSubsystemEntries.IntakeManualSetPoint.entryName);
 
+            putEntry(out, IntakeSubsystemEntries.IntakeMotorCurrent, 0, mIntakeOverview, IntakeSubsystemEntries.IntakeMotorCurrent.entryName);
+
             return out;
         }
 
@@ -82,6 +85,8 @@ public class ShuffleBoard {
             mShuffleBoardWidget.add("Set to speed",
                     subsystem.runOnce(() -> subsystem.setPctgSpeed(speedTarget.getDouble(0))));
 
+                mShuffleBoardWidget.add("Set to IN", subsystem.runOnce(()->subsystem.setState(IntakeState.IN)));
+                   mShuffleBoardWidget.add("Set to OFF", subsystem.runOnce(()->subsystem.setState(IntakeState.OFF)));
         }
 
     }

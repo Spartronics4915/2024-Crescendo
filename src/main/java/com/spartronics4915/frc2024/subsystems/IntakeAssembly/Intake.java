@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.util.MotorConstants;
@@ -15,6 +16,8 @@ import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
+
+import javax.swing.event.MenuDragMouseEvent;
 
 public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static enum IntakeState {
@@ -27,6 +30,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
     private GenericEntry mIntakeStateWidget;
     private GenericEntry mManualSetPointWidget;
+    private GenericEntry mIntakeVelocity;
+    private GenericEntry mIntakeMotorCurrent;
+
 
     private final CANSparkMax mMotor;
     private final SparkPIDController mPIDController;
@@ -34,6 +40,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     private final DigitalInput mBeamBreak;
 
     private double manualSetPoint;
+    private final RelativeEncoder mEncoder;
 
     private Intake() {
         mCurrentState = IntakeState.OFF;
@@ -41,6 +48,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         var EntryMap = IntakeTabManager.getEnumMap(this);
         mIntakeStateWidget = EntryMap.get(IntakeSubsystemEntries.IntakeState);
         mManualSetPointWidget = EntryMap.get(IntakeSubsystemEntries.IntakeManualSetPoint);
+        mIntakeVelocity = EntryMap.get(IntakeSubsystemEntries.IntakeVelocity);
+        mIntakeMotorCurrent = EntryMap.get(IntakeSubsystemEntries.IntakeMotorCurrent);
+
         IntakeTabManager.addMotorControlWidget(this);
 
         //motor setup 
@@ -49,7 +59,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         //PID controller setup
         mPIDController = constructPIDController(mMotor, kPIDconstants);
-
+        mEncoder = mMotor.getEncoder();
         mMotor.burnFlash();
 
         //beam break setup
@@ -109,6 +119,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
      */
     public void setState(IntakeState state) {
         mCurrentState = state;
+        System.out.println("Setting to " + state);
     }
 
     /**
@@ -136,12 +147,20 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     }   
 
     private void in() {
+        final boolean useBeamBreak = false;
+
+        if(useBeamBreak) {
         if (mBeamBreak.get()) {
             mCurrentState = IntakeState.OFF;
             off();
             return;
         }
-        mPIDController.setReference(kInSpeed, ControlType.kDutyCycle);
+    }
+
+        final double velocity = mEncoder.getVelocity();
+        final double outputPower = computeOneSidedPControlOutput(velocity);
+        manualSetPoint = outputPower;
+        mPIDController.setReference(outputPower, ControlType.kDutyCycle);
     }
 
     private void load() {
@@ -154,12 +173,15 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
     private void off() {
         mPIDController.setReference(kOffSpeed, ControlType.kDutyCycle);
+        manualSetPoint = kOffSpeed;
     }
 
     @Override
     public void updateShuffleboard() {
         mIntakeStateWidget.setString(mCurrentState.name());
         mManualSetPointWidget.setDouble(manualSetPoint);
+        mIntakeVelocity.setDouble(mEncoder.getVelocity());
+        mIntakeMotorCurrent.setDouble(mMotor.getOutputCurrent());
     }
 
     @Override
@@ -191,4 +213,33 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     public void modeSwitchAction() {
         mCurrentState = IntakeState.OFF;
     }
+
+    // One sided P Control will only add extra power if the intake is going to slow.
+    // It does not adjust if it is going too fast.  The idea is that we can be more 
+    // aggressive on adding power if the note is stuck in the intake.
+
+    public double computeOneSidedPControlOutput(double velocity) {
+
+        final double targetVel = 120; // RPM Need to tune
+        final double baseFF = targetVel / (4500/4) * 1.1; //4 is the reduction
+        final double maxPower = baseFF * 3;
+        final double maxBaseDelta = maxPower - baseFF;
+        // If the intake goes to 0, kick up to maxPower.  Needs to be tuned.
+        final double P = targetVel / maxBaseDelta; 
+        double error = targetVel - velocity;
+
+        double addedPower = 0;
+        if(error < 0) {
+            error = 0;
+        } else {
+            addedPower = error * P;
+        }
+
+        // For testing: 
+        addedPower = 0;
+
+        final double finalOutput = baseFF + addedPower;
+
+        return finalOutput;
+    }    
 }
