@@ -295,7 +295,6 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         //     mRotSetPoint.getDegrees() - Units.rotationsToDegrees(mCurrState.position), //5 //trapazoid offset
         //     Units.rotationsToDegrees(mCurrState.position) - getWristAngle().getDegrees() //6 //PID P
         // });
-        System.out.println(mWristMotor.getAppliedOutput());
     }
     
     public boolean needSoftLimit(){
