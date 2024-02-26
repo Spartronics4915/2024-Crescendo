@@ -143,24 +143,22 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         manualSetPoint = pctg;
         setState(IntakeState.MANUAL);
         mPIDController.setReference(pctg, ControlType.kDutyCycle);
-      
+        
     }   
 
     private void in() {
-        final boolean useBeamBreak = false;
-
-        if(useBeamBreak) {
-        if (mBeamBreak.get()) {
-            mCurrentState = IntakeState.OFF;
-            off();
-            return;
+        if(kUseBeakBreak) {
+            if (mBeamBreak.get()) {
+                mCurrentState = IntakeState.OFF;
+                off();
+                return;
+            }
         }
-    }
 
-        final double velocity = mEncoder.getVelocity();
-        final double outputPower = computeOneSidedPControlOutput(velocity);
+        double velocity = mEncoder.getVelocity();
+        double outputPower = computeOneSidedPControlOutput(velocity);
         manualSetPoint = outputPower;
-        mPIDController.setReference(outputPower, ControlType.kDutyCycle);
+        mPIDController.setReference(outputPower, ControlType.kVelocity);
     }
 
     private void load() {
