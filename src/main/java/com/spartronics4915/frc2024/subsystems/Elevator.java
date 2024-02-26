@@ -367,7 +367,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         // Here because something requires it
         @Override
-        public void modeSwitchAction() {}
+        public void modeSwitchAction() {
+            updateCurrStateToReal();
+        }
 
     /**
      * @return A static instance of the elevator subsystem
