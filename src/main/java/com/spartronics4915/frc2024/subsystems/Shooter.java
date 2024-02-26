@@ -124,6 +124,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     public void setConveyorState(ConveyorState state) {
         mCurrentConveyorState = state;
+        System.out.println("Conveyor state: " + mCurrentConveyorState);
     }
 
     // diff is the reduction in speed for the follower motor
@@ -131,6 +132,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         pctg = MathUtil.clamp(pctg, -1, 1);
         mPIDControllerLead.setReference(pctg, ControlType.kDutyCycle);
         mPIDControllerFollow.setReference(-(pctg - diff), ControlType.kDutyCycle);
+        mCurrentShooterState = ShooterState.MANUAL;
 
     }
     public Command setShooterStateCommand(ShooterState state) {

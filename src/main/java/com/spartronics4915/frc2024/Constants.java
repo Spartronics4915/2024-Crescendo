@@ -332,8 +332,8 @@ public final class Constants {
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
         public static final double kDiff = 50;
-        public static final double kConveyorInSpeed = 1.0; // placeholder
-        public static final double kConveyorOutSpeed = 1.0; // placeholder
+        public static final double kConveyorInSpeed = 0.3; // placeholder
+        public static final double kConveyorOutSpeed = 0.3; // placeholder
 
         public static final double kTargetRPM = 5500;
     }

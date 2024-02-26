@@ -204,6 +204,8 @@ public class ShuffleBoard {
                     subsystem.runOnce(() -> subsystem.setShooterManualPctg(speedTarget.getDouble(0),
                             motorDiff.getDouble(0))));
 
+            mShuffleBoardWidget.add("Turn Conveyor On", subsystem.runOnce(()->subsystem.setConveyorState(ConveyorState.IN)));
+
         }
 
     }
