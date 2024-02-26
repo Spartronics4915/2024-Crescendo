@@ -263,7 +263,7 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.1;
-            public static final double kMaxMeters = 5; // hack untested
+            public static final double kMaxMeters = 0.4; // hack untested
         }
     }
 
