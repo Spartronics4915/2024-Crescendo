@@ -136,7 +136,7 @@ public final class Constants {
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
         public enum IntakeAssemblyState { // TODO find constants
             GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), STOW(Rotation2d.fromDegrees(170.0), 0.0), AMP(
-                    Rotation2d.fromDegrees(90.0), 0.5), LOAD(Rotation2d.fromDegrees(190.0), 0.0), SOURCE(
+                    Rotation2d.fromDegrees(90.0), 0.5), LOAD(Rotation2d.fromDegrees(25.0), 0.0), SOURCE(
                             Rotation2d.fromDegrees(120.0), 0.75), MANUAL(Rotation2d.fromDegrees(0.0), -0.1); // CHECKUP
                                                                                                              // is this
                                                                                                              // needed?
@@ -184,9 +184,9 @@ public final class Constants {
             public static final double kMeterSafetyLimit = 1.0; // HACK tested in sim
 
             //TODO find values for this
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(170); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(170); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(0); 
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(50); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(50); //only when below the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-90); 
 
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
@@ -231,11 +231,11 @@ public final class Constants {
             //FIXME turn brake mode back on 
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit);
-            public static final MotorConstants kFollowerConstants = new MotorConstants(16, MotorType.kBrushless, true,
+            public static final MotorConstants kFollowerConstants = new MotorConstants(16, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit); // HACK untested
             public static final Constraints kZoidConstants = new Constraints(1d, 1d);
             public static final PIDConstants kPIDConstants = new PIDConstants(0.1, 0, 0);
-            public static final double kMetersToRotation = 59.16750717163086 / 0.91; // Conversion rate
+            public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
             public static final SimulatorSettings kElevatorSimulatorSettings = new SimulatorSettings(
                     "Elevator",
                     1.0,

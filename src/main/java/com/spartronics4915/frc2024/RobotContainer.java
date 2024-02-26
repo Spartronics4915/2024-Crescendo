@@ -96,7 +96,7 @@ public class RobotContainer {
 
     // private static final ShooterWrist mShooterWrist;
     // private static final Shooter mShooter;
-    // private static final Elevator mElevator;
+    private static final Elevator mElevator;
 
     private final SwerveDrive mSwerveDrive;
 
@@ -127,9 +127,9 @@ public class RobotContainer {
         // mShooter = Shooter.getInstance();
         // ModeSwitchSubsystems.add(mShooter);
 
-        // mElevator = Elevator.getInstance();
-        // ModeSwitchSubsystems.add(mElevator);
-        // list.add(mElevator);
+        mElevator = Elevator.getInstance();
+        ModeSwitchSubsystems.add(mElevator);
+        list.add(mElevator);
 
         mSimulator = new TrapezoidSimulator(list);
 

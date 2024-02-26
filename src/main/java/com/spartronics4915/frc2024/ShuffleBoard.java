@@ -302,7 +302,8 @@ public class ShuffleBoard {
             ElevatorSetPoint("ElevatorSetPoint"), ElevatorHeight("ElevatorHeight"), ElevatorManualControl(
                     "ElevatorManual"), ElevatorFollowerPos(
                             "ElevatorFollowerPos"), ElevatorLeaderPos("ElevatorLeaderPos"),
-                            ElevatorLeaderAppliedOutput("LeaderAppliedOutput");
+                            ElevatorLeaderAppliedOutput("LeaderAppliedOutput"),
+                            ElevatorFollowerAppliedOutput("FollowerAppliedOutput");
 
             private String entryName;
 
@@ -336,6 +337,8 @@ public class ShuffleBoard {
 
         putEntry(out, ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput, 0, mShuffleBoardTab,
                 ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput.entryName);
+        putEntry(out, ElevatorSubsystemEntries.ElevatorFollowerAppliedOutput, 0, mShuffleBoardTab,
+                ElevatorSubsystemEntries.ElevatorFollowerAppliedOutput.entryName);
 
             return out;
         }
@@ -350,9 +353,10 @@ public class ShuffleBoard {
                     .withWidget(BuiltInWidgets.kNumberSlider)
                     .withProperties(Map.of("min",0, "max", 1)).getEntry();
 
-            mShuffleBoardWidget.add("Set to target",
-                    subsystem.runOnce(() -> subsystem
-                            .setTarget(heightTarget.getDouble(45))));
+            mShuffleBoardWidget.add("Set to target", Commands.defer(() -> {
+                    return Commands.runOnce(() -> subsystem
+                            .setTarget(heightTarget.getDouble(45)));
+                }, Set.of()));
     }
 
     }

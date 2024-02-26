@@ -19,11 +19,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.*;
+
+import java.util.Set;
 
 public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
     //#region all the variables and stuff
@@ -50,6 +56,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private GenericEntry mElevatorLeaderPos;
     private GenericEntry mElevatorFollowerPos;
     private GenericEntry mAppliedOutputWidget;
+    private GenericEntry mFollowerAppliedOutput;
 
     private DigitalInput limitSwitch;
 
@@ -167,7 +174,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 mCurrentState,
                 // new State(getEncoderPosReading().getRotations(), getEncoderVelReading()),
                 new State(mTarget, 0));
-        // mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
+        mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
         // System.out.println("main"+mEncoder.getPosition());
         // System.out.println("follow"+mFollowerEncoder.getPosition()); //TODO: same direction
         updateShuffle();
@@ -197,6 +204,11 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorLeaderPos = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderPos);
         mElevatorFollowerPos = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerPos);
         mAppliedOutputWidget = mEntries.get(ElevatorSubsystemEntries.ElevatorLeaderAppliedOutput);
+        mFollowerAppliedOutput = mEntries.get(ElevatorSubsystemEntries.ElevatorFollowerAppliedOutput);
+        ShuffleboardTab tab = Shuffleboard.getTab(ElevatorTabManager.tabName);
+        var input = tab.add("targetSet", 0.0).getEntry();
+        
+        tab.add("red", Commands.defer(() -> {return this.setTargetCommand(input.getDouble(0.0));}, Set.of()));
     }
 
     private void updateShuffle() {
@@ -206,6 +218,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorLeaderPos.setDouble(mEncoder.getPosition());
         mElevatorFollowerPos.setDouble(mFollower.getEncoder().getPosition());
         mAppliedOutputWidget.setDouble(mMotor.getAppliedOutput());
+        mFollowerAppliedOutput.setDouble(mFollower.getAppliedOutput());
     }
     // #endregion
 
@@ -283,7 +296,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(double newTarget) {
         mIsManual = false;
-        mTarget = (newTarget * kMetersToRotation);
+        mTarget = (newTarget);
     }
 
     /**
@@ -292,7 +305,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public void setTarget(IntakeAssemblyState intakeAssemblyState) {
         mIsManual = false;
-        mTarget = (intakeAssemblyState.ElevatorHeight * kMetersToRotation);
+        mTarget = (intakeAssemblyState.ElevatorHeight);
     }
 
     /**
