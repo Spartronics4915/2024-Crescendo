@@ -90,7 +90,7 @@ public class AutoAimFunctions {
         // return Optional.empty();
         // }
 
-        System.out.println(out.div(out.getNorm()).times(kShooterSpeed));
+        // System.out.println(out.div(out.getNorm()).times(kShooterSpeed));
 
         return Optional.of(out);
     }

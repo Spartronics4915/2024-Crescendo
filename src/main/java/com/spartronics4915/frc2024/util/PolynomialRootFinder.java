@@ -39,12 +39,12 @@ public class PolynomialRootFinder {
         );
 
         LinkedList<Double> outList = new LinkedList<>();
-        System.out.println(outMat.width());
-        System.out.println(outMat.height());
+        // System.out.println(outMat.width());
+        // System.out.println(outMat.height());
         for (int i = 0; i < outMat.width(); i++) {
             for (int j = 0; j < outMat.height(); j++) {
                 var num = outMat.get(j, i);
-                System.out.println(num[0] + "+" + num[1] + "i");
+                // System.out.println(num[0] + "+" + num[1] + "i");
                 if (Math.abs(num[1]) < 1e-10) {
                     outList.add(num[0]);
                 }
