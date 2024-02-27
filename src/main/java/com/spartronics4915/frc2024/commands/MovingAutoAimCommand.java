@@ -18,6 +18,7 @@ import static com.spartronics4915.frc2024.util.AutoAimFunctions.*;
 public class MovingAutoAimCommand extends Command{
     public SwerveDrive mSwerve;
     public ShooterWrist mShooterWrist;
+    public boolean started = false;;
     public final Translation3d kTarget;
 
     static{
@@ -40,7 +41,12 @@ public class MovingAutoAimCommand extends Command{
     
     @Override
     public void initialize() {
-        mSwerve.decoupleRotation();
+        if (mSwerve.rotationIsDecoupled()) {
+            end(true);
+        } else {
+            started = true;
+            mSwerve.decoupleRotation();
+        }
         super.initialize();
     }
     
@@ -83,7 +89,7 @@ public class MovingAutoAimCommand extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        mSwerve.recoupleRotation();
+        if(started) mSwerve.recoupleRotation();
         super.end(interrupted);
     }
 }
