@@ -7,6 +7,7 @@ package com.spartronics4915.frc2024;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
 import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.Elevator;
@@ -39,6 +40,7 @@ import com.spartronics4915.frc2024.util.NoteVisualizer;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -184,24 +186,63 @@ public class RobotContainer {
     }
 
     private void configureBindings() { // TODO: format these nicely
-        // mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.5)));
-        // mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.5)));
-        // mOperatorController.povRight().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.1)));
-        // mOperatorController.povLeft().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.1)));
 
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
 
-        // mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.5));
-        // mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.5));
 
-        // var commandFactory = new IntakeAssemblyCommands(mIntakeWrist, mIntake, mElevator);
-        // mOperatorController.a().onTrue(commandFactory.setState(IntakeAssemblyState.GROUNDPICKUP));
-        // mOperatorController.y().onTrue(commandFactory.setState(IntakeAssemblyState.SOURCE));
-        // mOperatorController.x().onTrue(commandFactory.setState(IntakeAssemblyState.AMP));
-        // mOperatorController.b().onTrue(commandFactory.setState(IntakeAssemblyState.STOW)); //TEMP
+        //Operator controls
+        //Buttons:
+        mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
+        mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
+        mOperatorController.a().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
+        mOperatorController.b().toggleOnTrue(Commands.startEnd(
+            () -> mShooter.setShooterState(ShooterState.ON), 
+            () -> mShooter.setShooterState(ShooterState.OFF)
+        ));
+
+        //manual controls
+
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.05));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.05));
+        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
+        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
+        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+
+        //misc
+        mOperatorController.leftStick()
+            .onTrue(mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT));
+
+        mOperatorController.leftStick()
+            .onTrue(mElevator.setTargetCommand(IntakeAssemblyState.Climb));
+
+        mOperatorController.start() //menu
+            .onTrue(Commands.parallel(
+                mElevator.setTargetCommand(IntakeAssemblyState.STOW),
+                mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW),
+                mShooterWrist.setStateCommand(ShooterWristState.STOW)
+            ));
+
+        mOperatorController.back()
+            .whileTrue(mIntake.setStateCommand(IntakeState.OUT));
+
+        //triggers
+
+        mOperatorController.leftTrigger().whileTrue(
+            Commands.defer(() -> {
+                final var alliance = DriverStation.getAlliance().get();
+                final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER : AutoComponents.RED_SPEAKER;
+                return new MovingAutoAimCommand(speaker);
+            }, Set.of()));
+        
+        mOperatorController.rightTrigger().whileTrue(Commands.sequence(
+            mShooter.setShooterStateCommand(ShooterState.ON),
+            AutoComponents.loadIntoShooter(),
+            AutoComponents.shootFromLoaded()
+        ));
 
         // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));

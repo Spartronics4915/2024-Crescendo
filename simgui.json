@@ -1,18 +1,4 @@
 {
-  "HALProvider": {
-    "DIO": {
-      "window": {
-        "visible": true
-      }
-    },
-    "Other Devices": {
-      "SPARK MAX [1]": {
-        "header": {
-          "open": false
-        }
-      }
-    }
-  },
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
@@ -27,12 +13,7 @@
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/resetToResetAngle": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/setTargetToAngle": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/stow": "Command",
-      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/Amp": "Command",
-      "/Shuffleboard/IntakeWrist/IntakeWristlayout`/stow": "Command",
       "/Shuffleboard/IntakeWrist/Motor Control/Set to target": "Command",
-      "/Shuffleboard/IntakeWrist/Wrist/Amp": "Command",
-      "/Shuffleboard/IntakeWrist/Wrist/stow": "Command",
-      "/Shuffleboard/Overview/SendableChooser[0]": "String Chooser",
       "/Shuffleboard/Overview/SendableChooser[1]": "String Chooser",
       "/Shuffleboard/Shooter/Motor Control/Set to speed": "Command",
       "/Shuffleboard/Shooter/Motor Control/Turn Conveyor Off": "Command",
@@ -44,8 +25,6 @@
       "/Shuffleboard/ShooterWrist/ShooterWristlayout/setToSendableCHooser": "Command",
       "/Shuffleboard/VisionTab/alice field": "Field2d",
       "/Shuffleboard/VisionTab/bob field": "Field2d",
-      "/Shuffleboard/VisionTab/limelight-alice field": "Field2d",
-      "/Shuffleboard/VisionTab/limelight-bob field": "Field2d",
       "/Shuffleboard/bling/ERROR": "Command",
       "/Shuffleboard/bling/alliance color": "Command",
       "/Shuffleboard/bling/around": "Command",
@@ -71,62 +50,10 @@
       "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/choose shooterWrist value": "String Chooser",
       "/SmartDashboard/field": "Field2d",
-      "/SmartDashboard/ghostMechanism": "Mechanism2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
-    },
-    "windows": {
-      "/SmartDashboard/field": {
-        "bottom": 1476,
-        "height": 8.210550308227539,
-        "left": 150,
-        "right": 2961,
-        "top": 79,
-        "width": 16.541748046875,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/simCanvas": {
-        "window": {
-          "visible": true
-        }
-      }
-    }
-  },
-  "NetworkTables": {
-    "transitory": {
-      "Shuffleboard": {
-        "Elevator": {
-          "open": false
-        },
-        "IntakeWrist": {
-          "Wrist": {
-            "Amp": {
-              "open": false
-            },
-            "open": false,
-            "stow": {
-              "open": false
-            }
-          },
-          "open": false
-        }
-      },
-      "SmartDashboard": {
-        "simCanvas": {
-          "Wrist": {
-            "Wrist": {
-              "open": false
-            }
-          }
-        }
-      }
     }
   },
   "NetworkTables Info": {
-    "DartClient_23203894@1": {
-      "open": false
-    },
     "visible": true
   }
 }
