@@ -301,7 +301,7 @@ public final class Constants {
                                                                                                                    // untested
                                                                                                                    // values
 
-        public static final double kAimedAtTargetThreshold = 1 / 60; // 6 degrees
+        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05).getRotations(); // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(66).getRotations();
