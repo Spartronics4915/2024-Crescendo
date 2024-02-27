@@ -307,6 +307,12 @@ public class SwerveDrive extends SubsystemBase {
         return Rotation2d.fromDegrees(mIMU.getAngle() * -1.0);
     }
 
+    public boolean atTarget(){
+        return (rotationIsDecoupled()) ? 
+            Math.abs(mDesiredAngle.getRotations() - getAngle().getRotations()) < kAimedAtTargetThreshold.getRotations()
+        : false ;
+    }
+
     /**
      * Adds a vision measurement to the pose estimator.
      */

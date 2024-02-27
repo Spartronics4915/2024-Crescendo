@@ -125,6 +125,8 @@ public final class Constants {
         public static final int kAngleMotorCurrentLimit = 40;
         public static final double kMaxVoltage = 12.0;
 
+        public static final Rotation2d kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05);
+
         public static final record ModuleConstants(
                 int driveMotorID,
                 int angleMotorID,

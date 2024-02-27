@@ -83,7 +83,7 @@ public class MovingAutoAimCommand extends Command{
 
     public boolean atTarget(){
         return
-            true &&//FIXME implement swerve check
+            mSwerve.atTarget() &&
             mShooterWrist.atTarget();
     }
 
