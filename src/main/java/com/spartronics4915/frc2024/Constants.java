@@ -136,9 +136,13 @@ public final class Constants {
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
         public enum IntakeAssemblyState { // TODO find constants
-            GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), STOW(Rotation2d.fromDegrees(170.0), 0.0), AMP(
-                    Rotation2d.fromDegrees(90.0), 0.5), LOAD(Rotation2d.fromDegrees(25.0), 0.0), SOURCE(
-                            Rotation2d.fromDegrees(120.0), 0.75), MANUAL(Rotation2d.fromDegrees(0.0), -0.1); // CHECKUP
+            GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), 
+            STOW(Rotation2d.fromDegrees(170.0), 0.0), 
+            AMP(Rotation2d.fromDegrees(90.0), 0.5), 
+            Climb(Rotation2d.fromDegrees(90), 4.3), 
+            LOAD(Rotation2d.fromDegrees(25.0), 0.0), 
+            SOURCE(Rotation2d.fromDegrees(120.0), 0.75), 
+            MANUAL(Rotation2d.fromDegrees(0.0), -0.1); // CHECKUP
                                                                                                              // is this
                                                                                                              // needed?
 
