@@ -185,8 +185,8 @@ public final class Constants {
             public static final double kMeterSafetyLimit = 0.3; // HACK tested in sim
 
             //TODO find values for this
-            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(50); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(50); //only when below the safety height
+            public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(25); //only when below the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-90); 
 
             public static final PIDConstants kPIDconstants; // don't test with these values
