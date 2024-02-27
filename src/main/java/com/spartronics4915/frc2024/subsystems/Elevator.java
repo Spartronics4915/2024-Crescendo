@@ -97,7 +97,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
 
         // Limit PID Output for Testing
-        mPid.setOutputRange(-0.2, 0.2);
+        mPid.setOutputRange(-0.6, 0.6);
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 

@@ -228,7 +228,7 @@ public final class Constants {
         }
 
         public static final class ElevatorConstants {
-            private static final int kMotorLimit = 10;
+            private static final int kMotorLimit = 40;
             //FIXME turn brake mode back on 
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit);
