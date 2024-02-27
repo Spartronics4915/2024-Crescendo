@@ -3,14 +3,12 @@ package com.spartronics4915.frc2024.subsystems.vision;
 import java.util.Optional;
 
 import com.spartronics4915.frc2024.LimelightHelpers;
-import com.spartronics4915.frc2024.Constants.Vision.PoseOffsetConstants;
 import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,6 +30,7 @@ public class LimelightDevice extends SubsystemBase {
     private final Field2d mField;
     private final SlewRateLimiter mRateLimiter;
     private final GenericEntry ignoreVisionReadings;
+    private final GenericEntry useAverageTags;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
@@ -46,7 +45,10 @@ public class LimelightDevice extends SubsystemBase {
         mHasCoral = hasCoral;
         mRateLimiter = new SlewRateLimiter(246);
         ShuffleboardTab overview = Shuffleboard.getTab("Overview");
-        ignoreVisionReadings = overview.add("Ignore " + formattedName + " vision readings", false)
+        ignoreVisionReadings = overview.add("IGNORE " + name, false)
+                                       .withWidget(BuiltInWidgets.kToggleButton)
+                                       .getEntry();
+        useAverageTags = overview.add("USE " + name + " TAGS", false)
                                        .withWidget(BuiltInWidgets.kToggleButton)
                                        .getEntry();
         createShuffleboard();
@@ -157,6 +159,36 @@ public class LimelightDevice extends SubsystemBase {
         }
         averageDistance /= fiducials.length;
         return averageDistance;
+    }
+
+    public Pose3d getPoseFromAverageTags() {
+        if (!mValid) return new Pose3d();
+        LimelightHelpers.LimelightResults llresults = LimelightHelpers.getLatestResults(mName);
+        LimelightHelpers.LimelightTarget_Fiducial[] fiducials = llresults.targetingResults.targets_Fiducials;
+        double averageX = 0.0;
+        double averageY = 0.0;
+        double averageZ = 0.0;
+        double averageRX = 0.0;
+        double averageRY = 0.0;
+        double averageRZ = 0.0;
+        for(LimelightHelpers.LimelightTarget_Fiducial tag : fiducials) {
+            Pose3d pose = tag.getRobotPose_FieldSpace();
+            averageX += pose.getX();
+            averageY += pose.getY();
+            averageZ += pose.getZ();
+            averageRX += pose.getRotation().getX();
+            averageRY += pose.getRotation().getY();
+            averageRZ += pose.getRotation().getZ();
+        }
+        int tagCount = fiducials.length;
+        averageX /= tagCount;
+        averageY /= tagCount;
+        averageZ /= tagCount;
+        averageRX /= tagCount;
+        averageRY /= tagCount;
+        averageRZ /= tagCount;
+        Pose3d botpose = new Pose3d(averageX, averageY, averageZ, new Rotation3d(averageRX, averageRY, averageRZ));
+        return botpose;
     }
 //#endregion
 
