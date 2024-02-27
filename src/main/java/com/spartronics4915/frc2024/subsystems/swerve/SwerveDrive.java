@@ -311,7 +311,7 @@ public class SwerveDrive extends SubsystemBase {
      * Adds a vision measurement to the pose estimator.
      */
     public void addVisionMeasurement(final VisionMeasurement msmt) {
-        final var p = msmt.pose().toPose2d();
+        final var p = msmt.pose();
         final var t = msmt.timestamp();
         addVisionMeasurement(p, t);
     }
