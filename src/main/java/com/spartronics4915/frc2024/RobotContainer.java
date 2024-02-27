@@ -13,6 +13,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
+import com.spartronics4915.frc2024.commands.AlignToSpeakerCommand;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
@@ -120,6 +121,8 @@ public class RobotContainer {
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
+        mDriverController.rightTrigger(kDriverTriggerDeadband)
+                .whileTrue(new AlignToSpeakerCommand());
 
         // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
         // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
