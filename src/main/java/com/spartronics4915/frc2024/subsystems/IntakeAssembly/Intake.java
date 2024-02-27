@@ -217,14 +217,14 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     // It does not adjust if it is going too fast.  The idea is that we can be more 
     // aggressive on adding power if the note is stuck in the intake.
 
-    public double computeOneSidedPControlOutput(double velocity) {
+    public static double computeOneSidedPControlOutput(double velocity) {
 
         final double targetVel = 120; // RPM Need to tune
         final double baseFF = targetVel / (4500/4) * 1.1; //4 is the reduction
         final double maxPower = baseFF * 3;
         final double maxBaseDelta = maxPower - baseFF;
         // If the intake goes to 0, kick up to maxPower.  Needs to be tuned.
-        final double P = targetVel / maxBaseDelta; 
+        final double P = maxBaseDelta / targetVel; 
         double error = targetVel - velocity;
 
         double addedPower = 0;
@@ -235,7 +235,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         }
 
         // For testing: 
-        addedPower = 0;
+        // addedPower = 0;
 
         final double finalOutput = baseFF + addedPower;
 
