@@ -183,11 +183,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return pid;
     }
 
-    private RelativeEncoder initEncoder() { // TODO encoder init settings
+    private RelativeEncoder initEncoder() {
 
         RelativeEncoder encoder = mWristMotor.getEncoder();
         // Set the encoder to zero for now to make sure it is initialized to a reasonable value.
-        encoder.setPosition(0);
+        encoder.setPosition(0); //TODO set to startup position
         return encoder;
     }
 
@@ -250,7 +250,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private void currentToSetPoint(Rotation2d setpoint) {
         updateCurrStateToReal(setpoint);
         System.out.println(setpoint);
-        setRotationSetPoint(setpoint); // TODO clamp for safety? for now will have force boolean
+        setRotationSetPoint(setpoint); 
     }
 
     private void updateCurrStateToReal(Rotation2d setpoint) {
@@ -380,8 +380,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
                 new State(mTargetRotation2d.getRotations(), 0));
-
-        // TODO: Make this conversion its own method?
 
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());

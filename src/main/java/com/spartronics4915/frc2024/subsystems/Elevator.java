@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
-        mFollowerEncoder = mFollower.getEncoder(); //TODO remove this and the print lines
+        mFollowerEncoder = mFollower.getEncoder(); 
 
         // Set Encoders to 0 just for initialization
         resetEncoder(kMinMeters);

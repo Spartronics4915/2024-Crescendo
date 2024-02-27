@@ -135,7 +135,7 @@ public final class Constants {
     }
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
-        public enum IntakeAssemblyState { // TODO find constants
+        public enum IntakeAssemblyState { 
             // 70 max angle upwards
             // TODO find values for the intake wirst and elevator
             GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), 
@@ -235,11 +235,11 @@ public final class Constants {
 
         public static final class ElevatorConstants {
             private static final int kMotorLimit = 40;
-            //FIXME turn brake mode back on 
+            
             public static final MotorConstants kMotorConstants = new MotorConstants(20, MotorType.kBrushless, false,
                     IdleMode.kBrake, kMotorLimit);
             public static final MotorConstants kFollowerConstants = new MotorConstants(16, MotorType.kBrushless, false,
-                    IdleMode.kBrake, kMotorLimit); // HACK untested
+                    IdleMode.kBrake, kMotorLimit);
             
                     public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
             
@@ -295,7 +295,7 @@ public final class Constants {
         
     
         public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(80).getRotations()); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); //FIXME used for sim
+        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); 
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
@@ -385,7 +385,7 @@ public final class Constants {
                 }
             } else {
 
-                kSpeakerTarget = Targets.TEMP_TARGET.targetPosition; // TODO add alliance checker
+                kSpeakerTarget = Targets.TEMP_TARGET.targetPosition; 
             }
         }
 

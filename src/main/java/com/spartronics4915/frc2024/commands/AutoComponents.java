@@ -31,7 +31,7 @@ public class AutoComponents {
     private static SwerveDrive mSwerve = SwerveDrive.getInstance();
     private static Intake mIntake = Intake.getInstance();
 
-    private static Shooter mShooter = Shooter.getInstance(); // TODO placeholder
+    private static Shooter mShooter = Shooter.getInstance(); 
     private static ShooterWrist mShooterWrist = ShooterWrist.getInstance();
 
     public static final Translation3d TAG_4 = new Translation3d(Units.inchesToMeters(652.73),
