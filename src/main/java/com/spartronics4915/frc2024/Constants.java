@@ -136,6 +136,8 @@ public final class Constants {
 
     public static final class IntakeAssembly { // [ ] Intake Assembly constants
         public enum IntakeAssemblyState { // TODO find constants
+            // 70 max angle upwards
+            // TODO find values for the intake wirst and elevator
             GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), 
             STOW(Rotation2d.fromDegrees(170.0), 0.0), 
             AMP(Rotation2d.fromDegrees(90.0), 0.5), 
@@ -190,7 +192,7 @@ public final class Constants {
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(25); //only when below the safety height
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(70); //only when below the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-90); 
 
             public static final PIDConstants kPIDconstants; // don't test with these values
@@ -266,8 +268,8 @@ public final class Constants {
 
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
-            public static final double kMinMeters = 0.1;
-            public static final double kMaxMeters = 0.43; // hack untested
+            public static final double kMinMeters = 0.0;
+            public static final double kMaxMeters = 0.33; // hack untested
         }
     }
 
