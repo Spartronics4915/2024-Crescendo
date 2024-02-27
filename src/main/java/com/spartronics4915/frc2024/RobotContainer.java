@@ -143,11 +143,11 @@ public class RobotContainer {
         // }
         // }, -1));
 
-        new Trigger(() -> {
-            return mPDP.getFaults().Brownout;
-        }).onTrue(Commands.runOnce(() -> {
-            DriverStation.reportError("BROWNOUT DETECTED", false);
-        }));
+        // new Trigger(() -> {
+        //     return mPDP.getFaults().Brownout;
+        // }).onTrue(Commands.runOnce(() -> {
+        //     DriverStation.reportError("BROWNOUT DETECTED", false);
+        // }));
     }
 
     public RobotContainer() {

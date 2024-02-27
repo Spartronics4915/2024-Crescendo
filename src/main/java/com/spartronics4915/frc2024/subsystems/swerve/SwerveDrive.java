@@ -122,7 +122,7 @@ public class SwerveDrive extends SubsystemBase {
      */
     public static SwerveDrive getInstance() {
         if (mInstance == null) {
-            //mInstance = new SwerveDrive();
+            // mInstance = new SwerveDrive();
         }
         return mInstance;
     }

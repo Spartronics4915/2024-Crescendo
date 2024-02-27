@@ -154,7 +154,7 @@ public final class Constants {
 
         public static final class IntakeConstants {// [ ] Intake constants
             public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, false,
-                    IdleMode.kBrake, 40);
+                    IdleMode.kBrake, 80);
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
@@ -195,7 +195,7 @@ public final class Constants {
                 final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
                         * ShooterWristConstants.kWristToRotationsRate);
                 final double maxMotorPowerSetting = 1;
-                final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower/2;
+                final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
     
                 kPIDconstants = new PIDConstants(P, 0.0, 0.0);
             }
@@ -204,7 +204,7 @@ public final class Constants {
     
             static{
                  // The number of seconds that we expect the shooter to go from in to Max
-                final double timeMinToMaxSeconds = 10;
+                final double timeMinToMaxSeconds = 5;
                 // How long we expect the shooter to take to get to full speed
                 final double timeToFullSpeedSeconds = 1;
                 final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
@@ -343,8 +343,8 @@ public final class Constants {
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
         public static final double kDiff = 50;
-        public static final double kConveyorInSpeed = 0.3; // placeholder
-        public static final double kConveyorOutSpeed = 0.3; // placeholder
+        public static final double kConveyorInSpeed = 0.8; // placeholder
+        public static final double kConveyorOutSpeed = 0.8; // placeholder
 
         public static final double kTargetRPM = 5500;
     }
