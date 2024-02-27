@@ -158,7 +158,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         double velocity = mEncoder.getVelocity();
         double outputPower = computeOneSidedPControlOutput(velocity);
         manualSetPoint = outputPower;
-        mPIDController.setReference(outputPower, ControlType.kVelocity);
+        System.out.println(outputPower);
+        mPIDController.setReference(outputPower, ControlType.kDutyCycle);
     }
 
     private void load() {

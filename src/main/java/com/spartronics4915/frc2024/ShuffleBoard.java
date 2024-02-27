@@ -69,6 +69,10 @@ public class ShuffleBoard {
 
             putEntry(out, IntakeSubsystemEntries.IntakeMotorCurrent, 0, mIntakeOverview, IntakeSubsystemEntries.IntakeMotorCurrent.entryName);
 
+            mIntakeOverview.add("ON", subsystem.setStateCommand(IntakeState.IN));
+            mIntakeOverview.add("OFF", subsystem.setStateCommand(IntakeState.OFF));
+
+
             return out;
         }
 
@@ -205,6 +209,7 @@ public class ShuffleBoard {
                             motorDiff.getDouble(0))));
 
             mShuffleBoardWidget.add("Turn Conveyor On", subsystem.runOnce(()->subsystem.setConveyorState(ConveyorState.IN)));
+            mShuffleBoardWidget.add("Turn Conveyor Off", subsystem.runOnce(()->subsystem.setConveyorState(ConveyorState.OFF)));
 
         }
 
