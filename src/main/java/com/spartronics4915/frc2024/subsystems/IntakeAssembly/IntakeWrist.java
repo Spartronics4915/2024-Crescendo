@@ -212,6 +212,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     private void setManualDelta(Rotation2d deltaPosition){
+        mHoming = false;
         mManualMovement = true;
         mManualDelta = deltaPosition;
     }

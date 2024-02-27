@@ -216,6 +216,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void setManualDelta(Rotation2d deltaPosition) {
+        mHoming = false;
         mManualMovement = true;
         mManualDelta = deltaPosition;
     }

@@ -266,6 +266,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     }
 
     private void setManualDelta(double deltaPosition) {
+        mHoming = false;
         mIsManual = true;
         mManualDelta = deltaPosition;
     }
