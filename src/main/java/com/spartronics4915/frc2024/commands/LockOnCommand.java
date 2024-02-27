@@ -30,10 +30,14 @@ public class LockOnCommand extends Command {
     @Override
     public void initialize() {
         //do thing if rotation already decoupled
-        mSwerve.decoupleRotation();
-        mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
-        mBling.setMode(BlingModes.SOLID);
-        mBling.setColor(Color.kWhite);
+        if (mSwerve.rotationIsDecoupled()) {
+            end(true);
+        } else {
+            mSwerve.decoupleRotation();
+            mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
+            mBling.setMode(BlingModes.SOLID);
+            mBling.setColor(Color.kWhite);
+        }
     }
     
     @Override
