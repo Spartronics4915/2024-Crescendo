@@ -142,12 +142,13 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         }
         manualSetPoint = pctg;
         setState(IntakeState.MANUAL);
-        mPIDController.setReference(pctg, ControlType.kDutyCycle);
+        // mPIDController.setReference(pctg, ControlType.kDutyCycle);
+        mMotor.set(pctg);
         
     }   
 
     private void in() {
-        if(kUseBeakBreak) {
+        if(kUseBeamBreak) {
             if (mBeamBreak.get()) {
                 mCurrentState = IntakeState.OFF;
                 off();
