@@ -140,13 +140,13 @@ public final class Constants {
         public enum IntakeAssemblyState { 
             // 70 max angle upwards
             // TODO find values for the intake wirst and elevator
-            GROUNDPICKUP(Rotation2d.fromDegrees(90.0), 1.0), 
-            STOW(Rotation2d.fromDegrees(170.0), 0.0), 
-            AMP(Rotation2d.fromDegrees(90.0), 0.5), 
-            Climb(Rotation2d.fromDegrees(90), 4.3), 
-            LOAD(Rotation2d.fromDegrees(25.0), 0.0), 
-            SOURCE(Rotation2d.fromDegrees(120.0), 0.75), 
-            MANUAL(Rotation2d.fromDegrees(0.0), -0.1); // CHECKUP
+            GROUNDPICKUP(Rotation2d.fromDegrees(-39), 0.0), 
+            STOW(Rotation2d.fromDegrees(90), 0.0), 
+            AMP(Rotation2d.fromDegrees(-13.408), 0.5), //TODO find elevator height 
+            Climb(Rotation2d.fromDegrees(-20), 4.3), 
+            LOAD(Rotation2d.fromDegrees(54.57), 0.0), 
+            SOURCE(Rotation2d.fromDegrees(80.0), 0.75),  //TODO find elevator height 
+            MANUAL(Rotation2d.fromDegrees(0.0), 0.0); // CHECKUP
                                                                                                              // is this
                                                                                                              // needed?
 
@@ -194,8 +194,8 @@ public final class Constants {
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(70); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-90); 
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91); //only when below the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-39); 
 
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
@@ -277,7 +277,7 @@ public final class Constants {
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(60)), // TODO find Value
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(67.6864193)), // TODO find Value
             HOMING(Rotation2d.fromDegrees(50)),
             Test(Rotation2d.fromDegrees(30)),
             STOW(Rotation2d.fromDegrees(20));
@@ -394,8 +394,8 @@ public final class Constants {
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
 
-        public static final double kShooterSpeed = 18.0; // needs to be in m/s
-        public static final double kShooterHeight = 0.1681988 ;
+        public static final double kShooterSpeed = (5676/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0)*(0.038 /*radius (m) */); // needs to be in m/s
+        public static final double kShooterHeight = 0.1681988;
         public static final double kMaxDistance = 10.0; // Needs units, the maximum relative distance a target can be
                                                         // from the robot for autoaim
         public static final double kGravity = -9.8;
