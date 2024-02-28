@@ -56,7 +56,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveDrivePoseEstimator mPoseEstimator;
     private final Notifier mOdometryThread = new Notifier(this::updateOdometry);
-    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock(); // TODO: should this be fair?
+    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock();
     private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
