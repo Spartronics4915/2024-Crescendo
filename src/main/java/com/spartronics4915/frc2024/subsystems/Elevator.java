@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
+import com.spartronics4915.frc2024.util.PIDConstants;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -360,6 +361,14 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
     private void updateCurrStateToReal(double meters){
         mTarget = meters;
         this.mCurrentState = new State(meters, 0);
+    }
+
+    public Command setPidConstant(PIDConstants values){
+        return runOnce(() -> {
+            mPid.setP(values.p());
+            mPid.setI(values.i());
+            mPid.setD(values.d());
+        });
     }
 
     // #endregion
