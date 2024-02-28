@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -57,7 +56,7 @@ public class SwerveDrive extends SubsystemBase {
 
     private final SwerveDrivePoseEstimator mPoseEstimator;
     private final Notifier mOdometryThread = new Notifier(this::updateOdometry);
-    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock(); // TODO: should this be fair?
+    private final ReentrantReadWriteLock mPoseEstimatorLock = new ReentrantReadWriteLock();
     private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
@@ -187,10 +186,6 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vxMetersPerSecond = inputx * kMaxSpeed;
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
-                
-                // cs.vxMetersPerSecond = 1;
-                // cs.vyMetersPerSecond = 1;
-                // cs.omegaRadiansPerSecond = 0;
 
                 drive(cs, mIsFieldRelative);
             }
@@ -429,8 +424,6 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Pose x", pose.getX());
         SmartDashboard.putNumber("Pose y", pose.getY());
 
-        // This code causes the robot to crash
-        
         final var vs = VisionSubsystem.getInstance();
         vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
         vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
