@@ -280,9 +280,7 @@ public final class Constants {
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
             SUBWOOFER_SHOT(Rotation2d.fromDegrees(67.6864193)), // TODO find Value
-            HOMING(Rotation2d.fromDegrees(50)),
-            Test(Rotation2d.fromDegrees(30)),
-            STOW(Rotation2d.fromDegrees(20));
+            STOW(Rotation2d.fromDegrees(65));
 
             public final Rotation2d shooterAngle;
 
@@ -298,10 +296,10 @@ public final class Constants {
         
         
     
-        public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(80).getRotations()); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); 
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(65); //only when above the safety height
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(90);
+        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(80);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested

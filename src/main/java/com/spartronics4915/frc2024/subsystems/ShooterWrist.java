@@ -152,8 +152,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         chooser.addOption("MIN", kMinAngle);
         chooser.addOption(""+ShooterWristState.SUBWOOFER_SHOT.shooterAngle.getDegrees(), ShooterWristState.SUBWOOFER_SHOT.shooterAngle);
-        chooser.addOption(""+ShooterWristState.HOMING.shooterAngle.getDegrees(), ShooterWristState.HOMING.shooterAngle);
-        chooser.addOption(""+ShooterWristState.Test.shooterAngle.getDegrees(), ShooterWristState.Test.shooterAngle);
         chooser.addOption(""+ShooterWristState.STOW.shooterAngle.getDegrees(), ShooterWristState.STOW.shooterAngle);
         chooser.addOption("MAX", kMaxAngle);
 
