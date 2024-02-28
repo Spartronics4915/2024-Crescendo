@@ -186,10 +186,6 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vxMetersPerSecond = inputx * kMaxSpeed;
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
-                
-                // cs.vxMetersPerSecond = 1;
-                // cs.vyMetersPerSecond = 1;
-                // cs.omegaRadiansPerSecond = 0;
 
                 drive(cs, mIsFieldRelative);
             }
@@ -428,8 +424,6 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Pose x", pose.getX());
         SmartDashboard.putNumber("Pose y", pose.getY());
 
-        // This code causes the robot to crash
-        
         final var vs = VisionSubsystem.getInstance();
         vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
         vs.getBob().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
