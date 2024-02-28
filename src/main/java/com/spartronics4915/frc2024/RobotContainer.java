@@ -187,10 +187,15 @@ public class RobotContainer {
 
     private void configureBindings() { // TODO: format these nicely
 
+        //driver controls
+
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
+
+        mDriverController.leftTrigger(kDriverTriggerDeadband)
+            .whileTrue(new LockOnCommand());
 
         // Operator controls
         // Buttons:
@@ -230,7 +235,7 @@ public class RobotContainer {
 
         // triggers
 
-        mOperatorController.leftTrigger().whileTrue(
+        mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
                 Commands.defer(() -> {
                     final var alliance = DriverStation.getAlliance().get();
                     final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
@@ -238,7 +243,7 @@ public class RobotContainer {
                     return new MovingAutoAimCommand(speaker);
                 }, Set.of()));
 
-        mOperatorController.rightTrigger().whileTrue(Commands.sequence(
+        mOperatorController.rightTrigger(kOperatorTriggerDeadband).whileTrue(Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
                 AutoComponents.loadIntoShooter(),
                 AutoComponents.shootFromLoaded()));
@@ -259,8 +264,7 @@ public class RobotContainer {
 
         // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-        // mDriverController.leftTrigger(kDriverTriggerDeadband)
-        // .whileTrue(new LockOnCommand());
+    
     }
 
     public Command getAutonomousCommand() {
