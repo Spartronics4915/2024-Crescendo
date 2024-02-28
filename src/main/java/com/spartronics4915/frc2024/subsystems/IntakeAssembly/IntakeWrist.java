@@ -89,7 +89,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kConstraints);
         kFeedforwardCalc = initFeedForward();
 
-        resetEncoder(kMaxAngleGround);
+        resetEncoder(kStartingAngle);
         mLimitSwitch = initLimitSwitch();
 
         mWristMotor.burnFlash();        

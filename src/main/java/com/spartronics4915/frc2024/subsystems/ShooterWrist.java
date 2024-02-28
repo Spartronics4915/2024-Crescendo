@@ -99,6 +99,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         kFeedforwardCalc = initFeedForward();
 
+        resetEncoder(kStartingAngle);
+
         mWristMotor.burnFlash();
 
         currentToSetPoint();
@@ -271,13 +273,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     public Command resetToAngle(double degrees) {
         return runOnce(() -> {
-            var angle = Rotation2d.fromDegrees(degrees);
-            System.out.println("Reset encoder Called: " + angle.getDegrees());
-            mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
-            // mCurrentState = new State(degrees, 0.0);
-            // mTargetRotation2d = Rotation2d.fromDegrees(degrees);
-            currentToSetPoint(angle);
+            resetEncoder(Rotation2d.fromDegrees(degrees));
         });
+    }
+
+    public void resetEncoder(Rotation2d angle){
+        mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+        currentToSetPoint(angle);
     }
 
     public Command angleToSupplierCommand(Supplier<Rotation2d> supplier) {

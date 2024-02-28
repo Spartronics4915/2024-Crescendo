@@ -197,6 +197,8 @@ public final class Constants {
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91); //only when below the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-39); 
 
+            public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(91);
+
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
                 final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
@@ -298,6 +300,8 @@ public final class Constants {
     
         public static final Rotation2d kMaxAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(80).getRotations()); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromRotations(Rotation2d.fromDegrees(0).getRotations()); 
+
+        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(90);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
