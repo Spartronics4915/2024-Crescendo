@@ -148,7 +148,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     }   
 
     private void in() {
-        if(kUseBeakBreak) {
+        if(kUseBeamBreak) {
             if (mBeamBreak.get()) {
                 mCurrentState = IntakeState.OFF;
                 off();

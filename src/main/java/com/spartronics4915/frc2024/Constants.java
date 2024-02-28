@@ -171,7 +171,7 @@ public final class Constants {
             public static final double kOutSpeed = -0.3; // placeholder
             public static final double kOffSpeed = 0;
 
-            public static final boolean kUseBeakBreak = false;
+            public static final boolean kUseBeamBreak = false;
             public static final int kIntakeBeamBreakID = 0; // placeholder
         }
 
