@@ -161,7 +161,7 @@ public final class Constants {
         }
 
         public static final class IntakeConstants {// [ ] Intake constants
-            public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, false,
+            public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, true,
                     IdleMode.kBrake, 80);
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
@@ -197,7 +197,7 @@ public final class Constants {
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91); //only when below the safety height
             public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-39); 
 
-            public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(91);
+            public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
@@ -214,10 +214,10 @@ public final class Constants {
     
             static{
                  // The number of seconds that we expect the shooter to go from in to Max
-                final double timeMinToMaxSeconds = 5;
+                final double timeMinToMaxSeconds = 1;
                 // How long we expect the shooter to take to get to full speed
-                final double timeToFullSpeedSeconds = 1;
-                final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
+                final double timeToFullSpeedSeconds = 0.2;
+                final double maxShooterRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
                         - ShooterWristConstants.kMinAngle.getRotations();
                 final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
                 final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
@@ -289,17 +289,17 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 36.0;
+        public static double kWristToRotationsRate = 36.0 / 0.53;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
         
         
     
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(65); //only when above the safety height
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(69); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(80);
+        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(70);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
@@ -308,7 +308,7 @@ public final class Constants {
         public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05).getRotations(); // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
-        public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(66).getRotations();
+        public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(70).getRotations();
 
         public static final double kLimitSwitchTriggerOffset = -0.025;
 

@@ -140,8 +140,8 @@ public class ShuffleBoard {
             mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
 
             var p = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var i = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var d = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var i = mShuffleBoardTab.add("I", 0.0).getEntry();
+            var d = mShuffleBoardTab.add("D", 0.0).getEntry();
 
             mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
                 return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
@@ -278,8 +278,8 @@ public class ShuffleBoard {
 
 
             var p = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var i = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var d = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var i = mShuffleBoardTab.add("I", 0.0).getEntry();
+            var d = mShuffleBoardTab.add("D", 0.0).getEntry();
 
             mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
                 return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
@@ -366,8 +366,8 @@ public class ShuffleBoard {
                 ElevatorSubsystemEntries.ElevatorFollowerAppliedOutput.entryName);
 
             var p = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var i = mShuffleBoardTab.add("P", 0.0).getEntry();
-            var d = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var i = mShuffleBoardTab.add("I", 0.0).getEntry();
+            var d = mShuffleBoardTab.add("D", 0.0).getEntry();
 
             mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
                 return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));

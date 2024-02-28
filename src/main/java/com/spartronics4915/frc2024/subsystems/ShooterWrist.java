@@ -111,7 +111,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public boolean runsWhenDisabled() {
-                return true;
+                return false;
             }
 
             @Override

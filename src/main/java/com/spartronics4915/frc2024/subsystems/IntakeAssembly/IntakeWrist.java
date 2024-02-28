@@ -157,7 +157,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
             @Override
             public boolean runsWhenDisabled() {
-                return true;
+                return false;
             }
 
             @Override

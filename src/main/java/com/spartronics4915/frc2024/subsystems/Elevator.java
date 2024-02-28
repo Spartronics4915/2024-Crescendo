@@ -124,7 +124,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
             @Override
             public boolean runsWhenDisabled() {
-                return true;
+                return false;
             }
 
             @Override
