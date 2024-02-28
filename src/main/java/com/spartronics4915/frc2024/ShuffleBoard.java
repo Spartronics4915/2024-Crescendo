@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
+import com.spartronics4915.frc2024.util.PIDConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericEntry;
@@ -32,10 +33,12 @@ public class ShuffleBoard {
                                              // this
                                              // tab
 
-    public static <T extends Enum<T>> void putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
+    public static <T extends Enum<T>> GenericEntry putEntry(EnumMap<T, GenericEntry> map, T enumValue, Object defualtValue,
             ShuffleboardContainer shuffleContainer, String name) {
-        map.put(enumValue, shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
-                .withProperties(Map.of("Label position", "LEFT")).getEntry());
+                var i = shuffleContainer.add(name, defualtValue).withSize(2, 2).withPosition(0, 0)
+                .withProperties(Map.of("Label position", "LEFT")).getEntry();
+        map.put(enumValue, i);
+        return i;
     }
 
     public static class IntakeTabManager {
@@ -135,6 +138,14 @@ public class ShuffleBoard {
 
             mShuffleBoardTab.add("stow", subsystem.setStateCommand(IntakeAssemblyState.STOW));
             mShuffleBoardTab.add("Amp", subsystem.setStateCommand(IntakeAssemblyState.AMP));
+
+            var p = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var i = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var d = mShuffleBoardTab.add("P", 0.0).getEntry();
+
+            mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
+                return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
+            }, Set.of()));
 
             return out;
         }
@@ -264,6 +275,15 @@ public class ShuffleBoard {
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid.entryName);
+
+
+            var p = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var i = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var d = mShuffleBoardTab.add("P", 0.0).getEntry();
+
+            mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
+                return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
+            }, Set.of()));
 
             mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
                     // .withProperties(Map.of("Label position", "HIDDEN"));

@@ -275,6 +275,14 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         });
     }
 
+    public Command setPidConstant(PIDConstants values){
+        return runOnce(() -> {
+            mPidController.setP(values.p());
+            mPidController.setI(values.i());
+            mPidController.setD(values.d());
+        });
+    }
+
     public void resetEncoder(Rotation2d angle){
         mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
         currentToSetPoint(angle);

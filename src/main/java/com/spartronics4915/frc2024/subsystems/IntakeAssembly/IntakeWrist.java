@@ -236,6 +236,14 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         });
     }
 
+    public Command setPidConstant(PIDConstants values){
+        return runOnce(() -> {
+            mWristPIDController.setP(values.p());
+            mWristPIDController.setI(values.i());
+            mWristPIDController.setD(values.d());
+        });
+    }
+
     public Command setRotationSetpointTesting(double degrees){
         return Commands.runOnce(() -> {
             System.out.println("setting to: " + degrees);
