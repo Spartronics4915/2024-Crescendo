@@ -22,6 +22,8 @@ public class AlignToSpeakerCommand extends Command {
     private final Bling mBling;
     private int priorityID;
     private boolean cancellingEarly = false;
+    private boolean triggeredAlign = false;
+    private Rotation2d desiredRotation;
 
     public AlignToSpeakerCommand() {
         super();
@@ -60,17 +62,26 @@ public class AlignToSpeakerCommand extends Command {
     
     @Override
     public void execute() {
+        if (mLimelight.getTv()) {
         Rotation2d swerveAngle = mSwerve.getAngle();
-        double tx = mLimelight.getTxLowpass();
+        double tx = mLimelight.getTx();
         Rotation2d limelightAngle = Rotation2d.fromDegrees(-tx);
         Rotation2d desiredAngle = Rotation2d.fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
-        // System.out.println("LOCKON:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
-        if (mLimelight.getTv() && mLimelight.getPrimaryTag() == priorityID) {
-            mSwerve.setDesiredAngle(desiredAngle);
+        // System.out.println("ALIGN:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
+            if (!triggeredAlign) {
+                mSwerve.setDesiredAngle(desiredAngle);
+                desiredRotation = desiredAngle;
+                triggeredAlign = true;
+            }
             double percent = MathUtil.clamp((30.0 - Math.abs(tx)) / 30.0, 0.0, 1.0);
             Color color = Bling.mix(Color.kLime, Color.kOrange, percent);
             mBling.setColor(color);
         } else mBling.setColor(Color.kRed);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return mLimelight.getTv() && triggeredAlign && (Math.abs(mSwerve.getAngle().minus(desiredRotation).getDegrees()) < 1);
     }
 
     @Override
