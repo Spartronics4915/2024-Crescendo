@@ -2,8 +2,11 @@ package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
@@ -13,14 +16,13 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.IntakeTabManager.IntakeSubsystemEntries;
 import com.spartronics4915.frc2024.util.Loggable;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeConstants.*;
-
-import javax.swing.event.MenuDragMouseEvent;
 
 public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static enum IntakeState {
@@ -74,6 +76,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         //beam break setup
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
+        new Trigger(this::getBeamBreakStatus).onTrue(Commands.print("beam break triggered"));
+
+        RobotContainer.getDriverController().y().onTrue(Commands.sequence(Commands.runOnce(() -> { System.out.println("scg called"); mFollowerMotor.set(0.3); }), Commands.waitSeconds(1), Commands.runOnce(() -> mFollowerMotor.set(0))));
 
         manualSetPoint = 0;
     }
@@ -162,24 +167,29 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         setState(IntakeState.MANUAL);
         // mPIDController.setReference(pctg, ControlType.kDutyCycle);
         mMotor.set(pctg);
-        
+        mFollowerMotor.set(pctg * kMainToFollowRatio);
     }   
 
     private void in() {
         if(kUseBeamBreak) {
             if (mBeamBreak.get()) {
+                System.out.println("beam break triggered");
                 mCurrentState = IntakeState.OFF;
                 off();
                 return;
             }
         }
 
-        double velocity = mEncoder.getVelocity();
-        double outputPower = computeOneSidedPControlOutput(velocity);
-        manualSetPoint = outputPower;
-        System.out.println(outputPower);
-        mPIDController.setReference(outputPower, ControlType.kDutyCycle);
-        mFollowPIDController.setReference(outputPower * kMainToFollowRatio, ControlType.kDutyCycle);
+        // double velocity = mEncoder.getVelocity();
+        // double outputPower = computeOneSidedPControlOutput(velocity);
+        // manualSetPoint = outputPower;
+        // System.out.println(outputPower);
+        // mPIDController.setReference(outputPower, ControlType.kDutyCycle);
+        // mFollowPIDController.setReference(outputPower * kMainToFollowRatio, ControlType.kDutyCycle);
+        manualSetPoint = 0.3;
+
+        mMotor.set(0.3);
+        mFollowerMotor.set(-0.3);
 
     }
 
@@ -196,9 +206,11 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     }
 
     private void off() {
-        mPIDController.setReference(kOffSpeed, ControlType.kDutyCycle);
-        mFollowPIDController.setReference(kOffSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-        manualSetPoint = kOffSpeed;
+        // mPIDController.setReference(kOffSpeed, ControlType.kDutyCycle);
+        // mFollowPIDController.setReference(kOffSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
+        mMotor.set(0);
+        mFollowerMotor.set(0);
+        manualSetPoint = 0;
     }
 
     @Override
@@ -207,6 +219,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mManualSetPointWidget.setDouble(manualSetPoint);
         mIntakeVelocity.setDouble(mEncoder.getVelocity());
         mIntakeMotorCurrent.setDouble(mMotor.getOutputCurrent());
+        SmartDashboard.putBoolean("beam break", getBeamBreakStatus());
+        SmartDashboard.putNumber("flex enc", mFollowerMotor.getEncoder().getPosition());
+        SmartDashboard.putNumber("flex applied output", mFollowerMotor.getAppliedOutput());
     }
 
     @Override

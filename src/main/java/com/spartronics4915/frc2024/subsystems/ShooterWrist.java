@@ -347,7 +347,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
-        
+        SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
 
     private double getFeedForwardValue() {
