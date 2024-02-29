@@ -35,7 +35,11 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
 
     private final CANSparkMax mMotor;
+    private final CANSparkMax mFollowerMotor;
+
     private final SparkPIDController mPIDController;
+    private final SparkPIDController mFollowPIDController;
+
 
     private final DigitalInput mBeamBreak;
 
@@ -56,9 +60,12 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         //motor setup 
 
         mMotor = constructMotor(kMotorConstants);
+        mFollowerMotor = constructMotor(kFollowerMotorConstants);
 
         //PID controller setup
         mPIDController = constructPIDController(mMotor, kPIDconstants);
+        mFollowPIDController = constructPIDController(mFollowerMotor, kPIDconstants);
+
         mEncoder = mMotor.getEncoder();
         mMotor.burnFlash();
 
@@ -161,18 +168,25 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         manualSetPoint = outputPower;
         System.out.println(outputPower);
         mPIDController.setReference(outputPower, ControlType.kDutyCycle);
+        mFollowPIDController.setReference(outputPower * kMainToFollowRatio, ControlType.kDutyCycle);
+
     }
 
     private void load() {
         mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
+        mFollowPIDController.setReference(kLoadSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
+
     }
 
     private void out() {
         mPIDController.setReference(kOutSpeed, ControlType.kDutyCycle);
+        mFollowPIDController.setReference(kOutSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
+
     }
 
     private void off() {
         mPIDController.setReference(kOffSpeed, ControlType.kDutyCycle);
+        mFollowPIDController.setReference(kOffSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
         manualSetPoint = kOffSpeed;
     }
 
@@ -203,7 +217,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
             // Speed should already have been set, so don't do anything
                 break;
             case NONE:
-            mPIDController.setReference(0, ControlType.kDutyCycle);
+                mPIDController.setReference(0, ControlType.kDutyCycle);
+                mFollowPIDController.setReference(0, ControlType.kDutyCycle);
+                
             break;
         }
         updateShuffleboard();
