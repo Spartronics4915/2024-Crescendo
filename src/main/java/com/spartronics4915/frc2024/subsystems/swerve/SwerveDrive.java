@@ -137,7 +137,6 @@ public class SwerveDrive extends SubsystemBase {
         drive(speeds, false);
     }
 
-    // FIXME: field relative drives faster than robot relative (??)
     // FIXME: need to make field relative based on pose and mirror based on alliance
     private void drive(final ChassisSpeeds speeds, final boolean fieldRelative, final boolean rotationIndependent) {
         final ChassisSpeeds _speeds;
