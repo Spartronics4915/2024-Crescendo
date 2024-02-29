@@ -143,6 +143,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
             }
         });
 
+        // homeMotor(-0.01); 
 
         initShuffle();
     }
@@ -249,6 +250,9 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      */
     public double getHeight() {
         return getEncoderPosReading() / kMetersToRotation;
+    }
+    public double getSetpointHeight() {
+        return mTarget;
     }
 
     /**

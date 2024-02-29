@@ -24,6 +24,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants;
 import com.spartronics4915.frc2024.Robot;
@@ -94,6 +95,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         mWristMotor.burnFlash();        
         shuffleInit();
+
+        // homeMotor(Rotation2d.fromDegrees(1)); 
     }
 
     public static IntakeWrist getInstance() {
@@ -305,7 +308,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit);
+        return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit + (ElevatorConstants.kMaxMeters-kMeterSafetyLimit)/2) || mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
     }
     
     private double getFeedForwardValue(){

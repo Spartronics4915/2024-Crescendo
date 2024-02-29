@@ -131,6 +131,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 return true;
             }
         });
+
+        // homeMotor(Rotation2d.fromDegrees(1)); 
+
     }
 
     // #region init functions
