@@ -4,6 +4,9 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.revrobotics.CANSparkBase;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -35,7 +38,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
 
     private final CANSparkMax mMotor;
-    private final CANSparkMax mFollowerMotor;
+    private final CANSparkFlex mFollowerMotor;
 
     private final SparkPIDController mPIDController;
     private final SparkPIDController mFollowPIDController;
@@ -59,8 +62,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         //motor setup 
 
-        mMotor = constructMotor(kMotorConstants);
-        mFollowerMotor = constructMotor(kFollowerMotorConstants);
+        mMotor = constructMaxMotor(kMotorConstants);
+        mFollowerMotor = constructFlexMotor(kFollowerMotorConstants);
 
         //PID controller setup
         mPIDController = constructPIDController(mMotor, kPIDconstants);
@@ -75,7 +78,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         manualSetPoint = 0;
     }
 
-    private CANSparkMax constructMotor(MotorConstants motorValues){
+    private CANSparkMax constructMaxMotor(MotorConstants motorValues){
         CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
         motor.setInverted(motorValues.motorIsInverted());
@@ -83,8 +86,16 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         motor.setSmartCurrentLimit(motorValues.currentLimit());
         return motor;
     }
+    private CANSparkFlex constructFlexMotor(MotorConstants motorValues){
+        CANSparkFlex motor = new CANSparkFlex(motorValues.motorID(), motorValues.motorType());
+        motor.restoreFactoryDefaults();
+        motor.setInverted(motorValues.motorIsInverted());
+        motor.setIdleMode(motorValues.idleMode());
+        motor.setSmartCurrentLimit(motorValues.currentLimit());
+        return motor;
+    }
 
-    private SparkPIDController constructPIDController(CANSparkMax motor, PIDConstants kPIDValues) {
+    private SparkPIDController constructPIDController(CANSparkBase motor, PIDConstants kPIDValues) {
         SparkPIDController pid = motor.getPIDController();
 
         pid.setP(kPIDValues.p());
