@@ -394,24 +394,6 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         return mInstance;
     }
 
-    /**
-     * If you ever need to not get an instance of the elevator subsystem, use this
-     * @return null
-     */
-    public static Elevator dontGetInstance() {
-        return null;
-    }
-
-    /**
-     * getInstance for gambling addicts. 50% of the time you will get the instance but the other 50% you won't
-     * @return A static instance of the elevator subsystem OR null
-     */
-    public static Elevator mightGetInstance() {
-        if (Math.random() < .2) // Actually less than 50% because the house always wins
-            return getInstance();
-        return null;
-    }
-
     // #endregion
 
 }
