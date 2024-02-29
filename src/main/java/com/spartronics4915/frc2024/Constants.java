@@ -350,7 +350,7 @@ public final class Constants {
                 false, IdleMode.kCoast, 30); // placeholder
         public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
                 IdleMode.kCoast, 40); // placeholder
-        public static final PIDFConstants kPIDconstants = new PIDFConstants(1, 0.0, 0.0, 0.0); // TODO find these values
+        public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
         public static final double kDiff = 50;
