@@ -121,8 +121,7 @@ public class RobotContainer {
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand());
-        mDriverController.rightTrigger(kDriverTriggerDeadband)
-                .whileTrue(new AlignToSpeakerCommand());
+        mDriverController.x().onTrue(new AlignToSpeakerCommand());
 
         // mOperatorController.povUp().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(1)));
         // mOperatorController.povDown().whileTrue(mShooter.manualRunCommand(Rotation2d.fromDegrees(-1)));
