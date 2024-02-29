@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024;
 
 import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
+import static com.spartronics4915.frc2024.Constants.ShooterConstants.kShootSpeed;
 
 import java.util.stream.Stream;
 
@@ -166,9 +167,9 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = 0.2; // placeholder
-            public static final double kLoadSpeed = 0.2; // placeholder
-            public static final double kOutSpeed = -0.3; // placeholder
+            public static final double kInSpeed = -0.5; // placeholder
+            public static final double kLoadSpeed = -0.5; // placeholder
+            public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
             public static final boolean kUseBeamBreak = true;
@@ -396,7 +397,7 @@ public final class Constants {
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
 
-        public static final double kShooterSpeed = (5676/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0)*(0.038 /*radius (m) */); // needs to be in m/s
+        public static final double kShooterSpeed = (kShootSpeed/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0)*(0.038 /*radius (m) */); // needs to be in m/s
         public static final double kShooterHeight = 0.1681988;
         public static final double kMaxDistance = 10.0; // Needs units, the maximum relative distance a target can be
                                                         // from the robot for autoaim
