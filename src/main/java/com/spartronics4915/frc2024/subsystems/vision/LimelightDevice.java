@@ -31,7 +31,6 @@ public class LimelightDevice extends SubsystemBase {
     private final Field2d mField;
     private final SlewRateLimiter mRateLimiter;
     private final GenericEntry ignoreVisionReadings;
-    private final GenericEntry useAverageTags;
 
     /**
      * Creates a new LimelightDevice. The pipeline is initialized to 0, which tracks April Tags.
@@ -47,9 +46,6 @@ public class LimelightDevice extends SubsystemBase {
         mRateLimiter = new SlewRateLimiter(246);
         ShuffleboardTab overview = Shuffleboard.getTab("Overview");
         ignoreVisionReadings = overview.add("IGNORE " + name, false)
-                                       .withWidget(BuiltInWidgets.kToggleButton)
-                                       .getEntry();
-        useAverageTags = overview.add("USE " + name + " TAGS", false)
                                        .withWidget(BuiltInWidgets.kToggleButton)
                                        .getEntry();
         createShuffleboard();
