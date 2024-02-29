@@ -224,13 +224,13 @@ public class RobotContainer {
         mOperatorController.leftStick()
                 .onTrue(mElevator.setTargetCommand(IntakeAssemblyState.Climb));
 
-        mOperatorController.start() // menu
+        mOperatorController.back() // menu
                 .onTrue(Commands.parallel(
                         mElevator.setTargetCommand(IntakeAssemblyState.STOW),
                         mIntakeWrist.setStateCommand(IntakeAssemblyState.STOW),
                         mShooterWrist.setStateCommand(ShooterWristState.STOW)));
 
-        mOperatorController.back()
+        mOperatorController.start()
                 .whileTrue(mIntake.setStateCommand(IntakeState.OUT));
 
         // triggers
