@@ -141,11 +141,11 @@ public final class Constants {
         public enum IntakeAssemblyState { 
             // 70 max angle upwards
             // TODO find values for the intake wirst and elevator
-            GROUNDPICKUP(Rotation2d.fromDegrees(-39), 0.0), 
+            GROUNDPICKUP(Rotation2d.fromDegrees(-30), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
             AMP(Rotation2d.fromDegrees(-13.408), 0.335614), //TODO find elevator height 
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
-            LOAD(Rotation2d.fromDegrees(54.57), 0.0), 
+            LOAD(Rotation2d.fromDegrees(65), 0.0), 
             SOURCE(Rotation2d.fromDegrees(80.0), 0.143993),  //TODO find elevator height 
             MANUAL(Rotation2d.fromDegrees(0.0), 0.0); // CHECKUP
                                                                                                              // is this
@@ -200,7 +200,7 @@ public final class Constants {
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-39); 
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-30); 
 
             public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
@@ -253,8 +253,8 @@ public final class Constants {
                     public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
             
             public static final Constraints kZoidConstants = new Constraints(
-                0.1d, 
-                0.05d
+                0.5d, 
+                0.5d
             );
 
             public static final PIDConstants kPIDConstants = new PIDConstants(

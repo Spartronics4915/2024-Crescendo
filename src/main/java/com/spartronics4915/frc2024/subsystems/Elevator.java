@@ -23,6 +23,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -228,6 +229,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         mElevatorFollowerPos.setDouble(mFollower.getEncoder().getPosition());
         mAppliedOutputWidget.setDouble(mMotor.getAppliedOutput());
         mFollowerAppliedOutput.setDouble(mFollower.getAppliedOutput());
+        SmartDashboard.putBoolean("elevator ls", limitSwitch.get());
     }
     // #endregion
 

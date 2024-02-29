@@ -402,7 +402,7 @@ public class SwerveDrive extends SubsystemBase {
 
         posePublish.accept(getPose());
 
-        boolean logSwerveModules = true;
+        boolean logSwerveModules = false;
         if (logSwerveModules) {
             for(int i = 0; i < 4; i ++){
                 String moduleTag = "Module " + i + " encoder : ";
@@ -418,10 +418,6 @@ public class SwerveDrive extends SubsystemBase {
         var pose = getPose();
         
         mRobotPoseLogger.accept(pose);
-        SmartDashboard.putNumber("IMU Yaw Degrees", getAngle().getDegrees());
-        SmartDashboard.putNumber("Pose Yaw Degrees", pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Pose x", pose.getX());
-        SmartDashboard.putNumber("Pose y", pose.getY());
 
         final var vs = VisionSubsystem.getInstance();
         vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
