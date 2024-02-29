@@ -28,7 +28,6 @@ public class AlignToSpeakerCommand extends Command {
 
     public AlignToSpeakerCommand() {
         super();
-        System.out.println("AlignToSpeaker created");
         mSwerve = SwerveDrive.getInstance();
         mVision = VisionSubsystem.getInstance();
         mLimelight = mVision.getBob();
@@ -37,13 +36,9 @@ public class AlignToSpeakerCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("AlignToSpeaker initialized");
-        //do thing if rotation already decoupled
         if (mSwerve.rotationIsDecoupled()) {
-            System.out.println("and we're ending early");
             cancellingEarly = true;
         } else {
-            System.out.println("and we're NOT ending early");
             cancellingEarly = false;
             triggeredAlign = false;
             cantSeeTag = false;
@@ -66,7 +61,6 @@ public class AlignToSpeakerCommand extends Command {
             mLimelight.setPriorityTagID(priorityID);
             }
         }
-        System.out.println("triggered align is " + triggeredAlign);
     }
     
     @Override
@@ -76,18 +70,15 @@ public class AlignToSpeakerCommand extends Command {
         double tx = mLimelight.getTx();
         Rotation2d limelightAngle = Rotation2d.fromDegrees(-tx);
         Rotation2d desiredAngle = Rotation2d.fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
-        // System.out.println("ALIGN:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
             if (!triggeredAlign) {
                 mSwerve.setDesiredAngle(desiredAngle);
                 desiredRotation = desiredAngle;
                 triggeredAlign = true;
-                System.out.println("Well, this is it.\nOur desired angle is " + desiredAngle + ", and the current rotation from the swerve drive is " + swerveAngle + ".\nThe angle reading from the limelight is " + tx + ", which becomes a rotation of " + limelightAngle + ".\nWe're aligning to " + priorityID + " and tv is " + mLimelight.getTv() + ".\nLet's do this!");
             }
             double percent = MathUtil.clamp((30.0 - Math.abs(tx)) / 30.0, 0.0, 1.0);
             Color color = Bling.mix(Color.kLime, Color.kOrange, percent);
             mBling.setColor(color);
         } else if (!cancellingEarly && !cantSeeTag) {
-            System.out.println("Can't see the tag! Ending AlignToSpeaker.");
             cantSeeTag = true;
         }
     }
@@ -95,13 +86,11 @@ public class AlignToSpeakerCommand extends Command {
     @Override
     public boolean isFinished() {
         if (cancellingEarly || cantSeeTag) return true;
-        System.out.println(cancellingEarly + ", " + mLimelight.getTv() + ", " + triggeredAlign + ", " + Math.abs(mSwerve.getAngle().minus(desiredRotation).getDegrees()));
         return mLimelight.getTv() && triggeredAlign && (Math.abs(mSwerve.getAngle().minus(desiredRotation).getDegrees()) < 1.5);
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("ENDING ALIGN!!! interrupted=" + interrupted);
         if (!cancellingEarly) {
             mSwerve.recoupleRotation();
             mBling.setMode(BlingModes.OFF);
