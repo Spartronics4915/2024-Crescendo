@@ -19,6 +19,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
+import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
@@ -194,6 +195,8 @@ public class RobotContainer {
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
 
+        mDriverController.leftStick().onTrue(new HomingCommand());
+
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
 
@@ -268,7 +271,10 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return mAutoChooser.getSelected();
+        if (mAutoChooser == null) {
+            return null;
+        }
+        return new HomingCommand().andThen(mAutoChooser.getSelected());
         // var a = AutoBuilder.buildAuto("Path 1 Only");
         // System.out.println("AUTO START");
         // System.out.println(a);
