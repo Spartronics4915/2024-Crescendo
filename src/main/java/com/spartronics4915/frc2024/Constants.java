@@ -167,7 +167,7 @@ public final class Constants {
             public static final MotorConstants kFollowerMotorConstants = new MotorConstants(23, MotorType.kBrushless, true,
                 IdleMode.kBrake, 80);
 
-            public static final double kMainToFollowRatio = -1/2;
+            public static final double kMainToFollowRatio = -1/2 * 6748.0/5676.0;
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
