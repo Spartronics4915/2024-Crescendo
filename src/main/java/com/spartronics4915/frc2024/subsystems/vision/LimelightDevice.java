@@ -59,6 +59,7 @@ public class LimelightDevice extends SubsystemBase {
         if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
             mValid = true;
             LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
+            LimelightHelpers.setPriorityTagID(mName, -1);
             // LimelightHelpers.setLEDMode_ForceOff(mName);
         }
     }
@@ -138,7 +139,15 @@ public class LimelightDevice extends SubsystemBase {
     public int getPrimaryTag() {
         if (!mValid) return 0;
         return (int) LimelightHelpers.getFiducialID(mName);
+    }
 
+    public void setPriorityTagID(int id) {
+        if (!mValid) return;
+        LimelightHelpers.setPriorityTagID(mName, id);
+    }
+
+    public void resetPriorityTagID() {
+        setPriorityTagID(-1);
     }
 
     private double distanceToTag(LimelightHelpers.LimelightTarget_Fiducial tag) {

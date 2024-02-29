@@ -18,6 +18,7 @@ public class LockOnCommand extends Command {
     private final VisionSubsystem mVision;
     private final LimelightDevice mLimelight;
     private final Bling mBling;
+    private boolean cancellingEarly = false;
 
     public LockOnCommand() {
         super();
@@ -31,6 +32,7 @@ public class LockOnCommand extends Command {
     public void initialize() {
         //do thing if rotation already decoupled
         if (mSwerve.rotationIsDecoupled()) {
+            cancellingEarly = true;
             end(true);
         } else {
             mSwerve.decoupleRotation();
@@ -48,7 +50,7 @@ public class LockOnCommand extends Command {
         double tx = mLimelight.getTxLowpass();
         Rotation2d limelightAngle = Rotation2d.fromDegrees(-tx);
         Rotation2d desiredAngle = Rotation2d.fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
-        System.out.println("LOCKON:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
+        // System.out.println("LOCKON:\nswerve: " + swerveAngle + "\nlimelight: " + limelightAngle + "\ndesired: " + desiredAngle);
         if (!loaded) mBling.setColor(Color.kWhite);
         else if (loaded && mLimelight.getTv()) {
             mSwerve.setDesiredAngle(desiredAngle);
@@ -60,9 +62,10 @@ public class LockOnCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        mSwerve.recoupleRotation();
-        System.out.println("LOCKON:\nended; interrupted = " + interrupted);
-        mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
-        mBling.setMode(BlingModes.OFF);
+        if (!cancellingEarly) {
+            mSwerve.recoupleRotation();
+            mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
+            mBling.setMode(BlingModes.OFF);
+        }
     }
 }
