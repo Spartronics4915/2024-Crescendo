@@ -20,6 +20,7 @@ import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.AlignToSpeakerCommand;
 import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
+import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
@@ -207,9 +208,10 @@ public class RobotContainer {
         mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
         mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
         mOperatorController.a().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
-        mOperatorController.b().toggleOnTrue(Commands.startEnd(
-                () -> mShooter.setShooterState(ShooterState.ON),
-                () -> mShooter.setShooterState(ShooterState.OFF)));
+        mOperatorController.b().onTrue(Commands.parallel(
+                    mIntake.setStateCommand(IntakeState.OFF),
+                    mShooter.setShooterStateCommand(ShooterState.OFF),
+                    mShooter.setConveyorStateCommand(ConveyorState.OFF)));
 
         // manual controls
 
@@ -226,7 +228,7 @@ public class RobotContainer {
         mOperatorController.leftStick()
                 .onTrue(mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT));
 
-        mOperatorController.leftStick()
+        mOperatorController.rightStick()
                 .onTrue(mElevator.setTargetCommand(IntakeAssemblyState.Climb));
 
         mOperatorController.back() // menu
@@ -236,7 +238,7 @@ public class RobotContainer {
                         mShooterWrist.setStateCommand(ShooterWristState.STOW)));
 
         mOperatorController.start()
-                .whileTrue(mIntake.setStateCommand(IntakeState.OUT));
+                .whileTrue(DigestCommands.out());
 
         // triggers
 
@@ -248,11 +250,10 @@ public class RobotContainer {
                     return new MovingAutoAimCommand(speaker);
                 }, Set.of()));
 
-        mOperatorController.rightTrigger(kOperatorTriggerDeadband).whileTrue(Commands.sequence(
-                mShooter.setShooterStateCommand(ShooterState.ON),
-                AutoComponents.loadIntoShooter(),
-                AutoComponents.shootFromLoaded()));
-
+        mOperatorController.rightTrigger(kOperatorTriggerDeadband)
+            .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
+            .whileTrue(DigestCommands.in())
+            .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 

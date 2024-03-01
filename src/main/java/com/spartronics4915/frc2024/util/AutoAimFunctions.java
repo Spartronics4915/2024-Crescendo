@@ -104,7 +104,7 @@ public class AutoAimFunctions {
     }
 
     public static Rotation2d getChassisAngle(Translation3d targetPos) {
-        var r = targetPos.toTranslation2d().getAngle().getRotations() + 0.5;
+        var r = targetPos.toTranslation2d().getAngle().getRotations();
         return Rotation2d.fromRotations((r < 0) ? 1 + r : r);
     }
 }

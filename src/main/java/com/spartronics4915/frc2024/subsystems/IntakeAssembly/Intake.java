@@ -78,8 +78,6 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
         new Trigger(this::getBeamBreakStatus).onTrue(Commands.print("beam break triggered"));
 
-        RobotContainer.getDriverController().y().onTrue(Commands.sequence(Commands.runOnce(() -> { System.out.println("scg called"); mFollowerMotor.set(0.3); }), Commands.waitSeconds(1), Commands.runOnce(() -> mFollowerMotor.set(0))));
-
         manualSetPoint = 0;
     }
 
@@ -152,7 +150,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
      * @return A command that sets the state of the intake
      */
     public Command setStateCommand(IntakeState state) {
-        return runOnce(() -> {
+        return Commands.runOnce(() -> {
             setState(state);
         });
     }
@@ -172,7 +170,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
     private void in() {
         if(kUseBeamBreak) {
-            if (mBeamBreak.get()) {
+            if (!mBeamBreak.get()) {
                 System.out.println("beam break triggered");
                 mCurrentState = IntakeState.OFF;
                 off();
@@ -188,21 +186,23 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         // mFollowPIDController.setReference(outputPower * kMainToFollowRatio, ControlType.kDutyCycle);
         manualSetPoint = 0.3;
 
-        mMotor.set(0.3);
+        mMotor.set(0.4);
         mFollowerMotor.set(-0.3);
 
     }
 
     private void load() {
-        mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
-        mFollowPIDController.setReference(kLoadSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-
+        //mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
+        // mFollowPIDController.setReference(kLoadSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
+        mMotor.set(0.4);
+        mFollowerMotor.set(-0.3);
     }
 
     private void out() {
-        mPIDController.setReference(kOutSpeed, ControlType.kDutyCycle);
-        mFollowPIDController.setReference(kOutSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-
+        // mPIDController.setReference(kOutSpeed, ControlType.kDutyCycle);
+        // mFollowPIDController.setReference(kOutSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
+        mMotor.set(-0.4);
+        mFollowerMotor.set(0.3);
     }
 
     private void off() {

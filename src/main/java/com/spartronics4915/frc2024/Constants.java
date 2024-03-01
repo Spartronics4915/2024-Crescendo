@@ -200,7 +200,7 @@ public final class Constants {
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-30); 
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-40); 
 
             public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
@@ -219,9 +219,9 @@ public final class Constants {
     
             static{
                  // The number of seconds that we expect the shooter to go from in to Max
-                final double timeMinToMaxSeconds = 1;
+                final double timeMinToMaxSeconds = 0.4;
                 // How long we expect the shooter to take to get to full speed
-                final double timeToFullSpeedSeconds = 0.2;
+                final double timeToFullSpeedSeconds = 0.05;
                 final double maxShooterRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
                         - ShooterWristConstants.kMinAngle.getRotations();
                 final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
@@ -253,8 +253,8 @@ public final class Constants {
                     public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
             
             public static final Constraints kZoidConstants = new Constraints(
-                0.5d, 
-                0.5d
+                1.0, 
+                0.1
             );
 
             public static final PIDConstants kPIDConstants = new PIDConstants(
@@ -285,7 +285,7 @@ public final class Constants {
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
             SUBWOOFER_SHOT(Rotation2d.fromDegrees(67.6864193)), // TODO find Value
-            STOW(Rotation2d.fromDegrees(65));
+            STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
 
@@ -335,7 +335,7 @@ public final class Constants {
              // The number of seconds that we expect the shooter to go from in to Max
             final double timeMinToMaxSeconds = 0.3;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.5;
+            final double timeToFullSpeedSeconds = 0.1;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
@@ -349,16 +349,16 @@ public final class Constants {
 
     public static final class ShooterConstants { // [ ] Shooter Constants
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false,
-                IdleMode.kCoast, 30); // placeholder
-        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,
-                false, IdleMode.kCoast, 30); // placeholder
-        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
                 IdleMode.kCoast, 40); // placeholder
+        public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,
+                false, IdleMode.kCoast, 40); // placeholder
+        public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
+                IdleMode.kCoast, 60); // placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
         public static final double kDiff = 50;
-        public static final double kConveyorInSpeed = 0.8; // placeholder
+        public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
         public static final double kTargetRPM = 5500;

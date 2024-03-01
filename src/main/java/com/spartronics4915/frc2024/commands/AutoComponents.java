@@ -55,9 +55,11 @@ public class AutoComponents {
                         IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget),
                 mIntake.setStateCommand(IntakeState.LOAD),
-                Commands.waitUntil(() -> {
-                    return !mIntake.getBeamBreakStatus();
-                }),
+                mShooter.setConveyorStateCommand(ConveyorState.IN),
+                // Commands.waitUntil(() -> {
+                //     return mIntake.getBeamBreakStatus();
+                // }),
+                Commands.waitSeconds(4),
                 mIntake.setStateCommand(IntakeState.OFF));
     }
 
