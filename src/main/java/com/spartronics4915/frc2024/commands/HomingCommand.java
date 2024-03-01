@@ -13,6 +13,6 @@ public class HomingCommand extends ParallelCommandGroup {
         super(
                 ShooterWrist.getInstance().homeMotorCommand(Rotation2d.fromDegrees(0.3)),
                 IntakeWrist.getInstance().homingCommand(Rotation2d.fromDegrees(0.3)),
-                Elevator.getInstance().homeMotorCommand(0.01));
+                Elevator.getInstance().homeMotorCommand(-0.01));
     }
 }
