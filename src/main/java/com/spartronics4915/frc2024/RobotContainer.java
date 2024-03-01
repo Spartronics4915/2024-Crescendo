@@ -159,6 +159,13 @@ public class RobotContainer {
         mSwerveDrive = SwerveDrive.getInstance();
         if (mSwerveDrive != null) {
             mAutoChooser = AutoBuilder.buildAutoChooser();
+
+            mAutoChooser.addOption(
+                    "Preloaded only",
+                    Commands.parallel(
+                        mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+                        DigestCommands.in().withTimeout(5)));
+
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
