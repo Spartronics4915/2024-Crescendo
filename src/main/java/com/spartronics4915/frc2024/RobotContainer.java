@@ -158,6 +158,12 @@ public class RobotContainer {
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
         if (mSwerveDrive != null) {
+            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
             mAutoChooser.addOption(
@@ -170,13 +176,6 @@ public class RobotContainer {
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
-
-            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
-            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
-            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
-            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
-
         } else {
             mAutoChooser = null;
         }
@@ -204,7 +203,8 @@ public class RobotContainer {
             mDriverController.b().onTrue(mSwerveDrive.resetYawCommand());
         }
 
-        mDriverController.leftStick().onTrue(new HomingCommand());
+        // mDriverController.leftStick().onTrue(new HomingCommand());
+        mDriverController.leftStick().onTrue(IntakeAssemblyCommands.setState(IntakeAssemblyState.STOW));
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
