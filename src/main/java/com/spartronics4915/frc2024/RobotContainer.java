@@ -208,7 +208,7 @@ public class RobotContainer {
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
-        mDriverController.x().onTrue(new AlignToSpeakerCommand());
+        mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         // Operator controls
         // Buttons:
