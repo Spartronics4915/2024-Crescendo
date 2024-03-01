@@ -75,7 +75,12 @@ public class LimelightDevice extends SubsystemBase {
         }
         // if (numberOfTagsSeen() < 2) return Optional.empty();
         LimelightHelpers.PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(mName);
-        return Optional.of(new VisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds));
+        try {
+            if (poseEstimate.tagCount < 2) return Optional.empty();
+            return Optional.of(new VisionMeasurement(poseEstimate.pose, poseEstimate.timestampSeconds));
+        } catch(Error e) {
+            return Optional.empty();
+        }
     }
 
 //#region Limelight Values
