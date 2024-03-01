@@ -171,11 +171,11 @@ public class RobotContainer {
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
 
-            // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
-            // NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            // NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
-            // NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
-            // NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
 
         } else {
             mAutoChooser = null;
