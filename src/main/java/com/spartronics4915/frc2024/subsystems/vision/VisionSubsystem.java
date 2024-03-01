@@ -18,8 +18,8 @@ public class VisionSubsystem extends SubsystemBase {
     public static VisionSubsystem getInstance() {
         if (mInstance == null) {
             mInstance = new VisionSubsystem();
-            BootCoralCommand bootCoral = new BootCoralCommand();
-            CommandScheduler.getInstance().schedule(bootCoral);
+            // BootCoralCommand bootCoral = new BootCoralCommand();
+            // CommandScheduler.getInstance().schedule(bootCoral);
         }
         return mInstance;
     }

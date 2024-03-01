@@ -36,7 +36,7 @@ public class LockOnCommand extends Command {
             end(true);
         } else {
             mSwerve.decoupleRotation();
-            mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
+            // mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
             mBling.setMode(BlingModes.SOLID);
             mBling.setColor(Color.kWhite);
         }
@@ -64,7 +64,7 @@ public class LockOnCommand extends Command {
     public void end(boolean interrupted) {
         if (!cancellingEarly) {
             mSwerve.recoupleRotation();
-            mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
+            // mLimelight.setVisionPipeline(VisionPipelines.FIDUCIALS_3D);
             mBling.setMode(BlingModes.OFF);
         }
     }

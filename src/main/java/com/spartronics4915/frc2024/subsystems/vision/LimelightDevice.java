@@ -43,6 +43,7 @@ public class LimelightDevice extends SubsystemBase {
         mName = formattedName;
         mField = new Field2d();
         mPipeline = VisionPipelines.FIDUCIALS_3D;
+        if (name.equals("alice")) mPipeline = VisionPipelines.DETECTOR_NOTE;
         checkIfValid();
         mHasCoral = hasCoral;
         mRateLimiter = new SlewRateLimiter(246);
