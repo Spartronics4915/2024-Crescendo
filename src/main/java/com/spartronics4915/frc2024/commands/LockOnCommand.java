@@ -35,6 +35,7 @@ public class LockOnCommand extends Command {
             cancellingEarly = true;
             end(true);
         } else {
+            cancellingEarly = false;
             mSwerve.decoupleRotation();
             // mLimelight.setVisionPipeline(VisionPipelines.DETECTOR_NOTE);
             mBling.setMode(BlingModes.SOLID);
