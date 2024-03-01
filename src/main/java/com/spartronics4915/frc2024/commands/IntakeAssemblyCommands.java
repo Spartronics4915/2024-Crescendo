@@ -26,7 +26,7 @@ public class IntakeAssemblyCommands {
 
     public static boolean atTarget() {
         System.out.println("Intake Assembly at target");
-        return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.15);
+        return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.01);
     }
     
     public static Command ComplexSetState(IntakeAssemblyState newState){
