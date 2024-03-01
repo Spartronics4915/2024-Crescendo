@@ -343,7 +343,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
      * @param intakeAssemblyState Whatever the intake assembly state
      */
     public Command setTargetCommand(IntakeAssemblyState intakeAssemblyState) {
-        return runOnce(() -> {
+        return Commands.runOnce(() -> {
             setTarget(intakeAssemblyState);
         });
     }

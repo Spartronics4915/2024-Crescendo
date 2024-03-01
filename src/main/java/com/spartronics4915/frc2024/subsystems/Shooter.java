@@ -143,7 +143,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     }
     public Command setShooterStateCommand(ShooterState state) {
-        return runOnce(() -> {
+        return Commands.runOnce(() -> {
             setShooterState(state);
         });
     }
