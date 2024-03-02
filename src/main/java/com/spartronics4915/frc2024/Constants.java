@@ -294,7 +294,7 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 36.0 / 0.53;
+        public static double kWristToRotationsRate = 36.0 / 0.5;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
