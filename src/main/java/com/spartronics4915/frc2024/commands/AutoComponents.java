@@ -48,6 +48,13 @@ public class AutoComponents {
 
     private AutoComponents() {};
 
+    public static Command shootPreloaded() {
+        return Commands.sequence(
+                mShooter.setShooterStateCommand(ShooterState.ON),
+                Commands.waitUntil(mShooter::hasSpunUp),
+                DigestCommands.in().withTimeout(1));
+    }
+
     public static Command loadIntoShooter() {
         return Commands.sequence(
                 Commands.parallel(
