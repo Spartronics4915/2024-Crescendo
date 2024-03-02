@@ -171,7 +171,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
         // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
         // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
-        mShooterMotor.set(0.3);
+        mShooterMotor.set(0.8);
     }
 
     private void conveyorIn() {
