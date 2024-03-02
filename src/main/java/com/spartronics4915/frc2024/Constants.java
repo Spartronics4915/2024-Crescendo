@@ -176,7 +176,7 @@ public final class Constants {
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
-            public static final boolean kUseBeamBreak = true;
+            public static final boolean kUseBeamBreak = false;
             public static final int kIntakeBeamBreakID = 0; // placeholder
         }
 
@@ -253,8 +253,8 @@ public final class Constants {
                     public static final double kMetersToRotation = 40 / 0.23; // Conversion rate
             
             public static final Constraints kZoidConstants = new Constraints(
-                1.0, 
-                0.1
+                2.0, 
+                5.0
             );
 
             public static final PIDConstants kPIDConstants = new PIDConstants(
@@ -278,13 +278,13 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.0;
-            public static final double kMaxMeters = 0.33; // hack untested
+            public static final double kMaxMeters = 0.36; // hack untested
         }
     }
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(58.6864193)), // TODO find Value
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)), // TODO find Value
             STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
