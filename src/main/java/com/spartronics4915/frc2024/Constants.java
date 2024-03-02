@@ -304,7 +304,7 @@ public final class Constants {
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(69); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(70);
+        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(63);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
