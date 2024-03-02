@@ -4,17 +4,32 @@
 
 package com.spartronics4915.frc2024;
 
+import com.spartronics4915.frc2024.util.ModeSwitchInterface;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.util.datalog.DataLog;
+
+import edu.wpi.first.wpilibj.DataLogManager;
+
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
+    public static DataLog log;
 
     @Override
     public void robotInit() {
+
+        DataLogManager.logNetworkTables(true);
+        
+        log = DataLogManager.getLog();
+        
+        DriverStation.startDataLog(log, true);
+
         mRobotContainer = new RobotContainer();
     }
 
@@ -34,8 +49,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        modeInit();
         mAutonomousCommand = mRobotContainer.getAutonomousCommand();
-
         if (mAutonomousCommand != null) {
             mAutonomousCommand.schedule();
         }
@@ -49,6 +64,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        modeInit();
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
@@ -62,6 +78,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        modeInit();
         CommandScheduler.getInstance().cancelAll();
     }
 
@@ -70,4 +87,15 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testExit() {}
+
+    /**
+     * this method is called every time a robot is enabled or disabled
+     */
+    public void modeInit(){
+        
+        //Safety for trapezoid
+        for (var trapezoid : ModeSwitchInterface.ModeSwitchSubsystems) {
+            if (trapezoid != null) trapezoid.modeSwitchAction();
+        }
+    }
 }

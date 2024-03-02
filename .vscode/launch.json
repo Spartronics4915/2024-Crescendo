@@ -4,18 +4,38 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
+    {
+      "type": "java",
+      "name": "PolynomialRootFinder",
+      "request": "launch",
+      "mainClass": "com.spartronics4915.frc2024.util.PolynomialRootFinder",
+      "projectName": "2024-Crescendo"
+    },
+    {
+      "type": "java",
+      "name": "AutoAimFunctions",
+      "request": "launch",
+      "mainClass": "com.spartronics4915.frc2024.util.AutoAimFunctions",
+      "projectName": "2024-Crescendo"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "com.spartronics4915.frc2024.Main",
+      "projectName": "2024-Crescendo"
+    },
     {
       "type": "wpilib",
       "name": "WPILib Desktop Debug",
       "request": "launch",
-      "desktop": true,
+      "desktop": true
     },
     {
       "type": "wpilib",
       "name": "WPILib roboRIO Debug",
       "request": "launch",
-      "desktop": false,
+      "desktop": false
     }
   ]
 }
