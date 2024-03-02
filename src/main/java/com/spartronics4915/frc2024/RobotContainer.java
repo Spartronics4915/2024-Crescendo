@@ -163,6 +163,7 @@ public class RobotContainer {
             NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+            NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -170,6 +171,7 @@ public class RobotContainer {
                     "Preloaded only",
                     Commands.parallel(
                         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+                        mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2),
                         DigestCommands.in().withTimeout(5)));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);

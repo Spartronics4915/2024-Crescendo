@@ -284,7 +284,7 @@ public final class Constants {
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(67.6864193)), // TODO find Value
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(58.6864193)), // TODO find Value
             STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
@@ -294,7 +294,7 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 36.0 / 0.5;
+        public static double kWristToRotationsRate = 72;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
@@ -304,7 +304,7 @@ public final class Constants {
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(69); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(63);
+        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested

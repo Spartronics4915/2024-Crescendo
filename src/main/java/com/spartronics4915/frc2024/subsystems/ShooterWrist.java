@@ -90,7 +90,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return mInstance;
     }
 
-    public ShooterWrist() {
+    private ShooterWrist() {
         super();
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID();
@@ -107,6 +107,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         currentToSetPoint();
 
         initShuffleBoard();
+        Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
 
         new Trigger(mLimitSwitch::get).onTrue(new Command() {
 
@@ -349,7 +350,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
-        Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
     }
 
     private double getFeedForwardValue() {

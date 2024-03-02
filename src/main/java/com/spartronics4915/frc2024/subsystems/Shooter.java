@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
+    public static final double ON_SPEED = 0.9;
 
     public static enum ShooterState {
         ON, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -171,7 +172,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
         // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
         // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
-        mShooterMotor.set(0.8);
+        mShooterMotor.set(ON_SPEED);
     }
 
     private void conveyorIn() {
