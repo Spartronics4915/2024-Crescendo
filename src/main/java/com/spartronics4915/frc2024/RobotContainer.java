@@ -161,7 +161,7 @@ public class RobotContainer {
         if (mSwerveDrive != null) {
             NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("aim", new StationaryAutoAimCommand(AutoComponents.getTarget()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());

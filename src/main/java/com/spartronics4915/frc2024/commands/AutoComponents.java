@@ -48,6 +48,12 @@ public class AutoComponents {
 
     private AutoComponents() {};
 
+    public static Translation3d getTarget() {
+        final var alliance = DriverStation.getAlliance().get();
+        final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
+        return speaker;
+    }
+
     public static Command shootPreloaded() {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
