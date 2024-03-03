@@ -221,6 +221,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     private void setState(IntakeAssemblyState newState){
+        mHoming = false;
         mManualMovement = false;
         setRotationSetPoint(newState.wristAngle);
     }

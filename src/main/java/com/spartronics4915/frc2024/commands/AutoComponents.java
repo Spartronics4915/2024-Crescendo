@@ -40,11 +40,11 @@ public class AutoComponents {
     public static final Translation3d TAG_7 = new Translation3d(Units.inchesToMeters(-1.5),
             Units.inchesToMeters(218.42), Units.inchesToMeters(57.13));
 
-    public static final Translation3d RED_SPEAKER = new Translation3d(TAG_4.getX() + Units.inchesToMeters(9.055),
-            TAG_4.getY(), Units.inchesToMeters(80.515));
+    public static final Translation3d RED_SPEAKER = new Translation3d(TAG_4.getX(),
+            TAG_4.getY(), Units.inchesToMeters(83));
 
-    public static final Translation3d BLUE_SPEAKER = new Translation3d(TAG_7.getX() - Units.inchesToMeters(9.055),
-            TAG_7.getY(), Units.inchesToMeters(80.515));
+    public static final Translation3d BLUE_SPEAKER = new Translation3d(TAG_7.getX(),
+            TAG_7.getY(), Units.inchesToMeters(83));
 
     private AutoComponents() {};
 
