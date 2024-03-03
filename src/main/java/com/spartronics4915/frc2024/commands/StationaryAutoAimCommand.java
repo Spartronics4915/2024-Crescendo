@@ -18,7 +18,7 @@ import static com.spartronics4915.frc2024.util.AutoAimFunctions.*;
 
 import java.util.Optional;
 
-public class MovingAutoAimCommand extends Command{
+public class StationaryAutoAimCommand extends Command{
     public SwerveDrive mSwerve;
     public ShooterWrist mShooterWrist;
     public boolean started = false;;
@@ -33,7 +33,7 @@ public class MovingAutoAimCommand extends Command{
         );
     }
 
-    public MovingAutoAimCommand(Translation3d mTarget) {
+    public StationaryAutoAimCommand(Translation3d mTarget) {
         this.mSwerve = SwerveDrive.getInstance();
         this.mShooterWrist = ShooterWrist.getInstance();
         this.kTarget = mTarget;
