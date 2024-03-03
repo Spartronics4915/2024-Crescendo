@@ -24,6 +24,7 @@ import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
+import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;

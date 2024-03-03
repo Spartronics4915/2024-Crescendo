@@ -101,6 +101,10 @@ public class AutoComponents {
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget));
     }
 
+    /**
+     * do not use please
+     */
+    @Deprecated
     public static Command stationaryAutoAim() {
         return Commands.defer(() -> {
             final var alliance = DriverStation.getAlliance().get();
