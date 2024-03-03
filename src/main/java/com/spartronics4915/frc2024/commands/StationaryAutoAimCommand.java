@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import static com.spartronics4915.frc2024.util.AutoAimFunctions.*;
+import static com.spartronics4915.frc2024.Constants.AutoAimConstants.*;
 
 import java.util.Optional;
 
@@ -55,7 +56,11 @@ public class StationaryAutoAimCommand extends Command{
     
     @Override
     public void execute() {
-        var aimingPoint = Optional.of(kTarget);
+        var aimingPoint = Optional.of(kTarget.minus(new Translation3d(
+            mSwerve.getPose().getTranslation().getX(),
+            mSwerve.getPose().getTranslation().getY(),
+            kShooterHeight
+        )));
         if (aimingPoint.isEmpty()) {
             return;
         }
@@ -66,7 +71,7 @@ public class StationaryAutoAimCommand extends Command{
         targetPublisher.accept(new Pose3d(targetPos.plus(new Translation3d(
             mSwerve.getPose().getTranslation().getX(),
             mSwerve.getPose().getTranslation().getY(),
-            0.0
+            kShooterHeight
         )), new Rotation3d()));
 
         var botAngle = getChassisAngle(targetPos); //base rotations 0 --> 360 //reverses the direction (ie now the back is facing the target)
