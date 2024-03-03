@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.*;
 
@@ -41,18 +42,21 @@ public class AutoComponents {
     public static final Translation3d TAG_7 = new Translation3d(Units.inchesToMeters(-1.5),
             Units.inchesToMeters(218.42), Units.inchesToMeters(57.13));
 
-    public static final Translation3d RED_SPEAKER = new Translation3d(TAG_4.getX(),
-            TAG_4.getY(), Units.inchesToMeters(83));
+    public static final Translation3d RED_SPEAKER = new Translation3d(TAG_4.getX() - Units.inchesToMeters(9),
+            TAG_4.getY(), Units.inchesToMeters(86));
 
-    public static final Translation3d BLUE_SPEAKER = new Translation3d(TAG_7.getX(),
-            TAG_7.getY(), Units.inchesToMeters(83));
+    public static final Translation3d BLUE_SPEAKER = new Translation3d(TAG_7.getX() + Units.inchesToMeters(9),
+            TAG_7.getY(), Units.inchesToMeters(86));
 
     private AutoComponents() {};
 
-    public static Translation3d getTarget() {
+    public static Optional<Translation3d> getTarget() {
+        if (DriverStation.getAlliance().isEmpty()) {
+            return Optional.empty();
+        }
         final var alliance = DriverStation.getAlliance().get();
         final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
-        return speaker;
+        return Optional.of(speaker);
     }
 
     public static Command shootPreloaded() {
