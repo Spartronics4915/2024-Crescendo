@@ -212,6 +212,7 @@ public class RobotContainer {
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+        mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
 
         // Operator controls
         // Buttons:
