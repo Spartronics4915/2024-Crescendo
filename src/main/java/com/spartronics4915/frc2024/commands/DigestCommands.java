@@ -38,6 +38,7 @@ public class DigestCommands {
             .finallyDo(() -> {
                 mIntake.setState(IntakeState.OFF);
                 mShooter.setConveyorState(ConveyorState.OFF);
+                mShooter.setShooterState(ShooterState.OFF);
             });
     }
 }

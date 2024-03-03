@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice.VisionMeasurement;
@@ -323,7 +324,7 @@ public class SwerveDrive extends SubsystemBase {
     public void addVisionMeasurement(final Pose2d cameraPose, final double t) {
         mPoseEstimatorWriteLock.lock();
         try {
-            if (Timer.getMatchTime() > 130) {
+            if (!Robot.TELEOP_TIMER.hasElapsed(5) || DriverStation.isAutonomous()/*Timer.getMatchTime() > 130*/) {
                 mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1));
             } else {
                 mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.4, 0.4, 3.0));
