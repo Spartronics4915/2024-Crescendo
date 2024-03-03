@@ -123,7 +123,7 @@ public final class Constants {
                 kReplanningConfig);
 
         public static final int kDriveMotorCurrentLimit = 40;
-        public static final int kAngleMotorCurrentLimit = 40;
+        public static final int kAngleMotorCurrentLimit = 25;
         public static final double kMaxVoltage = 12.0;
 
         public static final Rotation2d kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05);
@@ -176,7 +176,7 @@ public final class Constants {
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
-            public static final boolean kUseBeamBreak = false;
+            public static final boolean kUseBeamBreak = true;
             public static final int kIntakeBeamBreakID = 0; // placeholder
         }
 

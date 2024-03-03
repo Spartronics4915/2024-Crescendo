@@ -5,6 +5,7 @@ import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
+import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,6 +33,7 @@ public class DigestCommands {
     public static Command out() {
         return mIntake.setStateCommand(IntakeState.OUT)
             .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
+            .alongWith(mShooter.setShooterStateCommand(ShooterState.BACK))
             .alongWith(Commands.idle())
             .finallyDo(() -> {
                 mIntake.setState(IntakeState.OFF);
