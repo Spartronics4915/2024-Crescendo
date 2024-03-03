@@ -1,6 +1,7 @@
 package com.spartronics4915.frc2024.commands;
 
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -31,7 +32,7 @@ public class AutoComponents {
     private static SwerveDrive mSwerve = SwerveDrive.getInstance();
     private static Intake mIntake = Intake.getInstance();
 
-    private static Shooter mShooter = Shooter.getInstance(); 
+    private static Shooter mShooter = Shooter.getInstance();
     private static ShooterWrist mShooterWrist = ShooterWrist.getInstance();
 
     public static final Translation3d TAG_4 = new Translation3d(Units.inchesToMeters(652.73),
@@ -55,10 +56,10 @@ public class AutoComponents {
     }
 
     public static Command shootPreloaded() {
-        return Commands.sequence(
-                mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.waitUntil(mShooter::hasSpunUp),
-                DigestCommands.in().withTimeout(1));
+        return Commands.parallel(
+                mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+                mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                    .andThen(DigestCommands.in().withTimeout(5)));
     }
 
     public static Command loadIntoShooter() {
@@ -70,7 +71,7 @@ public class AutoComponents {
                 mIntake.setStateCommand(IntakeState.LOAD),
                 mShooter.setConveyorStateCommand(ConveyorState.IN),
                 // Commands.waitUntil(() -> {
-                //     return mIntake.getBeamBreakStatus();
+                // return mIntake.getBeamBreakStatus();
                 // }),
                 Commands.waitSeconds(4),
                 mIntake.setStateCommand(IntakeState.OFF));
