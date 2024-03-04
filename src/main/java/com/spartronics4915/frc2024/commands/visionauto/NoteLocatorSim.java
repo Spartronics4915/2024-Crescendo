@@ -14,8 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class NoteLocatorSim {
-    public static record NoteDetection(double tx, double ty, double estimatedDistance) {};
+public class NoteLocatorSim implements NoteLocatorInterface{
 
     SwerveDrive swerveDrive;
     final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7)));
