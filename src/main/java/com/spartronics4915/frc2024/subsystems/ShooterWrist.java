@@ -21,6 +21,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
@@ -89,7 +90,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return mInstance;
     }
 
-    public ShooterWrist() {
+    private ShooterWrist() {
         super();
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID();
@@ -106,6 +107,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         currentToSetPoint();
 
         initShuffleBoard();
+        Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
 
         new Trigger(mLimitSwitch::get).onTrue(new Command() {
 

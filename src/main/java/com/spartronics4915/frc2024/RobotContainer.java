@@ -24,6 +24,7 @@ import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
+import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -51,6 +52,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -160,9 +162,10 @@ public class RobotContainer {
         if (mSwerveDrive != null) {
             NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
+            NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+            NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -170,12 +173,15 @@ public class RobotContainer {
                     "Preloaded only",
                     Commands.parallel(
                         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                        DigestCommands.in().withTimeout(5)));
+                        mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                            .andThen(DigestCommands.in().withTimeout(5))));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
+
+            Shuffleboard.getTab("Tab 12").add(mAutoChooser);
         } else {
             mAutoChooser = null;
         }
@@ -204,11 +210,12 @@ public class RobotContainer {
         }
 
         // mDriverController.leftStick().onTrue(new HomingCommand());
-        mDriverController.leftStick().onTrue(IntakeAssemblyCommands.setState(IntakeAssemblyState.STOW));
+        mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+        mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
 
         // Operator controls
         // Buttons:
@@ -222,14 +229,14 @@ public class RobotContainer {
 
         // manual controls
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.05));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.05));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.04));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.04));
 
-        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
-        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
+        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
 
-        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
-        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
+        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
 
         // misc
         mOperatorController.leftStick()
@@ -254,7 +261,7 @@ public class RobotContainer {
                     final var alliance = DriverStation.getAlliance().get();
                     final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
                             : AutoComponents.RED_SPEAKER;
-                    return new MovingAutoAimCommand(speaker);
+                    return new StationaryAutoAimCommand(speaker);
                 }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)

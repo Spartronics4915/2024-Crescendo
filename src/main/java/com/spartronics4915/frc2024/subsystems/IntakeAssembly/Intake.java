@@ -1,7 +1,11 @@
 package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -47,6 +51,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
 
     private final DigitalInput mBeamBreak;
+    private final Timer mBeamBreakTimer;
+    private final BooleanTopic mBeamBreakTopic;
+    private final BooleanPublisher mBeamBreakPublisher;
 
     private double manualSetPoint;
     private final RelativeEncoder mEncoder;
@@ -76,9 +83,21 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
         //beam break setup
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
-        new Trigger(this::getBeamBreakStatus).onTrue(Commands.print("beam break triggered"));
+        mBeamBreakTimer = new Timer();
+        mBeamBreakTimer.reset();
+        new Trigger(this::getBeamBreakStatus).onFalse(Commands.runOnce(() -> mBeamBreakTimer.start()));
+        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
+            if (mCurrentState == IntakeState.IN) {
+                setState(IntakeState.OFF);
+            }
+            mBeamBreakTimer.stop();
+            mBeamBreakTimer.reset();
+        }));
 
         manualSetPoint = 0;
+
+        mBeamBreakTopic = NetworkTableInstance.getDefault().getBooleanTopic("intake beam");
+        mBeamBreakPublisher = mBeamBreakTopic.publish();
     }
 
     private CANSparkMax constructMaxMotor(MotorConstants motorValues){
@@ -169,14 +188,14 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     }   
 
     private void in() {
-        if(kUseBeamBreak) {
-            if (!mBeamBreak.get()) {
-                System.out.println("beam break triggered");
-                mCurrentState = IntakeState.OFF;
-                off();
-                return;
-            }
-        }
+        // if(kUseBeamBreak) {
+        //     if (!mBeamBreak.get()) {
+        //         System.out.println("beam break triggered");
+        //         mCurrentState = IntakeState.OFF;
+        //         off();
+        //         return;
+        //     }
+        // }
 
         // double velocity = mEncoder.getVelocity();
         // double outputPower = computeOneSidedPControlOutput(velocity);
@@ -222,6 +241,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         SmartDashboard.putBoolean("beam break", getBeamBreakStatus());
         SmartDashboard.putNumber("flex enc", mFollowerMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("flex applied output", mFollowerMotor.getAppliedOutput());
+
+        mBeamBreakPublisher.accept(mBeamBreak.get());
     }
 
     @Override

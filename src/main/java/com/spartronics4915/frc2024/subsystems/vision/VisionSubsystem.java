@@ -32,6 +32,10 @@ public class VisionSubsystem extends SubsystemBase {
         return bob;
     }
 
+    public boolean aliceSeesNote() {
+        return alice.getTv();
+    }
+
     @Override
     public void periodic() {
         alice.updateFieldPose();

@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4817998866766982,
-        "y": 6.867392196322855
+        "x": 1.8415308101220598,
+        "y": 5.6344823658053915
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.024481741271176,
-        "y": 6.591117797620211
+        "x": 2.473905809075354,
+        "y": 5.762995109094613
       },
       "isLocked": false,
-      "linkedName": "Garage Midpoint 3"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3599577968386725,
-        "y": 6.324710341728376
+        "x": 3.346443434645111,
+        "y": 5.953243670223605
       },
       "prevControl": {
-        "x": 2.0244817412711766,
-        "y": 6.9364607959985145
+        "x": 2.5907033022857253,
+        "y": 5.798992877518723
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Garage Midpoint 4"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.972626614896384,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -132.91743472026917,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

@@ -7,6 +7,7 @@ package com.spartronics4915.frc2024;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.util.datalog.DataLog;
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot {
 
     private RobotContainer mRobotContainer;
     public static DataLog log;
+    public static final Timer TELEOP_TIMER = new Timer();
 
     @Override
     public void robotInit() {
@@ -68,6 +70,7 @@ public class Robot extends TimedRobot {
         if (mAutonomousCommand != null) {
             mAutonomousCommand.cancel();
         }
+        TELEOP_TIMER.start();
     }
 
     @Override

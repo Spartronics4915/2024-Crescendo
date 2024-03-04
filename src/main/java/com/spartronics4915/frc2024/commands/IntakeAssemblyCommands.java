@@ -16,7 +16,15 @@ public class IntakeAssemblyCommands {
     private static Elevator mElevator = Elevator.getInstance();
 
     private IntakeAssemblyCommands() {};
-    
+
+    public static Command home() {
+        return new HomingCommand();
+    }
+
+    public static Command stow() {
+        return home().andThen(setState(IntakeAssemblyState.STOW));
+    }
+
     public static Command setState(IntakeAssemblyState newState){
         return Commands.parallel(
             mElevator.setTargetCommand(newState),

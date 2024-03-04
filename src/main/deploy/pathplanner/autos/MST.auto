@@ -2,31 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7434568701554986,
-      "y": 4.400618027197593
+      "x": 1.3,
+      "y": 5.62
     },
-    "rotation": -60.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Bottom Start to Bottom Note"
+            "name": "shootPreloaded"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Bottom Note IE to Middle Note"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bottom Sub Taxi_"
+            "pathName": "Mid Sub Taxi"
           }
         }
       ]
