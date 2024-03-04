@@ -35,6 +35,9 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristCo
 
 import java.util.Set;
 
+/**
+ * this function calculates the coupler constant and returns the maxumum, minimum, and theororetical kinetic velocity of the motor. 
+ */
 public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
     //#region all the variables and stuff
     private static Elevator mInstance;

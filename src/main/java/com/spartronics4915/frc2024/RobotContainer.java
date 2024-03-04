@@ -163,6 +163,7 @@ public class RobotContainer {
             NamedCommands.registerCommand("aim", AutoComponents.stationaryAutoAim());
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
+            NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -170,7 +171,8 @@ public class RobotContainer {
                     "Preloaded only",
                     Commands.parallel(
                         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                        DigestCommands.in().withTimeout(5)));
+                        mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                            .andThen(DigestCommands.in().withTimeout(5))));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
@@ -204,7 +206,7 @@ public class RobotContainer {
         }
 
         // mDriverController.leftStick().onTrue(new HomingCommand());
-        mDriverController.leftStick().onTrue(IntakeAssemblyCommands.setState(IntakeAssemblyState.STOW));
+        mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
@@ -222,14 +224,14 @@ public class RobotContainer {
 
         // manual controls
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.05));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.05));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.04));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.04));
 
-        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
-        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+        mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
+        mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
 
-        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(0.25)));
-        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-0.25)));
+        mOperatorController.povRight().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
+        mOperatorController.povLeft().whileTrue(mIntakeWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
 
         // misc
         mOperatorController.leftStick()
