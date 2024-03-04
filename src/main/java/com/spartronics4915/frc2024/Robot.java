@@ -10,11 +10,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
@@ -71,6 +74,11 @@ public class Robot extends TimedRobot {
             mAutonomousCommand.cancel();
         }
         TELEOP_TIMER.start();
+
+        if(RobotBase.isSimulation()) {
+            
+            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2,7, new Rotation2d()));
+        }
     }
 
     @Override
