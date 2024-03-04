@@ -27,6 +27,7 @@ import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
+import com.spartronics4915.frc2024.commands.visionauto.DriveToPickUpNote;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMCwithPriority;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMC;
@@ -288,10 +289,17 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        if (mAutoChooser == null) {
-            return null;
-        }
-        return new HomingCommand().andThen(mAutoChooser.getSelected());
+        
+
+        return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(new DriveToPickUpNote(mSwerveDrive));
+        
+        // if (mAutoChooser == null) {
+        //     return null;
+        // }
+        
+        // return new HomingCommand().andThen(mAutoChooser.getSelected());
+        
+        
         // var a = AutoBuilder.buildAuto("Path 1 Only");
         // System.out.println("AUTO START");
         // System.out.println(a);

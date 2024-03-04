@@ -4,6 +4,7 @@
 
 package com.spartronics4915.frc2024;
 
+import com.spartronics4915.frc2024.commands.visionauto.DriveToPickUpNote;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -77,7 +78,8 @@ public class Robot extends TimedRobot {
 
         if(RobotBase.isSimulation()) {
             
-            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2,7, new Rotation2d()));
+            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2.5,7, new Rotation2d()));
+            new DriveToPickUpNote(mRobotContainer.getSwerveDrive()).schedule();
         }
     }
 
