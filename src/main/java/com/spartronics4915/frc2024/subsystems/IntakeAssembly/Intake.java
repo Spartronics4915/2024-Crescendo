@@ -1,6 +1,9 @@
 package com.spartronics4915.frc2024.subsystems.IntakeAssembly;
 
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,6 +52,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
 
     private final DigitalInput mBeamBreak;
     private final Timer mBeamBreakTimer;
+    private final BooleanTopic mBeamBreakTopic;
+    private final BooleanPublisher mBeamBreakPublisher;
 
     private double manualSetPoint;
     private final RelativeEncoder mEncoder;
@@ -90,6 +95,9 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         }));
 
         manualSetPoint = 0;
+
+        mBeamBreakTopic = NetworkTableInstance.getDefault().getBooleanTopic("intake beam");
+        mBeamBreakPublisher = mBeamBreakTopic.publish();
     }
 
     private CANSparkMax constructMaxMotor(MotorConstants motorValues){
@@ -233,6 +241,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         SmartDashboard.putBoolean("beam break", getBeamBreakStatus());
         SmartDashboard.putNumber("flex enc", mFollowerMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("flex applied output", mFollowerMotor.getAppliedOutput());
+
+        mBeamBreakPublisher.accept(mBeamBreak.get());
     }
 
     @Override

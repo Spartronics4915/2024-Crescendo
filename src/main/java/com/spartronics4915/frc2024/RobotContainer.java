@@ -52,6 +52,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -179,6 +180,8 @@ public class RobotContainer {
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
+
+            Shuffleboard.getTab("Tab 12").add(mAutoChooser);
         } else {
             mAutoChooser = null;
         }
