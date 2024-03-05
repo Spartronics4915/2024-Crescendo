@@ -97,10 +97,12 @@ public class AutoAimFunctions {
 
     public static Rotation2d getShooterAngle(Translation3d targetPos) { // this is the position of the speaker centered
                                                                         // around the robot
-        double kRelHeight = targetPos.getZ();// - kShooterHeight;
+        // opposite
+        double kRelHeight = targetPos.getZ() - kShooterHeight;
+        //adjacent
         double dist = targetPos.getNorm();
-
-        return new Rotation2d(Math.asin(kRelHeight / dist));
+        
+        return new Rotation2d(Math.atan(kRelHeight / dist));
     }
 
     public static Rotation2d getChassisAngle(Translation3d targetPos) {
