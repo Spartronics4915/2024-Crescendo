@@ -26,41 +26,36 @@ public class LimelightAuto {
 
     public static Command limelightAuto() {
         return Commands.sequence(
-            IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
-            driveToNote(),
-            new AlignToSpeakerCommand(),
-            aimAndShoot()
-            );
+                IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
+                driveToNote(),
+                new AlignToSpeakerCommand(),
+                aimAndShoot());
     }
 
     public static Command driveToNote() {
         return Commands.deadline(
-            Commands.waitUntil(mVisionSubsystem::aliceSeesNote),
-            Commands.parallel(
-                new LockOnCommand(),
-                new DriveStraightCommands.DriveStraightFixedDistance(
-                    mSwerve,
-                    new Rotation2d(),
-                    10,
-                    new Constraints(4.5, 11.09)
-                )
-            )
-        );
+                Commands.waitUntil(mVisionSubsystem::aliceCantSeeNote), // This shop stop when Alice can't see the note.
+                Commands.parallel(
+                        new LockOnCommand(),
+                        new DriveStraightCommands.DriveStraightFixedDistance(
+                                mSwerve,
+                                new Rotation2d(),
+                                10,
+                                new Constraints(1, 1))));
     }
 
-    //TODO: make
+    // TODO: make
     public static Rotation2d getNeededShooterAngle(double tagSize) {
         return new Rotation2d();
     }
 
     public static Command aimAndShoot() {
         return Commands.sequence(
-            Commands.runOnce(() -> {
-                mShooterWrist.publicSetRotationSetPoint(getNeededShooterAngle(0));
-            }),
-            Commands.waitUntil(mShooterWrist::atTarget),
-            mShooter.setShooterStateCommand(ShooterState.ON),
-            mShooter.setConveyorStateCommand(ConveyorState.IN)
-            );
+                Commands.runOnce(() -> {
+                    mShooterWrist.publicSetRotationSetPoint(getNeededShooterAngle(0));
+                }),
+                Commands.waitUntil(mShooterWrist::atTarget),
+                mShooter.setShooterStateCommand(ShooterState.ON),
+                mShooter.setConveyorStateCommand(ConveyorState.IN));
     }
 }
