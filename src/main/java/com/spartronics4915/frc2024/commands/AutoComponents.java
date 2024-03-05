@@ -106,7 +106,7 @@ public class AutoComponents {
         return Commands.sequence(
                 IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget),
-                Commands.waitUntil(mIntake::getBeamBreakStatus),
+                Commands.waitUntil(mIntake::beamBreakIsTriggered),
                 IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD));
     }
 
