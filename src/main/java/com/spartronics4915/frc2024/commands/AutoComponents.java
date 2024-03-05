@@ -67,7 +67,8 @@ public class AutoComponents {
     public static Command shootPreloaded() {
         return Commands.parallel(
                 mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                mShooter.setShooterStateCommand(ShooterState.ON)
+                    .andThen(Commands.waitUntil(mShooter::hasSpunUp))
                     .andThen(DigestCommands.in().withTimeout(5)));
     }
 
@@ -106,7 +107,7 @@ public class AutoComponents {
                 IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget),
                 Commands.waitUntil(mIntake::getBeamBreakStatus),
-                IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.LOAD));
+                IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD));
     }
 
     public static Command resetToGround() {
