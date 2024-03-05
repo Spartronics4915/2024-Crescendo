@@ -19,15 +19,8 @@ public class DigestCommands {
 
     public static Command in() {
         return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
-            .andThen(new WaitUntilCommand(IntakeAssemblyCommands::atTarget))
-            .andThen(
-                    mIntake.setStateCommand(IntakeState.LOAD)
-                        .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN)))
-            .alongWith(Commands.idle())
-            .finallyDo(() -> {
-                mIntake.setState(IntakeState.OFF);
-                mShooter.setConveyorState(ConveyorState.OFF);
-            });
+            .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+            .andThen(inUnsafe());
     }
 
     public static Command inUnsafe() {
