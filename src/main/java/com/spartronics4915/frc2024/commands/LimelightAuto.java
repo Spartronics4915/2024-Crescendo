@@ -28,8 +28,11 @@ public class LimelightAuto {
     public static Command limelightAuto() {
         return Commands.sequence(
                 IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
+                Commands.waitSeconds(1),
                 driveToNote(),
+                Commands.waitSeconds(1),
                 new AlignToSpeakerCommand(),
+                Commands.waitSeconds(1),
                 aimAndShoot());
     }
 
@@ -43,7 +46,7 @@ public class LimelightAuto {
 
         Command driveStraightIndefiniteCommand = swerve.run(()->{swerve.drive(forwardSpeed, false);});
         return Commands.deadline(
-                Commands.waitUntil(mVisionSubsystem::aliceCantSeeNote), // This shop stop when Alice can't see the note.
+                Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote), // This shop stop when Alice can't see the note.
                 Commands.parallel(
                         new LockOnCommand(),
                         driveStraightIndefiniteCommand));
