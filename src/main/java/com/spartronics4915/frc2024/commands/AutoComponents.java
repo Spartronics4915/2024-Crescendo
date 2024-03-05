@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.*;
@@ -49,6 +50,10 @@ public class AutoComponents {
             TAG_7.getY(), Units.inchesToMeters(86));
 
     private AutoComponents() {};
+
+    public static Translation3d getTargetUnsafe() throws NoSuchElementException {
+        return DriverStation.getAlliance().get() == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
+    }
 
     public static Optional<Translation3d> getTarget() {
         if (DriverStation.getAlliance().isEmpty()) {
