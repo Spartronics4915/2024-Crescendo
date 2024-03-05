@@ -37,6 +37,9 @@ public class TableAutoAimCommand extends Command {
     private static InterpolatingDoubleTreeMap mShooterAngleTable = new InterpolatingDoubleTreeMap();
     private static LinkedList<TableEntry> data = new LinkedList<>();
 
+    /*
+     * add entries to the data list in this static block
+     */
     static {
         data.add(new TableEntry(Units.Meters.of(10), Rotation2d.fromDegrees(10)));
         var x = new InterpolatingDoubleTreeMap();
