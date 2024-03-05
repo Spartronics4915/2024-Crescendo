@@ -2,6 +2,7 @@ package com.spartronics4915.frc2024.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
@@ -72,12 +73,16 @@ public class TableAutoAimCommand extends Command {
         }
     }
 
-    private Measure<Distance> findDistance() {
-        return Units.Meters.of(0.0);
+    private Measure<Distance> findDistance(Pose2d chassisLocation) {
+        return Units.Meters.of(kTarget.toTranslation2d().getDistance(chassisLocation.getTranslation()));
     }
 
-    private Rotation2d getBotAngle() {
-        return new Rotation2d();
+    private Rotation2d getBotAngle(Pose2d chassisLocation) {
+        return getChassisAngle(kTarget.minus(new Translation3d(
+            chassisLocation.getX(),
+            chassisLocation.getY(),
+            0.0)
+        ));
     }
 
     @Override
@@ -85,14 +90,9 @@ public class TableAutoAimCommand extends Command {
 
         Pose2d pose = mSwerve.getPose();
 
-        mShooterWrist.publicSetRotationSetPoint(getShooterAngle(findDistance()));
+        mShooterWrist.publicSetRotationSetPoint(getShooterAngle(findDistance(pose)));
 
-        mSwerve.setDesiredAngle(
-            getChassisAngle(kTarget.minus(new Translation3d(
-                pose.getX(),
-                pose.getY(),
-                0.0)))
-        );
+        mSwerve.setDesiredAngle(getBotAngle(pose));
     }
 
     @Override
