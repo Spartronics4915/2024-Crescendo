@@ -102,7 +102,7 @@ public class AutoComponents {
                         mShooterWrist.angleToSupplierCommand(aimSupplier)));
     }
 
-    public static Command groundToIntake() {
+    public static Command groundIntake() {
         return Commands.sequence(
                 IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget),
