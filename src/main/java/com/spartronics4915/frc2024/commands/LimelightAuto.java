@@ -50,7 +50,7 @@ public class LimelightAuto {
                 Commands.parallel(
                         new LockOnCommand(),
                         driveStraightIndefiniteCommand)
-                ).andThen(mSwerve.run(() -> {mSwerve.drive(zeroSpeed, false);}));
+                ).andThen(mSwerve.runOnce(() -> {mSwerve.drive(zeroSpeed, false);}));
                         // new DriveStraightCommands.DriveStraightFixedDistance(
                         //         mSwerve,
                         //         new Rotation2d(),
