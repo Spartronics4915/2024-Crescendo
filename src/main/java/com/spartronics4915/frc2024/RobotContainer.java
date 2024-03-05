@@ -261,7 +261,7 @@ public class RobotContainer {
                     final var alliance = DriverStation.getAlliance().get();
                     final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
                             : AutoComponents.RED_SPEAKER;
-                    return new StationaryAutoAimCommand(speaker);
+                    return new MovingAutoAimCommand(speaker);
                 }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
