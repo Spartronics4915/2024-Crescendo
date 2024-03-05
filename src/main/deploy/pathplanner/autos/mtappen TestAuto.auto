@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3422786091968535,
+      "y": 5.604496666327179
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "mtappen test"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToPickUpNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "PostTopGrab to Mid Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToPickUpNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
