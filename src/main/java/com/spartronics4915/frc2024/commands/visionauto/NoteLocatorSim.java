@@ -50,11 +50,11 @@ public class NoteLocatorSim implements NoteLocatorInterface {
             // }
 
             double vertAngleDegrees = vertAngle.getDegrees();
-            if((vertAngleDegrees > VERT_TOP_VISIBILITY_THRESH) ||  (vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
+            if((vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
             return Optional.empty();
             }
-            System.out.println("view center: " + viewCenterNoteAngle.getDegrees() + " " + "vert: "
-                    + vertAngle.getDegrees() + " " + currPosition + " " + currNoteLoc);
+            // System.out.println("view center: " + viewCenterNoteAngle.getDegrees() + " " + "vert: "
+            //         + vertAngle.getDegrees() + " " + currPosition + " " + currNoteLoc);
 
         }
 
