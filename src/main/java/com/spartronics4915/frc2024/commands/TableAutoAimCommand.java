@@ -42,7 +42,6 @@ public class TableAutoAimCommand extends Command {
      */
     static {
         data.add(new TableEntry(Units.Meters.of(10), Rotation2d.fromDegrees(10)));
-        var x = new InterpolatingDoubleTreeMap();
 
         for (TableEntry tableEntry : data) {
             mShooterAngleTable.put(tableEntry.distance.in(Meters), tableEntry.shooterAngle.getRadians());
