@@ -9,6 +9,7 @@ import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
+import com.spartronics4915.frc2024.commands.LimelightAuto;
 import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
@@ -291,7 +292,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         
 
-        return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(new DriveToPickUpNote(mSwerveDrive));
+        return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
         
         // if (mAutoChooser == null) {
         //     return null;

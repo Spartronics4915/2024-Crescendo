@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,15 +34,24 @@ public class LimelightAuto {
     }
 
     public static Command driveToNote() {
+
+        final double FORWARD_VELOCITY = 1;
+        SwerveDrive swerve = SwerveDrive.getInstance();
+
+        ChassisSpeeds forwardSpeed = new ChassisSpeeds(FORWARD_VELOCITY, 0, 0);
+        // You probably want to just drive straight indefinitely until the command ends.
+
+        Command driveStraightIndefiniteCommand = swerve.run(()->{swerve.drive(forwardSpeed, false);});
         return Commands.deadline(
                 Commands.waitUntil(mVisionSubsystem::aliceCantSeeNote), // This shop stop when Alice can't see the note.
                 Commands.parallel(
                         new LockOnCommand(),
-                        new DriveStraightCommands.DriveStraightFixedDistance(
-                                mSwerve,
-                                new Rotation2d(),
-                                10,
-                                new Constraints(1, 1))));
+                        driveStraightIndefiniteCommand));
+                        // new DriveStraightCommands.DriveStraightFixedDistance(
+                        //         mSwerve,
+                        //         new Rotation2d(),
+                        //         10,
+                        //         new Constraints(1, 1))));
     }
 
     // TODO: make
