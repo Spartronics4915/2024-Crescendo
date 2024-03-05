@@ -52,6 +52,10 @@ public class VisionSubsystem extends SubsystemBase {
         return noteLocator.getClosestVisibleNote().isPresent();
     }
 
+    public boolean aliceCantSeeNote() {
+        return !noteLocator.getClosestVisibleNote().isPresent();
+    }
+
     NoteLocatorInterface getNoteLocator() {
         return noteLocator;
     }
