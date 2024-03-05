@@ -23,6 +23,9 @@ public class DigestCommands {
             .andThen(inUnsafe());
     }
 
+    /**
+     * Same as {@link in} but without moving the intake to the loading position.
+     */
     public static Command inUnsafe() {
         return mIntake.setStateCommand(IntakeState.LOAD)
             .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
