@@ -30,6 +30,16 @@ public class DigestCommands {
             });
     }
 
+    public static Command inUnsafe() {
+        return mIntake.setStateCommand(IntakeState.LOAD)
+            .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
+            .alongWith(Commands.idle())
+            .finallyDo(() -> {
+                mIntake.setState(IntakeState.OFF);
+                mShooter.setConveyorState(ConveyorState.OFF);
+            });
+    }
+
     public static Command out() {
         return mIntake.setStateCommand(IntakeState.OUT)
             .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
