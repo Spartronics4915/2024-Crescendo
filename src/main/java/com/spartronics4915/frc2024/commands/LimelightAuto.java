@@ -42,6 +42,7 @@ public class LimelightAuto {
         SwerveDrive swerve = SwerveDrive.getInstance();
 
         ChassisSpeeds forwardSpeed = new ChassisSpeeds(FORWARD_VELOCITY, 0, 0);
+        ChassisSpeeds zeroSpeed = new ChassisSpeeds(0, 0, 0);
         // You probably want to just drive straight indefinitely until the command ends.
 
         Command driveStraightIndefiniteCommand = swerve.run(()->{swerve.drive(forwardSpeed, false);});
@@ -49,7 +50,8 @@ public class LimelightAuto {
                 Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote), // This shop stop when Alice can't see the note.
                 Commands.parallel(
                         new LockOnCommand(),
-                        driveStraightIndefiniteCommand));
+                        driveStraightIndefiniteCommand)
+                ).andThen(swerve.run(() -> {swerve.drive(zeroSpeed, false);}));
                         // new DriveStraightCommands.DriveStraightFixedDistance(
                         //         mSwerve,
                         //         new Rotation2d(),
