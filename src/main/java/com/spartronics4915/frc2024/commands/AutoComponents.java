@@ -117,17 +117,17 @@ public class AutoComponents {
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget));
     }
 
-    /**
-     * do not use please
-     */
-    @Deprecated
     public static Command stationaryAutoAim() {
-        return Commands.defer(() -> {
-            final var alliance = DriverStation.getAlliance().get();
-            final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
-            final var aac = new MovingAutoAimCommand(speaker);
-            return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
-        }, Set.of(mSwerve, mShooterWrist));
+        try {
+            return Commands.defer(() -> {
+                final Translation3d speaker = getTargetUnsafe();
+                final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
+                return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+            }, Set.of(mSwerve, mShooterWrist));
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+        }
+        return Commands.print("Auto aim failed!");
     }
 
     public static Command stationaryAimAndShootSequential() {
