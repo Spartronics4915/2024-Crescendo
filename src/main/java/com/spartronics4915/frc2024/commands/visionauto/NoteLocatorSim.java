@@ -14,7 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class NoteLocatorSim implements NoteLocatorInterface{
+public class NoteLocatorSim implements NoteLocatorInterface {
 
     SwerveDrive swerveDrive;
     final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7)));
@@ -31,7 +31,8 @@ public class NoteLocatorSim implements NoteLocatorInterface{
 
         final double MAX_DEGREES = 27;
         final double ROBOT_HEIGHT = 0.3; // Meters
-        final double VERT_VISIBILITY_THRESH = -20; // Degrees
+        final double VERT_TOP_VISIBILITY_THRESH = -20; // Degrees
+        final double VERT_BOT_VISIBILITY_THRESH = -40; // Degrees
         Optional<NoteDetection> bestNote = Optional.empty();
         for (Translation2d currNoteLoc : noteLocations) {
             Translation2d botNoteVec = currNoteLoc.minus(currPosition);
@@ -48,9 +49,10 @@ public class NoteLocatorSim implements NoteLocatorInterface{
             // return Optional.empty();
             // }
 
-            // if(vertAngle.getDegrees() > VERT_VISIBILITY_THRESH) {
-            // return Optional.empty();
-            // }
+            double vertAngleDegrees = vertAngle.getDegrees();
+            if((vertAngleDegrees > VERT_TOP_VISIBILITY_THRESH) ||  (vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
+            return Optional.empty();
+            }
             System.out.println("view center: " + viewCenterNoteAngle.getDegrees() + " " + "vert: "
                     + vertAngle.getDegrees() + " " + currPosition + " " + currNoteLoc);
 
