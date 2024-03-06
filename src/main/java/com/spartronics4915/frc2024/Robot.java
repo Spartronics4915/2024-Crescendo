@@ -6,6 +6,7 @@ package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.commands.LimelightAuto;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.visionauto.LockOnOpenLoopCommand;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
@@ -83,7 +84,8 @@ public class Robot extends TimedRobot {
             mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2.5, 7, new Rotation2d()));
             mRobotContainer.getSwerveDrive().resetPose(new Pose2d(14, 4, new Rotation2d()));
             //LimelightAuto.driveToNote().schedule();
-            new LockOnCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
+            // new LockOnCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
+            new LockOnOpenLoopCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
         }
     }
 

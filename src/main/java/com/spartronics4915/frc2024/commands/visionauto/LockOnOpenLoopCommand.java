@@ -22,6 +22,7 @@ public class LockOnOpenLoopCommand extends Command {
         super();
         mSwerve = SwerveDrive.getInstance();
         mBling = Bling.getInstance();
+        this.targetDetector = targetDetector;
     }
 
     @Override
