@@ -80,7 +80,7 @@ public class AutoComponents {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
                 Commands.waitUntil(mShooter::hasSpunUp),
-                mShooter.setConveyorStateCommand(ConveyorState.IN));
+                DigestCommands.inUnsafe().withTimeout(1));
     }
 
     public static Command shooterAim(Supplier<Rotation2d> aimSupplier) {
