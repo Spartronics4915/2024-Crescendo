@@ -39,20 +39,20 @@ public class MovingAutoAimCommand extends Command{
 
     //moving auto aim logging
 
-    private static final NetworkTable loggingTable = NetworkTableInstance.getDefault().getTable("MAA debug");
+    private static final NetworkTable loggingTable = NetworkTableInstance.getDefault().getTable("MAADebug");
 
-    private static final StructPublisher<Pose2d> kPoseInputPublisher = loggingTable.getStructTopic("Pose Input", Pose2d.struct).publish();
-    private static final StructPublisher<Translation3d> kTargetInputPublisher = loggingTable.getStructTopic("Target Input", Translation3d.struct).publish();
+    private static final StructPublisher<Pose2d> kPoseInputPublisher = loggingTable.getStructTopic("PoseInput", Pose2d.struct).publish();
+    private static final StructPublisher<Translation3d> kTargetInputPublisher = loggingTable.getStructTopic("TargetInput", Translation3d.struct).publish();
     private static final StructPublisher<ChassisSpeeds> kVelocityPublisher = loggingTable.getStructTopic("RobotVelocity", ChassisSpeeds.struct).publish();
     /*
      * RR = robot relative
      * FR = field relative
      */
-    private static final StructPublisher<Translation3d> kTargetOutputRRPublisher = loggingTable.getStructTopic("Target Output", Translation3d.struct).publish();
-    private static final StructPublisher<Translation3d> kTargetOutputFRPublisher = loggingTable.getStructTopic("Target Output", Translation3d.struct).publish();
+    private static final StructPublisher<Translation3d> kTargetOutputRRPublisher = loggingTable.getStructTopic("TargetRROutput", Translation3d.struct).publish();
+    private static final StructPublisher<Translation3d> kTargetOutputFRPublisher = loggingTable.getStructTopic("TargetFROutput", Translation3d.struct).publish();
 
-    private static final StructPublisher<Rotation2d> kWristAnglePublisher = loggingTable.getStructTopic("Wrist Angle Output", Rotation2d.struct).publish();
-    private static final StructPublisher<Rotation2d> kSwerveAnglePublisher = loggingTable.getStructTopic("Swerve Angle Output", Rotation2d.struct).publish();
+    private static final StructPublisher<Rotation2d> kWristAnglePublisher = loggingTable.getStructTopic("Wrist-Angle-Output", Rotation2d.struct).publish();
+    private static final StructPublisher<Rotation2d> kSwerveAnglePublisher = loggingTable.getStructTopic("Swerve-Angle-Output", Rotation2d.struct).publish();
 
 
 
