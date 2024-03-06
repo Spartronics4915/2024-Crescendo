@@ -96,7 +96,7 @@ public class AutoAimFunctions {
     }
 
     public static Rotation2d getShooterAngle(Translation3d targetPos) { // this is the position of the speaker centered
-                                                                        // around the robot
+                                                                        // around the shooter
         // opposite
         double kRelHeight = targetPos.getZ();//- kShooterHeight;
         //hypotenuse
