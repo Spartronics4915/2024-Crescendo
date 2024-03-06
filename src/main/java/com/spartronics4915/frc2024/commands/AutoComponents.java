@@ -73,18 +73,7 @@ public class AutoComponents {
     }
 
     public static Command loadIntoShooter() {
-        return Commands.sequence(
-                Commands.parallel(
-                        mIntake.setStateCommand(IntakeState.OFF),
-                        IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)),
-                Commands.waitUntil(IntakeAssemblyCommands::atTarget),
-                mIntake.setStateCommand(IntakeState.LOAD),
-                mShooter.setConveyorStateCommand(ConveyorState.IN),
-                // Commands.waitUntil(() -> {
-                // return mIntake.getBeamBreakStatus();
-                // }),
-                Commands.waitSeconds(4),
-                mIntake.setStateCommand(IntakeState.OFF));
+        return Commands.print("loadIntoShooter not implemented: wait until shooter beam break is installed");
     }
 
     public static Command shootFromLoaded() {
