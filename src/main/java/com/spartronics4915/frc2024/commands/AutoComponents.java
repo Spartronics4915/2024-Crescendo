@@ -84,11 +84,10 @@ public class AutoComponents {
     }
 
     public static Command shooterAim(Supplier<Rotation2d> aimSupplier) {
-        return Commands.sequence(
-                Commands.deadline(
-                        Commands.waitUntil(() -> mShooter.hasSpunUp() && mShooterWrist.atTarget()),
-                        mShooter.setShooterStateCommand(ShooterState.ON),
-                        mShooterWrist.angleToSupplierCommand(aimSupplier)));
+        return Commands.deadline(
+                Commands.waitUntil(() -> mShooter.hasSpunUp() && mShooterWrist.atTarget()),
+                mShooter.setShooterStateCommand(ShooterState.ON),
+                mShooterWrist.angleToSupplierCommand(aimSupplier));
     }
 
     public static Command groundIntake() {
