@@ -17,7 +17,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class NoteLocatorSim implements NoteLocatorInterface {
 
     SwerveDrive swerveDrive;
-    final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7)));
+    final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7),
+    new Translation2d(2.9, 5.5)));
 
     public NoteLocatorSim(SwerveDrive swerveDrive) {
         this.swerveDrive = swerveDrive;
@@ -40,18 +41,22 @@ public class NoteLocatorSim implements NoteLocatorInterface {
             Rotation2d viewCenterNoteAngle = currPose.getRotation().minus(botNoteAngle);
             Rotation2d vertAngle = new Rotation2d(botNoteVec.getNorm(), -ROBOT_HEIGHT);
             double dist = botNoteVec.getNorm();
+
+            if(Math.abs(viewCenterNoteAngle.getDegrees())> MAX_DEGREES) {
+                continue;
+            }
+
+            double vertAngleDegrees = vertAngle.getDegrees();
+            if((vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
+                continue;
+            }
+
+
             if (dist < minDist) {
 
                 bestNote = Optional
                         .of(new NoteDetection(viewCenterNoteAngle.getDegrees(), vertAngle.getDegrees(), dist));
-            }
-            // if(Math.abs(viewCenterNoteAngle.getDegrees())> MAX_DEGREES) {
-            // return Optional.empty();
-            // }
-
-            double vertAngleDegrees = vertAngle.getDegrees();
-            if((vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
-            return Optional.empty();
+                minDist = dist;
             }
             // System.out.println("view center: " + viewCenterNoteAngle.getDegrees() + " " + "vert: "
             //         + vertAngle.getDegrees() + " " + currPosition + " " + currNoteLoc);

@@ -168,6 +168,7 @@ public class RobotContainer {
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
+            NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -292,7 +293,8 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         
 
-        return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
+        return AutoBuilder.buildAuto("mtappen TestAuto");
+        // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
         
         // if (mAutoChooser == null) {
         //     return null;
