@@ -4,6 +4,8 @@ import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorInterface;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorLimeLight;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorSim;
+import com.spartronics4915.frc2024.commands.visionauto.SpeakerTargetTagLocatorSim;
+import com.spartronics4915.frc2024.commands.visionauto.TargetDetectorInterface;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.wpilibj.RobotBase;
@@ -15,7 +17,8 @@ public class VisionSubsystem extends SubsystemBase {
 
     private final LimelightDevice alice;
     private final LimelightDevice bob;
-    private NoteLocatorInterface noteLocator;
+    private TargetDetectorInterface noteLocator;
+    private TargetDetectorInterface speakerTagLocator;
 
     private VisionSubsystem() {
         alice = new LimelightDevice("alice", true);
@@ -24,11 +27,13 @@ public class VisionSubsystem extends SubsystemBase {
         if (RobotBase.isSimulation()) {
             SwerveDrive swerve = SwerveDrive.getInstance();
             noteLocator = new NoteLocatorSim(swerve);
+            speakerTagLocator = new SpeakerTargetTagLocatorSim(swerve);
+
         } else {
 
             noteLocator = new NoteLocatorLimeLight();
         }
-
+        
     }
 
     public static VisionSubsystem getInstance() {
@@ -49,15 +54,20 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public boolean aliceSeesNote() {
-        return noteLocator.getClosestVisibleNote().isPresent();
+        return noteLocator.getClosestVisibleTarget().isPresent();
     }
 
     public boolean aliceDoesNotSeeNote() {
-        return !noteLocator.getClosestVisibleNote().isPresent();
+        return !noteLocator.getClosestVisibleTarget().isPresent();
     }
 
-    NoteLocatorInterface getNoteLocator() {
+    public TargetDetectorInterface getNoteLocator() {
         return noteLocator;
+    }
+
+    public TargetDetectorInterface getSpeakerTagLocator() {
+
+        return speakerTagLocator;
     }
 
     @Override

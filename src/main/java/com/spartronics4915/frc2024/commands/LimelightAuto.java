@@ -48,7 +48,7 @@ public class LimelightAuto {
         return Commands.deadline(
                 Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote), // This shop stop when Alice can't see the note.
                 Commands.parallel(
-                        new LockOnCommand(),
+                        new LockOnCommand(mVisionSubsystem.getNoteLocator()),
                         driveStraightIndefiniteCommand)
                 ).andThen(mSwerve.runOnce(() -> {mSwerve.drive(zeroSpeed, false);}));
                         // new DriveStraightCommands.DriveStraightFixedDistance(

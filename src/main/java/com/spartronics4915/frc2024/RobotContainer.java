@@ -28,7 +28,6 @@ import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
-import com.spartronics4915.frc2024.commands.visionauto.DriveToPickUpNote;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMCwithPriority;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMC;
@@ -216,7 +215,7 @@ public class RobotContainer {
         mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
-            .whileTrue(new LockOnCommand());
+            .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
 

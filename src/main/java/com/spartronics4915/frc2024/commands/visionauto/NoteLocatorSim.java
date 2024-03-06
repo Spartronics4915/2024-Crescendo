@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 
-import javax.swing.text.html.Option;
 
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
@@ -14,7 +13,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-public class NoteLocatorSim implements NoteLocatorInterface {
+public class NoteLocatorSim implements TargetDetectorInterface {
 
     SwerveDrive swerveDrive;
     final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7),
@@ -24,7 +23,7 @@ public class NoteLocatorSim implements NoteLocatorInterface {
         this.swerveDrive = swerveDrive;
     }
 
-    public Optional<NoteDetection> getClosestVisibleNote() {
+    public Optional<Detection> getClosestVisibleTarget() {
 
         double minDist = 1e6;
         Pose2d currPose = swerveDrive.getPose();
@@ -34,7 +33,7 @@ public class NoteLocatorSim implements NoteLocatorInterface {
         final double ROBOT_HEIGHT = 0.3; // Meters
         final double VERT_TOP_VISIBILITY_THRESH = -20; // Degrees
         final double VERT_BOT_VISIBILITY_THRESH = -40; // Degrees
-        Optional<NoteDetection> bestNote = Optional.empty();
+        Optional<Detection> bestNote = Optional.empty();
         for (Translation2d currNoteLoc : noteLocations) {
             Translation2d botNoteVec = currNoteLoc.minus(currPosition);
             Rotation2d botNoteAngle = botNoteVec.getAngle();
@@ -55,7 +54,7 @@ public class NoteLocatorSim implements NoteLocatorInterface {
             if (dist < minDist) {
 
                 bestNote = Optional
-                        .of(new NoteDetection(viewCenterNoteAngle.getDegrees(), vertAngle.getDegrees(), dist));
+                        .of(new Detection(viewCenterNoteAngle.getDegrees(), vertAngle.getDegrees(), dist));
                 minDist = dist;
             }
             // System.out.println("view center: " + viewCenterNoteAngle.getDegrees() + " " + "vert: "

@@ -5,6 +5,7 @@ import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorInterface;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorLimeLight;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorSim;
+import com.spartronics4915.frc2024.commands.visionauto.TargetDetectorInterface;
 import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.LimelightDevice;
@@ -26,23 +27,17 @@ public class LockOnCommand extends Command {
     private final Bling mBling;
     private boolean cancellingEarly = false;
 
-    private NoteLocatorInterface noteLocator;
+    private TargetDetectorInterface targetDetector;
 
-    public LockOnCommand() {
+    public LockOnCommand(TargetDetectorInterface targetDetector) {
         super();
         mSwerve = SwerveDrive.getInstance();
         mVision = VisionSubsystem.getInstance();
         mLimelight = mVision.getAlice();
         mBling = Bling.getInstance();
 
-        if (RobotBase.isSimulation()) {
-
-            noteLocator = new NoteLocatorSim(mSwerve);
-        } else {
-
-            noteLocator = new NoteLocatorLimeLight();
-        }
-
+        this.targetDetector = targetDetector;
+   
     }
 
     @Override
@@ -63,14 +58,14 @@ public class LockOnCommand extends Command {
     @Override
     public void execute() {
 
-        Optional<NoteDetection> detectionResult = noteLocator.getClosestVisibleNote();
+        Optional<TargetDetectorInterface.Detection> detectionResult = targetDetector.getClosestVisibleTarget();
 
         if (!detectionResult.isPresent()) {
             mBling.setColor(Color.kRed);
             return;
         }
 
-        NoteDetection detection = detectionResult.get();
+        TargetDetectorInterface.Detection detection = detectionResult.get();
         
         Rotation2d swerveAngle = mSwerve.getAngle();
         double tx = detection.tx();
