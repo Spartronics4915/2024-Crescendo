@@ -98,15 +98,16 @@ public class AutoAimFunctions {
     public static Rotation2d getShooterAngle(Translation3d targetPos) { // this is the position of the speaker centered
                                                                         // around the robot
         // opposite
-        double kRelHeight = targetPos.getZ() - kShooterHeight;
-        //adjacent
+        double kRelHeight = targetPos.getZ();//- kShooterHeight;
+        //hypotenuse
         double dist = targetPos.getNorm();
         
-        return new Rotation2d(Math.atan(kRelHeight / dist));
+        // sin = o/h
+        return new Rotation2d(Math.asin(kRelHeight / dist));
     }
 
     public static Rotation2d getChassisAngle(Translation3d targetPos) {
         var r = targetPos.toTranslation2d().getAngle().getRotations();
-        return Rotation2d.fromRotations((r < 0) ? 1 + r : r);
+        return Rotation2d.fromRotations(((r < 0) ? 1 + r : r) + 0.5); //TODO is reversing dependent on alliance? 
     }
 }
