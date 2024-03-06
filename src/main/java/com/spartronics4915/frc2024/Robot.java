@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
         if (RobotBase.isSimulation()) {
 
             mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2.5, 7, new Rotation2d()));
-            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(14, 4, new Rotation2d()));
+            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(14, 4, Rotation2d.fromDegrees(180)));
             //LimelightAuto.driveToNote().schedule();
             // new LockOnCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
             new LockOnOpenLoopCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();

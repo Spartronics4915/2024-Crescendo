@@ -42,7 +42,8 @@ public class SpeakerTargetTagLocatorSim implements TargetDetectorInterface {
         }
         double minDist = 1e6;
         Pose2d currPose = swerveDrive.getPose();
-        Rotation2d currRobotView = currPose.getRotation();
+        // UnaryMinus because the camera is on the back.
+        Rotation2d currRobotView = currPose.getRotation().plus(Rotation2d.fromDegrees(180));
         final double CAMERA_HEIGHT = 0.5;
         Translation3d currPosition = new Translation3d(currPose.getTranslation().getX(),
                 currPose.getTranslation().getY(), CAMERA_HEIGHT);
