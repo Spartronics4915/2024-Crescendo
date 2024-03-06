@@ -71,7 +71,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (ignoreVisionReadings.getBoolean(false) || !getTv() || mPipeline.isDetector || !pipelineLoaded()) {
+        if (ignoreVisionReadings.getBoolean(false) || mPipeline.isDetector || !pipelineLoaded()) {
             return Optional.empty();
         }
         // if (numberOfTagsSeen() < 2) return Optional.empty();
