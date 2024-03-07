@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
 import java.util.Set;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -51,7 +52,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #region variables
 
     private CANSparkMax mWristMotor;
-    private SparkPIDController mPidController;
+    private PIDController mPidController;
 
     private RelativeEncoder mEncoder;
     private TrapezoidProfile kTrapezoidProfile;
@@ -80,6 +81,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private boolean startupHome = false;
     private boolean mHoming = false;
+
+    public static final double kOutputRange = 0.2;
 
     // #endregion
 
@@ -118,7 +121,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
+                setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
+                // mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
                 // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                 currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
@@ -173,14 +177,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID() {
-        SparkPIDController pid = mWristMotor.getPIDController();
-
-        pid.setOutputRange(-0.2, 0.2);
-
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
+    private PIDController initPID() {
+        PIDController pid = new PIDController(
+            kPIDconstants.p(), 
+            kPIDconstants.i(), 
+            kPIDconstants.d()
+        );
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         // position Conversion not needed by using rotation2d
@@ -243,6 +245,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate);
     }
 
+    private void setPosition(Rotation2d newAngle){
+        mEncoder.setPosition(newAngle.getRotations() * kWristToRotationsRate);
+    }
+
     private void setState(ShooterWristState newState) {
         mManualMovement = false;
         publicSetRotationSetPoint(newState.shooterAngle);
@@ -289,7 +295,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public void resetEncoder(Rotation2d angle){
-        mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+        setPosition(angle);
         currentToSetPoint(angle);
     }
 
@@ -397,7 +403,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mWristMotor.set(
+            MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
+        );
+        // mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
