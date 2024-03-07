@@ -22,7 +22,7 @@ public class NoteLocatorLimeLight implements TargetDetectorInterface {
         double pipelineIndex = mLimelight.getTruePipelineIndex();
         boolean loaded = pipelineIndex == 1;
 
-        if (!loaded || !mLimelight.getTv()) {
+        if (!loaded || !mLimelight.getTvDebounce()) {
             return Optional.empty();
         }
         double tx = mLimelight.getTxLowpass();
