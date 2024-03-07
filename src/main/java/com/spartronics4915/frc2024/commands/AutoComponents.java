@@ -117,12 +117,13 @@ public class AutoComponents {
         return Commands.print("Auto aim failed!");
     }
 
-    public static Command stationaryAimAndShootSequential() {
-        return Commands.sequence(stationaryAutoAim(), shootFromLoaded());
-    }
-
-    public static Command stationaryAimAndShootParallel() {
-        return Commands.parallel(Commands.waitUntil(mShooter::hasSpunUp), stationaryAutoAim())
-                .andThen(shootFromLoaded());
+    // TODO: modify to load faster when beam break is added
+    public static Command stationaryAimAndShoot() {
+        return Commands.sequence(
+                mShooter.setShooterStateCommand(ShooterState.ON),
+                Commands.parallel(
+                    Commands.waitUntil(mShooter::hasSpunUp),
+                    stationaryAutoAim()),
+                DigestCommands.in());
     }
 }
