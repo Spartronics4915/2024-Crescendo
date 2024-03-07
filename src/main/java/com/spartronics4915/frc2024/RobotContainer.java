@@ -28,6 +28,8 @@ import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
+import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
+import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl.FireControlEndDetector;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMCwithPriority;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMC;
@@ -112,6 +114,7 @@ public class RobotContainer {
     private final SwerveSim mSwerveSim;
 
     private final VisionSubsystem mVision;
+    private final ShooterRunFireControl shooterFireControl;
 
     private final Bling mBling;
 
@@ -160,6 +163,10 @@ public class RobotContainer {
 
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
+        mSwerveSim = new SwerveSim(mSwerveDrive);
+        mVision = VisionSubsystem.getInstance();
+        shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
+
         if (mSwerveDrive != null) {
             NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
@@ -168,6 +175,10 @@ public class RobotContainer {
             NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
             NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
+            NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
+            NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
+            NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -187,8 +198,6 @@ public class RobotContainer {
         } else {
             mAutoChooser = null;
         }
-        mSwerveSim = new SwerveSim(mSwerveDrive);
-        mVision = VisionSubsystem.getInstance();
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
         configureBindings();
@@ -294,7 +303,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         
 
-        return AutoBuilder.buildAuto("mtappen TestAuto");
+        return AutoBuilder.buildAuto("CenterRowAuto");
         // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
         
         // if (mAutoChooser == null) {

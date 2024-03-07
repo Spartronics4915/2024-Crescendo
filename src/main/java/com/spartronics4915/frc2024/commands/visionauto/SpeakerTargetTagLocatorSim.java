@@ -50,7 +50,7 @@ public class SpeakerTargetTagLocatorSim implements TargetDetectorInterface {
 
         final double MAX_DEGREES = 45;
         final double ROBOT_HEIGHT = 0.3; // Meters
-        final double VERT_BOT_VISIBILITY_THRESH = 80; // Degrees
+        final double VERT_BOT_VISIBILITY_THRESH = 20; // Degrees
         Translation3d botTargetVec = targetPosition.minus(currPosition);
         Translation2d botTargetFloorVec = new Translation2d(botTargetVec.getX(), botTargetVec.getY());
 
@@ -62,7 +62,7 @@ public class SpeakerTargetTagLocatorSim implements TargetDetectorInterface {
         }
 
         double vertAngleDegrees = botTargetVertAngle.getDegrees();
-        if ((vertAngleDegrees > VERT_BOT_VISIBILITY_THRESH)) {
+        if ((vertAngleDegrees < VERT_BOT_VISIBILITY_THRESH)) {
             return Optional.empty();
         }
 

@@ -5,6 +5,7 @@ import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.Optional;
 
@@ -45,7 +46,7 @@ public class LockOnOpenLoopCommand extends Command {
     @Override
     public void execute() {
 
-        if (cancellingEarly)
+        if (cancellingEarly || cantSeeTag)
             return;
 
         Optional<TargetDetectorInterface.Detection> detectionResult = targetDetector.getClosestVisibleTarget();
@@ -55,8 +56,10 @@ public class LockOnOpenLoopCommand extends Command {
             return;
         }
 
-        if (triggeredAlign)
+        if (triggeredAlign) {
+            mSwerve.drive(new ChassisSpeeds(0,0,0), false);
             return;
+        }
 
         TargetDetectorInterface.Detection detection = detectionResult.get();
         Rotation2d swerveAngle = mSwerve.getAngle();
@@ -64,7 +67,6 @@ public class LockOnOpenLoopCommand extends Command {
         Rotation2d limelightAngle = Rotation2d.fromDegrees(-tx);
         Rotation2d desiredAngle = Rotation2d
                 .fromRotations(swerveAngle.getRotations() + limelightAngle.getRotations());
-
         mSwerve.setDesiredAngle(desiredAngle);
         desiredRotation = desiredAngle;
         triggeredAlign = true;
@@ -75,6 +77,7 @@ public class LockOnOpenLoopCommand extends Command {
     public boolean isFinished() {
         if (cancellingEarly || cantSeeTag)
             return true;
+
         return triggeredAlign
                 && (Math.abs(mSwerve.getAngle().minus(desiredRotation).getDegrees()) < 1.5);
     }

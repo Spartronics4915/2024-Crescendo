@@ -1,0 +1,81 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3422786091968535,
+      "y": 5.604496666327179
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CenterToFirstRowTop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DriveToPickUpNote"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitShooterFireControl"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "FirstRowTopTo2ndRowTopShooterRun"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FireControlTracking"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopChassis"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNote1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Approach2ndRowNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
