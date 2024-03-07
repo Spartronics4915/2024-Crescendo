@@ -122,7 +122,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             @Override
             public void execute() {
                 setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
-                // mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
                 // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                 currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
@@ -194,7 +193,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         RelativeEncoder encoder = mWristMotor.getEncoder();
         // Set the encoder to zero for now to make sure it is initialized to a reasonable value.
-        encoder.setPosition(0); //TODO set to startup position
         return encoder;
     }
 
@@ -345,7 +343,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
-        handleLimitSwitch();
         // will add things here if trapezoid motion profiles get used
     }
 
@@ -408,17 +405,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         );
         // mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
-    }
-
-    private void handleLimitSwitch() {
-        // switching with triggers
-        // if (mLimitSwitch.get()) {
-        // mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-        // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
-        // kLimitSwitchTriggerOffset) {
-        // mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-        // }
-        // }
     }
 
     // #endregion
