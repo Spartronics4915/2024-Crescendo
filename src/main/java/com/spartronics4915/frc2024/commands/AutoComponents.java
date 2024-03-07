@@ -59,9 +59,7 @@ public class AutoComponents {
         if (DriverStation.getAlliance().isEmpty()) {
             return Optional.empty();
         }
-        final var alliance = DriverStation.getAlliance().get();
-        final var speaker = alliance == Alliance.Blue ? BLUE_SPEAKER : RED_SPEAKER;
-        return Optional.of(speaker);
+        return Optional.of(getTargetUnsafe());
     }
 
     public static Command shootPreloaded() {
