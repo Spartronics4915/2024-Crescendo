@@ -56,55 +56,29 @@ public class TableAutoAimCommand extends Command {
         return Rotation2d.fromRadians(mShooterAngleTable.get(ty.getDegrees()));
     };
 
-    private Translation3d kTarget;
 
-    private final SwerveDrive mSwerve = SwerveDrive.getInstance();
     private final ShooterWrist mShooterWrist = ShooterWrist.getInstance();
 
-    private boolean cancellingEarly;
 
-    public TableAutoAimCommand(Translation3d kTarget) {
-        this.kTarget = kTarget;
+    public TableAutoAimCommand() {
+        //TODO add Tag priority and alliance tag 
     }
 
     @Override
     public void initialize() {
-        // do thing if rotation already decoupled
-        if (mSwerve.rotationIsDecoupled()) {
-            cancellingEarly = true;
-            end(true);
-        } else {
-            cancellingEarly = false;
-            mSwerve.decoupleRotation();
-        }
-    }
 
-    private Measure<Distance> findDistance(Pose2d chassisLocation) {
-        return Units.Meters.of(kTarget.toTranslation2d().getDistance(chassisLocation.getTranslation()));
-    }
-
-    private Rotation2d getBotAngle(Pose2d chassisLocation) {
-        return getChassisAngle(kTarget.minus(new Translation3d(
-            chassisLocation.getX(),
-            chassisLocation.getY(),
-            0.0)
-        ));
     }
 
     @Override
     public void execute() {
 
-        Pose2d pose = mSwerve.getPose();
 
         mShooterWrist.publicSetRotationSetPoint(getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy())));
 
-        // mSwerve.setDesiredAngle(getBotAngle(pose));
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (!cancellingEarly) {
-            mSwerve.recoupleRotation();
-        }
+
     }
 }
