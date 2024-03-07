@@ -63,15 +63,6 @@ public class LimelightDevice extends SubsystemBase {
         if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
             mValid = true;
             LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
-            int priorityTag = -1;
-            if (mName.equals("limelight-bob")) {
-                Optional<Alliance> alliance = DriverStation.getAlliance();
-                if (!alliance.isEmpty()) {
-                    if (alliance.get() == Alliance.Blue) priorityTag = 7; // Center of blue speaker
-                    else if (alliance.get() == Alliance.Red) priorityTag = 4; // Center of red speaker
-                }
-            }
-            LimelightHelpers.setPriorityTagID(mName, priorityTag);
             // LimelightHelpers.setLEDMode_ForceOff(mName);
         }
     }
