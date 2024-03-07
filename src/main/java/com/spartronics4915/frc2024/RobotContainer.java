@@ -25,6 +25,7 @@ import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
+import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
@@ -261,7 +262,7 @@ public class RobotContainer {
                     final var alliance = DriverStation.getAlliance().get();
                     final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
                             : AutoComponents.RED_SPEAKER;
-                    return new MovingAutoAimCommand(speaker);
+                    return new TableAutoAimCommand(speaker);
                 }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
