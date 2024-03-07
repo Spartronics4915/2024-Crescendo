@@ -37,7 +37,7 @@ public class VisionSubsystem extends SubsystemBase {
             speakerTagLocator = new SpeakerTargetTagLocatorSim(swerve);
 
         } else {
-            noteLocator = new NoteLocatorLimeLight();
+            noteLocator = new NoteLocatorLimeLight(this);
         }
         
         new Trigger(DriverStation::isEnabled).onTrue(Commands.runOnce(this::setBobPriorityTagToSpeaker));

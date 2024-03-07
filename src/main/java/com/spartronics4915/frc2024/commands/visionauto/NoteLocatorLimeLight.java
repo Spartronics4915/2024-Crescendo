@@ -11,8 +11,8 @@ public class NoteLocatorLimeLight implements TargetDetectorInterface {
     private final VisionSubsystem mVision;
     private final LimelightDevice mLimelight;
 
-    public NoteLocatorLimeLight() {
-        mVision = VisionSubsystem.getInstance();
+    public NoteLocatorLimeLight(VisionSubsystem vision) {
+        mVision = vision;
         mLimelight = mVision.getAlice();
 
     }
