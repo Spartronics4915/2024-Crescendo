@@ -163,9 +163,9 @@ public final class Constants {
 
         public static final class IntakeConstants {// [ ] Intake constants
             public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, true,
-                    IdleMode.kBrake, 80);
+                    IdleMode.kBrake, 60);
             public static final MotorConstants kFollowerMotorConstants = new MotorConstants(23, MotorType.kBrushless, true,
-                IdleMode.kBrake, 80);
+                IdleMode.kBrake, 60);
 
             public static final double kMainToFollowRatio = -1/2 * 6748.0/5676.0;
 
