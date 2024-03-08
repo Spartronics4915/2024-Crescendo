@@ -215,8 +215,11 @@ public class RobotContainer {
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand());
-        mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+        mDriverController.leftBumper().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
+
+        mDriverController.x().onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
         // Operator controls
         // Buttons:

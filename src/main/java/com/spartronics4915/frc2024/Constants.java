@@ -285,6 +285,7 @@ public final class Constants {
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
             SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)), // TODO find Value
+            HARD_STOP(Rotation2d.fromDegrees(13.3)), //TODO find value
             STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
@@ -357,7 +358,7 @@ public final class Constants {
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
-        public static final double kDiff = 50;
+        public static final double kDiff = 200;
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
