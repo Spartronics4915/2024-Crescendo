@@ -18,15 +18,15 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "DriveToPickUpNote"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToPickUpNote"
+                }
+              },
               {
                 "type": "named",
                 "data": {
@@ -71,6 +71,124 @@
           "type": "path",
           "data": {
             "pathName": "Approach2ndRowNote"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToPickUpNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitShooterFireControl"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FireControlTracking"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "NearRowMidToNearBottomShooterRun"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopChassis"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNote2"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ApproachNote3"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "DriveToPickUpNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "InitShooterFireControl"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "ShooterRunNearNote3"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FireControlTracking"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopChassis"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNote3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NearNote3ToCenterNote5"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": []
           }
         }
       ]
