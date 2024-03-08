@@ -177,6 +177,8 @@ public class RobotContainer {
             NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
             NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
             NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("ShootNote2", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();

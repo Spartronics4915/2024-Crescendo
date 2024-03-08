@@ -17,7 +17,7 @@ public class NoteLocatorSim implements TargetDetectorInterface {
 
     SwerveDrive swerveDrive;
     final static ArrayList<Translation2d> noteLocations = new ArrayList<>(List.of(new Translation2d(2.9, 7),
-    new Translation2d(2.9, 5.5)));
+    new Translation2d(2.9, 5.5), new Translation2d(2.9, 4.1)));
 
     public NoteLocatorSim(SwerveDrive swerveDrive) {
         this.swerveDrive = swerveDrive;
