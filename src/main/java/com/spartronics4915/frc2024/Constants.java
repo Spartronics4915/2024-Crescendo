@@ -351,7 +351,7 @@ public final class Constants {
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false,
                 IdleMode.kCoast, 40); // placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,
-                false, IdleMode.kCoast, 40); // placeholder
+                true, IdleMode.kCoast, 40); // placeholder
         public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
                 IdleMode.kCoast, 60); // placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5

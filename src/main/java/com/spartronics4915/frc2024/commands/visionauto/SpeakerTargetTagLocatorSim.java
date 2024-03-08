@@ -33,7 +33,12 @@ public class SpeakerTargetTagLocatorSim implements TargetDetectorInterface {
 
         // Needs to be here for sim in case the alliance changes in sim.
 
-        if (DriverStation.getAlliance().get() == Alliance.Blue) {
+        var allianceResult = DriverStation.getAlliance();
+        if(allianceResult.isEmpty()) {
+            return Optional.empty();
+        }
+
+        if (allianceResult.get() == Alliance.Blue) {
 
             targetPosition = fieldLayout.getTagPose(7).get().getTranslation();
         } else {
