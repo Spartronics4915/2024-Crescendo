@@ -85,7 +85,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mBeamBreak = new DigitalInput(kIntakeBeamBreakID);
         mBeamBreakTimer = new Timer();
         mBeamBreakTimer.reset();
-        new Trigger(this::getBeamBreakStatus).onFalse(Commands.runOnce(() -> mBeamBreakTimer.start()));
+        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(() -> mBeamBreakTimer.start()));
         new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
             if (mCurrentState == IntakeState.IN) {
                 setState(IntakeState.OFF);
@@ -127,7 +127,12 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         return pid;
     }
 
-    public boolean getBeamBreakStatus(){
+    public boolean beamBreakIsTriggered() {
+        return !mBeamBreak.get();
+    }
+
+    @Deprecated
+    public boolean getBeamBreakStatus() {
         return mBeamBreak.get();
     }
 
@@ -238,7 +243,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mManualSetPointWidget.setDouble(manualSetPoint);
         mIntakeVelocity.setDouble(mEncoder.getVelocity());
         mIntakeMotorCurrent.setDouble(mMotor.getOutputCurrent());
-        SmartDashboard.putBoolean("beam break", getBeamBreakStatus());
+        SmartDashboard.putBoolean("beam break", beamBreakIsTriggered());
         SmartDashboard.putNumber("flex enc", mFollowerMotor.getEncoder().getPosition());
         SmartDashboard.putNumber("flex applied output", mFollowerMotor.getAppliedOutput());
 

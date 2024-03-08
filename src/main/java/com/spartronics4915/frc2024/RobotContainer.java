@@ -168,11 +168,10 @@ public class RobotContainer {
         shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
 
         if (mSwerveDrive != null) {
-            NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
             NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
-            NamedCommands.registerCommand("aimAndShoot", AutoComponents.stationaryAimAndShootParallel());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
             NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
             NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));

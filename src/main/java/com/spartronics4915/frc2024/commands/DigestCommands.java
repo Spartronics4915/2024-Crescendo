@@ -19,10 +19,16 @@ public class DigestCommands {
 
     public static Command in() {
         return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
-            .andThen(new WaitUntilCommand(IntakeAssemblyCommands::atTarget))
-            .andThen(
-                    mIntake.setStateCommand(IntakeState.LOAD)
-                        .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN)))
+            .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+            .andThen(inUnsafe());
+    }
+
+    /**
+     * Same as {@link in} but without moving the intake to the loading position.
+     */
+    public static Command inUnsafe() {
+        return mIntake.setStateCommand(IntakeState.LOAD)
+            .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
             .alongWith(Commands.idle())
             .finallyDo(() -> {
                 mIntake.setState(IntakeState.OFF);
