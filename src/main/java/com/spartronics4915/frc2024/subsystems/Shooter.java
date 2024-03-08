@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static final double ON_SPEED = 0.9;
     public static final double BACK_SPEED = 0.2;
+    public static final double ROLLER_SPEED_DIFFERENCE = 0.1;
 
     public static enum ShooterState {
         ON, BACK, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -59,7 +60,10 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        mShooterFollowMotor.follow(mShooterMotor, true);
+        
+        // Disabling follow to make spin possible
+        // mShooterFollowMotor.follow(mShooterMotor, true);
+
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
 
         // mShooterFollowMotor.follow(mShooterMotor, true);
@@ -164,7 +168,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mPIDControllerFollow.setReference(kOffSpeed, ControlType.kVelocity);
 
         mShooterMotor.set(0);
-
+        mShooterFollowMotor.set(0);
     }
 
     private void shooterOn() {
@@ -174,10 +178,12 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
         // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
         mShooterMotor.set(ON_SPEED);
+        mShooterFollowMotor.set(ON_SPEED-ROLLER_SPEED_DIFFERENCE);
     }
 
     private void shooterBack() {
         mShooterMotor.set(BACK_SPEED);
+        mShooterFollowMotor.set(BACK_SPEED);
     }
 
     private void conveyorIn() {
