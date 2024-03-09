@@ -39,7 +39,7 @@ public class TableAutoAimCommand extends Command {
      * add entries to the data list in this static block
      */
     static {
-
+        // BE CAREFUL THERE IS A CORRECTION FACTOR BELOW BECAUSE THIS IS OLD DATA data for 
         data.add(new TableEntry(Rotation2d.fromDegrees(19.15) , Rotation2d.fromDegrees(46.25)));
         data.add(new TableEntry(Rotation2d.fromDegrees(9.85) , Rotation2d.fromDegrees(33.5)));
         data.add(new TableEntry(Rotation2d.fromDegrees(5.01) , Rotation2d.fromDegrees(27.5)));
@@ -72,8 +72,10 @@ public class TableAutoAimCommand extends Command {
     @Override
     public void execute() {
 
+        Rotation2d predictedAngle = getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy()));
+        Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(14));
 
-        mShooterWrist.publicSetRotationSetPoint(getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy())));
+        mShooterWrist.publicSetRotationSetPoint(correctedAngle);
 
     }
 
