@@ -44,13 +44,14 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     private GenericEntry mShooterStateWidget;
     private GenericEntry mShooterSpeedWidget;
+    private GenericEntry mShooterFollowSpeedWidget;
     private GenericEntry mConveyerStateWidget;
 
     private final CANSparkMax mShooterMotor;
     private final CANSparkMax mShooterFollowMotor;
     private final CANSparkMax mConveyorMotor;
-    private final SparkPIDController mPIDControllerLead;
-    private final SparkPIDController mPIDControllerFollow;
+    // private final SparkPIDController mPIDControllerLead;
+    // private final SparkPIDController mPIDControllerFollow;
 
     private final RelativeEncoder mShooterEncoder;
 
@@ -59,12 +60,12 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        mShooterFollowMotor.follow(mShooterMotor, true);
+        // mShooterFollowMotor.follow(mShooterMotor, true);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
 
         // mShooterFollowMotor.follow(mShooterMotor, true);
-        mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
-        mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
+        // mPIDControllerLead = constructPIDController(mShooterMotor, kPIDconstants);
+        // mPIDControllerFollow = constructPIDController(mShooterFollowMotor, kPIDconstants);
 
         mShooterMotor.burnFlash();
         mShooterFollowMotor.burnFlash();
@@ -76,6 +77,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
         mShooterSpeedWidget = mEntries.get(ShooterSubsystemEntries.ShooterSpeed);
+        mShooterFollowSpeedWidget = mEntries.get(ShooterSubsystemEntries.FollowShooterSpeed);
 
         ShooterTabManager.addMotorControlWidget(this);
 
@@ -101,16 +103,16 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         return motor;
     }
 
-    private SparkPIDController constructPIDController(CANSparkMax motor, PIDFConstants kpidconstants) {
-        SparkPIDController pid = motor.getPIDController();
+    // private SparkPIDController constructPIDController(CANSparkMax motor, PIDFConstants kpidconstants) {
+    //     SparkPIDController pid = motor.getPIDController();
 
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
-        pid.setFF(kPIDconstants.ff());
+    //     pid.setP(kPIDconstants.p());
+    //     pid.setI(kPIDconstants.i());
+    //     pid.setD(kPIDconstants.d());
+    //     pid.setFF(kPIDconstants.ff());
 
-        return pid;
-    }
+    //     return pid;
+    // }
 
     public static Shooter getInstance() {
         if (mInstance == null) {
@@ -139,8 +141,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     // diff is the reduction in speed for the follower motor
     public void setShooterManualPctg(double pctg, double diff) {
         pctg = MathUtil.clamp(pctg, -1, 1);
-        mPIDControllerLead.setReference(pctg, ControlType.kDutyCycle);
-        mPIDControllerFollow.setReference(-(pctg - diff), ControlType.kDutyCycle);
+        // mPIDControllerLead.setReference(pctg, ControlType.kDutyCycle);
+        // mPIDControllerFollow.setReference(-(pctg - diff), ControlType.kDutyCycle);
         mCurrentShooterState = ShooterState.MANUAL;
 
     }
@@ -164,6 +166,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mPIDControllerFollow.setReference(kOffSpeed, ControlType.kVelocity);
 
         mShooterMotor.set(0);
+        mShooterFollowMotor.set(0);
 
     }
 
@@ -174,10 +177,12 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
         // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
         mShooterMotor.set(ON_SPEED);
+        mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }
 
     private void shooterBack() {
         mShooterMotor.set(BACK_SPEED);
+        mShooterFollowMotor.set(-BACK_SPEED + 0.05);
     }
 
     private void conveyorIn() {
@@ -201,6 +206,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget.setString(mCurrentShooterState.name());
         mConveyerStateWidget.setString(mCurrentConveyorState.name());
         mShooterSpeedWidget.setDouble(mShooterEncoder.getVelocity());
+        mShooterFollowSpeedWidget.setDouble(mShooterFollowMotor.getEncoder().getVelocity());
     }
 
     @Override

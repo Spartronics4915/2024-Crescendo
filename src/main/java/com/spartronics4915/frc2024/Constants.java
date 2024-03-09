@@ -302,10 +302,10 @@ public final class Constants {
         
         
     
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(69); //only when above the safety height
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(80); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
+        // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
@@ -326,8 +326,12 @@ public final class Constants {
                     * ShooterWristConstants.kWristToRotationsRate);
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
+            System.out.println(P);
+            System.out.println(P);
+            System.out.println(P);
+            System.out.println(P);
 
-            kPIDconstants = new PIDConstants(P, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(P * 10, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;

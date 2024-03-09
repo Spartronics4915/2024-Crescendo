@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024;
 import java.util.EnumMap;
 import java.util.Map;
 
+import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
@@ -171,7 +172,7 @@ public class ShuffleBoard {
         public static String tabName = "Shooter";
 
         public static enum ShooterSubsystemEntries {
-            ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Shooter-Speed");
+            ShooterState("Shooter-State"), ConveyorState("Conveyor-State"), ShooterSpeed("Main-Shooter-Speed"), FollowShooterSpeed("Follow-Shooter-Speed");;
 
             private String entryName;
 
@@ -197,6 +198,10 @@ public class ShuffleBoard {
             putEntry(out, ShooterSubsystemEntries.ConveyorState, ConveyorState.NONE.name(),
                     mShooterOverview,
                     ShooterSubsystemEntries.ConveyorState.entryName);
+
+            putEntry(out, ShooterSubsystemEntries.FollowShooterSpeed, 0.0,
+                    mShooterOverview,
+                    ShooterSubsystemEntries.FollowShooterSpeed.entryName);
 
             return out;
         }
@@ -281,7 +286,7 @@ public class ShuffleBoard {
                     ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading.entryName);
 
 
-            var p = mShuffleBoardTab.add("P", 0.0).getEntry();
+            var p = mShuffleBoardTab.add("P", ShooterWristConstants.kPIDconstants.p()).getEntry();
             var i = mShuffleBoardTab.add("I", 0.0).getEntry();
             var d = mShuffleBoardTab.add("D", 0.0).getEntry();
 

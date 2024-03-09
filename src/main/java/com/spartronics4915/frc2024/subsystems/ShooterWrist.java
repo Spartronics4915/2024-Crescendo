@@ -107,6 +107,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private ShooterWrist() {
         super();
+        mIMU = new Pigeon2(24);
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID();
         mEncoder = initEncoder();
@@ -115,7 +116,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         kFeedforwardCalc = initFeedForward();
 
-        resetEncoder(kStartingAngle);
+        // resetEncoder(kStartingAngle);
 
         mWristMotor.burnFlash();
 
@@ -124,7 +125,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         initShuffleBoard();
         Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
 
-        mIMU = new Pigeon2(24);
 
         new Trigger(mLimitSwitch::get).onTrue(new Command() {
 
@@ -257,7 +257,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate);
+        return getShooterPitch();
     }
 
     private void setPosition(Rotation2d newAngle){
