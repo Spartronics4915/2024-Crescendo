@@ -173,6 +173,9 @@ public class RobotContainer {
             NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
+            NamedCommands.registerCommand("shootFromLoaded", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("groundIntake", AutoComponents.groundIntake());
+            NamedCommands.registerCommand("loadIntoShooter", AutoComponents.loadIntoShooter());
             NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
             NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
             NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
