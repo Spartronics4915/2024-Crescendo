@@ -7,6 +7,7 @@ import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorInterface;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorLimeLight;
 import com.spartronics4915.frc2024.commands.visionauto.NoteLocatorSim;
+import com.spartronics4915.frc2024.commands.visionauto.SpeakerTargetTagLocatorLimeLight;
 import com.spartronics4915.frc2024.commands.visionauto.SpeakerTargetTagLocatorSim;
 import com.spartronics4915.frc2024.commands.visionauto.TargetDetectorInterface;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
@@ -38,6 +39,7 @@ public class VisionSubsystem extends SubsystemBase {
 
         } else {
             noteLocator = new NoteLocatorLimeLight(this);
+            speakerTagLocator = new SpeakerTargetTagLocatorLimeLight(bob);
         }
         
         new Trigger(DriverStation::isEnabled).onTrue(Commands.runOnce(this::setBobPriorityTagToSpeaker));
