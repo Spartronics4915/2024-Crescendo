@@ -237,6 +237,7 @@ public class ShuffleBoard {
             ShooterWristErrorPID("ShooterPIDError"),
             ShooterWristErrorTrapazoid("ShooterTrapazoidError"), 
             ShooterWristTarget("ShooterTarget"), 
+            ShooterWristPigeonAngleReading("ShooterWristPigeonAngleReading"), 
 
             WristAppliedOutput("WristAppliedOutput");
 
@@ -275,6 +276,9 @@ public class ShuffleBoard {
 
             putEntry(out, ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid.entryName);
+
+            putEntry(out, ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading, 0.0, mShuffleBoardTab,
+                    ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading.entryName);
 
 
             var p = mShuffleBoardTab.add("P", 0.0).getEntry();
