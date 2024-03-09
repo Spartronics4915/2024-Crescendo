@@ -197,6 +197,12 @@ public final class Constants {
 
             public static final double kMeterSafetyLimit = 0.23; // HACK tested in sim
 
+            public static final int kCANCoderID = 25;
+
+            public static final Rotation2d kCanCoderResetAngle = Rotation2d.fromDegrees(15);
+
+            public static final double kCANCoderOffset = 0.0;
+
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91/*291*/); //only when below the safety height

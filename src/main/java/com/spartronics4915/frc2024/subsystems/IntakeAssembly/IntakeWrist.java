@@ -43,6 +43,10 @@ import com.spartronics4915.frc2024.util.PIDConstants;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
+
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
@@ -56,6 +60,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
         private Rotation2d mManualDelta;
+
+        // private CANcoder mCANCoder;
 
         private final ArmFeedforward kFeedforwardCalc;
 
@@ -89,11 +95,23 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kConstraints);
         kFeedforwardCalc = initFeedForward();
+        
+        // mCANCoder = new CANcoder(kCANCoderID);
+        // mCANCoder
+        //         .getConfigurator()
+        //         .apply(new CANcoderConfiguration()
+        //                 .withMagnetSensor(new MagnetSensorConfigs()
+        //                         .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())));
 
+        // resetEncoder(getCanCoderAngle());
         resetEncoder(kStartingAngle);
+
         mLimitSwitch = initLimitSwitch();
 
-        mWristMotor.burnFlash();        
+        mWristMotor.burnFlash();
+
+
+
         shuffleInit();
 
         // homeMotor(Rotation2d.fromDegrees(1)); 
@@ -187,6 +205,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     private Rotation2d getWristAngle(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
         return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); //CHECKUP Failure Point?
     }
+
+    // private Rotation2d getCanCoderAngle(){
+    //     return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
+    // }
 
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
@@ -295,7 +317,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         TrapezoidMotionProfileUpdate();
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
-        handleLimitSwitch();
+        handleCANCoderLogic();
 
         // test.accept(new double[]{
         //     mWristMotor.getAppliedOutput(), //0
@@ -361,13 +383,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
-    private void handleLimitSwitch(){
-        // switching with trigger
-        // if (mLimitSwitch.get()) {
-        //     mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-        //     if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
-        //         mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-        //     }
+    private void handleCANCoderLogic(){
+        // System.out.println(getCanCoderAngle());
+        // if (getCanCoderAngle().getDegrees() - getWristAngle().getDegrees() < kCanCoderResetAngle.getDegrees()) {
+        //     resetEncoder(getCanCoderAngle());
         // }
     }
 
