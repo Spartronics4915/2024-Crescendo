@@ -63,11 +63,13 @@ public class AutoComponents {
     }
 
     public static Command shootPreloaded() {
-        return Commands.parallel(
-                mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                mShooter.setShooterStateCommand(ShooterState.ON)
-                    .andThen(Commands.waitUntil(mShooter::hasSpunUp))
-                    .andThen(DigestCommands.in().withTimeout(5)));
+        // return Commands.parallel(
+        //         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+        //         mShooter.setShooterStateCommand(ShooterState.ON)
+        //             .andThen(Commands.waitUntil(mShooter::hasSpunUp))
+        //             .andThen(DigestCommands.in().withTimeout(5)));
+
+        return shootFromLoaded();
     }
 
     public static Command loadIntoShooter() {
@@ -79,8 +81,11 @@ public class AutoComponents {
     public static Command shootFromLoaded() {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.waitUntil(mShooter::hasSpunUp),
-                DigestCommands.inUnsafe().withTimeout(1));
+                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(3),
+                Commands.deadline(
+                    Commands.waitUntil(mShooter::beamBreakIsNotTriggered).withTimeout(2).andThen(Commands.waitSeconds(0.3)),
+                    DigestCommands.inUnsafe()),
+                mShooter.setShooterStateCommand(ShooterState.OFF));
     }
 
     public static Command shooterAim(Supplier<Rotation2d> aimSupplier) {

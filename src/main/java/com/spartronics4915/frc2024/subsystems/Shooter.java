@@ -119,6 +119,10 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         return mBeamBreak.get(); // TODO: inverted or not?
     }
 
+    public boolean beamBreakIsNotTriggered() {
+        return !beamBreakIsTriggered();
+    }
+
     private CANSparkMax constructMotor(MotorConstants motorValues) {
         CANSparkMax motor = new CANSparkMax(motorValues.motorID(), motorValues.motorType());
         motor.restoreFactoryDefaults();
