@@ -40,34 +40,60 @@
                 }
               },
               {
-                "type": "race",
+                "type": "parallel",
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "FirstRowTopTo2ndRowTopShooterRun"
+                        "name": "loadIntoShooter"
+                      }
+                    },
+                    {
+                      "type": "sequential",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "race",
+                            "data": {
+                              "commands": [
+                                {
+                                  "type": "path",
+                                  "data": {
+                                    "pathName": "FirstRowTopTo2ndRowTopShooterRun"
+                                  }
+                                },
+                                {
+                                  "type": "named",
+                                  "data": {
+                                    "name": "FireControlTracking"
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "StopChassis"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "stationaryAutoAim"
+                            }
+                          }
+                        ]
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "FireControlTracking"
+                        "name": "shootFromLoaded"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "StopChassis"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootNote1"
                 }
               }
             ]
