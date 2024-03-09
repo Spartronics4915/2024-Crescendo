@@ -76,7 +76,6 @@ public class TableAutoAimCommand extends Command {
         Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(14));
 
         mShooterWrist.publicSetRotationSetPoint(correctedAngle);
-
     }
 
     @Override

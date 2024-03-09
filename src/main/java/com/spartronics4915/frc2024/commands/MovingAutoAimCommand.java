@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTable;
@@ -39,20 +40,20 @@ public class MovingAutoAimCommand extends Command{
 
     //moving auto aim logging
 
-    private static final NetworkTable loggingTable = NetworkTableInstance.getDefault().getTable("MAA debug");
+    private static final NetworkTable loggingTable = NetworkTableInstance.getDefault().getTable("MAADebug");
 
-    private static final StructPublisher<Pose2d> kPoseInputPublisher = loggingTable.getStructTopic("Pose Input", Pose2d.struct).publish();
-    private static final StructPublisher<Translation3d> kTargetInputPublisher = loggingTable.getStructTopic("Target Input", Translation3d.struct).publish();
-    private static final StructPublisher<ChassisSpeeds> kVelocityPublisher = loggingTable.getStructTopic("RobotVelocity", ChassisSpeeds.struct).publish();
+    private static final StructPublisher<Pose2d> kPoseInputPublisher = loggingTable.getStructTopic("PoseInput", Pose2d.struct).publish();
+    private static final StructPublisher<Pose3d> kTargetInputPublisher = loggingTable.getStructTopic("TargetInput", Pose3d.struct).publish();
+    private static final StructPublisher<Pose2d> kVelocityPublisher = loggingTable.getStructTopic("RobotVelocity", Pose2d.struct).publish();
     /*
      * RR = robot relative
      * FR = field relative
      */
-    private static final StructPublisher<Translation3d> kTargetOutputRRPublisher = loggingTable.getStructTopic("Target Output", Translation3d.struct).publish();
-    private static final StructPublisher<Translation3d> kTargetOutputFRPublisher = loggingTable.getStructTopic("Target Output", Translation3d.struct).publish();
+    private static final StructPublisher<Pose3d> kTargetOutputRRPublisher = loggingTable.getStructTopic("TargetRROutput", Pose3d.struct).publish();
+    private static final StructPublisher<Pose3d> kTargetOutputFRPublisher = loggingTable.getStructTopic("TargetFROutput", Pose3d.struct).publish();
 
-    private static final StructPublisher<Rotation2d> kWristAnglePublisher = loggingTable.getStructTopic("Wrist Angle Output", Rotation2d.struct).publish();
-    private static final StructPublisher<Rotation2d> kSwerveAnglePublisher = loggingTable.getStructTopic("Swerve Angle Output", Rotation2d.struct).publish();
+    private static final StructPublisher<Rotation2d> kWristAnglePublisher = loggingTable.getStructTopic("Wrist-Angle-Output", Rotation2d.struct).publish();
+    private static final StructPublisher<Rotation2d> kSwerveAnglePublisher = loggingTable.getStructTopic("Swerve-Angle-Output", Rotation2d.struct).publish();
 
 
 
@@ -90,8 +91,8 @@ public class MovingAutoAimCommand extends Command{
         }
 
         if (kDebug) {
-            kVelocityPublisher.accept(speeds);
-            kTargetInputPublisher.accept(kTarget);
+            kVelocityPublisher.accept(new Pose2d(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), new Rotation2d()));
+            kTargetInputPublisher.accept(new Pose3d(kTarget, new Rotation3d()));
             kPoseInputPublisher.accept(pose);
         }
 
@@ -114,12 +115,12 @@ public class MovingAutoAimCommand extends Command{
         // System.out.println("next");
 
         if (kDebug) {
-            kTargetOutputRRPublisher.accept(targetPos);
-            kTargetOutputFRPublisher.accept(targetPos.plus(new Translation3d(
+            kTargetOutputRRPublisher.accept(new Pose3d(targetPos, new Rotation3d()));
+            kTargetOutputFRPublisher.accept(new Pose3d(targetPos.plus(new Translation3d(
                 pose.getX(),
                 pose.getY(),
                 kShooterHeight
-            )));
+            )), new Rotation3d()));
             kWristAnglePublisher.accept(shooterAngle);
             kSwerveAnglePublisher.accept(botAngle);
         }

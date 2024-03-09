@@ -19,9 +19,13 @@ import java.util.Optional;
 import java.util.Set;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,6 +53,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     private GenericEntry mShooterStateWidget;
     private GenericEntry mShooterSpeedWidget;
+    private GenericEntry mShooterFollowSpeedWidget;
     private GenericEntry mConveyerStateWidget;
 
     private final CANSparkMax mShooterMotor;
@@ -67,10 +72,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        
-        // Disabling follow to make spin possible
-        // mShooterFollowMotor.follow(mShooterMotor, true);
-
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
 
         // mShooterFollowMotor.follow(mShooterMotor, true);
@@ -87,6 +88,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mShooterStateWidget = mEntries.get(ShooterSubsystemEntries.ShooterState);
         mConveyerStateWidget = mEntries.get(ShooterSubsystemEntries.ConveyorState);
         mShooterSpeedWidget = mEntries.get(ShooterSubsystemEntries.ShooterSpeed);
+        mShooterFollowSpeedWidget = mEntries.get(ShooterSubsystemEntries.FollowShooterSpeed);
 
         ShooterTabManager.addMotorControlWidget(this);
 
@@ -191,26 +193,24 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kOffSpeed);
         // mShooterFollowMotor.set(-kOffSpeed);
 
-        // mPIDControllerLead.setReference(kOffSpeed, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(kOffSpeed, ControlType.kVelocity);
+        mPIDControllerLead.setReference(kOffSpeed, ControlType.kDutyCycle);
+        mPIDControllerFollow.setReference(kOffSpeed, ControlType.kDutyCycle);
 
-        mShooterMotor.set(0);
-        mShooterFollowMotor.set(0);
     }
 
     private void shooterOn() {
         // mShooterMotor.set(kShootSpeed);
         // mShooterFollowMotor.set(-kShootSpeed);
 
-        // mPIDControllerLead.setReference(kShootSpeed, ControlType.kVelocity);
-        // mPIDControllerFollow.setReference(-(kShootSpeed - kDiff), ControlType.kVelocity);
-        mShooterMotor.set(ON_SPEED);
-        mShooterFollowMotor.set(ON_SPEED-ROLLER_SPEED_DIFFERENCE);
+        mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
+        mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
+        // mShooterMotor.set(ON_SPEED);
+        // mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }
 
     private void shooterBack() {
         mShooterMotor.set(BACK_SPEED);
-        mShooterFollowMotor.set(BACK_SPEED);
+        mShooterFollowMotor.set(-BACK_SPEED + 0.05);
     }
 
     private void conveyorIn() {
@@ -226,14 +226,22 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     public boolean hasSpunUp() {
-        return mShooterEncoder.getVelocity() >= kTargetRPM;
+        return (mShooterEncoder.getVelocity() >= kTargetRPM) && mShooterFollowMotor.getEncoder().getVelocity() >= kTargetRPM ;
     }
+
+
+    private final DoubleArrayPublisher kCurrent = NetworkTableInstance.getDefault().getDoubleArrayTopic("Currents").publish();
 
     @Override
     public void updateShuffleboard() {
         mShooterStateWidget.setString(mCurrentShooterState.name());
         mConveyerStateWidget.setString(mCurrentConveyorState.name());
         mShooterSpeedWidget.setDouble(mShooterEncoder.getVelocity());
+        mShooterFollowSpeedWidget.setDouble(mShooterFollowMotor.getEncoder().getVelocity());
+        kCurrent.accept(new double[]{
+            mShooterMotor.getOutputCurrent(),
+            mShooterFollowMotor.getOutputCurrent()
+        });
     }
 
     @Override

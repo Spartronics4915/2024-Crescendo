@@ -26,6 +26,7 @@ import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
+import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
@@ -234,7 +235,12 @@ public class RobotContainer {
         mDriverController.leftTrigger(kDriverTriggerDeadband)
             .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+
+        mDriverController.leftBumper().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
+
+        mDriverController.x().onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
         // Operator controls
         // Buttons:
@@ -276,12 +282,22 @@ public class RobotContainer {
         // triggers
 
         mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
-                Commands.defer(() -> {
-                    final var alliance = DriverStation.getAlliance().get();
-                    final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-                            : AutoComponents.RED_SPEAKER;
-                    return new StationaryAutoAimCommand(speaker);
-                }, Set.of()));
+                Commands.repeatingSequence(Commands.parallel(
+                    Commands.defer(() -> {
+                        final var alliance = DriverStation.getAlliance().get();
+                        final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+                                : AutoComponents.RED_SPEAKER;
+                        return new TableAutoAimCommand();
+                    }, Set.of()),
+                    new AlignToSpeakerCommand())
+                ));
+
+        mDriverController.povUp().whileTrue(Commands.defer(() -> {
+            final var alliance = DriverStation.getAlliance().get();
+                        final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+                                : AutoComponents.RED_SPEAKER;
+            return new MovingAutoAimCommand(speaker);
+        }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
             .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))

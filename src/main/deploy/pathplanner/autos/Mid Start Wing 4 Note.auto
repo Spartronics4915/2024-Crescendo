@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3038718330183912,
+      "y": 5.624222646796942
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid Start to Top Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Top Note IE to Mid CE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Middle Note to Bottom Note"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
