@@ -270,6 +270,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         });
     }
 
+    // public Command resetToCancoder(){
+    //     return Commands.runOnce(() -> {
+    //         resetEncoder(getCanCoderAngle());
+    //     });
+    // }
+
     public Command setRotationSetpointTesting(double degrees){
         return Commands.runOnce(() -> {
             System.out.println("setting to: " + degrees);
@@ -331,7 +337,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit + (ElevatorConstants.kMaxMeters-kMeterSafetyLimit)/2) || mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
+        if (mManualMovement) {
+            return mElevatorSubsystem.getHeight() > kMeterSafetyLimit;
+        } else {
+            return mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
+        }
+        
+        // return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit + (ElevatorConstants.kMaxMeters-kMeterSafetyLimit)/2) || mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
     }
     
     private double getFeedForwardValue(){
@@ -368,7 +380,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         if (!mHoming)
             mRotSetPoint = Rotation2d.fromRotations(
-                MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngle.getRotations(), (needSoftLimit()) ? kMaxAngleAmp.getRotations() : kMaxAngleGround.getRotations())
+                (needSoftLimit()) ? (
+                    MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngleAmp.getRotations(), kMaxAngleAmp.getRotations())
+                ) : (
+                    MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngleGround.getRotations(), kMaxAngleGround.getRotations())
+                )
             );
 
         // if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
