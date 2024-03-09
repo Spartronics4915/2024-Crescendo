@@ -305,9 +305,9 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        
+        return mAutoChooser.getSelected();
 
-        return AutoBuilder.buildAuto("CenterRowAuto");
+        // return AutoBuilder.buildAuto("CenterRowAuto");
         // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
         
         // if (mAutoChooser == null) {
