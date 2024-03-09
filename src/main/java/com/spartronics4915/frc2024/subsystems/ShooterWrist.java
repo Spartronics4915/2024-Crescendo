@@ -31,6 +31,7 @@ import edu.wpi.first.math.Matrix;
 
 import java.util.Set;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -61,7 +62,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #region variables
 
     private CANSparkMax mWristMotor;
-    private SparkPIDController mPidController;
+    private PIDController mPidController;
 
     private RelativeEncoder mEncoder;
     private TrapezoidProfile kTrapezoidProfile;
@@ -93,6 +94,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private boolean mHoming = false;
 
     private Pigeon2 mIMU;
+    public static final double kOutputRange = 0.2;
+
     // #endregion
 
     public static ShooterWrist getInstance() {
@@ -132,7 +135,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
+                setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
                 // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                 currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
@@ -190,14 +193,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID() {
-        SparkPIDController pid = mWristMotor.getPIDController();
-
-        pid.setOutputRange(-0.2, 0.2);
-
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
+    private PIDController initPID() {
+        PIDController pid = new PIDController(
+            kPIDconstants.p(), 
+            kPIDconstants.i(), 
+            kPIDconstants.d()
+        );
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         // position Conversion not needed by using rotation2d
@@ -209,7 +210,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         RelativeEncoder encoder = mWristMotor.getEncoder();
         // Set the encoder to zero for now to make sure it is initialized to a reasonable value.
-        encoder.setPosition(0); //TODO set to startup position
         return encoder;
     }
 
@@ -258,6 +258,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     public Rotation2d getWristAngle() {
         return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate);
+    }
+
+    private void setPosition(Rotation2d newAngle){
+        mEncoder.setPosition(newAngle.getRotations() * kWristToRotationsRate);
     }
 
     private void setState(ShooterWristState newState) {
@@ -326,7 +330,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public void resetEncoder(Rotation2d angle){
-        mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+        setPosition(angle);
         currentToSetPoint(angle);
     }
 
@@ -376,7 +380,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
-        handleLimitSwitch();
 
         System.out.println(
             getShooterPitch().getDegrees() + "\t : " + 
@@ -442,19 +445,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mWristMotor.set(
+            MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
+        );
+        // mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
-    }
-
-    private void handleLimitSwitch() {
-        // switching with triggers
-        // if (mLimitSwitch.get()) {
-        // mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-        // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
-        // kLimitSwitchTriggerOffset) {
-        // mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-        // }
-        // }
     }
 
     // #endregion
