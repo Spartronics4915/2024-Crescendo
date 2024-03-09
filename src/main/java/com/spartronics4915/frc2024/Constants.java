@@ -278,7 +278,7 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.0;
-            public static final double kMaxMeters = 0.36; // hack untested
+            public static final double kMaxMeters = 0.38; // hack untested
         }
     }
 
@@ -326,7 +326,7 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(P, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(P * 10, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;

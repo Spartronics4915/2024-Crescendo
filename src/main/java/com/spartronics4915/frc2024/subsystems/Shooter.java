@@ -116,7 +116,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     public boolean beamBreakIsTriggered() {
-        return mBeamBreak.get(); // TODO: inverted or not?
+        return !mBeamBreak.get(); // TODO: inverted or not?
     }
 
     public boolean beamBreakIsNotTriggered() {
