@@ -16,14 +16,14 @@ public final class Main {
 
     public static void main(String... args) {
 
-        var x = 1;
-        var y = 1;
+        // var x = 1;
+        // var y = 1;
 
 
-        System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(x, y).in(Degrees))); //expected: 45
-        System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(x, -y).in(Degrees))); //expected: -45
-        System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(-x, y).in(Degrees))); //expected: 135
-        System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(-x, -y).in(Degrees))); //expected: -135
+        // System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(x, y).in(Degrees))); //expected: 45
+        // System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(x, -y).in(Degrees))); //expected: -45
+        // System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(-x, y).in(Degrees))); //expected: 135
+        // System.out.println(Rotation2d.fromDegrees(ShooterWrist.findAngle(-x, -y).in(Degrees))); //expected: -135
 
         
 

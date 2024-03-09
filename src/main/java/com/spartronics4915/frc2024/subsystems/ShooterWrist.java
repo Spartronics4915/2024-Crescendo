@@ -381,12 +381,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         updateShuffle();
 
-        System.out.println(
-            getShooterPitch().getDegrees() + "\t : " + 
-            mIMU.getGravityVectorX().getValueAsDouble() + "\t : " +
-            mIMU.getGravityVectorY().getValueAsDouble() + "\t : " + 
-            mIMU.getGravityVectorZ().getValueAsDouble()
-        );
+        // System.out.println(
+        //     getShooterPitch().getDegrees() + "\t : " + 
+        //     mIMU.getGravityVectorX().getValueAsDouble() + "\t : " +
+        //     mIMU.getGravityVectorY().getValueAsDouble() + "\t : " + 
+        //     mIMU.getGravityVectorZ().getValueAsDouble()
+        // );
         // will add things here if trapezoid motion profiles get used
     }
 
