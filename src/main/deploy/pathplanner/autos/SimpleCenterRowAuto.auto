@@ -12,6 +12,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "groundIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "CenterToFirstRowTop"

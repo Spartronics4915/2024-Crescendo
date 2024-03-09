@@ -130,11 +130,6 @@ public class AutoComponents {
 
     // TODO: modify to load faster when beam break is added
     public static Command stationaryAimAndShoot() {
-        return Commands.sequence(
-                mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.parallel(
-                    Commands.waitUntil(mShooter::hasSpunUp),
-                    stationaryAutoAim()),
-                DigestCommands.in());
+        return stationaryAutoAim().andThen(shootFromLoaded());
     }
 }
