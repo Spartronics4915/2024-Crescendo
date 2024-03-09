@@ -71,7 +71,9 @@ public class AutoComponents {
     }
 
     public static Command loadIntoShooter() {
-        return Commands.print("loadIntoShooter not implemented: wait until shooter beam break is installed");
+        return Commands.deadline(
+                Commands.waitUntil(mShooter::beamBreakIsTriggered),
+                DigestCommands.in());
     }
 
     public static Command shootFromLoaded() {
