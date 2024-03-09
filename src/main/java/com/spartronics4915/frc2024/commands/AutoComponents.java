@@ -62,6 +62,10 @@ public class AutoComponents {
         return Optional.of(getTargetUnsafe());
     }
 
+    /**
+     * @deprecated use shootFromLoaded instead
+     */
+    @Deprecated
     public static Command shootPreloaded() {
         // return Commands.parallel(
         //         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
