@@ -1,0 +1,58 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.738244451763629,
+        "y": 5.906986182791047
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.301230123064642,
+        "y": 5.588224878372834
+      },
+      "isLocked": false,
+      "linkedName": "Middle Note Top Chain Entry"
+    },
+    {
+      "anchor": {
+        "x": 2.5495579239784854,
+        "y": 4.459620286685629
+      },
+      "prevControl": {
+        "x": 2.112579096037313,
+        "y": 5.066257236223264
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0,
+      "rotationDegrees": -75.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.5,
+    "maxAcceleration": 11.09,
+    "maxAngularVelocity": 900.0,
+    "maxAngularAcceleration": 2220.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -46.068872944110346,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": -68.02407825335516,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -1,6 +1,8 @@
 package com.spartronics4915.frc2024.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -25,14 +27,20 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Matrix;
+
 import java.util.Set;
 import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -42,6 +50,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static com.spartronics4915.frc2024.Constants.ShooterWristConstants.*;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Radians;
+
 import java.util.function.*;
 
 import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
@@ -51,7 +62,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #region variables
 
     private CANSparkMax mWristMotor;
-    private SparkPIDController mPidController;
+    private PIDController mPidController;
 
     private RelativeEncoder mEncoder;
     private TrapezoidProfile kTrapezoidProfile;
@@ -75,11 +86,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mAppliedOutput;
     private GenericEntry mShooterWristErrorPID;
     private GenericEntry mShooterWristErrorTrapazoid;
+    private GenericEntry mShooterWristPigeonAngleReading;
 
     private SendableChooser<Rotation2d> chooser;
 
     private boolean startupHome = false;
     private boolean mHoming = false;
+
+    private Pigeon2 mIMU;
+    public static final double kOutputRange = 0.2;
 
     // #endregion
 
@@ -92,6 +107,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private ShooterWrist() {
         super();
+        mIMU = new Pigeon2(24);
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID();
         mEncoder = initEncoder();
@@ -100,7 +116,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         kFeedforwardCalc = initFeedForward();
 
-        resetEncoder(kStartingAngle);
+        // resetEncoder(kStartingAngle);
 
         mWristMotor.burnFlash();
 
@@ -108,6 +124,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         initShuffleBoard();
         Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
+
 
         new Trigger(mLimitSwitch::get).onTrue(new Command() {
 
@@ -118,7 +135,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
             @Override
             public void execute() {
-                mEncoder.setPosition(kLimitSwitchEncoderReading * kWristToRotationsRate);
+                setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
                 // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
                 // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
                 currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
@@ -138,6 +155,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     }
 
+
     // #region init functions
 
     private void initShuffleBoard() {
@@ -152,6 +170,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         mShooterWristErrorPID = mEntries.get(ShooterWristSubsystemEntries.ShooterWristErrorPID);
         mShooterWristErrorTrapazoid = mEntries.get(ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid);
+
+        mShooterWristPigeonAngleReading = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading);
 
         chooser = new SendableChooser<Rotation2d>();
 
@@ -173,14 +193,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID() {
-        SparkPIDController pid = mWristMotor.getPIDController();
-
-        pid.setOutputRange(-0.2, 0.2);
-
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
+    private PIDController initPID() {
+        PIDController pid = new PIDController(
+            kPIDconstants.p(), 
+            kPIDconstants.i(), 
+            kPIDconstants.d()
+        );
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         // position Conversion not needed by using rotation2d
@@ -192,7 +210,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         RelativeEncoder encoder = mWristMotor.getEncoder();
         // Set the encoder to zero for now to make sure it is initialized to a reasonable value.
-        encoder.setPosition(0); //TODO set to startup position
         return encoder;
     }
 
@@ -240,7 +257,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate);
+        return getShooterPitch();
+    }
+
+    private void setPosition(Rotation2d newAngle){
+        mEncoder.setPosition(newAngle.getRotations() * kWristToRotationsRate);
     }
 
     private void setState(ShooterWristState newState) {
@@ -266,6 +287,26 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return Math.abs(getWristAngle().getRotations() - mTargetRotation2d.getRotations()) < kAimedAtTargetThreshold;
     }
 
+
+    
+    public static Measure<Angle> findAngle(double x, double y){
+        return Radians.of(Math.atan2(y, x));
+    }
+
+    public Rotation2d getShooterPitch(){
+        var xStream = mIMU.getGravityVectorX(); //if you move these to objects you need to replace them periodically with the output of .refresh()
+        var yStream = mIMU.getGravityVectorY(); //if you move these to objects you need to replace them periodically with the output of .refresh()
+        
+        // if (!BaseStatusSignal.isAllGood(xStream, yStream)) {
+        //     return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); 
+        // }
+
+        var d = findAngle(xStream.getValueAsDouble(), yStream.getValueAsDouble()).in(Degrees);
+        
+        return Rotation2d.fromDegrees((d));
+    }
+
+
     // #endregion
 
     // #region Commands
@@ -289,7 +330,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public void resetEncoder(Rotation2d angle){
-        mEncoder.setPosition(angle.getRotations() * kWristToRotationsRate);
+        setPosition(angle);
         currentToSetPoint(angle);
     }
 
@@ -339,7 +380,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
-        handleLimitSwitch();
+
+        // System.out.println(
+        //     getShooterPitch().getDegrees() + "\t : " + 
+        //     mIMU.getGravityVectorX().getValueAsDouble() + "\t : " +
+        //     mIMU.getGravityVectorY().getValueAsDouble() + "\t : " + 
+        //     mIMU.getGravityVectorZ().getValueAsDouble()
+        // );
         // will add things here if trapezoid motion profiles get used
     }
 
@@ -349,6 +396,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
+        mShooterWristPigeonAngleReading.setDouble(getShooterPitch().getDegrees());
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
 
@@ -397,25 +445,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mWristMotor.set(
+            MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
+        );
+        // mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
-    }
-
-    private void handleLimitSwitch() {
-        // switching with triggers
-        // if (mLimitSwitch.get()) {
-        // mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-        // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
-        // kLimitSwitchTriggerOffset) {
-        // mTargetRotation2d = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-        // }
-        // }
     }
 
     // #endregion
     @Override
     public void modeSwitchAction() {
-        currentToSetPoint();
+        currentToSetPoint(); // FIXME: switch out of manual mode
     }
 
     @Override

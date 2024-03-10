@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7434568701554986,
+      "y": 4.400618027197593
+    },
+    "rotation": -60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Start to Bottom Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Note IE to Middle Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bottom Sub Taxi_"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

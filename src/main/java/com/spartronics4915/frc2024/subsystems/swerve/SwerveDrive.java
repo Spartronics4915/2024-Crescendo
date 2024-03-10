@@ -151,7 +151,7 @@ public class SwerveDrive extends SubsystemBase {
         if (rotationIndependent) {
             
             var ac_c = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
-            System.out.println(ac_c);
+            //System.out.println(ac_c);
             _speeds.omegaRadiansPerSecond = ac_c;
         }
 
@@ -265,6 +265,9 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void recoupleRotation() {
         mRotationIsIndependent = false;
+        var ccs = getRobotRelativeSpeeds();
+        var tcs = new ChassisSpeeds(ccs.vxMetersPerSecond, ccs.vyMetersPerSecond, 0);
+        drive(tcs, false);
     }
 
     /**
