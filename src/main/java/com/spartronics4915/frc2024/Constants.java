@@ -141,7 +141,7 @@ public final class Constants {
         public enum IntakeAssemblyState { 
             // 70 max angle upwards
             // TODO find values for the intake wirst and elevator
-            GROUNDPICKUP(Rotation2d.fromDegrees(-20), 0.0), 
+            GROUNDPICKUP(Rotation2d.fromDegrees(-30), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
             AMP(Rotation2d.fromDegrees(-13.408), 0.335614), //TODO find elevator height 
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
