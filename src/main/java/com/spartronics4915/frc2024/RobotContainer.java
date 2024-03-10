@@ -201,6 +201,8 @@ public class RobotContainer {
             overviewTab.add(mAutoChooser);
 
             Shuffleboard.getTab("Tab 12").add(mAutoChooser);
+
+            SmartDashboard.putData(CommandScheduler.getInstance());
         } else {
             mAutoChooser = null;
         }
