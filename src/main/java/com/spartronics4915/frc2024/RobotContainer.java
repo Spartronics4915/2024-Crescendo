@@ -117,7 +117,6 @@ public class RobotContainer {
     private static final VisionSubsystem mVision = VisionSubsystem.getInstance();
     private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
 
-
     private final Bling mBling;
 
     private static final PowerDistribution mPDP = new PowerDistribution();
