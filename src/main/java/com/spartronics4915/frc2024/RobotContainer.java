@@ -20,6 +20,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.AlignToSpeakerCommand;
 import com.spartronics4915.frc2024.commands.AutoComponents;
+import com.spartronics4915.frc2024.commands.AutoFactory;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.HomingCommand;
@@ -325,27 +326,11 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return mAutoChooser.getSelected();
-
-        // return AutoBuilder.buildAuto("CenterRowAuto");
-        // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
-        
-        // if (mAutoChooser == null) {
-        //     return null;
-        // }
-        
-        // return new HomingCommand().andThen(mAutoChooser.getSelected());
-        
-        
-        // var a = AutoBuilder.buildAuto("Path 1 Only");
-        // System.out.println("AUTO START");
-        // System.out.println(a);
-        // System.out.println("AUTO END");
-        // return Commands.sequence(
-        // Commands.print("starting auto"),
-        // a,
-        // Commands.print("ending")
-        // );
+        return AutoFactory.generateVisionAuto(
+                new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("CenterToFirstRowTop"),
+                    PathPlannerPath.fromPathFile("FirstRowTopTo2ndRowTopShooterRun")));
+        // return mAutoChooser.getSelected();
     }
 
     public SwerveDrive getSwerveDrive() {
