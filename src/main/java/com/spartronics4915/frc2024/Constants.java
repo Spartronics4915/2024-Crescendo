@@ -85,7 +85,7 @@ public final class Constants {
 
         // theoretical maximum with NEO and L2 MK4i
         public static final double kMaxSpeed = Units.feetToMeters(15.1);
-        public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
+        public static final double kMaxAcceleration = 5; // 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
         public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;

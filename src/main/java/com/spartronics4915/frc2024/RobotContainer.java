@@ -70,6 +70,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kSpeakerTarget;
@@ -196,6 +197,8 @@ public class RobotContainer {
                             .andThen(DigestCommands.in().withTimeout(5))));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
+
+            SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
@@ -326,10 +329,16 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
+
         return AutoFactory.generateVisionAuto(
                 new AutoFactory.PathSet(
                     PathPlannerPath.fromPathFile("CenterToFirstRowTop"),
-                    PathPlannerPath.fromPathFile("FirstRowTopTo2ndRowTopShooterRun")));
+                    Optional.empty()),
+                new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("entry 2"),
+                    Optional.empty()));
+
         // return mAutoChooser.getSelected();
     }
 

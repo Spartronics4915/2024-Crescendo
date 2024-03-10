@@ -65,7 +65,8 @@ public class TableAutoAimCommand extends Command {
     }
 
     public boolean atTarget() {
-        return mShooterWrist.atTarget();
+        return true;
+        // return mShooterWrist.atTarget();
     }
 
     @Override
