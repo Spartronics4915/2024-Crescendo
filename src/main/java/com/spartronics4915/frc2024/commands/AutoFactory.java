@@ -37,7 +37,7 @@ public final class AutoFactory {
 
     public static Command generateVisionAuto(List<PathSet> paths) {
         final Command[] seq = paths.stream().map((ps) -> generateAutoSegment(ps)).toArray(Command[]::new);
-        return AutoComponents.shootFromLoaded().andThen(Commands.sequence(seq));
+        return AutoComponents.shootPreloaded().andThen(Commands.sequence(seq));
     }
 
     private static Command generateAutoSegment(PathSet pathSet) {
