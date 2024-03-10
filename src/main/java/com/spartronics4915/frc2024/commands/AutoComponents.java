@@ -63,10 +63,6 @@ public class AutoComponents {
         return Optional.of(getTargetUnsafe());
     }
 
-    /**
-     * @deprecated use shootFromLoaded instead
-     */
-    @Deprecated
     public static Command shootPreloaded() {
         // return Commands.parallel(
         //         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
@@ -74,7 +70,7 @@ public class AutoComponents {
         //             .andThen(Commands.waitUntil(mShooter::hasSpunUp))
         //             .andThen(DigestCommands.in().withTimeout(5)));
 
-        return shootFromLoaded();
+        return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT).andThen(shootFromLoaded());
     }
 
     public static Command loadIntoShooter() {
