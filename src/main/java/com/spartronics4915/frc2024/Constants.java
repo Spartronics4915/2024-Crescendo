@@ -167,12 +167,12 @@ public final class Constants {
             public static final MotorConstants kFollowerMotorConstants = new MotorConstants(23, MotorType.kBrushless, true,
                 IdleMode.kBrake, 60);
 
-            public static final double kMainToFollowRatio = -1/2.0 * 6748.0/5676.0;
+            public static final double kMainToFollowRatio = -1/2 * 6748.0/5676.0;
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = 0.8; // placeholder
-            public static final double kLoadSpeed = 0.3; // placeholder
+            public static final double kInSpeed = -0.5; // placeholder
+            public static final double kLoadSpeed = -0.5; // placeholder
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
@@ -195,7 +195,7 @@ public final class Constants {
             
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
-            public static final double kMeterSafetyLimit = 0.3; // HACK tested in sim
+            public static final double kMeterSafetyLimit = 0.23; // HACK tested in sim
 
             public static final int kCANCoderID = 25;
 
@@ -204,10 +204,9 @@ public final class Constants {
             public static final double kCANCoderOffset = 0.0;
 
             //TODO find values for this
-            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91/*291*/); //only when below the safety height
-            public static final Rotation2d kMinAngleGround = Rotation2d.fromDegrees(-20); 
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
-            public static final Rotation2d kMinAngleAmp= Rotation2d.fromDegrees(-20); 
+            public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91/*291*/); //only when below the safety height
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-40); 
 
             public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
