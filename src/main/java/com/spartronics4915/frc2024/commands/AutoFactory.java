@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import static com.spartronics4915.frc2024.Constants.Drive.kMaxSpeed;
 import static com.spartronics4915.frc2024.Constants.Drive.kMaxAcceleration;
@@ -60,6 +61,7 @@ public final class AutoFactory {
                 intakeAction,
                 Commands.sequence(
                     AutoBuilder.followPath(path),
+                    Commands.waitUntil(VisionSubsystem.getInstance()::aliceSeesNote).withTimeout(1),
                     noteAction));
     }
 

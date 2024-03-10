@@ -218,8 +218,8 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     private void load() {
         //mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
         // mFollowPIDController.setReference(kLoadSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-        mMotor.set(0.4);
-        mFollowerMotor.set(-0.3);
+        mMotor.set(0.7);
+        mFollowerMotor.set(-0.6);
     }
 
     private void out() {

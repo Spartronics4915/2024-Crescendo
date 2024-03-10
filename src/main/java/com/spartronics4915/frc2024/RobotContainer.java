@@ -337,7 +337,10 @@ public class RobotContainer {
                     Optional.empty()),
                 new AutoFactory.PathSet(
                     PathPlannerPath.fromPathFile("entry 2"),
-                    Optional.empty()));
+                    Optional.empty()),
+                new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("entry 3"),
+                    PathPlannerPath.fromPathFile("sweep 3")));
 
         // return mAutoChooser.getSelected();
     }

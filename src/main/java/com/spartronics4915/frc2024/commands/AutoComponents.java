@@ -82,7 +82,7 @@ public class AutoComponents {
     public static Command shootFromLoaded() {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
+                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(0.1),
                 Commands.deadline(
                     Commands.waitUntil(mShooter::beamBreakIsNotTriggered).withTimeout(2).andThen(Commands.waitSeconds(0.3)),
                     DigestCommands.inUnsafe()),
