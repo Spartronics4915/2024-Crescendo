@@ -456,6 +456,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     @Override
     public void modeSwitchAction() {
         currentToSetPoint();
+        mManualMovement = false;
     }
 
     @Override

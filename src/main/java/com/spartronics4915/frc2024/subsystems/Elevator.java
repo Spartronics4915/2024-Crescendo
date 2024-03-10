@@ -388,6 +388,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         @Override
         public void modeSwitchAction() {
             updateCurrStateToReal();
+            mIsManual = false;
         }
 
     /**
