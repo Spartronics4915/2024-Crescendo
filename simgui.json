@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Elevator/Elevatorlayout/setPidConstants": "Command",
       "/Shuffleboard/Elevator/encoderSet": "Command",
       "/Shuffleboard/Elevator/targetSet": "Command",
       "/Shuffleboard/Intake/Intake/OFF": "Command",
@@ -11,6 +12,7 @@
       "/Shuffleboard/Intake/Motor Control/Set to speed": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/Amp": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/resetToResetAngle": "Command",
+      "/Shuffleboard/IntakeWrist/IntakeWristlayout/setPidConstants": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/setTargetToAngle": "Command",
       "/Shuffleboard/IntakeWrist/IntakeWristlayout/stow": "Command",
       "/Shuffleboard/IntakeWrist/Motor Control/Set to target": "Command",
@@ -22,7 +24,9 @@
       "/Shuffleboard/ShooterWrist/ShooterWristlayout/ResetEncoder": "Command",
       "/Shuffleboard/ShooterWrist/ShooterWristlayout/Set to 45 degrees": "Command",
       "/Shuffleboard/ShooterWrist/ShooterWristlayout/resetToAngle": "Command",
+      "/Shuffleboard/ShooterWrist/ShooterWristlayout/setPidConstants": "Command",
       "/Shuffleboard/ShooterWrist/ShooterWristlayout/setToSendableCHooser": "Command",
+      "/Shuffleboard/Tab 12/SendableChooser[1]": "String Chooser",
       "/Shuffleboard/VisionTab/alice field": "Field2d",
       "/Shuffleboard/VisionTab/bob field": "Field2d",
       "/Shuffleboard/bling/ERROR": "Command",
@@ -51,6 +55,19 @@
       "/SmartDashboard/choose shooterWrist value": "String Chooser",
       "/SmartDashboard/field": "Field2d",
       "/SmartDashboard/simCanvas": "Mechanism2d"
+    },
+    "windows": {
+      "/SmartDashboard/field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables Info": {

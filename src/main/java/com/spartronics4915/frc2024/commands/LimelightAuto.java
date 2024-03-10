@@ -12,6 +12,7 @@ import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,41 +27,49 @@ public class LimelightAuto {
 
     public static Command limelightAuto() {
         return Commands.sequence(
-            IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
-            driveToNote(),
-            new AlignToSpeakerCommand(),
-            aimAndShoot()
-            );
+                IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP),
+                Commands.waitSeconds(1),
+                driveToNote(),
+                Commands.waitSeconds(1),
+                new AlignToSpeakerCommand(),
+                Commands.waitSeconds(1),
+                aimAndShoot());
     }
 
     public static Command driveToNote() {
+
+        final double FORWARD_VELOCITY = 1;
+
+        ChassisSpeeds forwardSpeed = new ChassisSpeeds(FORWARD_VELOCITY, 0, 0);
+        ChassisSpeeds zeroSpeed = new ChassisSpeeds(0, 0, 0);
+        // You probably want to just drive straight indefinitely until the command ends.
+
+        Command driveStraightIndefiniteCommand = mSwerve.run(()->{mSwerve.drive(forwardSpeed, false);});
         return Commands.deadline(
-            Commands.waitUntil(mVisionSubsystem::aliceSeesNote),
-            Commands.parallel(
-                new LockOnCommand(),
-                new DriveStraightCommands.DriveStraightFixedDistance(
-                    mSwerve,
-                    new Rotation2d(),
-                    10,
-                    new Constraints(4.5, 11.09)
-                )
-            )
-        );
+                Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote), // This shop stop when Alice can't see the note.
+                Commands.parallel(
+                        new LockOnCommand(mVisionSubsystem.getNoteLocator()),
+                        driveStraightIndefiniteCommand)
+                ).andThen(mSwerve.runOnce(() -> {mSwerve.drive(zeroSpeed, false);}));
+                        // new DriveStraightCommands.DriveStraightFixedDistance(
+                        //         mSwerve,
+                        //         new Rotation2d(),
+                        //         10,
+                        //         new Constraints(1, 1))));
     }
 
-    //TODO: make
+    // TODO: make
     public static Rotation2d getNeededShooterAngle(double tagSize) {
         return new Rotation2d();
     }
 
     public static Command aimAndShoot() {
         return Commands.sequence(
-            Commands.runOnce(() -> {
-                mShooterWrist.publicSetRotationSetPoint(getNeededShooterAngle(0));
-            }),
-            Commands.waitUntil(mShooterWrist::atTarget),
-            mShooter.setShooterStateCommand(ShooterState.ON),
-            mShooter.setConveyorStateCommand(ConveyorState.IN)
-            );
+                Commands.runOnce(() -> {
+                    mShooterWrist.publicSetRotationSetPoint(getNeededShooterAngle(0));
+                }),
+                Commands.waitUntil(mShooterWrist::atTarget),
+                mShooter.setShooterStateCommand(ShooterState.ON),
+                mShooter.setConveyorStateCommand(ConveyorState.IN));
     }
 }

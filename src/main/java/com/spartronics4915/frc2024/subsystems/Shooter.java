@@ -16,11 +16,14 @@ import com.spartronics4915.frc2024.util.PIDConstants;
 import com.spartronics4915.frc2024.util.PIDFConstants;
 
 import java.util.Optional;
+import java.util.Set;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -28,10 +31,12 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
     public static final double ON_SPEED = 0.9;
     public static final double BACK_SPEED = 0.2;
+    public static final double ROLLER_SPEED_DIFFERENCE = 0.1;
 
     public static enum ShooterState {
         ON, BACK, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
@@ -59,12 +64,14 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
     private final RelativeEncoder mShooterEncoder;
 
+    private final DigitalInput mBeamBreak;
+    private final Timer mBeamBreakTimer;
+
     public Shooter() {
         mCurrentShooterState = ShooterState.OFF;
         mCurrentConveyorState = ConveyorState.OFF;
         mShooterMotor = constructMotor(kShooterMotorConstants);
         mShooterFollowMotor = constructMotor(kShooterFollowMotorConstants);
-        // mShooterFollowMotor.follow(mShooterMotor, true);
         mConveyorMotor = constructMotor(kConveyorMotorConstants);
 
         // mShooterFollowMotor.follow(mShooterMotor, true);
@@ -96,6 +103,26 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // return Optional.of(new Bling.BlingMC(BlingModes.WARNING, Color.kOrange, Color.kOrangeRed));
         // }, 1));
 
+        mBeamBreak = new DigitalInput(7);
+
+        mBeamBreakTimer = new Timer();
+        mBeamBreakTimer.reset();
+
+        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
+        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
+            mBeamBreakTimer.stop();
+            mBeamBreakTimer.reset();
+            mCurrentConveyorState = ConveyorState.OFF;
+            conveyorOff();
+        }));
+    }
+
+    public boolean beamBreakIsTriggered() {
+        return !mBeamBreak.get(); // TODO: inverted or not?
+    }
+
+    public boolean beamBreakIsNotTriggered() {
+        return !beamBreakIsTriggered();
     }
 
     private CANSparkMax constructMotor(MotorConstants motorValues) {
@@ -168,9 +195,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
         mPIDControllerLead.setReference(kOffSpeed, ControlType.kDutyCycle);
         mPIDControllerFollow.setReference(kOffSpeed, ControlType.kDutyCycle);
-
-        // mShooterMotor.set(0);
-        // mShooterFollowMotor.set(0);
 
     }
 

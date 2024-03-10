@@ -5,7 +5,9 @@ import java.util.Optional;
 import com.spartronics4915.frc2024.LimelightHelpers;
 import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -32,6 +34,7 @@ public class LimelightDevice extends SubsystemBase {
     private final boolean mHasCoral;
     private final Field2d mField;
     private final SlewRateLimiter mRateLimiter;
+    private final Debouncer mDebouncer;
     private final GenericEntry ignoreVisionReadings;
     private final GenericEntry mDisabled;
 
@@ -49,6 +52,7 @@ public class LimelightDevice extends SubsystemBase {
         checkIfValid();
         mHasCoral = hasCoral;
         mRateLimiter = new SlewRateLimiter(246);
+        mDebouncer = new Debouncer(0.5, DebounceType.kFalling);
         ShuffleboardTab overview = Shuffleboard.getTab("Overview");
         ignoreVisionReadings = overview.add("IGNORE " + name, false)
                                        .withWidget(BuiltInWidgets.kToggleButton)
@@ -81,7 +85,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (ignoreVisionReadings.getBoolean(false) || !getTv() || mPipeline.isDetector || !pipelineLoaded()) {
+        if (ignoreVisionReadings.getBoolean(false) || mPipeline.isDetector || !pipelineLoaded()) {
             return Optional.empty();
         }
         // if (numberOfTagsSeen() < 2) return Optional.empty();
@@ -110,6 +114,10 @@ public class LimelightDevice extends SubsystemBase {
     public boolean getTv() {
         if (!isValid()) return false;
         return LimelightHelpers.getTV(mName);
+    }
+
+    public boolean getTvDebounce() {
+        return mDebouncer.calculate(getTv());
     }
 
     /**

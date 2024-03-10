@@ -1,5 +1,6 @@
 package com.spartronics4915.frc2024.commands;
 
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.subsystems.Shooter;
@@ -62,23 +63,34 @@ public class AutoComponents {
         return Optional.of(getTargetUnsafe());
     }
 
+    /**
+     * @deprecated use shootFromLoaded instead
+     */
+    @Deprecated
     public static Command shootPreloaded() {
-        return Commands.parallel(
-                mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                mShooter.setShooterStateCommand(ShooterState.ON)
-                    .andThen(Commands.waitUntil(mShooter::hasSpunUp))
-                    .andThen(DigestCommands.in().withTimeout(5)));
+        // return Commands.parallel(
+        //         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+        //         mShooter.setShooterStateCommand(ShooterState.ON)
+        //             .andThen(Commands.waitUntil(mShooter::hasSpunUp))
+        //             .andThen(DigestCommands.in().withTimeout(5)));
+
+        return shootFromLoaded();
     }
 
     public static Command loadIntoShooter() {
-        return Commands.print("loadIntoShooter not implemented: wait until shooter beam break is installed");
+        return Commands.deadline(
+                Commands.waitUntil(mShooter::beamBreakIsTriggered),
+                DigestCommands.in());
     }
 
     public static Command shootFromLoaded() {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.waitUntil(mShooter::hasSpunUp),
-                DigestCommands.inUnsafe().withTimeout(1));
+                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
+                Commands.deadline(
+                    Commands.waitUntil(mShooter::beamBreakIsNotTriggered).withTimeout(2).andThen(Commands.waitSeconds(0.3)),
+                    DigestCommands.inUnsafe()),
+                mShooter.setShooterStateCommand(ShooterState.OFF));
     }
 
     public static Command shooterAim(Supplier<Rotation2d> aimSupplier) {
@@ -105,25 +117,28 @@ public class AutoComponents {
     }
 
     public static Command stationaryAutoAim() {
-        try {
-            return Commands.defer(() -> {
-                final Translation3d speaker = getTargetUnsafe();
-                final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
-                return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
-            }, Set.of(mSwerve, mShooterWrist));
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-        return Commands.print("Auto aim failed!");
+        var shooterFireControl = RobotContainer.getShooterFireControl();
+        var aac = new TableAutoAimCommand();
+        return Commands.sequence(
+                shooterFireControl.aimAndFireCommand(20),
+                Commands.deadline(
+                    Commands.waitUntil(aac::atTarget),
+                    aac));
+        // shooterFireControl.aimAndFireCommand(20).andThen(new TableAutoAimCommand().withTimeout(2));
+        // try {
+        //     return Commands.defer(() -> {
+        //         final Translation3d speaker = getTargetUnsafe();
+        //         final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
+        //         return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+        //     }, Set.of(mSwerve, mShooterWrist));
+        // } catch (Exception ex) {
+        //     ex.printStackTrace(System.err);
+        // }
+        // return Commands.print("Auto aim failed!");
     }
 
     // TODO: modify to load faster when beam break is added
     public static Command stationaryAimAndShoot() {
-        return Commands.sequence(
-                mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.parallel(
-                    Commands.waitUntil(mShooter::hasSpunUp),
-                    stationaryAutoAim()),
-                DigestCommands.in());
+        return stationaryAutoAim().andThen(shootFromLoaded());
     }
 }

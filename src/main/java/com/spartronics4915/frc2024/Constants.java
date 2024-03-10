@@ -285,7 +285,7 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.0;
-            public static final double kMaxMeters = 0.36; // hack untested
+            public static final double kMaxMeters = 0.38; // hack untested
         }
     }
 
@@ -318,7 +318,7 @@ public final class Constants {
                                                                                                                    // untested
                                                                                                                    // values
 
-        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05).getRotations(); // 6 degrees
+        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(2).getRotations(); // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(70).getRotations();
@@ -338,7 +338,7 @@ public final class Constants {
             System.out.println(P);
             System.out.println(P);
 
-            kPIDconstants = new PIDConstants(P * 10, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(P * 15, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;
@@ -373,7 +373,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 5500;
+        public static final double kTargetRPM = 3900;
     }
 
     public static final class AutoAimConstants {

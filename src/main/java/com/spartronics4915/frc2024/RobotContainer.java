@@ -9,6 +9,7 @@ import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.commands.IntakeAssemblyCommands;
+import com.spartronics4915.frc2024.commands.LimelightAuto;
 import com.spartronics4915.frc2024.subsystems.Bling;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
@@ -28,6 +29,8 @@ import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
+import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
+import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl.FireControlEndDetector;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMCwithPriority;
 import com.spartronics4915.frc2024.subsystems.Bling.BlingMC;
@@ -111,7 +114,9 @@ public class RobotContainer {
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
 
-    private final VisionSubsystem mVision;
+    private static final VisionSubsystem mVision = VisionSubsystem.getInstance();
+    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
+
 
     private final Bling mBling;
 
@@ -160,7 +165,27 @@ public class RobotContainer {
 
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
+        mSwerveSim = new SwerveSim(mSwerveDrive);
         if (mSwerveDrive != null) {
+            // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
+            NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
+            NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
+            NamedCommands.registerCommand("shootFromLoaded", AutoComponents.shootFromLoaded());
+            NamedCommands.registerCommand("shooterOn", mShooter.setShooterStateCommand(ShooterState.ON));
+            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO: replace timeout with debounced atTarget
+            NamedCommands.registerCommand("aimAndShootPreloaded", AutoComponents.stationaryAimAndShoot());
+            NamedCommands.registerCommand("groundIntake", AutoComponents.groundIntake());
+            NamedCommands.registerCommand("loadIntoShooter", AutoComponents.loadIntoShooter());
+            NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
+            NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
+            NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
+            NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("ShootNote2", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
+
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
             mAutoChooser.addOption(
@@ -179,11 +204,13 @@ public class RobotContainer {
         } else {
             mAutoChooser = null;
         }
-        mSwerveSim = new SwerveSim(mSwerveDrive);
-        mVision = VisionSubsystem.getInstance();
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
         configureBindings();
+    }
+
+    public static ShooterRunFireControl getShooterFireControl() {
+        return shooterFireControl;
     }
 
     public static CommandXboxController getDriverController() {
@@ -206,8 +233,12 @@ public class RobotContainer {
         // mDriverController.leftStick().onTrue(new HomingCommand());
         mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
+        mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
+
         mDriverController.leftTrigger(kDriverTriggerDeadband)
-            .whileTrue(new LockOnCommand());
+            .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
+        mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
+
         mDriverController.leftBumper().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
@@ -295,10 +326,18 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        if (mAutoChooser == null) {
-            return null;
-        }
-        return new HomingCommand().andThen(mAutoChooser.getSelected());
+        return mAutoChooser.getSelected();
+
+        // return AutoBuilder.buildAuto("CenterRowAuto");
+        // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
+        
+        // if (mAutoChooser == null) {
+        //     return null;
+        // }
+        
+        // return new HomingCommand().andThen(mAutoChooser.getSelected());
+        
+        
         // var a = AutoBuilder.buildAuto("Path 1 Only");
         // System.out.println("AUTO START");
         // System.out.println(a);
@@ -308,5 +347,9 @@ public class RobotContainer {
         // a,
         // Commands.print("ending")
         // );
+    }
+
+    public SwerveDrive getSwerveDrive() {
+        return mSwerveDrive;
     }
 }
