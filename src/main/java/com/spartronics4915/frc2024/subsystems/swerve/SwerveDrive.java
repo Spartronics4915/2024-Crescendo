@@ -403,13 +403,9 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.unlock();
     }
 
-    StructPublisher<Pose2d> posePublish = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("robot pose", Pose2d.struct).publish();
-
     @Override
     public void periodic() {
         updateOdometry();
-
-        posePublish.accept(getPose());
 
         boolean logSwerveModules = false;
         if (logSwerveModules) {

@@ -43,6 +43,10 @@ import com.spartronics4915.frc2024.util.PIDConstants;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristConstants.*;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
+import com.ctre.phoenix6.hardware.CANcoder;
+
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
@@ -56,6 +60,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         private RelativeEncoder mEncoder;
         private Rotation2d mRotSetPoint;
         private Rotation2d mManualDelta;
+
+        // private CANcoder mCANCoder;
 
         private final ArmFeedforward kFeedforwardCalc;
 
@@ -89,11 +95,23 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mEncoder = initEncoder();
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kConstraints);
         kFeedforwardCalc = initFeedForward();
+        
+        // mCANCoder = new CANcoder(kCANCoderID);
+        // mCANCoder
+        //         .getConfigurator()
+        //         .apply(new CANcoderConfiguration()
+        //                 .withMagnetSensor(new MagnetSensorConfigs()
+        //                         .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())));
 
+        // resetEncoder(getCanCoderAngle());
         resetEncoder(kStartingAngle);
+
         mLimitSwitch = initLimitSwitch();
 
-        mWristMotor.burnFlash();        
+        mWristMotor.burnFlash();
+
+
+
         shuffleInit();
 
         // homeMotor(Rotation2d.fromDegrees(1)); 
@@ -188,6 +206,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); //CHECKUP Failure Point?
     }
 
+    // private Rotation2d getCanCoderAngle(){
+    //     return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
+    // }
+
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
     }
@@ -248,6 +270,12 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         });
     }
 
+    // public Command resetToCancoder(){
+    //     return Commands.runOnce(() -> {
+    //         resetEncoder(getCanCoderAngle());
+    //     });
+    // }
+
     public Command setRotationSetpointTesting(double degrees){
         return Commands.runOnce(() -> {
             System.out.println("setting to: " + degrees);
@@ -295,7 +323,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         TrapezoidMotionProfileUpdate();
         //will add things here if trapezoid motion profiles get used
         updateShuffleboard();
-        handleLimitSwitch();
+        handleCANCoderLogic();
 
         // test.accept(new double[]{
         //     mWristMotor.getAppliedOutput(), //0
@@ -309,7 +337,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
     
     public boolean needSoftLimit(){
-        return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit + (ElevatorConstants.kMaxMeters-kMeterSafetyLimit)/2) || mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
+        if (mManualMovement) {
+            return mElevatorSubsystem.getHeight() > kMeterSafetyLimit;
+        } else {
+            return mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
+        }
+        
+        // return (mElevatorSubsystem.getHeight()  > kMeterSafetyLimit + (ElevatorConstants.kMaxMeters-kMeterSafetyLimit)/2) || mElevatorSubsystem.getSetpointHeight() > kMeterSafetyLimit;
     }
     
     private double getFeedForwardValue(){
@@ -346,7 +380,11 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
         if (!mHoming)
             mRotSetPoint = Rotation2d.fromRotations(
-                MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngle.getRotations(), (needSoftLimit()) ? kMaxAngleAmp.getRotations() : kMaxAngleGround.getRotations())
+                (needSoftLimit()) ? (
+                    MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngleAmp.getRotations(), kMaxAngleAmp.getRotations())
+                ) : (
+                    MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngleGround.getRotations(), kMaxAngleGround.getRotations())
+                )
             );
 
         // if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
@@ -361,13 +399,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
-    private void handleLimitSwitch(){
-        // switching with trigger
-        // if (mLimitSwitch.get()) {
-        //     mEncoder.setPosition(kLimitSwitchEncoderReading*kInToOutRotations);
-        //     if (mRotSetPoint.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations + kLimitSwitchTriggerOffset) {
-        //         mRotSetPoint = Rotation2d.fromRotations(kLimitSwitchEncoderReading * kInToOutRotations);
-        //     }
+    private void handleCANCoderLogic(){
+        // System.out.println(getCanCoderAngle());
+        // if (getCanCoderAngle().getDegrees() - getWristAngle().getDegrees() < kCanCoderResetAngle.getDegrees()) {
+        //     resetEncoder(getCanCoderAngle());
         // }
     }
 
@@ -378,6 +413,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     @Override
     public void modeSwitchAction() {
         currentToSetPoint();
+        mManualMovement = false;
     }
 
     @Override
