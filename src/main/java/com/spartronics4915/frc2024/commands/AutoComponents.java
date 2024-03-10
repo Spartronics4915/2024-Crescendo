@@ -1,5 +1,6 @@
 package com.spartronics4915.frc2024.commands;
 
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
 import com.spartronics4915.frc2024.subsystems.Shooter;
@@ -85,7 +86,7 @@ public class AutoComponents {
     public static Command shootFromLoaded() {
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
-                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(3),
+                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
                 Commands.deadline(
                     Commands.waitUntil(mShooter::beamBreakIsNotTriggered).withTimeout(2).andThen(Commands.waitSeconds(0.3)),
                     DigestCommands.inUnsafe()),
@@ -116,16 +117,24 @@ public class AutoComponents {
     }
 
     public static Command stationaryAutoAim() {
-        try {
-            return Commands.defer(() -> {
-                final Translation3d speaker = getTargetUnsafe();
-                final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
-                return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
-            }, Set.of(mSwerve, mShooterWrist));
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
-        return Commands.print("Auto aim failed!");
+        var shooterFireControl = RobotContainer.getShooterFireControl();
+        var aac = new TableAutoAimCommand();
+        return Commands.sequence(
+                shooterFireControl.aimAndFireCommand(20),
+                Commands.deadline(
+                    Commands.waitUntil(aac::atTarget),
+                    aac));
+        // shooterFireControl.aimAndFireCommand(20).andThen(new TableAutoAimCommand().withTimeout(2));
+        // try {
+        //     return Commands.defer(() -> {
+        //         final Translation3d speaker = getTargetUnsafe();
+        //         final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
+        //         return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+        //     }, Set.of(mSwerve, mShooterWrist));
+        // } catch (Exception ex) {
+        //     ex.printStackTrace(System.err);
+        // }
+        // return Commands.print("Auto aim failed!");
     }
 
     // TODO: modify to load faster when beam break is added

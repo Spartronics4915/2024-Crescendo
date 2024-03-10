@@ -311,7 +311,7 @@ public final class Constants {
                                                                                                                    // untested
                                                                                                                    // values
 
-        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05).getRotations(); // 6 degrees
+        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(2).getRotations(); // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(70).getRotations();
@@ -331,7 +331,7 @@ public final class Constants {
             System.out.println(P);
             System.out.println(P);
 
-            kPIDconstants = new PIDConstants(P * 10, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(P * 15, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;
@@ -356,7 +356,7 @@ public final class Constants {
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false,
                 IdleMode.kCoast, 40); // placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,
-                true, IdleMode.kCoast, 40); // placeholder
+                false, IdleMode.kCoast, 40); // placeholder
         public static final MotorConstants kConveyorMotorConstants = new MotorConstants(17, MotorType.kBrushless, false,
                 IdleMode.kCoast, 60); // placeholder
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5
@@ -366,7 +366,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 5500;
+        public static final double kTargetRPM = 3900;
     }
 
     public static final class AutoAimConstants {

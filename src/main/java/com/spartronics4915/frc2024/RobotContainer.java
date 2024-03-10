@@ -114,8 +114,9 @@ public class RobotContainer {
     private static final TrapezoidSimulator mSimulator;
     private final SwerveSim mSwerveSim;
 
-    private final VisionSubsystem mVision;
-    private final ShooterRunFireControl shooterFireControl;
+    private static final VisionSubsystem mVision = VisionSubsystem.getInstance();
+    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
+
 
     private final Bling mBling;
 
@@ -165,9 +166,6 @@ public class RobotContainer {
     public RobotContainer() {
         mSwerveDrive = SwerveDrive.getInstance();
         mSwerveSim = new SwerveSim(mSwerveDrive);
-        mVision = VisionSubsystem.getInstance();
-        shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
-
         if (mSwerveDrive != null) {
             // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
@@ -175,7 +173,8 @@ public class RobotContainer {
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
             NamedCommands.registerCommand("shootFromLoaded", AutoComponents.shootFromLoaded());
-            NamedCommands.registerCommand("stationaryAutoAim", shooterFireControl.aimAndFireCommand(20));
+            NamedCommands.registerCommand("shooterOn", mShooter.setShooterStateCommand(ShooterState.ON));
+            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO: replace timeout with debounced atTarget
             NamedCommands.registerCommand("aimAndShootPreloaded", AutoComponents.stationaryAimAndShoot());
             NamedCommands.registerCommand("groundIntake", AutoComponents.groundIntake());
             NamedCommands.registerCommand("loadIntoShooter", AutoComponents.loadIntoShooter());
@@ -208,6 +207,10 @@ public class RobotContainer {
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
         configureBindings();
+    }
+
+    public static ShooterRunFireControl getShooterFireControl() {
+        return shooterFireControl;
     }
 
     public static CommandXboxController getDriverController() {

@@ -455,7 +455,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #endregion
     @Override
     public void modeSwitchAction() {
-        currentToSetPoint();
+        currentToSetPoint(); // FIXME: switch out of manual mode
     }
 
     @Override

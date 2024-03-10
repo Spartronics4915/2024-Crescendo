@@ -265,6 +265,9 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void recoupleRotation() {
         mRotationIsIndependent = false;
+        var ccs = getRobotRelativeSpeeds();
+        var tcs = new ChassisSpeeds(ccs.vxMetersPerSecond, ccs.vyMetersPerSecond, 0);
+        drive(tcs, false);
     }
 
     /**

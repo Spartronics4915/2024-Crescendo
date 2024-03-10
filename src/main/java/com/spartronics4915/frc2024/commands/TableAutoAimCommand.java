@@ -64,6 +64,10 @@ public class TableAutoAimCommand extends Command {
         //TODO add Tag priority and alliance tag 
     }
 
+    public boolean atTarget() {
+        return mShooterWrist.atTarget();
+    }
+
     @Override
     public void initialize() {
 

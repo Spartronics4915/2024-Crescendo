@@ -95,6 +95,12 @@
                           {
                             "type": "named",
                             "data": {
+                              "name": "shooterOn"
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
                               "name": "stationaryAutoAim"
                             }
                           }
@@ -105,6 +111,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootFromLoaded"
           }
         }
       ]
