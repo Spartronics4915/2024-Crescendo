@@ -264,12 +264,12 @@ public class RobotContainer {
                     new AlignToSpeakerCommand())
                 ));
 
-        mDriverController.povUp().whileTrue(Commands.defer(() -> {
-            final var alliance = DriverStation.getAlliance().get();
-                        final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-                                : AutoComponents.RED_SPEAKER;
-            return new MovingAutoAimCommand(speaker);
-        }, Set.of()));
+        // mDriverController.povUp().whileTrue(Commands.defer(() -> {
+        //     final var alliance = DriverStation.getAlliance().get();
+        //                 final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+        //                         : AutoComponents.RED_SPEAKER;
+        //     return new MovingAutoAimCommand(speaker);
+        // }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
             .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
