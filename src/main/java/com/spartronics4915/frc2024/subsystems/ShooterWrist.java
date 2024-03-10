@@ -123,7 +123,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         // resetEncoder(kStartingAngle);
 
-        mFilter = LinearFilter.singlePoleIIR(0.05, 0.05);
+        mFilter = LinearFilter.movingAverage(1);
 
         mWristMotor.burnFlash();
 
