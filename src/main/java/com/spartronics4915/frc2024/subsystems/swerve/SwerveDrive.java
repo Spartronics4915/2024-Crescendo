@@ -197,6 +197,14 @@ public class SwerveDrive extends SubsystemBase {
         };
     }
 
+    public void stop() {
+        driveRobotRelative(new ChassisSpeeds());
+    }
+
+    public Command stopCommand() {
+        return runOnce(this::stop);
+    }
+
     public void setBrakeMode() {
         for (SwerveModule m : mModules) {
             m.setBrakeMode();

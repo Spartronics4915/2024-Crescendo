@@ -13,6 +13,10 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.spartronics4915.frc2024.RobotContainer;
+import com.spartronics4915.frc2024.subsystems.Shooter;
+import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
 import static com.spartronics4915.frc2024.Constants.Drive.kMaxSpeed;
@@ -55,8 +59,8 @@ public final class AutoFactory {
     }
 
     private static Command generateDriveCommand(PathPlannerPath path, boolean groundIntake) {
-        final Command intakeAction = groundIntake ? NamedCommands.getCommand("groundIntake") : Commands.none();
-        final Command noteAction = groundIntake ? NamedCommands.getCommand("DriveToPickUpNote") : Commands.none();
+        final Command intakeAction = groundIntake ? AutoComponents.groundIntake() : Commands.none();
+        final Command noteAction = groundIntake ? LimelightAuto.driveToNote() : Commands.none();
         return Commands.parallel(
                 intakeAction,
                 Commands.sequence(
@@ -67,26 +71,26 @@ public final class AutoFactory {
 
     private static Command generateSweepCommand(PathPlannerPath path) {
         return Commands.sequence(
-                NamedCommands.getCommand("InitShooterFireControl"),
+                RobotContainer.getShooterFireControl().initRunCommand(),
                 Commands.parallel(
-                    NamedCommands.getCommand("loadIntoShooter"),
+                    AutoComponents.loadIntoShooter(),
                     Commands.sequence(
                         Commands.race(
                             AutoBuilder.pathfindThenFollowPath(path, PATH_CONSTRAINTS),
-                            NamedCommands.getCommand("FireControlTracking")),
-                        NamedCommands.getCommand("StopChassis"),
-                        NamedCommands.getCommand("shooterOn"),
-                        NamedCommands.getCommand("stationaryAutoAim"))));
+                            RobotContainer.getShooterFireControl().trackRunCommand()),
+                        SwerveDrive.getInstance().stopCommand(),
+                        Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
+                        AutoComponents.stationaryAutoAim().withTimeout(2))));
     }
 
     private static Command loadAndAimCommand() {
         return Commands.parallel(
-                NamedCommands.getCommand("loadIntoShooter"),
-                NamedCommands.getCommand("shooterOn"),
-                NamedCommands.getCommand("stationaryAutoAim"));
+                AutoComponents.loadIntoShooter(),
+                Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
+                AutoComponents.stationaryAutoAim().withTimeout(2));
     }
 
     private static Command shootCommand() {
-        return NamedCommands.getCommand("shootFromLoaded");
+        return AutoComponents.shootFromLoaded();
     }
 }
