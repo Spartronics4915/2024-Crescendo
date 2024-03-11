@@ -108,13 +108,13 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mBeamBreakTimer = new Timer();
         mBeamBreakTimer.reset();
 
-        // If a note is stored in the shooter, we don't want this trigger running) 
+        // If a note is stored in the shooter, we don't want this trigger running)
         new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
         new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
             if (getConveyorState() != ConveyorState.STORED && (getConveyorState() != ConveyorState.SHOOTING)) {
                 mBeamBreakTimer.stop();
                 mBeamBreakTimer.reset();
-                mCurrentConveyorState = ConveyorState.OFF;
+                mCurrentConveyorState = ConveyorState.STORED;
                 conveyorOff();
             }
         }));
@@ -276,6 +276,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
             case NONE:
                 conveyorOff();
                 break;
+            case STORED:
             case OFF:
                 conveyorOff();
                 break;
@@ -283,9 +284,6 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 conveyorOut();
                 break;
             case MANUAL:
-                break;
-            case STORED:
-                conveyorOff();
                 break;
             default:
                 break;
