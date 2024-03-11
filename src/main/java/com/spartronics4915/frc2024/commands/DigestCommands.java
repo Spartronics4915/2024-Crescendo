@@ -19,8 +19,8 @@ public class DigestCommands {
 
     public static Command in() {
         return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
-            .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
-            .andThen(inUnsafe());
+                .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+                .andThen(inUnsafe());
     }
 
     /**
@@ -28,23 +28,33 @@ public class DigestCommands {
      */
     public static Command inUnsafe() {
         return mIntake.setStateCommand(IntakeState.LOAD)
-            .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
-            .alongWith(Commands.idle())
-            .finallyDo(() -> {
-                mIntake.setState(IntakeState.OFF);
-                mShooter.setConveyorState(ConveyorState.OFF);
-            });
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                });
+    }
+
+    public static Command inFromLoaded() {
+        return mIntake.setStateCommand(IntakeState.LOAD)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.SHOOTING))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                });
     }
 
     public static Command out() {
         return mIntake.setStateCommand(IntakeState.OUT)
-            .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
-            .alongWith(mShooter.setShooterStateCommand(ShooterState.BACK))
-            .alongWith(Commands.idle())
-            .finallyDo(() -> {
-                mIntake.setState(IntakeState.OFF);
-                mShooter.setConveyorState(ConveyorState.OFF);
-                mShooter.setShooterState(ShooterState.OFF);
-            });
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
+                .alongWith(mShooter.setShooterStateCommand(ShooterState.BACK))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                    mShooter.setShooterState(ShooterState.OFF);
+                });
     }
 }

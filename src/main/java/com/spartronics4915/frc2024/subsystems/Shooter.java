@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     public static enum ConveyorState {
-        IN, OUT, OFF, MANUAL, NONE;
+        IN, OUT, OFF, MANUAL, NONE, STORED, SHOOTING;
     }
 
     private static Shooter mInstance;
@@ -108,12 +108,15 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mBeamBreakTimer = new Timer();
         mBeamBreakTimer.reset();
 
+        // If a note is stored in the shooter, we don't want this trigger running) 
         new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
         new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
-            mBeamBreakTimer.stop();
-            mBeamBreakTimer.reset();
-            mCurrentConveyorState = ConveyorState.OFF;
-            conveyorOff();
+            if (getConveyorState() != ConveyorState.STORED && (getConveyorState() != ConveyorState.SHOOTING)) {
+                mBeamBreakTimer.stop();
+                mBeamBreakTimer.reset();
+                mCurrentConveyorState = ConveyorState.OFF;
+                conveyorOff();
+            }
         }));
     }
 
@@ -177,6 +180,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mCurrentShooterState = ShooterState.MANUAL;
 
     }
+
     public Command setShooterStateCommand(ShooterState state) {
         return Commands.runOnce(() -> {
             setShooterState(state);
@@ -226,11 +230,12 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     public boolean hasSpunUp() {
-        return (mShooterEncoder.getVelocity() >= kTargetRPM) && mShooterFollowMotor.getEncoder().getVelocity() >= kTargetRPM ;
+        return (mShooterEncoder.getVelocity() >= kTargetRPM)
+                && mShooterFollowMotor.getEncoder().getVelocity() >= kTargetRPM;
     }
 
-
-    private final DoubleArrayPublisher kCurrent = NetworkTableInstance.getDefault().getDoubleArrayTopic("Currents").publish();
+    private final DoubleArrayPublisher kCurrent = NetworkTableInstance.getDefault().getDoubleArrayTopic("Currents")
+            .publish();
 
     @Override
     public void updateShuffleboard() {
@@ -238,9 +243,9 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyerStateWidget.setString(mCurrentConveyorState.name());
         mShooterSpeedWidget.setDouble(mShooterEncoder.getVelocity());
         mShooterFollowSpeedWidget.setDouble(mShooterFollowMotor.getEncoder().getVelocity());
-        kCurrent.accept(new double[]{
-            mShooterMotor.getOutputCurrent(),
-            mShooterFollowMotor.getOutputCurrent()
+        kCurrent.accept(new double[] {
+                mShooterMotor.getOutputCurrent(),
+                mShooterFollowMotor.getOutputCurrent()
         });
     }
 
@@ -265,6 +270,7 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         }
         switch (mCurrentConveyorState) {
             case IN:
+            case SHOOTING:
                 conveyorIn();
                 break;
             case NONE:
@@ -277,6 +283,9 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 conveyorOut();
                 break;
             case MANUAL:
+                break;
+            case STORED:
+                conveyorOff();
                 break;
             default:
                 break;

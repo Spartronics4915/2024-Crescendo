@@ -65,10 +65,10 @@ public class AutoComponents {
 
     public static Command shootPreloaded() {
         // return Commands.parallel(
-        //         mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-        //         mShooter.setShooterStateCommand(ShooterState.ON)
-        //             .andThen(Commands.waitUntil(mShooter::hasSpunUp))
-        //             .andThen(DigestCommands.in().withTimeout(5)));
+        // mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+        // mShooter.setShooterStateCommand(ShooterState.ON)
+        // .andThen(Commands.waitUntil(mShooter::hasSpunUp))
+        // .andThen(DigestCommands.in().withTimeout(5)));
 
         return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT).andThen(shootFromLoaded());
     }
@@ -76,16 +76,23 @@ public class AutoComponents {
     public static Command loadIntoShooter() {
         return Commands.deadline(
                 Commands.waitUntil(mShooter::beamBreakIsTriggered),
-                DigestCommands.in());
+                DigestCommands.in()).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
     }
 
     public static Command shootFromLoaded() {
+
+        // If the note slips back, the bream break will not be triggered, so the robot will go on without shooting.
+        // This makes sure the beam break is on, then waits for it to go off.
+        
+        Command waitUntilBeamBreakTriggeredThenNotTriggered = Commands.waitUntil(mShooter::beamBreakIsTriggered)
+                .andThen(Commands.waitUntil(mShooter::beamBreakIsNotTriggered));
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
                 Commands.waitUntil(mShooter::hasSpunUp).withTimeout(0.1),
                 Commands.deadline(
-                    Commands.waitUntil(mShooter::beamBreakIsNotTriggered).withTimeout(2).andThen(Commands.waitSeconds(0.3)),
-                    DigestCommands.inUnsafe()),
+                        waitUntilBeamBreakTriggeredThenNotTriggered.withTimeout(2)
+                                .andThen(Commands.waitSeconds(0.3)),
+                        DigestCommands.inFromLoaded()),
                 mShooter.setShooterStateCommand(ShooterState.OFF));
     }
 
@@ -118,17 +125,17 @@ public class AutoComponents {
         return Commands.sequence(
                 shooterFireControl.aimAndFireCommand(20),
                 Commands.deadline(
-                    Commands.waitUntil(aac::atTarget),
-                    aac));
+                        Commands.waitUntil(aac::atTarget),
+                        aac));
         // shooterFireControl.aimAndFireCommand(20).andThen(new TableAutoAimCommand().withTimeout(2));
         // try {
-        //     return Commands.defer(() -> {
-        //         final Translation3d speaker = getTargetUnsafe();
-        //         final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
-        //         return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
-        //     }, Set.of(mSwerve, mShooterWrist));
+        // return Commands.defer(() -> {
+        // final Translation3d speaker = getTargetUnsafe();
+        // final StationaryAutoAimCommand aac = new StationaryAutoAimCommand(speaker);
+        // return Commands.deadline(Commands.waitUntil(aac::atTarget), aac);
+        // }, Set.of(mSwerve, mShooterWrist));
         // } catch (Exception ex) {
-        //     ex.printStackTrace(System.err);
+        // ex.printStackTrace(System.err);
         // }
         // return Commands.print("Auto aim failed!");
     }

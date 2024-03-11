@@ -135,39 +135,16 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //initalizing cache
         mFilterCache = getShooterPitch();
 
+        // Initialize the angle
+        resetToAngle(getShooterPitch().getDegrees());
+        
         Timer mTimer = new Timer();
         mTimer.start();
         new Trigger(() -> {
-            return mTimer.advanceIfElapsed(0.1);
+            return mTimer.advanceIfElapsed(0.2);
         }).onTrue(Commands.defer(() -> {
             return this.resetToAngle(getShooterPitch().getDegrees());
         }, Set.of()));
-
-
-        new Trigger(mLimitSwitch::get).onTrue(new Command() {
-
-            @Override
-            public boolean runsWhenDisabled() {
-                return false;
-            }
-
-            @Override
-            public void execute() {
-                setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
-                // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
-                // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
-                // }
-                mHoming = false;
-                mManualMovement = false;
-                startupHome = true;
-            }
-
-            @Override
-            public boolean isFinished() {
-                return true;
-            }
-        });
 
         // homeMotor(Rotation2d.fromDegrees(1)); 
 
@@ -220,7 +197,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         SparkPIDController pid = mWristMotor.getPIDController();
 
-        mPidController.setP(kPIDconstants.i());
+        mPidController.setP(kPIDconstants.p());
         mPidController.setI(kPIDconstants.i());
         mPidController.setD(kPIDconstants.d());
 
