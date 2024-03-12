@@ -144,7 +144,7 @@ public final class Constants {
             // TODO find values for the intake wirst and elevator
             GROUNDPICKUP(Rotation2d.fromDegrees(-20), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
-            AMP(Rotation2d.fromDegrees(-13.408), 0.335614), //TODO find elevator height 
+            AMP(Rotation2d.fromDegrees(-23), 0.36), //TODO find elevator height 
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
             LOAD(Rotation2d.fromDegrees(65), 0.0), 
             SOURCE(Rotation2d.fromDegrees(80.0), 0.143993),  //TODO find elevator height 
