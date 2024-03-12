@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024;
 import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.kShootSpeed;
+import static com.spartronics4915.frc2024.Constants.ShooterConstants.kTargetRPM;
 
 import java.util.stream.Stream;
 
@@ -171,8 +172,8 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = -0.5; // placeholder
-            public static final double kLoadSpeed = -0.5; // placeholder
+            public static final double kInSpeed = 0.8; // placeholder
+            public static final double kLoadSpeed = 0.5; // placeholder
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
@@ -301,7 +302,7 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 72;
+        public static double kWristToRotationsRate = 66.5;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
@@ -337,16 +338,16 @@ public final class Constants {
             System.out.println(P);
             System.out.println(P);
 
-            kPIDconstants = new PIDConstants(P * 15, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(1.4, 0.0, 0.15);
         }
 
         public static final Constraints kConstraints;
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.2;
+            final double timeMinToMaxSeconds = 0.6;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.05;
+            final double timeToFullSpeedSeconds = 0.1;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
@@ -412,7 +413,7 @@ public final class Constants {
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
         public static final double kFlyWheelTransferRate = 0.9; //CHECKUP kinda a guess
-        public static final double kFlyWheelRadPerSec = (kShootSpeed/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
+        public static final double kFlyWheelRadPerSec = (kTargetRPM/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
         public static final double kFlyWheelRadius = 0.038;
         public static final double kShooterSpeed = kFlyWheelTransferRate * kFlyWheelRadius * kFlyWheelRadPerSec; // needs to be in m/s
         public static final double kShooterHeight = 0.1681988;

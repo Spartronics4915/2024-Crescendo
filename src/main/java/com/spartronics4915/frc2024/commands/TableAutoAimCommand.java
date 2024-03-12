@@ -40,11 +40,14 @@ public class TableAutoAimCommand extends Command {
      */
     static {
         // BE CAREFUL THERE IS A CORRECTION FACTOR BELOW BECAUSE THIS IS OLD DATA data for 
-        data.add(new TableEntry(Rotation2d.fromDegrees(19.15) , Rotation2d.fromDegrees(46.25)));
-        data.add(new TableEntry(Rotation2d.fromDegrees(9.85) , Rotation2d.fromDegrees(33.5)));
-        data.add(new TableEntry(Rotation2d.fromDegrees(5.01) , Rotation2d.fromDegrees(27.5)));
-        data.add(new TableEntry(Rotation2d.fromDegrees(1.7) , Rotation2d.fromDegrees(22.5)));
-        data.add(new TableEntry(Rotation2d.fromDegrees(-1.13) , Rotation2d.fromDegrees(17.25)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(13.1) , Rotation2d.fromDegrees(50.3)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(5.6) , Rotation2d.fromDegrees(38.9)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(2.5) , Rotation2d.fromDegrees(32.9)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(0.69) , Rotation2d.fromDegrees(29.8)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(0.5) , Rotation2d.fromDegrees(29.6)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(-1.5) , Rotation2d.fromDegrees(25.1)));
+        data.add(new TableEntry(Rotation2d.fromDegrees(-3.3) , Rotation2d.fromDegrees(23.2)));
+
 
 
         for (TableEntry tableEntry : data) {
@@ -78,7 +81,7 @@ public class TableAutoAimCommand extends Command {
     public void execute() {
 
         Rotation2d predictedAngle = getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy()));
-        Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(14));
+        Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(0));
 
         mShooterWrist.publicSetRotationSetPoint(correctedAngle);
     }
