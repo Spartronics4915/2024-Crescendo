@@ -373,7 +373,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 3900;
+        public static final double kTargetRPM = 3500;
     }
 
     public static final class AutoAimConstants {
