@@ -173,7 +173,7 @@ public final class Constants {
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
             public static final double kInSpeed = 0.8; // placeholder
-            public static final double kLoadSpeed = 0.3; // placeholder
+            public static final double kLoadSpeed = 0.5; // placeholder
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
@@ -346,9 +346,9 @@ public final class Constants {
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.2;
+            final double timeMinToMaxSeconds = 0.6;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.05;
+            final double timeToFullSpeedSeconds = 0.1;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
