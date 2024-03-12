@@ -128,6 +128,9 @@ public class SwerveDrive extends SubsystemBase {
         return mInstance;
     }
 
+    public Command stopChassisCommand() {
+        return Commands.runOnce(()->{drive(new ChassisSpeeds(0, 0,0), false);});
+    }
     /**
      * Drives the robot given a {@link ChassisSpeeds} and whether to drive field relative or not.
      */
