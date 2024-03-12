@@ -341,7 +341,7 @@ public class SwerveDrive extends SubsystemBase {
             if (!Robot.TELEOP_TIMER.hasElapsed(5) || DriverStation.isAutonomous()/*Timer.getMatchTime() > 130*/) {
                 mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1));
             } else {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.4, 0.4, 3.0));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.15, 0.15, 3.0));
             }
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
