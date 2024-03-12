@@ -339,7 +339,7 @@ public final class Constants {
             System.out.println(P);
             System.out.println(P);
 
-            kPIDconstants = new PIDConstants(1.4, 0.0, 0.15);
+            kPIDconstants = new PIDConstants(0.11, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;
