@@ -23,6 +23,7 @@ import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -235,7 +236,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         pid.setI(kPIDconstants.i());
         pid.setD(kPIDconstants.d());
 
-        pid.setOutputRange(-0.3, 0.3);
+        pid.setOutputRange(-kOutputRange, kOutputRange);
 
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
@@ -298,7 +299,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getEncoderPos().plus(mPigeonDrift);
+        return getEncoderPos();
     }
 
     private void setPosition(Rotation2d newAngle){
@@ -355,11 +356,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Command setPidConstant(PIDConstants values){
-        return runOnce(() -> {
-            mPidController.setP(values.p());
-            mPidController.setI(values.i());
-            mPidController.setD(values.d());
-        });
+        return Commands.sequence(
+            Commands.waitUntil(DriverStation::isEnabled).ignoringDisable(true),
+            runOnce(() -> {
+                System.out.println("setting pid values");
+                mPidController.setP(values.p());
+                mPidController.setI(values.i());
+                mPidController.setD(values.d());
+            })
+        ).ignoringDisable(true);
     }
 
     public void resetEncoder(Rotation2d angle, boolean resetSetpoint){
@@ -432,7 +437,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
         }
 
-        if (Math.abs(mPigeonDrift.getDegrees()) > 2.5) {
+        if (Math.abs(mPigeonDrift.getDegrees()) > 2.0) {
             resetEncoder(getShooterPitchFiltered(), true);
             mPigeonDrift = new Rotation2d();
         }
