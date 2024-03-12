@@ -296,7 +296,7 @@ public class ShuffleBoard {
 
             mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
                 return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
-            }, Set.of()));
+            }, Set.of()).ignoringDisable(true));
 
             mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
                     // .withProperties(Map.of("Label position", "HIDDEN"));

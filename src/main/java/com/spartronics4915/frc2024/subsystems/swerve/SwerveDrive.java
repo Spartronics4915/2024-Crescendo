@@ -87,7 +87,7 @@ public class SwerveDrive extends SubsystemBase {
 
         {
             final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
-            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.4, 0.4, 3.0);
+            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.15, 0.15, 3.0);
 
             // TODO: change initial pose estimate
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
