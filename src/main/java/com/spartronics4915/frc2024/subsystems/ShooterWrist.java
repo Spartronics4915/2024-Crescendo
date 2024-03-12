@@ -95,11 +95,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private SendableChooser<Rotation2d> chooser;
 
+    private Rotation2d mPigeonDrift;
+
     private boolean startupHome = false;
     private boolean mHoming = false;
 
     private Pigeon2 mIMU;
     public static final double kOutputRange = 0.2;
+
+    private Timer mIMUTimer = new Timer();
 
     // #endregion
 
@@ -123,7 +127,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         // resetEncoder(kStartingAngle);
 
-        mFilter = LinearFilter.movingAverage(1);
+        mFilter = LinearFilter.movingAverage(5);
 
         mWristMotor.burnFlash();
 
@@ -135,13 +139,16 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //initalizing cache
         mFilterCache = getShooterPitch();
 
-        Timer mTimer = new Timer();
-        mTimer.start();
-        new Trigger(() -> {
-            return mTimer.advanceIfElapsed(0.1);
-        }).onTrue(Commands.defer(() -> {
-            return this.resetToAngle(getShooterPitch().getDegrees());
-        }, Set.of()));
+        // mIMUTimer.start();
+        // resetEncoder(getShooterPitch(), true);
+
+        // new Trigger(() -> {
+        //     return mIMUTimer.advanceIfElapsed(0.1);
+        // }).onTrue(Commands.defer(() -> {
+        //     return Commands.runOnce(() -> 
+        //         mPigeonDrift = getEncoderPos().minus(getShooterPitchFiltered())
+        //     );
+        // }, Set.of()));
 
 
         new Trigger(mLimitSwitch::get).onTrue(new Command() {
@@ -220,10 +227,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         SparkPIDController pid = mWristMotor.getPIDController();
 
-        mPidController.setP(kPIDconstants.p());
-        mPidController.setI(kPIDconstants.i());
-        mPidController.setD(kPIDconstants.d());
+        pid.setP(kPIDconstants.p());
+        pid.setI(kPIDconstants.i());
+        pid.setD(kPIDconstants.d());
 
+        pid.setOutputRange(-0.3, 0.3);
 
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
@@ -303,9 +311,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void currentToSetPoint(Rotation2d setpoint) {
+        currentToSetPoint(setpoint, true);
+    }
+
+    private void currentToSetPoint(Rotation2d setpoint, boolean resetTarget) {
         updateCurrStateToReal(setpoint);
-        System.out.println(setpoint);
-        setRotationSetPoint(setpoint); 
+        // System.out.println(setpoint);
+        if(resetTarget) setRotationSetPoint(setpoint); 
     }
 
     private void updateCurrStateToReal(Rotation2d setpoint) {
@@ -334,7 +346,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     public Command resetToAngle(double degrees) {
         return runOnce(() -> {
-            resetEncoder(Rotation2d.fromDegrees(degrees));
+            resetEncoder(Rotation2d.fromDegrees(degrees), true);
         });
     }
 
@@ -346,9 +358,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         });
     }
 
-    public void resetEncoder(Rotation2d angle){
+    public void resetEncoder(Rotation2d angle, boolean resetSetpoint){
         setPosition(angle);
-        currentToSetPoint(angle);
+        currentToSetPoint(angle, false);
     }
 
     public Command angleToSupplierCommand(Supplier<Rotation2d> supplier) {
