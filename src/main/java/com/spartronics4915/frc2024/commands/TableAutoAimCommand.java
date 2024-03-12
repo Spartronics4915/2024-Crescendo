@@ -39,7 +39,6 @@ public class TableAutoAimCommand extends Command {
      * add entries to the data list in this static block
      */
     static {
-        // BE CAREFUL THERE IS A CORRECTION FACTOR BELOW BECAUSE THIS IS OLD DATA data for 
         data.add(new TableEntry(Rotation2d.fromDegrees(13.1) , Rotation2d.fromDegrees(50.3)));
         data.add(new TableEntry(Rotation2d.fromDegrees(5.6) , Rotation2d.fromDegrees(38.9)));
         data.add(new TableEntry(Rotation2d.fromDegrees(2.5) , Rotation2d.fromDegrees(32.9)));
