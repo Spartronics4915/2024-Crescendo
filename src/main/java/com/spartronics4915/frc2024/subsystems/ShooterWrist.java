@@ -139,14 +139,14 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //initalizing cache
         mFilterCache = getShooterPitch();
 
-        // mIMUTimer.start();
-        // resetEncoder(getShooterPitch(), true);
+        mIMUTimer.start();
+        resetEncoder(getShooterPitch(), true);
 
         // new Trigger(() -> {
         //     return mIMUTimer.advanceIfElapsed(0.1);
         // }).onTrue(Commands.defer(() -> {
         //     return Commands.runOnce(() -> 
-        //         mPigeonDrift = getEncoderPos().minus(getShooterPitchFiltered())
+        //         mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos())
         //     );
         // }, Set.of()));
 
@@ -294,7 +294,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getEncoderPos();
+        return getEncoderPos().plus(mPigeonDrift);
     }
 
     private void setPosition(Rotation2d newAngle){
@@ -422,6 +422,17 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     @Override
     public void periodic() {
         mFilterCache = Rotation2d.fromDegrees(mFilter.calculate(getShooterPitch().getDegrees()));
+        // mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
+
+        if (mIMUTimer.advanceIfElapsed(0.1)) {
+            mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
+        }
+
+        if (mPigeonDrift.getDegrees() > 10) {
+            resetEncoder(getShooterPitchFiltered(), true);
+            mPigeonDrift = new Rotation2d();
+        }
+
         if (mManualMovement) {
             manualControlUpdate();
         }
@@ -497,7 +508,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //     MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
         // );
 
-        mPidController.setReference(mCurrentState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mPidController.setReference((mCurrentState.position + mPigeonDrift.getRotations()) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
