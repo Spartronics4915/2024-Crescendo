@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024;
 import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.kShootSpeed;
+import static com.spartronics4915.frc2024.Constants.ShooterConstants.kTargetRPM;
 
 import java.util.stream.Stream;
 
@@ -413,7 +414,7 @@ public final class Constants {
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
         public static final double kFlyWheelTransferRate = 0.9; //CHECKUP kinda a guess
-        public static final double kFlyWheelRadPerSec = (kShootSpeed/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
+        public static final double kFlyWheelRadPerSec = (kTargetRPM/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
         public static final double kFlyWheelRadius = 0.038;
         public static final double kShooterSpeed = kFlyWheelTransferRate * kFlyWheelRadius * kFlyWheelRadPerSec; // needs to be in m/s
         public static final double kShooterHeight = 0.1681988;
