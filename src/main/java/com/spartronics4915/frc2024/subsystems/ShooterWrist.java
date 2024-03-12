@@ -92,9 +92,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristPigeonAngleReading;
     private GenericEntry mShooterWristPigeonDriftEntry;
 
-
-    private LinearFilter mFilter;
-
     private LinearFilter mFilter;
 
     private SendableChooser<Rotation2d> chooser;
