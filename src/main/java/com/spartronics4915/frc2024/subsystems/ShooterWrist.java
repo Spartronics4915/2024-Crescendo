@@ -97,7 +97,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private SendableChooser<Rotation2d> chooser;
 
-    private Rotation2d mPigeonDrift;
+    private Rotation2d mPigeonDrift = new Rotation2d();
 
     private boolean startupHome = false;
     private boolean mHoming = false;
@@ -129,9 +129,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         // resetEncoder(kStartingAngle);
 
-        mFilter = LinearFilter.movingAverage(5);
+        mFilter = LinearFilter.movingAverage(3);
 
         mWristMotor.burnFlash();
+
 
         currentToSetPoint();
 
@@ -431,7 +432,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
         }
 
-        if (mPigeonDrift.getDegrees() > 10) {
+        if (Math.abs(mPigeonDrift.getDegrees()) > 2.5) {
             resetEncoder(getShooterPitchFiltered(), true);
             mPigeonDrift = new Rotation2d();
         }
@@ -512,7 +513,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //     MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
         // );
 
-        mPidController.setReference((mCurrentState.position + mPigeonDrift.getRotations()) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
