@@ -287,14 +287,16 @@ public class RobotContainer {
         // triggers
 
         mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
-                Commands.repeatingSequence(Commands.parallel(
+                Commands.repeatingSequence(
                     Commands.defer(() -> {
                         final var alliance = DriverStation.getAlliance().get();
                         final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
                                 : AutoComponents.RED_SPEAKER;
-                        return new TableAutoAimCommand();
-                    }, Set.of()),
-                    new AlignToSpeakerCommand())
+                        return Commands.parallel(
+                            new TableAutoAimCommand(),
+                            new StationaryAutoAimCommand(speaker)
+                        );
+                    }, Set.of())
                 ));
 
         // mDriverController.povUp().whileTrue(Commands.defer(() -> {
