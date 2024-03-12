@@ -302,7 +302,7 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 72;
+        public static double kWristToRotationsRate = 66.5;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
@@ -338,7 +338,7 @@ public final class Constants {
             System.out.println(P);
             System.out.println(P);
 
-            kPIDconstants = new PIDConstants(P * 15, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(P, 0.0, 0.0);
         }
 
         public static final Constraints kConstraints;
