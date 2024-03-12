@@ -6,6 +6,7 @@ import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
@@ -46,7 +47,10 @@ public class LimelightAuto {
 
         Command driveStraightIndefiniteCommand = mSwerve.run(()->{mSwerve.drive(forwardSpeed, false);});
         return Commands.deadline(
-                Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote), // This shop stop when Alice can't see the note.
+                Commands.race(
+                    Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote).andThen(Commands.waitSeconds(1)),
+                    Commands.waitUntil(Intake.getInstance()::beamBreakIsTriggered)
+                ),
                 Commands.parallel(
                         new LockOnCommand(mVisionSubsystem.getNoteLocator()),
                         driveStraightIndefiniteCommand)
