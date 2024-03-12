@@ -50,6 +50,13 @@ public final class AutoFactory {
                 shootCommand());
     }
 
+    private static Command generateNoPauseToShootAutoSegment(PathSet pathSet) {
+
+        Command driveSweepPathCommand = AutoBuilder.followPath(pathSet.sweepPath.get());
+        return Commands.sequence(generateDriveCommand(pathSet.drivePath),
+        AutoComponents.loadWhileDrivingThenStopAndShootIfNoteLoaded(driveSweepPathCommand));
+    }
+
     private static Command generateDriveCommand(PathPlannerPath path) {
         return generateDriveCommand(path, true);
     }

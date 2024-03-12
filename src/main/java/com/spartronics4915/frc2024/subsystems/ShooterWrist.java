@@ -100,6 +100,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private Pigeon2 mIMU;
     public static final double kOutputRange = 0.2;
+    Timer syncPigeonTimer;
 
     // #endregion
 
@@ -138,14 +139,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         // Initialize the angle
         resetToAngle(getShooterPitch().getDegrees());
         
-        Timer mTimer = new Timer();
-        mTimer.start();
-        new Trigger(() -> {
-            return mTimer.advanceIfElapsed(0.2);
-        }).onTrue(Commands.defer(() -> {
-            return this.resetToAngle(getShooterPitch().getDegrees());
-        }, Set.of()));
-
+        syncPigeonTimer = new Timer();
+        syncPigeonTimer.start();
         // homeMotor(Rotation2d.fromDegrees(1)); 
 
     }
@@ -386,6 +381,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     @Override
     public void periodic() {
+
+        if(syncPigeonTimer.hasElapsed(0.2)) {
+            resetToAngle(getShooterPitch().getDegrees());
+            syncPigeonTimer.reset();
+        }
+        
         mFilterCache = Rotation2d.fromDegrees(mFilter.calculate(getShooterPitch().getDegrees()));
         if (mManualMovement) {
             manualControlUpdate();

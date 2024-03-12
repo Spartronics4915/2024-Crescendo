@@ -131,6 +131,11 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         return !mBeamBreak.get();
     }
 
+    public boolean beamBreakIsNotTriggered() {
+        return !beamBreakIsTriggered();
+    }
+
+
     @Deprecated
     public boolean getBeamBreakStatus() {
         return mBeamBreak.get();

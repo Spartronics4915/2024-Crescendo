@@ -57,4 +57,17 @@ public class DigestCommands {
                     mShooter.setShooterState(ShooterState.OFF);
                 });
     }
+
+    public static Command startLoadingToShoot() {
+        return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
+                .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+                .andThen(mIntake.setStateCommand(IntakeState.LOAD)
+                        .alongWith(mShooter.setConveyorStateCommand(ConveyorState.SHOOTING)));
+    }
+
+    public static Command turnOffAllIntakes() {
+
+        return mIntake.setStateCommand(IntakeState.OFF)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OFF));
+    }
 }
