@@ -89,7 +89,7 @@ public class AutoComponents {
                                 .andThen(Commands.waitUntil(mShooter::beamBreakIsNotTriggered));
                 return Commands.sequence(
                                 mShooter.setShooterStateCommand(ShooterState.ON),
-                                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(2),
+                                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
                                 Commands.deadline(
                                                 waitUntilBeamBreakTriggeredThenNotTriggered.withTimeout(2)
                                                                 .andThen(Commands.waitSeconds(0.3)),
