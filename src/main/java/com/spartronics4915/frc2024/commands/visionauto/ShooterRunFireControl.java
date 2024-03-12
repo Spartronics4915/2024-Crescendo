@@ -67,6 +67,9 @@ public class ShooterRunFireControl extends SubsystemBase {
     public boolean pollTargeting() {
         Optional<TargetDetectorInterface.Detection> detectionResult = targetDetector.getClosestVisibleTarget();
         if (detectionResult.isPresent()) {
+            if (detectionResult.get().ty() < 0) {
+                return false;
+            }
 
             lastDetection = detectionResult.get();
 
