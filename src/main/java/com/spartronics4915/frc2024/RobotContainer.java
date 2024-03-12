@@ -262,8 +262,8 @@ public class RobotContainer {
 
         // manual controls
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.04));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.04));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.02));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.02));
 
         mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
         mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
