@@ -90,6 +90,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristErrorPID;
     private GenericEntry mShooterWristErrorTrapazoid;
     private GenericEntry mShooterWristPigeonAngleReading;
+    private GenericEntry mShooterWristPigeonDriftEntry;
+
 
     private LinearFilter mFilter;
 
@@ -197,6 +199,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorTrapazoid = mEntries.get(ShooterWristSubsystemEntries.ShooterWristErrorTrapazoid);
 
         mShooterWristPigeonAngleReading = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading);
+        mShooterWristPigeonDriftEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonDrift);
 
         chooser = new SendableChooser<Rotation2d>();
 
@@ -456,6 +459,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
         mShooterWristPigeonAngleReading.setDouble(getShooterPitchFiltered().getDegrees());
+        mShooterWristPigeonDriftEntry.setDouble(mPigeonDrift.getDegrees());
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
 
