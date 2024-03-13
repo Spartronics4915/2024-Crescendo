@@ -19,6 +19,7 @@ import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
@@ -105,7 +106,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private boolean mHoming = false;
 
     private Pigeon2 mIMU;
+    
     public static final double kOutputRange = 0.2;
+    
+    private final Pigeon2 mSwerveIMU = SwerveDrive.getInstance().getIMU();
 
     private StatusSignal<Double> mGravVectorX;
     private StatusSignal<Double> mGravVectorY;
@@ -346,6 +350,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return Radians.of(Math.atan2(y, x));
     }
 
+    /*
+     * this determines if the shooterwrist should stop moving based on the gravity vector of the IMU
+     * https://www.desmos.com/3d (the area showing is where this function returns true)
+     */
+    private boolean getRotationLock(){
+        return mSwerveIMU.getGravityVectorZ().getValueAsDouble() < -0.8;
+    }
 
 
     // #endregion
@@ -502,13 +513,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        mWristMotor.set(
-            MathUtil.clamp(
-                mPidController.calculate(
-                    getWristAngle().getRotations(), 
-                    mCurrentState.position), 
-            -kOutputRange, kOutputRange)
-        );
+        if (!getRotationLock()) {
+            mWristMotor.set(
+                MathUtil.clamp(
+                    mPidController.calculate(
+                        getWristAngle().getRotations(), 
+                        mCurrentState.position), 
+                -kOutputRange, kOutputRange)
+            );
+        }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
