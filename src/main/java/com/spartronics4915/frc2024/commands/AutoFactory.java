@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.spartronics4915.frc2024.RobotContainer;
+import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
@@ -21,20 +22,43 @@ import static com.spartronics4915.frc2024.Constants.Drive.kMaxAngularSpeed;
 import static com.spartronics4915.frc2024.Constants.Drive.kMaxAngularAcceleration;
 
 public final class AutoFactory {
-    public static final record PathSet(PathPlannerPath drivePath, Optional<PathPlannerPath> sweepPath,
-            Optional<Double> noteApproachSlowThreshold, Optional<Double> noteApproachSlowSpeed) {
-        public PathSet(PathPlannerPath drivePath, PathPlannerPath sweepPath) {
-            this(drivePath, Optional.of(sweepPath), Optional.empty(), Optional.empty());
-        }
+   
+    public static final class PathSet {
+        PathPlannerPath drivePath;
+        Optional<PathPlannerPath> sweepPath;
+        Optional<Double> noteApproachSlowSpeed;
+        Optional<Double> noteApproachSlowThreshold;
+        Optional<PathPlannerPath> returnToStartSweepPath;
 
         public PathSet(PathPlannerPath drivePath) {
-            this(drivePath, Optional.empty(), Optional.empty(), Optional.empty());
+            this.drivePath = drivePath;
+            this.sweepPath = Optional.empty();
+            noteApproachSlowSpeed = Optional.empty();
+            noteApproachSlowThreshold = Optional.empty();
+            returnToStartSweepPath = Optional.empty();
+
+        }
+
+        public PathSet(PathPlannerPath drivePath, PathPlannerPath sweepPath) {
+            this(drivePath);
+            this.sweepPath = Optional.of(sweepPath);
+
         }
 
         public PathSet withNoteApproachParams(double noteApproachSlowThreshold, double noteApproachSlowSpeed) {
-            return new PathSet(this.drivePath, this.sweepPath, Optional.of(Double.valueOf(noteApproachSlowThreshold)),
-                    Optional.of(Double.valueOf(noteApproachSlowSpeed)));
+
+            this.noteApproachSlowThreshold = Optional.of(Double.valueOf(noteApproachSlowThreshold));
+            this.noteApproachSlowSpeed = Optional.of(Double.valueOf(noteApproachSlowSpeed));
+            return this;
         }
+
+        public PathSet withReturnToStartSweepPath(PathPlannerPath returnPath) {
+            this.returnToStartSweepPath = Optional.of(returnPath);
+            return this;
+        }
+
+        PathPlannerPath drivePath() { return drivePath;}
+        Optional<PathPlannerPath> sweepPath() { return sweepPath;};
 
     }
 
@@ -62,7 +86,7 @@ public final class AutoFactory {
 
     private static Command generateAutoSegment(PathSet pathSet) {
         final var sp = pathSet.sweepPath();
-        final Command aimCommand = sp.isPresent() ? generateSweepCommand(sp.get()) : loadAndAimCommand();
+        final Command aimCommand = sp.isPresent() ? generateSweepCommand(pathSet) : loadAndAimCommand();
         return Commands.sequence(
                 generateDriveCommand(pathSet),
                 aimCommand,
@@ -102,8 +126,9 @@ public final class AutoFactory {
                         noteAction));
     }
 
-    private static Command generateSweepCommand(PathPlannerPath path) {
-        return Commands.sequence(
+    private static Command generateSweepCommand(PathSet pathSet) {
+        PathPlannerPath path = pathSet.sweepPath.get();
+        Command sweepSequence =  Commands.sequence(
                 RobotContainer.getShooterFireControl().initRunCommand(),
                 Commands.parallel(
                         AutoComponents.loadIntoShooter(),
@@ -114,6 +139,12 @@ public final class AutoFactory {
                                 SwerveDrive.getInstance().stopCommand(),
                                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
                                 AutoComponents.stationaryAutoAim().withTimeout(2))));
+
+        if(pathSet.returnToStartSweepPath.isEmpty()) {
+            return sweepSequence;
+        } else {
+            return AutoBuilder.followPath(pathSet.returnToStartSweepPath.get()).andThen(sweepSequence);
+        }
     }
 
     private static Command loadAndAimCommand() {
