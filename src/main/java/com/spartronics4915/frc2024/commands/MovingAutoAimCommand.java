@@ -44,11 +44,13 @@ public class MovingAutoAimCommand extends Command{
 
     private static final StructPublisher<Pose2d> kPoseInputPublisher = loggingTable.getStructTopic("PoseInput", Pose2d.struct).publish();
     private static final StructPublisher<Pose3d> kTargetInputPublisher = loggingTable.getStructTopic("TargetInput", Pose3d.struct).publish();
-    private static final StructPublisher<Pose2d> kVelocityPublisher = loggingTable.getStructTopic("RobotVelocity", Pose2d.struct).publish();
     /*
      * RR = robot relative
      * FR = field relative
      */
+    private static final StructPublisher<Pose2d> kVelocityRRPublisher = loggingTable.getStructTopic("RobotVelocityRR", Pose2d.struct).publish();
+    private static final StructPublisher<Pose2d> kVelocityFRPublisher = loggingTable.getStructTopic("RobotVelocityFR", Pose2d.struct).publish();
+    
     private static final StructPublisher<Pose3d> kTargetOutputRRPublisher = loggingTable.getStructTopic("TargetRROutput", Pose3d.struct).publish();
     private static final StructPublisher<Pose3d> kTargetOutputFRPublisher = loggingTable.getStructTopic("TargetFROutput", Pose3d.struct).publish();
 
@@ -91,7 +93,12 @@ public class MovingAutoAimCommand extends Command{
         }
 
         if (kDebug) {
-            kVelocityPublisher.accept(new Pose2d(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), new Rotation2d()));
+            kVelocityRRPublisher.accept(new Pose2d(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond), new Rotation2d()));
+            kVelocityFRPublisher.accept(new Pose2d(new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond).plus(new Translation2d(
+                speeds.vxMetersPerSecond,
+                speeds.vyMetersPerSecond
+            )), new Rotation2d()));
+            
             kTargetInputPublisher.accept(new Pose3d(kTarget, new Rotation3d()));
             kPoseInputPublisher.accept(pose);
         }
