@@ -97,6 +97,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristErrorTrapazoid;
     private GenericEntry mShooterWristPigeonAngleReading;
     private GenericEntry mShooterWristPigeonDriftEntry;
+    private GenericEntry mShooterWristPIDSetpoint;
 
     public static final double kOutputRange = 0.2;
     private static final double kRotationLockTolerance = -0.8;
@@ -218,6 +219,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         mShooterWristPigeonAngleReading = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading);
         mShooterWristPigeonDriftEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonDrift);
+
+        mShooterWristPIDSetpoint = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPIDSetpoint);
 
         chooser = new SendableChooser<Rotation2d>();
 
@@ -513,6 +516,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 mCurrentState,
                 new State(mTargetRotation2d.getRotations(), 0));
 
+        mShooterWristPIDSetpoint.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees());
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
