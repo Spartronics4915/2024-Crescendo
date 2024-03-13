@@ -151,7 +151,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
 
 
-        resetEncoder(getShooterPitch(), true);
+        resetEncoder(getCachedShooterPitch(), true);
 
         // new Trigger(() -> {
         //     return mIMUTimer.advanceIfElapsed(0.1);
@@ -306,7 +306,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getShooterPitch();
+        return getCachedShooterPitch();
     }
 
     private void setPosition(Rotation2d newAngle){
@@ -417,27 +417,31 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     // #region periodic functions
 
-    private Rotation2d mPeriodicPigeonReading = new Rotation2d();
+    private Rotation2d mPeriodicPigeonReading = new Rotation2d(); //this is to prevent a race condition during a single periodic cycle
     
 
-    private Rotation2d getShooterPitch(){
-        var xStream = mGravVectorX; 
-        var yStream = mGravVectorY; 
+    private Rotation2d getCachedShooterPitch(){
+        return mPeriodicPigeonReading;
+    }
+
+    private void updateShooterPitchCache(){
+        
+        var xStream = mGravVectorX.refresh();
+        var yStream = mGravVectorY.refresh();
+        mGravVectorZ.refresh();
         
         var d = findAngle(
             xStream.getValueAsDouble(), 
             yStream.getValueAsDouble()).in(Degrees);
         
-        return Rotation2d.fromDegrees((d));
+        mPeriodicPigeonReading = Rotation2d.fromDegrees((d));
     }
 
     @Override
     public void periodic() {
         // mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
         //once per periodic update of angle
-        mGravVectorX.refresh();
-        mGravVectorY.refresh();
-        mGravVectorZ.refresh();
+        updateShooterPitchCache();
 
         if (mManualMovement) {
             manualControlUpdate();
@@ -461,7 +465,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
-        mShooterWristPigeonAngleReading.setDouble(getShooterPitch().getDegrees());
+        mShooterWristPigeonAngleReading.setDouble(getCachedShooterPitch().getDegrees());
         mShooterWristPigeonDriftEntry.setDouble(mPigeonDrift.getDegrees());
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
