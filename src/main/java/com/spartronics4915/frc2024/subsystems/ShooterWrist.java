@@ -426,10 +426,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void updateShooterPitchCache(){
         
-        var xStream = mGravVectorX.refresh();
-        var yStream = mGravVectorY.refresh();
-        mGravVectorZ.refresh();
-        
+        var xStream = mGravVectorX;
+        var yStream = mGravVectorY;
+
         var d = findAngle(
             xStream.getValueAsDouble(), 
             yStream.getValueAsDouble()).in(Degrees);
@@ -449,6 +448,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
+
+        BaseStatusSignal.refreshAll(
+            mGravVectorX,
+            mGravVectorY,
+            mGravVectorZ
+        );
 
         // System.out.println(
         //     getShooterPitch().getDegrees() + "\t : " + 
