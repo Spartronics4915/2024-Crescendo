@@ -28,6 +28,7 @@ public final class AutoFactory {
         Optional<Double> noteApproachSlowSpeed;
         Optional<Double> noteApproachSlowThreshold;
         Optional<PathPlannerPath> returnToStartSweepPath;
+        double minTyForSweepPath;
 
         public PathSet(PathPlannerPath drivePath) {
             this.drivePath = drivePath;
@@ -35,6 +36,7 @@ public final class AutoFactory {
             noteApproachSlowSpeed = Optional.empty();
             noteApproachSlowThreshold = Optional.empty();
             returnToStartSweepPath = Optional.empty();
+            minTyForSweepPath = 0;
 
         }
 
@@ -53,6 +55,11 @@ public final class AutoFactory {
 
         public PathSet withReturnToStartSweepPath(PathPlannerPath returnPath) {
             this.returnToStartSweepPath = Optional.of(returnPath);
+            return this;
+        }
+
+        public PathSet withMinTyForSweepPath(double minTy) {
+            this.minTyForSweepPath = minTy;
             return this;
         }
 
@@ -134,7 +141,7 @@ public final class AutoFactory {
                         Commands.sequence(
                                 Commands.race(
                                         AutoBuilder.pathfindThenFollowPath(path, PATH_CONSTRAINTS),
-                                        RobotContainer.getShooterFireControl().trackRunCommand()),
+                                        RobotContainer.getShooterFireControl().trackRunCommand(pathSet.minTyForSweepPath)),
                                 SwerveDrive.getInstance().stopCommand(),
                                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
                                 AutoComponents.stationaryAutoAim().withTimeout(2))));

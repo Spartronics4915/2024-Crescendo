@@ -195,7 +195,6 @@ public class RobotContainer {
             NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("ShootNote2", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
-            NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
 
             // NamedCommands for Full Composite Autos
             NamedCommands.registerCommand("CenterFourNote", CompositeAutos.generateCenterFourNote());
