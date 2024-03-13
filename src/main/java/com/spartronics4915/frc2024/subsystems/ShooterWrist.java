@@ -352,7 +352,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     /*
      * this determines if the shooterwrist should stop moving based on the gravity vector of the IMU
-     * https://www.desmos.com/3d (the area showing is where this function returns true)
+     * https://www.desmos.com/3d/620847dbb5 (the area showing is where this function returns true)
      */
     private boolean getRotationLock(){
         return mSwerveIMU.getGravityVectorZ().getValueAsDouble() < -0.8;
