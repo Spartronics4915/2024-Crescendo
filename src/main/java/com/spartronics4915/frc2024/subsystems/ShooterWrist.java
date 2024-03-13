@@ -66,7 +66,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #region variables
 
     private CANSparkMax mWristMotor;
-    private SparkPIDController mPidController;
+    private PIDController mPidController;
 
     private RelativeEncoder mEncoder;
     private TrapezoidProfile kTrapezoidProfile;
@@ -230,20 +230,20 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID() {
-        // PIDController pid = new PIDController(
-        //     kPIDconstants.p(), 
-        //     kPIDconstants.i(), 
-        //     kPIDconstants.d()
-        // );
+    private PIDController initPID() {
+        PIDController pid = new PIDController(
+            kPIDconstants.p(), 
+            kPIDconstants.i(), 
+            kPIDconstants.d()
+        );
 
-        SparkPIDController pid = mWristMotor.getPIDController();
+        // SparkPIDController pid = mWristMotor.getPIDController();
 
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
+        // pid.setP(kPIDconstants.p());
+        // pid.setI(kPIDconstants.i());
+        // pid.setD(kPIDconstants.d());
 
-        pid.setOutputRange(-kOutputRange, kOutputRange);
+        // pid.setOutputRange(-kOutputRange, kOutputRange);
 
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
@@ -306,7 +306,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getEncoderPos();
+        return getShooterPitch();
     }
 
     private void setPosition(Rotation2d newAngle){
@@ -421,13 +421,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     
 
     private Rotation2d getShooterPitch(){
-        var xStream = mGravVectorX; //if you move these to objects you need to replace them periodically with the output of .refresh()
-        var yStream = mGravVectorY; //if you move these to objects you need to replace them periodically with the output of .refresh()
+        var xStream = mGravVectorX; 
+        var yStream = mGravVectorY; 
         
-        // if (!BaseStatusSignal.isAllGood(xStream, yStream)) {
-        // }
-    
-        var d = findAngle(xStream.getValueAsDouble(), yStream.getValueAsDouble()).in(Degrees);
+        var d = findAngle(
+            xStream.getValueAsDouble(), 
+            yStream.getValueAsDouble()).in(Degrees);
         
         return Rotation2d.fromDegrees((d));
     }
@@ -494,7 +493,14 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
+        mWristMotor.set(
+            MathUtil.clamp(
+                mPidController.calculate(
+                    getWristAngle().getRotations(), 
+                    mCurrentState.position), 
+            -kOutputRange, kOutputRange)
+        );
+        // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
         // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
