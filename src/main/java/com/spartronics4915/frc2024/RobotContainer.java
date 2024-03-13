@@ -197,6 +197,9 @@ public class RobotContainer {
             NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
 
+            // NamedCommands for Full Composite Autos
+            NamedCommands.registerCommand("CenterFourNote", CompositeAutos.generateCenterFourNote());
+
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
             mAutoChooser.addOption(
@@ -343,7 +346,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
-        return CompositeAutos.generateCenterFourNote();
+        return AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly");
         // return mAutoChooser.getSelected();
     }
 
