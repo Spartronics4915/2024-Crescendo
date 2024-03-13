@@ -466,7 +466,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void updateShuffle() {
         mShooterSetPointEntry.setDouble(mTargetRotation2d.getDegrees());
-        mShooterEncoderReadingEntry.setDouble(getWristAngle().getDegrees());
+        mShooterEncoderReadingEntry.setDouble(getEncoderPos().getDegrees());
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
