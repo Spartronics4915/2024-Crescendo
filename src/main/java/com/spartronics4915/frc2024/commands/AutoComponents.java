@@ -70,7 +70,9 @@ public class AutoComponents {
                 // .andThen(Commands.waitUntil(mShooter::hasSpunUp))
                 // .andThen(DigestCommands.in().withTimeout(5)));
 
-                return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT).andThen(shootFromLoaded());
+                return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT)
+                                .andThen(Commands.waitUntil(() -> mShooterWrist.atTarget()).withTimeout(2))
+                                .andThen(shootFromLoaded());
         }
 
         public static Command loadIntoShooter() {
