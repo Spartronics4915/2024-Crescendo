@@ -28,6 +28,7 @@ import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
+import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
@@ -117,7 +118,8 @@ public class RobotContainer {
     private final SwerveSim mSwerveSim;
 
     private static final VisionSubsystem mVision = VisionSubsystem.getInstance();
-    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
+    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(
+            mVision.getSpeakerTagLocator());
 
     private final Bling mBling;
 
@@ -170,17 +172,25 @@ public class RobotContainer {
         if (mSwerveDrive != null) {
             // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
+            NamedCommands.registerCommand("aim",
+                    Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
             NamedCommands.registerCommand("shootFromLoaded", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shooterOn", mShooter.setShooterStateCommand(ShooterState.ON));
-            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO: replace timeout with debounced atTarget
+            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO:
+                                                                                                                   // replace
+                                                                                                                   // timeout
+                                                                                                                   // with
+                                                                                                                   // debounced
+                                                                                                                   // atTarget
             NamedCommands.registerCommand("aimAndShootPreloaded", AutoComponents.stationaryAimAndShoot());
             NamedCommands.registerCommand("groundIntake", AutoComponents.groundIntake());
             NamedCommands.registerCommand("loadIntoShooter", AutoComponents.loadIntoShooter());
             NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
-            NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
+            NamedCommands.registerCommand("StopChassis", Commands.runOnce(() -> {
+                mSwerveDrive.drive(new ChassisSpeeds(0, 0, 0), false);
+            }));
             NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
             NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("ShootNote2", shooterFireControl.aimAndFireCommand(20));
@@ -192,9 +202,9 @@ public class RobotContainer {
             mAutoChooser.addOption(
                     "Preloaded only",
                     Commands.parallel(
-                        mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                        mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
-                            .andThen(DigestCommands.in().withTimeout(5))));
+                            mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+                            mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                                    .andThen(DigestCommands.in().withTimeout(5))));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
@@ -228,7 +238,7 @@ public class RobotContainer {
 
     private void configureBindings() { // TODO: format these nicely
 
-        //driver controls
+        // driver controls
 
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
@@ -241,14 +251,15 @@ public class RobotContainer {
         mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
-            .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
+                .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         mDriverController.leftBumper().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
 
-        mDriverController.x().onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
+        mDriverController.x()
+                .onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
         // Operator controls
         // Buttons:
@@ -256,9 +267,9 @@ public class RobotContainer {
         mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
         mOperatorController.a().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.b().onTrue(Commands.parallel(
-                    mIntake.setStateCommand(IntakeState.OFF),
-                    mShooter.setShooterStateCommand(ShooterState.OFF),
-                    mShooter.setConveyorStateCommand(ConveyorState.OFF)));
+                mIntake.setStateCommand(IntakeState.OFF),
+                mShooter.setShooterStateCommand(ShooterState.OFF),
+                mShooter.setConveyorStateCommand(ConveyorState.OFF)));
 
         // manual controls
 
@@ -291,28 +302,26 @@ public class RobotContainer {
 
         mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
                 Commands.repeatingSequence(
-                    Commands.defer(() -> {
-                        final var alliance = DriverStation.getAlliance().get();
-                        final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-                                : AutoComponents.RED_SPEAKER;
-                        return Commands.parallel(
-                            new TableAutoAimCommand(),
-                            new StationaryAutoAimCommand(speaker)
-                        );
-                    }, Set.of())
-                ));
+                        Commands.defer(() -> {
+                            final var alliance = DriverStation.getAlliance().get();
+                            final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+                                    : AutoComponents.RED_SPEAKER;
+                            return Commands.parallel(
+                                    new TableAutoAimCommand(),
+                                    new StationaryAutoAimCommand(speaker));
+                        }, Set.of())));
 
         // mDriverController.povUp().whileTrue(Commands.defer(() -> {
-        //     final var alliance = DriverStation.getAlliance().get();
-        //                 final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-        //                         : AutoComponents.RED_SPEAKER;
-        //     return new MovingAutoAimCommand(speaker);
+        // final var alliance = DriverStation.getAlliance().get();
+        // final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+        // : AutoComponents.RED_SPEAKER;
+        // return new MovingAutoAimCommand(speaker);
         // }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
-            .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
-            .whileTrue(DigestCommands.in())
-            .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
+                .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
+                .whileTrue(DigestCommands.in())
+                .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
@@ -329,27 +338,33 @@ public class RobotContainer {
 
         // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-    
     }
 
     public Command getAutonomousCommand() {
         // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
-        return AutoFactory.generateVisionAuto(
-                new AutoFactory.PathSet(
-                    PathPlannerPath.fromPathFile("CenterToFirstRowTop"),
-                    Optional.empty()),
-                new AutoFactory.PathSet(
-                    PathPlannerPath.fromPathFile("entry 2"),
-                    Optional.empty()),
-                new AutoFactory.PathSet(
-                    PathPlannerPath.fromPathFile("entry 3"),
-                    PathPlannerPath.fromPathFile("sweep 3")));
-
+        return CompositeAutos.generateCenterFourNote();
         // return mAutoChooser.getSelected();
     }
 
     public SwerveDrive getSwerveDrive() {
         return mSwerveDrive;
     }
+
+    private static class CompositeAutos {
+
+        public static Command generateCenterFourNote() {
+            PathSet pickUpFinalNote = new AutoFactory.PathSet(
+                PathPlannerPath.fromPathFile("entry 3"),
+                PathPlannerPath.fromPathFile("sweep 3")).withNoteApproachParams(-18, 0.25);
+            return AutoFactory.generateVisionAuto(
+                new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("CenterToFirstRowTop")),
+                new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("entry 2")),
+                    pickUpFinalNote);
+        }
+
+    }
+
 }

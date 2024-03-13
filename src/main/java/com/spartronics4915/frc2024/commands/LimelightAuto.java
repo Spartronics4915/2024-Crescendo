@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.Optional;
 
 public class LimelightAuto {
     private static final VisionSubsystem mVisionSubsystem = VisionSubsystem.getInstance();
@@ -25,10 +26,10 @@ public class LimelightAuto {
     private static final ShooterWrist mShooterWrist = ShooterWrist.getInstance();
     private static final Shooter mShooter = Shooter.getInstance();
     private static final GenericEntry mDriveToNoteVelocity = Shuffleboard.getTab("Overview")
-                                                                         .add("Drive to Note Velocity", 1.0)
-                                                                         .withWidget(BuiltInWidgets.kNumberSlider)
-                                                                         .withProperties(Map.of("min", 0, "max", 3))
-                                                                         .getEntry();
+            .add("Drive to Note Velocity", 1.0)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 3))
+            .getEntry();
 
     private LimelightAuto() {}
 
@@ -44,6 +45,11 @@ public class LimelightAuto {
     }
 
     public static Command driveToNote() {
+        return driveToNote(Optional.empty(), Optional.empty());
+    }
+
+    public static Command driveToNote(Optional<Double> noteApproachSlowThreshold,
+            Optional<Double> noteApproachSlowSpeed) {
 
         final double FORWARD_VELOCITY = mDriveToNoteVelocity.getDouble(1.0);
 
@@ -51,21 +57,39 @@ public class LimelightAuto {
         ChassisSpeeds zeroSpeed = new ChassisSpeeds(0, 0, 0);
         // You probably want to just drive straight indefinitely until the command ends.
 
-        Command driveStraightIndefiniteCommand = mSwerve.run(()->{mSwerve.drive(forwardSpeed, false);});
+        Command driveStraightIndefiniteCommand;
+        if (noteApproachSlowThreshold.isEmpty())
+            driveStraightIndefiniteCommand = mSwerve.run(() -> {
+                mSwerve.drive(forwardSpeed, false);
+            });
+        else {
+            var noteLocator = mVisionSubsystem.getNoteLocator();
+            driveStraightIndefiniteCommand = mSwerve.run(() -> {
+                double speed = FORWARD_VELOCITY;
+                var noteDetection = noteLocator.getClosestVisibleTarget();
+                if ((noteDetection.isEmpty()) ||
+                        (noteDetection.get().ty() < noteApproachSlowThreshold.get().doubleValue())) {
+                    speed = noteApproachSlowSpeed.get().doubleValue();
+                }
+
+                mSwerve.drive(new ChassisSpeeds(speed, 0, 0), false);
+            });
+        }
         return Commands.deadline(
                 Commands.race(
-                    Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote).andThen(Commands.waitSeconds(1)),
-                    Commands.waitUntil(Intake.getInstance()::beamBreakIsTriggered)
-                ),
+                        Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote).andThen(Commands.waitSeconds(1)),
+                        Commands.waitUntil(Intake.getInstance()::beamBreakIsTriggered)),
                 Commands.parallel(
                         new LockOnCommand(mVisionSubsystem.getNoteLocator()),
-                        driveStraightIndefiniteCommand)
-                ).andThen(mSwerve.runOnce(() -> {mSwerve.drive(zeroSpeed, false);}));
-                        // new DriveStraightCommands.DriveStraightFixedDistance(
-                        //         mSwerve,
-                        //         new Rotation2d(),
-                        //         10,
-                        //         new Constraints(1, 1))));
+                        driveStraightIndefiniteCommand))
+                .andThen(mSwerve.runOnce(() -> {
+                    mSwerve.drive(zeroSpeed, false);
+                }));
+        // new DriveStraightCommands.DriveStraightFixedDistance(
+        // mSwerve,
+        // new Rotation2d(),
+        // 10,
+        // new Constraints(1, 1))));
     }
 
     // TODO: make
