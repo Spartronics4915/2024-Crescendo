@@ -56,9 +56,19 @@ public final class AutoFactory {
         final var sp = pathSet.sweepPath();
         final Command aimCommand = sp.isPresent() ? generateSweepCommand(sp.get()) : loadAndAimCommand();
         return Commands.sequence(
-                generateDriveCommand(pathSet.drivePath()),
+                generateDriveCommand(pathSet),
                 aimCommand,
                 shootCommand());
+    }
+
+    private static Command generateDriveCommand(PathSet pathSet) {
+        boolean groundIntake = true;
+        final Command intakeAction = groundIntake ? AutoComponents.groundIntake() : Commands.none();
+        final Command noteAction = groundIntake
+                ? LimelightAuto.driveToNote(pathSet.noteApproachSlowThreshold, pathSet.noteApproachSlowSpeed)
+                : Commands.none();
+        return generateDriveCommand(pathSet.drivePath, intakeAction, noteAction);
+
     }
 
     private static Command generateNoPauseToShootAutoSegment(PathSet pathSet) {
@@ -69,12 +79,13 @@ public final class AutoFactory {
     }
 
     private static Command generateDriveCommand(PathPlannerPath path) {
-        return generateDriveCommand(path, true);
-    }
-
-    private static Command generateDriveCommand(PathPlannerPath path, boolean groundIntake) {
+        boolean groundIntake = true;
         final Command intakeAction = groundIntake ? AutoComponents.groundIntake() : Commands.none();
         final Command noteAction = groundIntake ? LimelightAuto.driveToNote() : Commands.none();
+        return generateDriveCommand(path, intakeAction, noteAction);
+    }
+
+    private static Command generateDriveCommand(PathPlannerPath path, Command intakeAction, Command noteAction) {
         return Commands.parallel(
                 intakeAction,
                 Commands.sequence(
