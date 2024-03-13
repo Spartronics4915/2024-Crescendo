@@ -342,7 +342,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     public void resetEncoder(Rotation2d angle, boolean resetSetpoint){
         setPosition(angle);
-        currentToSetPoint(angle, false);
+        currentToSetPoint(angle, resetSetpoint);
     }
 
     public Command angleToSupplierCommand(Supplier<Rotation2d> supplier) {
