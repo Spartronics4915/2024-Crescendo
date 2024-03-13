@@ -52,6 +52,14 @@ public final class AutoFactory {
         return AutoComponents.shootPreloaded().andThen(Commands.sequence(seq));
     }
 
+    public static Command generateBlindAuto(PathPlannerPath... paths) {
+        return generateBlindAuto(List.of(paths));
+    }
+
+    public static Command generateBlindAuto(List<PathPlannerPath> paths) {
+        return Commands.print("generateBlindAuto not yet implemented!");
+    }
+
     private static Command generateAutoSegment(PathSet pathSet) {
         final var sp = pathSet.sweepPath();
         final Command aimCommand = sp.isPresent() ? generateSweepCommand(sp.get()) : loadAndAimCommand();
