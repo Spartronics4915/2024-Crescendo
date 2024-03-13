@@ -63,7 +63,7 @@ public class TableAutoAimCommand extends Command {
 
 
     public TableAutoAimCommand() {
-        //TODO add Tag priority and alliance tag 
+
     }
 
     public boolean atTarget() {

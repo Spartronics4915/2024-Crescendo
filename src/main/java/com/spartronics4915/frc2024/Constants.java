@@ -138,19 +138,16 @@ public final class Constants {
                 double y) {}
     }
 
-    public static final class IntakeAssembly { // [ ] Intake Assembly constants
+    public static final class IntakeAssembly {
         public enum IntakeAssemblyState { 
             // 70 max angle upwards
-            // TODO find values for the intake wirst and elevator
+            // CHECKUP update values as needed
             GROUNDPICKUP(Rotation2d.fromDegrees(-20), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
-            AMP(Rotation2d.fromDegrees(-23), 0.36), //TODO find elevator height 
+            AMP(Rotation2d.fromDegrees(-23), 0.36),
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
             LOAD(Rotation2d.fromDegrees(65), 0.0), 
-            SOURCE(Rotation2d.fromDegrees(80.0), 0.143993),  //TODO find elevator height 
-            MANUAL(Rotation2d.fromDegrees(0.0), 0.0); // CHECKUP
-                                                                                                             // is this
-                                                                                                             // needed?
+            SOURCE(Rotation2d.fromDegrees(80.0), 0.143993);
 
             public final Rotation2d wristAngle;
             public final double ElevatorHeight;
@@ -162,7 +159,7 @@ public final class Constants {
 
         }
 
-        public static final class IntakeConstants {// [ ] Intake constants
+        public static final class IntakeConstants {
             public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, true,
                     IdleMode.kBrake, 60);
             public static final MotorConstants kFollowerMotorConstants = new MotorConstants(23, MotorType.kBrushless, true,
@@ -181,16 +178,14 @@ public final class Constants {
             public static final int kIntakeBeamBreakID = 0; // placeholder
         }
 
-        public static final class IntakeWristConstants { // [ ] Intake Wrist constants
+        public static final class IntakeWristConstants {
 
-            // TODO Make Units Clear
-
-            public static final double kLimitSwitchTriggerOffset = -0.025;
+            // public static final double kLimitSwitchTriggerOffset = -0.025; //CHECKUP not used
 
             public static final MotorConstants kMotorConstants = new MotorConstants(19, MotorType.kBrushless, false,
                     IdleMode.kBrake, 40);
-            // public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); // TODO Tune
-            // public static final Constraints kTrapzoidConstraints = new Constraints(1, 1); // TODO Tune
+            // public static final PIDConstants kPIDConstants = new PIDConstants(0.25, 0.0, 0.0); 
+            // public static final Constraints kTrapzoidConstraints = new Constraints(1, 1);
 
             public static final double kWristToRotationsRate = 44.7631578947;
             
@@ -238,9 +233,8 @@ public final class Constants {
                 kConstraints = new Constraints(maxWristVelocity, maxWristAcceleration);
             }
 
-            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
-                                                                                                                     // untested
-                                                                                                                     // values
+            //TODO implement feedforward
+            public static final FeedForwardConstants kArmFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0);
 
             public static final int kLimitSwitchChannel = 4;
             public static final double kLimitSwitchEncoderReading = 0;
@@ -277,8 +271,10 @@ public final class Constants {
                     new Color8Bit(Color.kMediumPurple),
                     SimType.Elevator,
                     new Translation2d(2, 0));
+            
+            //TODO implement FeedForward
             public static final FeedForwardConstants kElevatorFeedFowardConstants = new FeedForwardConstants(.1026,
-                    .0156, 7, 102); // HACK untested
+                    .0156, 7, 102);
             public static final int kLimitSwitchChannel = 3;
 
             public static final double kLimitSwitchTriggerOffset = -0.025;
@@ -290,10 +286,10 @@ public final class Constants {
         }
     }
 
-    public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
+    public static final class ShooterWristConstants { 
         public enum ShooterWristState { // Mostly for debug
-            SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)), // TODO find Value
-            HARD_STOP(Rotation2d.fromDegrees(14.9)), //TODO find value
+            SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)),
+            HARD_STOP(Rotation2d.fromDegrees(14.9)),
             STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
@@ -315,9 +311,8 @@ public final class Constants {
 
         // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
-        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
-                                                                                                                   // untested
-                                                                                                                   // values
+        //TODO implement FeedForward
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0);
 
         public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(2).getRotations(); // 6 degrees
 
@@ -360,7 +355,7 @@ public final class Constants {
         
     }
 
-    public static final class ShooterConstants { // [ ] Shooter Constants
+    public static final class ShooterConstants {
         public static final MotorConstants kShooterMotorConstants = new MotorConstants(18, MotorType.kBrushless, false,
                 IdleMode.kCoast, 40); // placeholder
         public static final MotorConstants kShooterFollowMotorConstants = new MotorConstants(22, MotorType.kBrushless,

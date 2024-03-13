@@ -48,6 +48,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
+    //TODO test CanCoder logic
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
     //#region variables
@@ -202,8 +203,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
 
     //#region Component Functions
     
-    private Rotation2d getWristAngle(){ //90 = horizantal, 0 = veritcally down(based on FF calculator)
-        return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); //CHECKUP Failure Point?
+    private Rotation2d getWristAngle(){ //90 = horizantal, 0 = vertically down (based on FF calculator)
+        return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate);
     }
 
     // private Rotation2d getCanCoderAngle(){
@@ -211,7 +212,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     // }
 
     private double getEncoderVelReading(){
-        return mEncoder.getVelocity(); //CHECKUP Failure Point?
+        return mEncoder.getVelocity(); 
     }
 
     private void resetEncoder(Rotation2d angle){
@@ -294,7 +295,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         return this.startEnd(
             () -> setManualDelta(angleDelta), 
             () -> {
-                if (!Robot.isSimulation()) currentToSetPoint(); //CHECKUP remove sim statment when doing chassis stuff?
+                if (!Robot.isSimulation()) currentToSetPoint();
                 mManualMovement = false;
             }
         );
@@ -361,17 +362,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mEncoderEntry.setDouble(getWristAngle().getDegrees());
     }
 
-    private void manualControlUpdate(){ //HACK untested
-
-        // if (mManualDelta.getRotations() > 0 && !mHoming) { //CHECKUP might not work
-        //     if (needSoftLimit() && (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0 )) {
-        //         mManualDelta = Rotation2d.fromRotations(0);
-        //     } else if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleGround.getRotations() > 0 ) {
-        //         mManualDelta = Rotation2d.fromRotations(0);
-        //     }
-        // } else if (mRotSetPoint.getRotations() % 1.0 - kMinAngle.getRotations() < 0 && mManualDelta.getRotations() < 0 && !mHoming) {
-        //     mManualDelta =  Rotation2d.fromRotations(0);
-        // }
+    private void manualControlUpdate(){
         mRotSetPoint = Rotation2d.fromRadians(mRotSetPoint.getRadians() + mManualDelta.getRadians());
     }
 
@@ -386,17 +377,13 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                     MathUtil.clamp(mRotSetPoint.getRotations(), kMinAngleGround.getRotations(), kMaxAngleGround.getRotations())
                 )
             );
-
-        // if (mRotSetPoint.getRotations() % 1.0 - kMaxAngleAmp.getRotations() > 0.05 && needSoftLimit() && !mHoming) { //CHECKUP meant to actively prevent overshoot
-        //     mRotSetPoint = kMaxAngleAmp;
-        // }
         
         mCurrState = kTrapezoidProfile.calculate(
             GeneralConstants.kUpdateTime,
             mCurrState,
             new State(mRotSetPoint.getRotations(), 0)
         );
-        mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, getFeedForwardValue()); //CHECKUP FF output? currently set to volatgage out instead of precentage out
+        mWristPIDController.setReference(mCurrState.position * kWristToRotationsRate, ControlType.kPosition, 0, 0.0);
     }
 
     private void handleCANCoderLogic(){

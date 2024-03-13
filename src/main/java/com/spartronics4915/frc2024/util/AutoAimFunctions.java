@@ -108,6 +108,6 @@ public class AutoAimFunctions {
 
     public static Rotation2d getChassisAngle(Translation3d targetPos) {
         var r = targetPos.toTranslation2d().getAngle().getRotations();
-        return Rotation2d.fromRotations(((r < 0) ? 1 + r : r) + 0.5); //TODO is reversing dependent on alliance? 
+        return Rotation2d.fromRotations(((r < 0) ? 1 + r : r) + 0.5);
     }
 }

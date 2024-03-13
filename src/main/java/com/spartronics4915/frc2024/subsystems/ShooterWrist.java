@@ -65,6 +65,7 @@ import java.util.function.*;
 import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
 
 public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+    //TODO test pigeon2 logic 
 
     // #region variables
 
@@ -254,7 +255,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         // pid.setOutputRange(-kOutputRange, kOutputRange);
 
 
-        // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
         // position Conversion not needed by using rotation2d
 
         return pid;
@@ -291,7 +291,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private double getEncoderVelReading() {
-        return mEncoder.getVelocity(); // CHECKUP Failure Point?
+        return mEncoder.getVelocity() / kWristToRotationsRate;
     }
 
     private void setManualDelta(Rotation2d deltaPosition) {
@@ -417,7 +417,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 () -> setManualDelta(angleDelta),
                 () -> {
                     if (!Robot.isSimulation())
-                        currentToSetPoint(); // CHECKUP remove sim statment when doing chassis stuff?
+                        currentToSetPoint();
                     mManualMovement = false;
                 });
     }
@@ -498,8 +498,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         // return 0.0;
     }
 
-    private void manualControlUpdate() { // HACK untested
-                mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
+    private void manualControlUpdate() {
+        mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
     }
 
     private void TrapezoidMotionProfileUpdate() {
@@ -508,7 +508,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 MathUtil.clamp(mTargetRotation2d.getRotations(), kMinAngle.getRotations(), kMaxAngle.getRotations())
             );
 
-        // CHECKUP not sure if this will work
         mCurrentState = kTrapezoidProfile.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
@@ -527,7 +526,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             );
         }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
-        // CHECKUP FF output? currently set to volatgage out instead of precentage out
     }
 
     // #endregion

@@ -104,7 +104,6 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         // Limit PID Output for Testing
         // mPid.setOutputRange(-0.6, 0.6);
 
-        // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 
         // Sets up the encoder
         mEncoder = mMotor.getEncoder();
@@ -133,9 +132,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
             @Override
             public void execute() {
-                // if (mTarget.getRotations() < kLimitSwitchGoto * kMetersToRotation + kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
-                    resetEncoder(kLimitSwitchGoto);
-                // }
+                resetEncoder(kLimitSwitchGoto);
                 startupHome = true;
                 mHoming = false;
                 mIsManual = false;
@@ -181,17 +178,17 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
                 new State(mTarget, 0));
         mPid.setReference(mCurrentState.position * kMetersToRotation, ControlType.kPosition, 0, getFeedForwardValue());
         // System.out.println("main"+mEncoder.getPosition());
-        // System.out.println("follow"+mFollowerEncoder.getPosition()); //TODO: same direction
+        // System.out.println("follow"+mFollowerEncoder.getPosition()); //same direction
         updateShuffle();
     }
 
     // #region encoder & feed foward
     private double getEncoderVelReading() {
-        return mEncoder.getVelocity(); // CHECKUP Failure Point?
+        return mEncoder.getVelocity();
     }
 
     private double getEncoderPosReading() {
-        return (mEncoder.getPosition()); // CHECKUP Failure Point?
+        return (mEncoder.getPosition());
     }
 
     private double getFeedForwardValue() {

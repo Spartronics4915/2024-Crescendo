@@ -30,7 +30,7 @@ public class MovingAutoAimCommand extends Command{
     public final Translation3d kTarget;
 
     static{
-        //CHECKUP "warms up" the function, first run of this function takes roughly 20 ms
+        //"warms up" the function, has it compile the MAA code
         movingAutoAim(
             new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
             new ChassisSpeeds(0, 0, 0), 
