@@ -70,9 +70,7 @@ public class LimelightAuto {
                 if ((noteDetection.isEmpty()) ||
                         (noteDetection.get().ty() < noteApproachSlowThreshold.get().doubleValue())) {
                     speed = noteApproachSlowSpeed.get().doubleValue();
-                    System.out.println("Ty: "+ noteDetection.get().ty() + " " + noteApproachSlowThreshold.get().doubleValue());
                 }
-                System.out.println("Speed: " + speed);
 
                 mSwerve.drive(new ChassisSpeeds(speed, 0, 0), false);
             });
