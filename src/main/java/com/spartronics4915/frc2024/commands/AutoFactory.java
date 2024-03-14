@@ -1,5 +1,9 @@
 package com.spartronics4915.frc2024.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -21,6 +25,33 @@ import static com.spartronics4915.frc2024.Constants.Drive.kMaxAngularSpeed;
 import static com.spartronics4915.frc2024.Constants.Drive.kMaxAngularAcceleration;
 
 public final class AutoFactory {
+    public static enum StartingPosition {
+        TOP(new Pose2d(0.75, 6.67, Rotation2d.fromDegrees(60))),
+        MIDDLE(new Pose2d(1.30, 5.62, Rotation2d.fromDegrees(0))),
+        BOTTOM(new Pose2d(0.75, 4.41, Rotation2d.fromDegrees(-60)));
+
+        private final Pose2d poseBlue;
+
+        private StartingPosition(Pose2d pose) {
+            poseBlue = pose;
+        }
+
+        public Pose2d getPoseBlue() {
+            return poseBlue;
+        }
+
+        public Pose2d getPoseRed() {
+            return mirrorPose(poseBlue);
+        }
+
+        public Pose2d getPose(DriverStation.Alliance alliance) {
+            return alliance == Alliance.Red ? getPoseRed() : getPoseBlue();
+        }
+    }
+
+    public static Pose2d mirrorPose(Pose2d pose) {
+        return new Pose2d(16.541 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation()));
+    }
    
     public static final class PathSet {
         PathPlannerPath drivePath;
