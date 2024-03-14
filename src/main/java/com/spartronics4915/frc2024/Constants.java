@@ -333,12 +333,8 @@ public final class Constants {
                     * ShooterWristConstants.kWristToRotationsRate);
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
-            System.out.println(P);
-            System.out.println(P);
-            System.out.println(P);
-            System.out.println(P);
 
-            kPIDconstants = new PIDConstants(0.11, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(4, 0.25, 0.02);
         }
 
         public static final Constraints kConstraints;
