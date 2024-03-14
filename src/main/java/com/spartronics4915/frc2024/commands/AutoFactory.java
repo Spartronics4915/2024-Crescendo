@@ -58,6 +58,7 @@ public final class AutoFactory {
         Optional<PathPlannerPath> sweepPath;
         Optional<Double> noteApproachSlowSpeed;
         Optional<Double> noteApproachSlowThreshold;
+        double noteApproachVelocity;
         Optional<PathPlannerPath> returnToStartSweepPath;
         double minTyForSweepPath;
 
@@ -68,6 +69,7 @@ public final class AutoFactory {
             noteApproachSlowThreshold = Optional.empty();
             returnToStartSweepPath = Optional.empty();
             minTyForSweepPath = 0;
+            noteApproachVelocity = 1;
 
         }
 
@@ -94,8 +96,18 @@ public final class AutoFactory {
             return this;
         }
 
-        PathPlannerPath drivePath() { return drivePath;}
-        Optional<PathPlannerPath> sweepPath() { return sweepPath;};
+        public PathSet withNoteApproachForwardVelocity(double forwardVelocity) {
+            this.noteApproachVelocity = forwardVelocity;
+            return this;
+        }
+
+        PathPlannerPath drivePath() {
+            return drivePath;
+        }
+
+        Optional<PathPlannerPath> sweepPath() {
+            return sweepPath;
+        };
 
     }
 
@@ -134,7 +146,8 @@ public final class AutoFactory {
         boolean groundIntake = true;
         final Command intakeAction = groundIntake ? AutoComponents.groundIntake() : Commands.none();
         final Command noteAction = groundIntake
-                ? LimelightAuto.driveToNote(pathSet.noteApproachSlowThreshold, pathSet.noteApproachSlowSpeed)
+                ? LimelightAuto.driveToNote(pathSet.noteApproachVelocity, pathSet.noteApproachSlowThreshold,
+                        pathSet.noteApproachSlowSpeed)
                 : Commands.none();
         return generateDriveCommand(pathSet.drivePath, intakeAction, noteAction);
 
@@ -165,26 +178,28 @@ public final class AutoFactory {
 
     private static Command generateSweepCommand(PathSet pathSet) {
         PathPlannerPath path = pathSet.sweepPath.get();
-        Command sweepSequence =  Commands.sequence(
+        Command sweepSequence = Commands.sequence(
                 RobotContainer.getShooterFireControl().initRunCommand(),
                 Commands.parallel(
                         AutoComponents.loadIntoShooter(),
                         Commands.sequence(
                                 Commands.race(
                                         AutoBuilder.pathfindThenFollowPath(path, PATH_CONSTRAINTS),
-                                        RobotContainer.getShooterFireControl().trackRunCommand(pathSet.minTyForSweepPath)).andThen(Commands.waitSeconds(0.3)),
+                                        RobotContainer.getShooterFireControl()
+                                                .trackRunCommand(pathSet.minTyForSweepPath))
+                                        .andThen(Commands.waitSeconds(0.3)),
                                 SwerveDrive.getInstance().stopCommand(),
                                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
                                 AutoComponents.stationaryAutoAim().withTimeout(2))));
 
-        if(pathSet.returnToStartSweepPath.isEmpty()) {
+        if (pathSet.returnToStartSweepPath.isEmpty()) {
             return sweepSequence;
         } else {
             return AutoBuilder.followPath(pathSet.returnToStartSweepPath.get()).andThen(sweepSequence);
         }
     }
 
-    private static Command loadAndAimCommand() {
+    public static Command loadAndAimCommand() {
         return Commands.parallel(
                 AutoComponents.loadIntoShooter(),
                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
