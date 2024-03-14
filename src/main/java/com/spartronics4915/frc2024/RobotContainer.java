@@ -349,7 +349,7 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
-        return AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly");
+        return mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
         
         // return mAutoChooser.getSelected();
     }
