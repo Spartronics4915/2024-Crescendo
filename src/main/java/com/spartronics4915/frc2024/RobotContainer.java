@@ -363,7 +363,7 @@ public class RobotContainer {
         public static Command generateCenterFourNote() {
             PathSet pickUpFinalNote = new AutoFactory.PathSet(
                     PathPlannerPath.fromPathFile("entry 3"),
-                    PathPlannerPath.fromPathFile("sweep 3")).withNoteApproachParams(-18, 0.25);
+                    PathPlannerPath.fromPathFile("sweep 3")).withNoteApproachParams(-18, 0.25).withMinTyForSweepPath(5);
             return AutoFactory.generateVisionAuto(
                     new AutoFactory.PathSet(
                             PathPlannerPath.fromPathFile("CenterToFirstRowTop")),
