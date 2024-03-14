@@ -230,8 +230,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
     }
 
     public boolean hasSpunUp() {
-        return (mShooterEncoder.getVelocity() >= kTargetRPM)
-                && mShooterFollowMotor.getEncoder().getVelocity() >= kTargetRPM;
+        return (Math.abs(mShooterEncoder.getVelocity()) >= kTargetRPM)
+                && (Math.abs(mShooterFollowMotor.getEncoder().getVelocity()) >= kTargetRPM);
     }
 
     private final DoubleArrayPublisher kCurrent = NetworkTableInstance.getDefault().getDoubleArrayTopic("Currents")

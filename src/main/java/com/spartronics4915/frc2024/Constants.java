@@ -144,7 +144,7 @@ public final class Constants {
             // TODO find values for the intake wirst and elevator
             GROUNDPICKUP(Rotation2d.fromDegrees(-30), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
-            AMP(Rotation2d.fromDegrees(-13.408), 0.335614), //TODO find elevator height 
+            AMP(Rotation2d.fromDegrees(-23), 0.36), //TODO find elevator height 
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
             LOAD(Rotation2d.fromDegrees(65), 0.0), 
             SOURCE(Rotation2d.fromDegrees(80.0), 0.143993),  //TODO find elevator height 
@@ -333,12 +333,8 @@ public final class Constants {
                     * ShooterWristConstants.kWristToRotationsRate);
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
-            System.out.println(P);
-            System.out.println(P);
-            System.out.println(P);
-            System.out.println(P);
 
-            kPIDconstants = new PIDConstants(1.4, 0.0, 0.15);
+            kPIDconstants = new PIDConstants(4, 0, 0.02);
         }
 
         public static final Constraints kConstraints;
@@ -347,7 +343,7 @@ public final class Constants {
              // The number of seconds that we expect the shooter to go from in to Max
             final double timeMinToMaxSeconds = 0.6;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.1;
+            final double timeToFullSpeedSeconds = 0.15;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
@@ -373,7 +369,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 3900;
+        public static final double kTargetRPM = 3500;
     }
 
     public static final class AutoAimConstants {

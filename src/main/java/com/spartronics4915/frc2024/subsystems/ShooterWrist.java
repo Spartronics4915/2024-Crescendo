@@ -2,8 +2,10 @@ package com.spartronics4915.frc2024.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
@@ -18,11 +20,13 @@ import com.spartronics4915.frc2024.Robot;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimType;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.SimulatorSettings;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator.TrapezoidSimulatorInterface;
+import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 import com.spartronics4915.frc2024.util.MotorConstants;
 import com.spartronics4915.frc2024.util.PIDConstants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -36,6 +40,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -60,11 +65,12 @@ import java.util.function.*;
 import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
 
 public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+    //TODO test pigeon2 logic 
 
     // #region variables
 
     private CANSparkMax mWristMotor;
-    private SparkPIDController mPidController;
+    private PIDController mPidController;
 
     private RelativeEncoder mEncoder;
     private TrapezoidProfile kTrapezoidProfile;
@@ -91,6 +97,10 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristErrorTrapazoid;
     private GenericEntry mShooterWristPigeonAngleReading;
     private GenericEntry mShooterWristPigeonDriftEntry;
+    private GenericEntry mShooterWristPIDSetpoint;
+
+    public static final double kOutputRange = 0.2;
+    private static final double kRotationLockTolerance = -0.8;
 
     private LinearFilter mFilter;
 
@@ -102,10 +112,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private boolean mHoming = false;
 
     private Pigeon2 mIMU;
-    public static final double kOutputRange = 0.2;
-    Timer syncPigeonTimer;
+    
+    
+    private final Pigeon2 mSwerveIMU = SwerveDrive.getInstance().getIMU();
 
-    private Timer mIMUTimer = new Timer();
+    private StatusSignal<Double> mGravVectorX;
+    private StatusSignal<Double> mGravVectorY;
+    private StatusSignal<Double> mGravVectorZ;
 
     // #endregion
 
@@ -119,6 +132,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private ShooterWrist() {
         super();
         mIMU = new Pigeon2(24);
+
+        mGravVectorX = mIMU.getGravityVectorX();
+        mGravVectorY = mIMU.getGravityVectorY();
+        mGravVectorZ = mIMU.getGravityVectorZ();
+
+        BaseStatusSignal.setUpdateFrequencyForAll(50, mGravVectorX, mGravVectorY, mGravVectorZ);
+
         mWristMotor = initMotor(ShooterWristConstants.kMotorConstants);
         mPidController = initPID();
         mEncoder = initEncoder();
@@ -139,11 +159,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         initShuffleBoard();
         Shuffleboard.getTab("ShooterWrist").addDouble("enc rot", mEncoder::getPosition);
 
-        //initalizing cache
-        mFilterCache = getShooterPitch();
 
-        mIMUTimer.start();
-        resetEncoder(getShooterPitch(), true);
+        updateShooterPitchCache();
+        resetEncoder(getCachedShooterPitch(), true);
 
         // new Trigger(() -> {
         //     return mIMUTimer.advanceIfElapsed(0.1);
@@ -153,11 +171,32 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         //     );
         // }, Set.of()));
 
-        // Initialize the angle
-        resetToAngle(getShooterPitch().getDegrees());
-        
-        syncPigeonTimer = new Timer();
-        syncPigeonTimer.start();
+
+        new Trigger(mLimitSwitch::get).onTrue(new Command() {
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return false;
+            }
+
+            @Override
+            public void execute() {
+                setPosition(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
+                // if (mTargetRotation2d.getRotations() < kLimitSwitchEncoderReading * kInToOutRotations +
+                // kLimitSwitchTriggerOffset) { //CHECKUP does trigger get hit rapidly
+                currentToSetPoint(Rotation2d.fromRotations(kLimitSwitchEncoderReading));
+                // }
+                mHoming = false;
+                mManualMovement = false;
+                startupHome = true;
+            }
+
+            @Override
+            public boolean isFinished() {
+                return true;
+            }
+        });
+
         // homeMotor(Rotation2d.fromDegrees(1)); 
 
     }
@@ -181,6 +220,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristPigeonAngleReading = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading);
         mShooterWristPigeonDriftEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonDrift);
 
+        mShooterWristPIDSetpoint = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPIDSetpoint);
+
         chooser = new SendableChooser<Rotation2d>();
 
         chooser.addOption("MIN", kMinAngle);
@@ -201,22 +242,22 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return motor;
     }
 
-    private SparkPIDController initPID() {
-        // PIDController pid = new PIDController(
-        //     kPIDconstants.p(), 
-        //     kPIDconstants.i(), 
-        //     kPIDconstants.d()
-        // );
+    private PIDController initPID() {
+        PIDController pid = new PIDController(
+            kPIDconstants.p(), 
+            kPIDconstants.i(), 
+            kPIDconstants.d()
+        );
 
-        SparkPIDController pid = mWristMotor.getPIDController();
+        // SparkPIDController pid = mWristMotor.getPIDController();
 
-        pid.setP(kPIDconstants.p());
-        pid.setI(kPIDconstants.i());
-        pid.setD(kPIDconstants.d());
+        // pid.setP(kPIDconstants.p());
+        // pid.setI(kPIDconstants.i());
+        // pid.setD(kPIDconstants.d());
 
-        pid.setOutputRange(-0.3, 0.3);
+        // pid.setOutputRange(-kOutputRange, kOutputRange);
 
-        // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
+
         // position Conversion not needed by using rotation2d
 
         return pid;
@@ -253,7 +294,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private double getEncoderVelReading() {
-        return mEncoder.getVelocity(); // CHECKUP Failure Point?
+        return mEncoder.getVelocity() / kWristToRotationsRate;
     }
 
     private void setManualDelta(Rotation2d deltaPosition) {
@@ -276,7 +317,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getEncoderPos().plus(mPigeonDrift);
+        return getCachedShooterPitch();
     }
 
     private void setPosition(Rotation2d newAngle){
@@ -316,6 +357,13 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         return Radians.of(Math.atan2(y, x));
     }
 
+    /*
+     * this determines if the shooterwrist should stop moving based on the gravity vector of the IMU
+     * https://www.desmos.com/3d/43a3d2d01d (the area showing is where this function returns true)
+     */
+    private boolean getRotationLock(){
+        return mSwerveIMU.getGravityVectorZ().getValueAsDouble() > kRotationLockTolerance;
+    }
 
 
     // #endregion
@@ -333,11 +381,15 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Command setPidConstant(PIDConstants values){
-        return runOnce(() -> {
-            mPidController.setP(values.p());
-            mPidController.setI(values.i());
-            mPidController.setD(values.d());
-        });
+        return Commands.sequence(
+            Commands.waitUntil(DriverStation::isEnabled).ignoringDisable(true),
+            runOnce(() -> {
+                System.out.println("setting pid values");
+                mPidController.setP(values.p());
+                mPidController.setI(values.i());
+                mPidController.setD(values.d());
+            })
+        ).ignoringDisable(true);
     }
 
     public void resetEncoder(Rotation2d angle, boolean resetSetpoint){
@@ -368,7 +420,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 () -> setManualDelta(angleDelta),
                 () -> {
                     if (!Robot.isSimulation())
-                        currentToSetPoint(); // CHECKUP remove sim statment when doing chassis stuff?
+                        currentToSetPoint();
                     mManualMovement = false;
                 });
     }
@@ -383,37 +435,30 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     // #region periodic functions
 
-    private Rotation2d mFilterCache = new Rotation2d();
-
-    private Rotation2d getShooterPitch(){
-        var xStream = mIMU.getGravityVectorX(); //if you move these to objects you need to replace them periodically with the output of .refresh()
-        var yStream = mIMU.getGravityVectorY(); //if you move these to objects you need to replace them periodically with the output of .refresh()
-        
-        // if (!BaseStatusSignal.isAllGood(xStream, yStream)) {
-        // }
+    private Rotation2d mPeriodicPigeonReading = new Rotation2d(); //this is to prevent a race condition during a single periodic cycle
     
-        var d = findAngle(xStream.getValueAsDouble(), yStream.getValueAsDouble()).in(Degrees);
-        
-        return Rotation2d.fromDegrees((d));
+
+    private Rotation2d getCachedShooterPitch(){
+        return mPeriodicPigeonReading;
     }
 
-    private Rotation2d getShooterPitchFiltered(){
-        return mFilterCache;
+    private void updateShooterPitchCache(){
+        
+        var xStream = mGravVectorX;
+        var yStream = mGravVectorY;
+
+        var d = findAngle(
+            xStream.getValueAsDouble(), 
+            yStream.getValueAsDouble()).in(Degrees);
+        
+        mPeriodicPigeonReading = Rotation2d.fromDegrees((d));
     }
 
     @Override
     public void periodic() {
-        mFilterCache = Rotation2d.fromDegrees(mFilter.calculate(getShooterPitch().getDegrees()));
         // mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
-
-        if (mIMUTimer.advanceIfElapsed(0.1)) {
-            mPigeonDrift = getShooterPitchFiltered().minus(getEncoderPos());
-        }
-
-        if (Math.abs(mPigeonDrift.getDegrees()) > 2.5) {
-            resetEncoder(getShooterPitchFiltered(), true);
-            mPigeonDrift = new Rotation2d();
-        }
+        //once per periodic update of angle
+        updateShooterPitchCache();
 
         if (mManualMovement) {
             manualControlUpdate();
@@ -421,6 +466,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         TrapezoidMotionProfileUpdate();
 
         updateShuffle();
+
+        BaseStatusSignal.refreshAll(
+            mGravVectorX,
+            mGravVectorY,
+            mGravVectorZ
+        );
 
         // System.out.println(
         //     getShooterPitch().getDegrees() + "\t : " + 
@@ -433,11 +484,11 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private void updateShuffle() {
         mShooterSetPointEntry.setDouble(mTargetRotation2d.getDegrees());
-        mShooterEncoderReadingEntry.setDouble(getWristAngle().getDegrees());
+        mShooterEncoderReadingEntry.setDouble(getEncoderPos().getDegrees());
         mShooterManualControlEntry.setBoolean(mManualMovement);
         mShooterDelta.setDouble(mManualDelta.getDegrees());
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
-        mShooterWristPigeonAngleReading.setDouble(getShooterPitchFiltered().getDegrees());
+        mShooterWristPigeonAngleReading.setDouble(getCachedShooterPitch().getDegrees());
         mShooterWristPigeonDriftEntry.setDouble(mPigeonDrift.getDegrees());
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
@@ -450,26 +501,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         // return 0.0;
     }
 
-    private void manualControlUpdate() { // HACK untested
-        // if (!mHoming) {
-        //     if (mTargetRotation2d.getRotations() % 1.0 > kMaxAngle.getRotations() && mManualDelta.getRotations() > 0) { // CHECKUP
-        //                                                                                                                 // might
-        //                                                                                                                 // not
-        //                                                                                                                 // work
-        //         System.out.println(mTargetRotation2d.getDegrees() % 1.0);
-        //         System.out.println(kMaxAngle.getRotations());
-        //         System.out.println("reset max");
-        //         mTargetRotation2d = kMaxAngle;
-        //     } else if (mTargetRotation2d.getRotations() % 1.0 < kMinAngle.getRotations()
-        //             && mManualDelta.getRotations() < 0) {
-        //         System.out.println(mTargetRotation2d.getDegrees() % 1.0);
-        //         System.out.println(kMinAngle.getRotations());
-        //         System.out.println("reset low");
-        //         mTargetRotation2d = kMinAngle;
-        //     } else {
-                mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
-        //     }
-        // }
+    private void manualControlUpdate() {
+        mTargetRotation2d = mTargetRotation2d.plus(mManualDelta);
     }
 
     private void TrapezoidMotionProfileUpdate() {
@@ -478,26 +511,31 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 MathUtil.clamp(mTargetRotation2d.getRotations(), kMinAngle.getRotations(), kMaxAngle.getRotations())
             );
 
-        // CHECKUP not sure if this will work
         mCurrentState = kTrapezoidProfile.calculate(
                 GeneralConstants.kUpdateTime,
                 mCurrentState,
                 new State(mTargetRotation2d.getRotations(), 0));
 
+        mShooterWristPIDSetpoint.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees());
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        // mWristMotor.set(
-        //     MathUtil.clamp(mPidController.calculate(getWristAngle().getRotations(), mCurrentState.position), -kOutputRange, kOutputRange)
-        // );
-
-        mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
-        // CHECKUP FF output? currently set to volatgage out instead of precentage out
+        // if (!getRotationLock()) {
+            mWristMotor.set(
+                MathUtil.clamp(
+                    mPidController.calculate(
+                        getWristAngle().getRotations(), 
+                        mCurrentState.position), 
+                -kOutputRange, kOutputRange)
+            );
+        // }
+        // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
     }
 
     // #endregion
     @Override
     public void modeSwitchAction() {
+        updateShooterPitchCache();
         currentToSetPoint();
         mManualMovement = false;
     }

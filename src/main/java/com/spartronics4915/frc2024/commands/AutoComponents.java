@@ -70,7 +70,9 @@ public class AutoComponents {
                 // .andThen(Commands.waitUntil(mShooter::hasSpunUp))
                 // .andThen(DigestCommands.in().withTimeout(5)));
 
-                return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT).andThen(shootFromLoaded());
+                return mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT)
+                                .andThen(Commands.waitUntil(() -> mShooterWrist.atTarget()).withTimeout(2))
+                                .andThen(shootFromLoaded());
         }
 
         public static Command loadIntoShooter() {
@@ -89,7 +91,7 @@ public class AutoComponents {
                                 .andThen(Commands.waitUntil(mShooter::beamBreakIsNotTriggered));
                 return Commands.sequence(
                                 mShooter.setShooterStateCommand(ShooterState.ON),
-                                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(2),
+                                Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
                                 Commands.deadline(
                                                 waitUntilBeamBreakTriggeredThenNotTriggered.withTimeout(2)
                                                                 .andThen(Commands.waitSeconds(0.3)),
