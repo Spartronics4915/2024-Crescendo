@@ -243,6 +243,8 @@ public class ShuffleBoard {
             ShooterWristErrorTrapazoid("ShooterTrapazoidError"), 
             ShooterWristTarget("ShooterTarget"), 
             ShooterWristPigeonAngleReading("ShooterWristPigeonAngleReading"), 
+            ShooterWristPigeonDrift("ShooterWristPigeonDrift"), 
+            ShooterWristPIDSetpoint("ShooterWristPIDSetpoint"),
 
             WristAppliedOutput("WristAppliedOutput");
 
@@ -285,6 +287,12 @@ public class ShuffleBoard {
             putEntry(out, ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading, 0.0, mShuffleBoardTab,
                     ShooterWristSubsystemEntries.ShooterWristPigeonAngleReading.entryName);
 
+            putEntry(out, ShooterWristSubsystemEntries.ShooterWristPigeonDrift, 0.0, mShuffleBoardTab, 
+                    ShooterWristSubsystemEntries.ShooterWristPigeonDrift.entryName);
+
+            putEntry(out, ShooterWristSubsystemEntries.ShooterWristPIDSetpoint, 0.0, mShuffleBoardTab, 
+                    ShooterWristSubsystemEntries.ShooterWristPIDSetpoint.entryName);
+
 
             var p = mShuffleBoardTab.add("P", ShooterWristConstants.kPIDconstants.p()).getEntry();
             var i = mShuffleBoardTab.add("I", 0.0).getEntry();
@@ -292,7 +300,7 @@ public class ShuffleBoard {
 
             mShuffleBoardTab.add("setPidConstants", Commands.defer(() -> {
                 return subsystem.setPidConstant(new PIDConstants(p.getDouble(1.0), i.getDouble(0.0), d.getDouble(0.0)));
-            }, Set.of()));
+            }, Set.of()).ignoringDisable(true));
 
             mShuffleBoardTab.add("ResetEncoder", subsystem.resetEncoder());
                     // .withProperties(Map.of("Label position", "HIDDEN"));

@@ -20,13 +20,16 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.spartronics4915.frc2024.commands.AlignToSpeakerCommand;
 import com.spartronics4915.frc2024.commands.AutoComponents;
+import com.spartronics4915.frc2024.commands.AutoFactory;
 import com.spartronics4915.frc2024.commands.BootCoralCommand;
 import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
+import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
+import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands.DriveStraightFixedDistance;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
@@ -69,6 +72,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kAutoAimTarget;
 import static com.spartronics4915.frc2024.Constants.AutoAimConstants.kSpeakerTarget;
@@ -115,8 +119,8 @@ public class RobotContainer {
     private final SwerveSim mSwerveSim;
 
     private static final VisionSubsystem mVision = VisionSubsystem.getInstance();
-    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(mVision.getSpeakerTagLocator());
-
+    private static final ShooterRunFireControl shooterFireControl = new ShooterRunFireControl(
+            mVision.getSpeakerTagLocator());
 
     private final Bling mBling;
 
@@ -169,38 +173,52 @@ public class RobotContainer {
         if (mSwerveDrive != null) {
             // NamedCommands.registerCommand("intake", AutoComponents.groundToIntake());
             NamedCommands.registerCommand("load", AutoComponents.loadIntoShooter());
-            NamedCommands.registerCommand("aim", Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
+            NamedCommands.registerCommand("aim",
+                    Commands.defer(() -> new StationaryAutoAimCommand(AutoComponents.getTarget().get()), Set.of()));
             NamedCommands.registerCommand("shoot", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shootPreloaded", AutoComponents.shootPreloaded());
             NamedCommands.registerCommand("shootFromLoaded", AutoComponents.shootFromLoaded());
             NamedCommands.registerCommand("shooterOn", mShooter.setShooterStateCommand(ShooterState.ON));
-            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO: replace timeout with debounced atTarget
+            NamedCommands.registerCommand("stationaryAutoAim", AutoComponents.stationaryAutoAim().withTimeout(2)); // TODO:
+                                                                                                                   // replace
+                                                                                                                   // timeout
+                                                                                                                   // with
+                                                                                                                   // debounced
+                                                                                                                   // atTarget
             NamedCommands.registerCommand("aimAndShootPreloaded", AutoComponents.stationaryAimAndShoot());
             NamedCommands.registerCommand("groundIntake", AutoComponents.groundIntake());
             NamedCommands.registerCommand("loadIntoShooter", AutoComponents.loadIntoShooter());
             NamedCommands.registerCommand("DriveToPickUpNote", LimelightAuto.driveToNote());
-            NamedCommands.registerCommand("StopChassis", Commands.runOnce(()->{mSwerveDrive.drive(new ChassisSpeeds(0,0,0), false);}));
+            NamedCommands.registerCommand("StopChassis", Commands.runOnce(() -> {
+                mSwerveDrive.drive(new ChassisSpeeds(0, 0, 0), false);
+            }));
             NamedCommands.registerCommand("InitShooterFireControl", shooterFireControl.initRunCommand());
             NamedCommands.registerCommand("ShootNote1", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("ShootNote2", shooterFireControl.aimAndFireCommand(20));
             NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
-            NamedCommands.registerCommand("FireControlTracking", shooterFireControl.trackRunCommand());
+
+            // NamedCommands for Full Composite Autos
+            NamedCommands.registerCommand("CenterFourNote", CompositeAutos.generateCenterFourNote());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
             mAutoChooser.addOption(
                     "Preloaded only",
                     Commands.parallel(
-                        mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                        mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
-                            .andThen(DigestCommands.in().withTimeout(5))));
+                            mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
+                            mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
+                                    .andThen(DigestCommands.in().withTimeout(5))));
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
+
+            SmartDashboard.putData("Command Scheduler", CommandScheduler.getInstance());
 
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
 
             Shuffleboard.getTab("Tab 12").add(mAutoChooser);
+
+            SmartDashboard.putData(CommandScheduler.getInstance());
         } else {
             mAutoChooser = null;
         }
@@ -223,7 +241,7 @@ public class RobotContainer {
 
     private void configureBindings() { // TODO: format these nicely
 
-        //driver controls
+        // driver controls
 
         if (mSwerveDrive != null) {
             mDriverController.a().onTrue(mSwerveDrive.toggleFieldRelativeCommand());
@@ -236,14 +254,15 @@ public class RobotContainer {
         mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
-            .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
+                .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
         mDriverController.x().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         mDriverController.leftBumper().onTrue(new AlignToSpeakerCommand().withTimeout(1.25));
 
         mDriverController.y().onTrue(mIntakeWrist.resetEncoderToAngle(-31)); // ground intake minus one
 
-        mDriverController.x().onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
+        mDriverController.x()
+                .onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
         // Operator controls
         // Buttons:
@@ -251,14 +270,14 @@ public class RobotContainer {
         mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
         mOperatorController.a().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.b().onTrue(Commands.parallel(
-                    mIntake.setStateCommand(IntakeState.OFF),
-                    mShooter.setShooterStateCommand(ShooterState.OFF),
-                    mShooter.setConveyorStateCommand(ConveyorState.OFF)));
+                mIntake.setStateCommand(IntakeState.OFF),
+                mShooter.setShooterStateCommand(ShooterState.OFF),
+                mShooter.setConveyorStateCommand(ConveyorState.OFF)));
 
         // manual controls
 
-        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.04));
-        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.04));
+        mOperatorController.rightBumper().whileTrue(mElevator.manualRunCommand(0.02));
+        mOperatorController.leftBumper().whileTrue(mElevator.manualRunCommand(-0.02));
 
         mOperatorController.povUp().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(0.45)));
         mOperatorController.povDown().whileTrue(mShooterWrist.manualRunCommand(Rotation2d.fromDegrees(-0.45)));
@@ -285,27 +304,30 @@ public class RobotContainer {
         // triggers
 
         mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
-                Commands.repeatingSequence(Commands.parallel(
-                    Commands.defer(() -> {
-                        final var alliance = DriverStation.getAlliance().get();
-                        final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-                                : AutoComponents.RED_SPEAKER;
-                        return new TableAutoAimCommand();
-                    }, Set.of()),
-                    new AlignToSpeakerCommand())
-                ));
+                Commands.repeatingSequence(
+                        Commands.defer(() -> {
+                            final var alliance = DriverStation.getAlliance().get();
+                            final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+                                    : AutoComponents.RED_SPEAKER;
+                            return Commands.parallel(
+                                    new TableAutoAimCommand(),
+                                    //new StationaryAutoAimCommand(speaker)
+                                    StationaryAutoAimVisionPose.getStationaryAutoAimVisionOrPose(mVision.getSpeakerTagLocator(),
+                                    speaker)
+                                    );
+                        }, Set.of())));
 
         // mDriverController.povUp().whileTrue(Commands.defer(() -> {
-        //     final var alliance = DriverStation.getAlliance().get();
-        //                 final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
-        //                         : AutoComponents.RED_SPEAKER;
-        //     return new MovingAutoAimCommand(speaker);
+        // final var alliance = DriverStation.getAlliance().get();
+        // final var speaker = alliance == Alliance.Blue ? AutoComponents.BLUE_SPEAKER
+        // : AutoComponents.RED_SPEAKER;
+        // return new MovingAutoAimCommand(speaker);
         // }, Set.of()));
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
-            .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
-            .whileTrue(DigestCommands.in())
-            .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
+                .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
+                .whileTrue(DigestCommands.in())
+                .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));
 
@@ -322,34 +344,34 @@ public class RobotContainer {
 
         // mOperatorController.button(15).onTrue(mSwerveDrive.toggleFieldRelativeCommand());
 
-    
     }
 
     public Command getAutonomousCommand() {
-        return mAutoChooser.getSelected();
+        // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
-        // return AutoBuilder.buildAuto("CenterRowAuto");
-        // return mSwerveDrive.runOnce(()->{mSwerveDrive.resetPose(new Pose2d(2,6, Rotation2d.fromDegrees(30)));}).andThen(LimelightAuto.driveToNote());
+        return mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
         
-        // if (mAutoChooser == null) {
-        //     return null;
-        // }
-        
-        // return new HomingCommand().andThen(mAutoChooser.getSelected());
-        
-        
-        // var a = AutoBuilder.buildAuto("Path 1 Only");
-        // System.out.println("AUTO START");
-        // System.out.println(a);
-        // System.out.println("AUTO END");
-        // return Commands.sequence(
-        // Commands.print("starting auto"),
-        // a,
-        // Commands.print("ending")
-        // );
+        // return mAutoChooser.getSelected();
     }
 
     public SwerveDrive getSwerveDrive() {
         return mSwerveDrive;
     }
+
+    private static class CompositeAutos {
+
+        public static Command generateCenterFourNote() {
+            PathSet pickUpFinalNote = new AutoFactory.PathSet(
+                    PathPlannerPath.fromPathFile("entry 3"),
+                    PathPlannerPath.fromPathFile("sweep 3")).withNoteApproachParams(-18, 0.5); // .withMinTyForSweepPath(5);
+            return AutoFactory.generateVisionAuto(
+                    new AutoFactory.PathSet(
+                            PathPlannerPath.fromPathFile("CenterToFirstRowTop")),
+                    new AutoFactory.PathSet(
+                            PathPlannerPath.fromPathFile("entry 2")),
+                    pickUpFinalNote);
+        }
+
+    }
+
 }

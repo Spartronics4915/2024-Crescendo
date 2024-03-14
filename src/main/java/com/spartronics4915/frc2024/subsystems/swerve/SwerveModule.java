@@ -159,7 +159,7 @@ public class SwerveModule {
         pid.setD(pc.d(), 1);
         pid.setFF(pc.ff(), 1);
         pid.setSmartMotionMaxVelocity(kMaxSpeed, 1);
-        pid.setSmartMotionMaxAccel(kMaxAcceleration, 1);
+        pid.setSmartMotionMaxAccel(11, 1);
 
         motor.burnFlash();
     }

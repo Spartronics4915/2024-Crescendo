@@ -27,8 +27,11 @@ public class NoteLocatorLimeLight implements TargetDetectorInterface {
         }
         double tx = mLimelight.getTxLowpass();
         double ty = mLimelight.getTy();
+        if(!mLimelight.getTv() && mLimelight.getTvDebounce()) {
+            ty = -20;
+        }
         double estimatedHeight = -CAMERA_HEIGHT / Rotation2d.fromDegrees(ty).getTan();
-        if (mLimelight.getTy() < 0.5) tx = 0.0;
+        if (mLimelight.getTy() < -17) tx = 0.0;
         return Optional.of(new Detection(tx, ty, estimatedHeight));
     }
 
