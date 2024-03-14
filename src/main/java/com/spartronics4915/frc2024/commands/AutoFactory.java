@@ -153,7 +153,7 @@ public final class AutoFactory {
         }
     }
 
-    private static Command loadAndAimCommand() {
+    public static Command loadAndAimCommand() {
         return Commands.parallel(
                 AutoComponents.loadIntoShooter(),
                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),

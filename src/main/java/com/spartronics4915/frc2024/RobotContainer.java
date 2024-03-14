@@ -199,6 +199,7 @@ public class RobotContainer {
 
             // NamedCommands for Full Composite Autos
             NamedCommands.registerCommand("CenterFourNote", CompositeAutos.generateCenterFourNote());
+            NamedCommands.registerCommand("MiddleLower2", CompositeAutos.lowerTwoNote());
 
             mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -349,8 +350,10 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
-        return mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
+        //return mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
         
+        return mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
+
         // return mAutoChooser.getSelected();
     }
 
@@ -370,6 +373,28 @@ public class RobotContainer {
                     new AutoFactory.PathSet(
                             PathPlannerPath.fromPathFile("entry 2")),
                     pickUpFinalNote);
+        }
+
+        public static Command lowerTwoNote() {
+                PathPlannerPath entryPath = PathPlannerPath.fromPathFile("entryMiddle4");
+                PathPlannerPath returnPath = PathPlannerPath.fromPathFile("exitMiddle4");
+                PathPlannerPath entryPath5 = PathPlannerPath.fromPathFile("entry5");
+                PathPlannerPath returnPath5 = PathPlannerPath.fromPathFile("ExitMiddle5");
+
+                return Commands.sequence(
+                AutoComponents.shootPreloaded(),        
+                AutoBuilder.followPath(entryPath),
+                LimelightAuto.driveToNote(Optional.of(Double.valueOf(-18)), Optional.of(Double.valueOf(0.5))),
+                AutoBuilder.followPath(returnPath),
+                AutoFactory.loadAndAimCommand(),
+                AutoComponents.shootFromLoaded(),
+                AutoBuilder.followPath(entryPath5),
+                LimelightAuto.driveToNote(Optional.of(Double.valueOf(-18)), Optional.of(Double.valueOf(0.5))),
+                AutoBuilder.followPath(returnPath5),
+                AutoFactory.loadAndAimCommand(),
+                AutoComponents.shootFromLoaded()
+                );
+
         }
 
     }
