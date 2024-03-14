@@ -141,7 +141,7 @@ public final class AutoFactory {
                         Commands.sequence(
                                 Commands.race(
                                         AutoBuilder.pathfindThenFollowPath(path, PATH_CONSTRAINTS),
-                                        RobotContainer.getShooterFireControl().trackRunCommand(pathSet.minTyForSweepPath)),
+                                        RobotContainer.getShooterFireControl().trackRunCommand(pathSet.minTyForSweepPath)).andThen(Commands.waitSeconds(0.3)),
                                 SwerveDrive.getInstance().stopCommand(),
                                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
                                 AutoComponents.stationaryAutoAim().withTimeout(2))));
