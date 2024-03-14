@@ -443,7 +443,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     private void updateShooterPitchCache(){
-        
+        BaseStatusSignal.refreshAll(
+            mGravVectorX,
+            mGravVectorY,
+            mGravVectorZ
+        );
+
         var xStream = mGravVectorX;
         var yStream = mGravVectorY;
 
@@ -467,11 +472,6 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
         updateShuffle();
 
-        BaseStatusSignal.refreshAll(
-            mGravVectorX,
-            mGravVectorY,
-            mGravVectorZ
-        );
 
         // System.out.println(
         //     getShooterPitch().getDegrees() + "\t : " + 
@@ -520,7 +520,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        // if (!getRotationLock()) {
+        // if (!getRotationLock()) {    
             mWristMotor.set(
                 MathUtil.clamp(
                     mPidController.calculate(
@@ -536,7 +536,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     @Override
     public void modeSwitchAction() {
         updateShooterPitchCache();
-        currentToSetPoint();
+        currentToSetPoint(getCachedShooterPitch());
         mManualMovement = false;
     }
 
