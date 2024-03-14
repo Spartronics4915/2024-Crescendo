@@ -82,9 +82,9 @@ public class LimelightAuto {
                 Commands.parallel(
                         new LockOnCommand(mVisionSubsystem.getNoteLocator()),
                         driveStraightIndefiniteCommand))
-                .andThen(mSwerve.runOnce(() -> {
+                .finallyDo(() -> {
                     mSwerve.drive(zeroSpeed, false);
-                }));
+                });
         // new DriveStraightCommands.DriveStraightFixedDistance(
         // mSwerve,
         // new Rotation2d(),
