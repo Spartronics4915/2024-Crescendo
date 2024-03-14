@@ -27,6 +27,7 @@ import com.spartronics4915.frc2024.commands.HomingCommand;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
 import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
+import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.commands.drivecommands.DriveStraightCommands;
@@ -310,7 +311,10 @@ public class RobotContainer {
                                     : AutoComponents.RED_SPEAKER;
                             return Commands.parallel(
                                     new TableAutoAimCommand(),
-                                    new StationaryAutoAimCommand(speaker));
+                                    //new StationaryAutoAimCommand(speaker)
+                                    StationaryAutoAimVisionPose.getStationaryAutoAimVisionOrPose(mVision.getSpeakerTagLocator(),
+                                    speaker)
+                                    );
                         }, Set.of())));
 
         // mDriverController.povUp().whileTrue(Commands.defer(() -> {
@@ -346,6 +350,7 @@ public class RobotContainer {
         // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
         return AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly");
+        
         // return mAutoChooser.getSelected();
     }
 
