@@ -201,8 +201,13 @@ public class RobotContainer {
                         NamedCommands.registerCommand("ShootNote3", shooterFireControl.aimAndFireCommand(20));
 
                         // NamedCommands for Full Composite Autos
-                        NamedCommands.registerCommand("CenterFourNote", CompositeAutos.generateCenterFourNoteFaster());
-                        NamedCommands.registerCommand("MiddleLower2", CompositeAutos.lowerTwoNote());
+                        NamedCommands.registerCommand("CenterFourNote", mShooter.setShooterStateCommand(ShooterState.ON)
+                                        .andThen(CompositeAutos.generateCenterFourNote()));
+                        NamedCommands.registerCommand("FastCenterFourNote",
+                                        mShooter.setShooterStateCommand(ShooterState.ON)
+                                                        .andThen(CompositeAutos.generateCenterFourNoteFaster()));
+                        NamedCommands.registerCommand("MiddleLower2", mShooter.setShooterStateCommand(ShooterState.ON)
+                                        .andThen(CompositeAutos.lowerTwoNote()));
 
                         mAutoChooser = AutoBuilder.buildAutoChooser();
 
@@ -358,8 +363,10 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
+                // return mShooter.setShooterStateCommand(ShooterState.ON)
+                //                 .andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
                 return mShooter.setShooterStateCommand(ShooterState.ON)
-                                .andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
+                                .andThen(AutoBuilder.buildAuto("FastCenterRow4NoteKickoffOnly"));
 
                 // return
                 // mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
@@ -395,7 +402,7 @@ public class RobotContainer {
                                                                         .withNoteApproachForwardVelocity(1.5)
                                                                         .withNoteApproachParams(-18, 0.85),
                                         new AutoFactory.PathSet(
-                                                        PathPlannerPath.fromPathFile("entry 2")),
+                                                        PathPlannerPath.fromPathFile("entry2Fast")),
                                         pickUpFinalNote);
                 }
 
