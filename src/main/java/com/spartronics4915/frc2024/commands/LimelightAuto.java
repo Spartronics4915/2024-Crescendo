@@ -45,15 +45,15 @@ public class LimelightAuto {
     }
 
     public static Command driveToNote() {
-        return driveToNote(Optional.empty(), Optional.empty());
-    }
-
-    public static Command driveToNote(Optional<Double> noteApproachSlowThreshold,
-            Optional<Double> noteApproachSlowSpeed) {
-
         final double FORWARD_VELOCITY = mDriveToNoteVelocity.getDouble(1.0);
 
-        ChassisSpeeds forwardSpeed = new ChassisSpeeds(FORWARD_VELOCITY, 0, 0);
+        return driveToNote(FORWARD_VELOCITY, Optional.empty(), Optional.empty());
+    }
+
+    public static Command driveToNote(double forwardVelocity, Optional<Double> noteApproachSlowThreshold,
+            Optional<Double> noteApproachSlowSpeed) {
+
+        ChassisSpeeds forwardSpeed = new ChassisSpeeds(forwardVelocity, 0, 0);
         ChassisSpeeds zeroSpeed = new ChassisSpeeds(0, 0, 0);
         // You probably want to just drive straight indefinitely until the command ends.
 
@@ -65,7 +65,7 @@ public class LimelightAuto {
         else {
             var noteLocator = mVisionSubsystem.getNoteLocator();
             driveStraightIndefiniteCommand = mSwerve.run(() -> {
-                double speed = FORWARD_VELOCITY;
+                double speed = forwardVelocity;
                 var noteDetection = noteLocator.getClosestVisibleTarget();
                 if ((noteDetection.isEmpty()) ||
                         (noteDetection.get().ty() < noteApproachSlowThreshold.get().doubleValue())) {
