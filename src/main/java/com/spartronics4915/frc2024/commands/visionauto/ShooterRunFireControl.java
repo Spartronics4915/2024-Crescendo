@@ -64,9 +64,12 @@ public class ShooterRunFireControl extends SubsystemBase {
         });
     }
 
-    public boolean pollTargeting() {
+    public boolean pollTargeting(double minTy) {
         Optional<TargetDetectorInterface.Detection> detectionResult = targetDetector.getClosestVisibleTarget();
         if (detectionResult.isPresent()) {
+            if (detectionResult.get().ty() < minTy) {
+                return false;
+            }
 
             lastDetection = detectionResult.get();
 
@@ -120,9 +123,9 @@ public class ShooterRunFireControl extends SubsystemBase {
     // }
 
     // This is the command that tracks while the shooter run is occurring.
-    public Command trackRunCommand() {
+    public Command trackRunCommand(double minTy) {
         return new WaitUntilCommand(() -> {
-            return pollTargeting();
+            return pollTargeting(minTy);
         });
     }
 

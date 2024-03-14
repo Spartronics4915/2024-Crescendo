@@ -535,6 +535,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     // #endregion
     @Override
     public void modeSwitchAction() {
+        updateShooterPitchCache();
         currentToSetPoint();
         mManualMovement = false;
     }
