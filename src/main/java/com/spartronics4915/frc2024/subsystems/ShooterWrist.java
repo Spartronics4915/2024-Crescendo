@@ -98,6 +98,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristPigeonAngleReading;
     private GenericEntry mShooterWristPigeonDriftEntry;
     private GenericEntry mShooterWristPIDSetpoint;
+    private GenericEntry mShooterWristDisabled;
+
 
     public static final double kOutputRange = 0.2;
     private static final double kRotationLockTolerance = -0.8;
@@ -110,6 +112,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private boolean startupHome = false;
     private boolean mHoming = false;
+    private boolean mDisabled = false;
+
 
     private Pigeon2 mIMU;
     
@@ -221,6 +225,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristPigeonDriftEntry = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPigeonDrift);
 
         mShooterWristPIDSetpoint = mEntries.get(ShooterWristSubsystemEntries.ShooterWristPIDSetpoint);
+
+        mShooterWristDisabled = mEntries.get(ShooterWristSubsystemEntries.ShooterWristDisabled);
 
         chooser = new SendableChooser<Rotation2d>();
 
@@ -431,6 +437,22 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         });
     }
 
+    public Command setDisabled(boolean isDisabled){
+        return Commands.runOnce(() -> {
+            mDisabled = isDisabled;
+        });
+    }
+
+    public Command toggleDisabled(){
+        return Commands.startEnd(() -> {
+            mDisabled = true;
+            System.out.println("disabling");
+        }, () -> {
+            mDisabled = false;
+            System.out.println("enabling");
+        });
+    }
+
     // #endregion
 
     // #region periodic functions
@@ -490,6 +512,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mAppliedOutput.setDouble(mWristMotor.getAppliedOutput());
         mShooterWristPigeonAngleReading.setDouble(getCachedShooterPitch().getDegrees());
         mShooterWristPigeonDriftEntry.setDouble(mPigeonDrift.getDegrees());
+        mShooterWristDisabled.setBoolean(mDisabled);
         SmartDashboard.putBoolean("shooter ls", mLimitSwitch.get());
     }
 
@@ -520,7 +543,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        // if (!getRotationLock()) {
+        if (!mDisabled) {
             mWristMotor.set(
                 MathUtil.clamp(
                     mPidController.calculate(
@@ -528,7 +551,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                         mCurrentState.position), 
                 -kOutputRange, kOutputRange)
             );
-        // }
+        } else {
+            mWristMotor.set(0.0);
+        }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
     }
 
