@@ -160,6 +160,23 @@ public final class AutoFactory {
                                 SwerveDrive.getInstance().stopCommand(),
                                 Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
                                 AutoComponents.stationaryAutoAim().withTimeout(2))));
+        if (pathSet.returnToStartSweepPath.isEmpty()) {
+            return sweepSequence;
+        } else {
+            return AutoBuilder.followPath(pathSet.returnToStartSweepPath.get()).andThen(sweepSequence);
+        }
+    }
+
+    private static Command generateSweepCommandSimple(PathSet pathSet) {
+        PathPlannerPath path = pathSet.sweepPath.get();
+        Command sweepSequence = Commands.sequence(
+                Commands.parallel(
+                        AutoComponents.loadIntoShooter(),
+                        Shooter.getInstance().setShooterStateCommand(ShooterState.ON),
+                        Commands.sequence(
+                                AutoBuilder.pathfindThenFollowPath(path, PATH_CONSTRAINTS), Commands.waitSeconds(0.3))),
+                SwerveDrive.getInstance().stopCommand(),
+                AutoComponents.stationaryAutoAim().withTimeout(2));
 
         if (pathSet.returnToStartSweepPath.isEmpty()) {
             return sweepSequence;
