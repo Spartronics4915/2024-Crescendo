@@ -264,6 +264,9 @@ public class RobotContainer {
         mDriverController.x()
                 .onTrue(mShooterWrist.resetToAngle(ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
+
+        mDriverController.back().toggleOnTrue(mShooterWrist.toggleDisabled());
+
         // Operator controls
         // Buttons:
         mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
