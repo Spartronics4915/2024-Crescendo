@@ -183,14 +183,8 @@ public class RobotContainer {
             NamedCommands.registerCommand("MiddleLower2", mShooter.setShooterStateCommand(ShooterState.ON)
                     .andThen(CompositeAutos.lowerTwoNote()));
 
-            mAutoChooser = AutoBuilder.buildAutoChooser();
-
-            mAutoChooser.addOption(
-                    "Preloaded only",
-                    Commands.parallel(
-                            mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT),
-                            mShooter.setShooterStateCommand(ShooterState.ON).withTimeout(2)
-                                    .andThen(DigestCommands.in().withTimeout(5))));
+            // mAutoChooser = AutoBuilder.buildAutoChooser();
+            mAutoChooser = buildAutoChooser();
 
             SmartDashboard.putData("Auto Chooser", mAutoChooser);
 
@@ -346,6 +340,23 @@ public class RobotContainer {
                 .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
 
         // return mAutoChooser.getSelected();
+    }
+
+    private SendableChooser<Command> buildAutoChooser() {
+        SendableChooser<Command> out = new SendableChooser<Command>();
+
+        out.setDefaultOption("None", Commands.none());
+        
+        out.addOption("Preloaded only", AutoComponents.shootPreloaded());
+        
+        out.addOption("Center 4-note", CompositeAutos.generateCenterFourNote());
+
+        out.addOption("Center 4-note faster", CompositeAutos.generateCenterFourNoteFaster());
+
+        out.addOption("Middle Lower 2", mShooter.setShooterStateCommand(ShooterState.ON)
+                .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));
+
+        return out;
     }
 
     public SwerveDrive getSwerveDrive() {
