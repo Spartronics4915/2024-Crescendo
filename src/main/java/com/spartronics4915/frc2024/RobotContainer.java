@@ -336,8 +336,10 @@ public class RobotContainer {
         // return mShooter.setShooterStateCommand(ShooterState.ON)
         // .andThen(AutoBuilder.buildAuto("FastCenterRow4NoteKickoffOnly"));
 
-        return mShooter.setShooterStateCommand(ShooterState.ON)
-                .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
+        // return mShooter.setShooterStateCommand(ShooterState.ON)
+        //         .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
+
+        return mAutoChooser.getSelected();
 
         // return mAutoChooser.getSelected();
     }
