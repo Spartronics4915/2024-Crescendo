@@ -364,12 +364,12 @@ public class RobotContainer {
                 // return AutoBuilder.followPath(PathPlannerPath.fromPathFile("CenterToFirstRowTop"));
 
                 // return mShooter.setShooterStateCommand(ShooterState.ON)
-                //                 .andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
-                return mShooter.setShooterStateCommand(ShooterState.ON)
-                                .andThen(AutoBuilder.buildAuto("FastCenterRow4NoteKickoffOnly"));
+                // .andThen(AutoBuilder.buildAuto("CenterRow4NoteKickoffOnly"));
+                // return mShooter.setShooterStateCommand(ShooterState.ON)
+                // .andThen(AutoBuilder.buildAuto("FastCenterRow4NoteKickoffOnly"));
 
-                // return
-                // mShooter.setShooterStateCommand(ShooterState.ON).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
+                return mShooter.setShooterStateCommand(ShooterState.ON)
+                                .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
 
                 // return mAutoChooser.getSelected();
         }
@@ -415,14 +415,16 @@ public class RobotContainer {
                         return Commands.sequence(
                                         AutoComponents.shootPreloaded(),
                                         AutoBuilder.followPath(entryPath),
-                                        LimelightAuto.driveToNote(1, Optional.of(Double.valueOf(-18)),
-                                                        Optional.of(Double.valueOf(0.5))),
+                                        Commands.parallel(AutoComponents.groundIntake(),
+                                                        LimelightAuto.driveToNote(1, Optional.of(Double.valueOf(-18)),
+                                                                        Optional.of(Double.valueOf(0.5)))),
                                         AutoBuilder.followPath(returnPath),
                                         AutoFactory.loadAndAimCommand(),
                                         AutoComponents.shootFromLoaded(),
                                         AutoBuilder.followPath(entryPath5),
-                                        LimelightAuto.driveToNote(1, Optional.of(Double.valueOf(-18)),
-                                                        Optional.of(Double.valueOf(0.5))),
+                                        Commands.parallel(AutoComponents.groundIntake(),
+                                                        LimelightAuto.driveToNote(1, Optional.of(Double.valueOf(-18)),
+                                                                        Optional.of(Double.valueOf(0.5)))),
                                         AutoBuilder.followPath(returnPath5),
                                         AutoFactory.loadAndAimCommand(),
                                         AutoComponents.shootFromLoaded());
