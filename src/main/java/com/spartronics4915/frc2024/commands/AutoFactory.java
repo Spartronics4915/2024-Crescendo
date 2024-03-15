@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
@@ -125,12 +126,34 @@ public final class AutoFactory {
         return AutoComponents.shootPreloaded().andThen(Commands.sequence(seq));
     }
 
+    public static Command generateVisionAuto(StartingPosition startingPosition, PathSet... paths) {
+        return resetPoseDeferred(startingPosition).andThen(generateVisionAuto(paths));
+    }
+
     public static Command generateBlindAuto(PathPlannerPath... paths) {
         return generateBlindAuto(List.of(paths));
     }
 
     public static Command generateBlindAuto(List<PathPlannerPath> paths) {
         return Commands.print("generateBlindAuto not yet implemented!");
+    }
+
+    private static Command resetPose(Pose2d pose) {
+        return Commands.runOnce(() -> SwerveDrive.getInstance().resetPose(pose));
+    }
+
+    private static Command resetPoseDeferred(StartingPosition startingPosition) {
+        return Commands.defer(() -> {
+            var allianceOpt = DriverStation.getAlliance();
+            if (allianceOpt.isEmpty()) {
+                return Commands.print("AutoFactory.resetPoseDeferred: could not get alliance!");
+            }
+            var alliance = allianceOpt.get();
+
+            var pose = startingPosition.getPose(alliance);
+
+            return resetPose(pose);
+        }, Set.of());
     }
 
     private static Command generateAutoSegment(PathSet pathSet) {
