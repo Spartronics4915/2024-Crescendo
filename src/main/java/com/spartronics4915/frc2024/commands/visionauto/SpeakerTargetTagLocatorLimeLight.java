@@ -17,7 +17,8 @@ public class SpeakerTargetTagLocatorLimeLight implements TargetDetectorInterface
     public SpeakerTargetTagLocatorLimeLight(LimelightDevice limelight) {
         this.limelight = limelight;
 
-         AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
+        AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
+
         TAG_HEIGHT = fieldLayout.getTagPose(7).get().getTranslation().getZ();
     }
 
