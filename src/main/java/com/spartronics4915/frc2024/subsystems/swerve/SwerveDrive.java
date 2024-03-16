@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -404,13 +405,21 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private void updateOdometry() {
+        var angle = getAngle();
+        var allianceOpt = DriverStation.getAlliance();
+        if (allianceOpt.isPresent() && allianceOpt.get() == Alliance.Red) {
+            angle = angle.unaryMinus();
+        }
+
         mPoseEstimatorWriteLock.lock();
+
         try {
-            mPoseEstimator.update(getAngle(), getModulePositions());
+            mPoseEstimator.update(angle, getModulePositions());
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
             throw e;
         }
+
         mPoseEstimatorWriteLock.unlock();
     }
 
