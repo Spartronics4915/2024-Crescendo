@@ -25,6 +25,7 @@ import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
+import com.spartronics4915.frc2024.commands.AutoFactory.StartingPosition;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -351,9 +352,9 @@ public class RobotContainer {
         
         out.addOption("Preloaded only", AutoComponents.shootPreloaded());
         
-        out.addOption("Center 4-note", CompositeAutos.generateCenterFourNote());
+        out.addOption("Center 4-note", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNote()));
 
-        out.addOption("Center 4-note faster", CompositeAutos.generateCenterFourNoteFaster());
+        out.addOption("Center 4-note faster", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNoteFaster()));
 
         out.addOption("Middle Lower 2", mShooter.setShooterStateCommand(ShooterState.ON)
                 .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));

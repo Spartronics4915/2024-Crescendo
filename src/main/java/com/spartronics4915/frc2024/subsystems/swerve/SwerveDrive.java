@@ -340,9 +340,9 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.lock();
         try {
             if (!Robot.TELEOP_TIMER.hasElapsed(5) || DriverStation.isAutonomous()/*Timer.getMatchTime() > 130*/) {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.2, 0.2, 3));
             } else {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.15, 0.15, 3.0));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.35, 0.35, 3.0));
             }
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
@@ -374,6 +374,10 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.lock();
         mPoseEstimator.resetPosition(getAngle(), getModulePositions(), newPose);
         mPoseEstimatorWriteLock.unlock();
+    }
+
+    public Command resetPoseCommand(final Pose2d newPose) {
+        return Commands.runOnce(() -> this.resetPose(newPose));
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {

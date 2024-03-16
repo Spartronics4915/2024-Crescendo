@@ -14,6 +14,7 @@ import java.util.Set;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.GeometryUtil;
 import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
@@ -48,10 +49,25 @@ public final class AutoFactory {
         public Pose2d getPose(DriverStation.Alliance alliance) {
             return alliance == Alliance.Red ? getPoseRed() : getPoseBlue();
         }
+
+        public static Command setStartingPosition(StartingPosition startingPosition) {
+            return Commands.defer(
+                    () -> {
+                        var allianceOpt = DriverStation.getAlliance();
+                        if (allianceOpt.isEmpty()) {
+                            return Commands.print("setStartingPose: no alliance detected");
+                        }
+                        var alliance = allianceOpt.get();
+
+                        var pose = startingPosition.getPose(alliance);
+                        return SwerveDrive.getInstance().resetPoseCommand(pose);
+                    },
+                    Set.of());
+        }
     }
 
     public static Pose2d mirrorPose(Pose2d pose) {
-        return new Pose2d(16.541 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation()));
+        return GeometryUtil.flipFieldPose(pose);
     }
    
     public static final class PathSet {

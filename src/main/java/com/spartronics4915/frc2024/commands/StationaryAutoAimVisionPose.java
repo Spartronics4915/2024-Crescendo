@@ -15,10 +15,11 @@ public class StationaryAutoAimVisionPose {
 
         Command useSpeakerTagCommand = new LockOnOpenLoopCommand(speakerTargetDetector);
         Command usePoseCommand = new StationaryAutoAimCommand(mTarget);
-        return Commands.either(useSpeakerTagCommand,
-                usePoseCommand,
-                () -> {
-                    return speakerTargetDetector.getClosestVisibleTarget().isPresent();
-                });
+        return useSpeakerTagCommand;
+        // return Commands.either(useSpeakerTagCommand,
+        //         usePoseCommand,
+        //         () -> {
+        //             return speakerTargetDetector.getClosestVisibleTarget().isPresent();
+        //         });
     }
 }
