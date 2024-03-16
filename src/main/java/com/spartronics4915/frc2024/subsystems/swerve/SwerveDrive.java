@@ -410,10 +410,10 @@ public class SwerveDrive extends SubsystemBase {
 
     private void updateOdometry() {
         var angle = getAngle();
-        var allianceOpt = DriverStation.getAlliance();
-        if (allianceOpt.isPresent() && allianceOpt.get() == Alliance.Red) {
-            angle = angle.unaryMinus();
-        }
+        // var allianceOpt = DriverStation.getAlliance();
+        // if (allianceOpt.isPresent() && allianceOpt.get() == Alliance.Red) {
+        //     angle = angle.unaryMinus();
+        // }
 
         mPoseEstimatorWriteLock.lock();
 
