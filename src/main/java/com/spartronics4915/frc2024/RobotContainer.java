@@ -229,7 +229,7 @@ public class RobotContainer {
         // mDriverController.leftStick().onTrue(new HomingCommand());
         mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
-        mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
+        // mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
