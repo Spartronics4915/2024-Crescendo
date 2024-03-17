@@ -207,7 +207,7 @@ public final class Constants {
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91/*291*/); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-40); 
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-80); 
 
             public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
