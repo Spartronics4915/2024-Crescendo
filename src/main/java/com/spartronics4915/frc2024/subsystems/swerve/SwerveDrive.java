@@ -192,6 +192,11 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
 
+                if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red && mIsFieldRelative) {
+                    cs.vxMetersPerSecond = -cs.vxMetersPerSecond;
+                    cs.vyMetersPerSecond = -cs.vyMetersPerSecond;
+                }
+
                 drive(cs, mIsFieldRelative);
             }
 
@@ -401,7 +406,11 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void resetYaw() {
-        mIMU.reset();
+        double newYaw = 0;
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            newYaw = 180;
+        }
+        mIMU.setYaw(newYaw);
     }
 
     public Command resetYawCommand() {
