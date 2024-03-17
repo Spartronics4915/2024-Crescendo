@@ -43,11 +43,12 @@ public class AlignToSpeakerCommand extends Command {
             triggeredAlign = false;
             cantSeeTag = false;
             desiredRotation = new Rotation2d();
+            /*
             var alliance = DriverStation.getAlliance();
             if (alliance.isEmpty()) {
                 System.out.println("Ending AlignToSpeakerCommand as there is no alliance set.");
                 cancellingEarly = true;
-            } else if (alliance.get().equals(Alliance.Blue)) {
+            }else if (alliance.get().equals(Alliance.Blue)) {
                 priorityID = 7;
             } else if (alliance.get().equals(Alliance.Red)) {
                 priorityID = 4;
@@ -55,10 +56,11 @@ public class AlignToSpeakerCommand extends Command {
                 System.out.println("Error with AlignToSpeakerCommand! Failed to get alliance data!");
                 cancellingEarly = true;
             }
+            */
             if (!cancellingEarly) {
             mSwerve.decoupleRotation();
             mBling.setMode(BlingModes.SOLID);
-            mLimelight.setPriorityTagID(priorityID);
+            // mLimelight.setPriorityTagID(priorityID);
             }
         }
     }
@@ -94,7 +96,7 @@ public class AlignToSpeakerCommand extends Command {
         if (!cancellingEarly) {
             mSwerve.recoupleRotation();
             mBling.setMode(BlingModes.OFF);
-            mLimelight.resetPriorityTagID();
+            // mLimelight.resetPriorityTagID();
         }
     }
 }

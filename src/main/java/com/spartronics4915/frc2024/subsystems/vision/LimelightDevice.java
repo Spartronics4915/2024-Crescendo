@@ -5,15 +5,19 @@ import java.util.Optional;
 import com.spartronics4915.frc2024.LimelightHelpers;
 import com.spartronics4915.frc2024.Constants.Vision.VisionPipelines;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -30,6 +34,7 @@ public class LimelightDevice extends SubsystemBase {
     private final boolean mHasCoral;
     private final Field2d mField;
     private final SlewRateLimiter mRateLimiter;
+    private final Debouncer mDebouncer;
     private final GenericEntry ignoreVisionReadings;
     private final GenericEntry mDisabled;
 
@@ -47,6 +52,7 @@ public class LimelightDevice extends SubsystemBase {
         checkIfValid();
         mHasCoral = hasCoral;
         mRateLimiter = new SlewRateLimiter(246);
+        mDebouncer = new Debouncer(0.5, DebounceType.kFalling);
         ShuffleboardTab overview = Shuffleboard.getTab("Overview");
         ignoreVisionReadings = overview.add("IGNORE " + name, false)
                                        .withWidget(BuiltInWidgets.kToggleButton)
@@ -61,7 +67,15 @@ public class LimelightDevice extends SubsystemBase {
         if (!NetworkTableInstance.getDefault().getTable(mName).getKeys().isEmpty()) {
             mValid = true;
             LimelightHelpers.setPipelineIndex(mName, mPipeline.pipeline);
-            LimelightHelpers.setPriorityTagID(mName, -1);
+            int priorityTag = -1;
+            if (mName.equals("limelight-bob")) {
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+                if (!alliance.isEmpty()) {
+                    if (alliance.get() == Alliance.Blue) priorityTag = 7; // Center of blue speaker
+                    else if (alliance.get() == Alliance.Red) priorityTag = 4; // Center of red speaker
+                }
+            }
+            LimelightHelpers.setPriorityTagID(mName, priorityTag);
             // LimelightHelpers.setLEDMode_ForceOff(mName);
         }
     }
@@ -71,7 +85,7 @@ public class LimelightDevice extends SubsystemBase {
     }
 
     public Optional<VisionMeasurement> getVisionMeasurement() {
-        if (ignoreVisionReadings.getBoolean(false) || !getTv() || mPipeline.isDetector || !pipelineLoaded()) {
+        if (ignoreVisionReadings.getBoolean(false) || mPipeline.isDetector || !pipelineLoaded()) {
             return Optional.empty();
         }
         // if (numberOfTagsSeen() < 2) return Optional.empty();
@@ -100,6 +114,10 @@ public class LimelightDevice extends SubsystemBase {
     public boolean getTv() {
         if (!isValid()) return false;
         return LimelightHelpers.getTV(mName);
+    }
+
+    public boolean getTvDebounce() {
+        return mDebouncer.calculate(getTv());
     }
 
     /**

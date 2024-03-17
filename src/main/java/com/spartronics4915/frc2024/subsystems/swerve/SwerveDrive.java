@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -87,7 +88,7 @@ public class SwerveDrive extends SubsystemBase {
 
         {
             final var stateStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1);
-            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.4, 0.4, 3.0);
+            final var visionMeasurementStdDevs = MatBuilder.fill(Nat.N3(), Nat.N1(), 0.15, 0.15, 3.0);
 
             // TODO: change initial pose estimate
             mPoseEstimator = new SwerveDrivePoseEstimator(kKinematics, getAngle(), getModulePositions(), new Pose2d(),
@@ -128,6 +129,9 @@ public class SwerveDrive extends SubsystemBase {
         return mInstance;
     }
 
+    public Command stopChassisCommand() {
+        return Commands.runOnce(()->{drive(new ChassisSpeeds(0, 0,0), false);});
+    }
     /**
      * Drives the robot given a {@link ChassisSpeeds} and whether to drive field relative or not.
      */
@@ -151,7 +155,7 @@ public class SwerveDrive extends SubsystemBase {
         if (rotationIndependent) {
             
             var ac_c = mAngleController.calculate(getAngle().getRadians(), mDesiredAngle.getRadians());
-            System.out.println(ac_c);
+            //System.out.println(ac_c);
             _speeds.omegaRadiansPerSecond = ac_c;
         }
 
@@ -188,6 +192,11 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
 
+                if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red && mIsFieldRelative) {
+                    cs.vxMetersPerSecond = -cs.vxMetersPerSecond;
+                    cs.vyMetersPerSecond = -cs.vyMetersPerSecond;
+                }
+
                 drive(cs, mIsFieldRelative);
             }
 
@@ -195,6 +204,14 @@ public class SwerveDrive extends SubsystemBase {
                 return Math.signum(x) * Math.pow(x, 2);
             }
         };
+    }
+
+    public void stop() {
+        driveRobotRelative(new ChassisSpeeds());
+    }
+
+    public Command stopCommand() {
+        return runOnce(this::stop);
     }
 
     public void setBrakeMode() {
@@ -265,6 +282,9 @@ public class SwerveDrive extends SubsystemBase {
      */
     public void recoupleRotation() {
         mRotationIsIndependent = false;
+        var ccs = getRobotRelativeSpeeds();
+        var tcs = new ChassisSpeeds(ccs.vxMetersPerSecond, ccs.vyMetersPerSecond, 0);
+        drive(tcs, false);
     }
 
     /**
@@ -325,9 +345,9 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.lock();
         try {
             if (!Robot.TELEOP_TIMER.hasElapsed(5) || DriverStation.isAutonomous()/*Timer.getMatchTime() > 130*/) {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.2, 0.2, 3));
             } else {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.4, 0.4, 3.0));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.35, 0.35, 3.0));
             }
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
@@ -361,6 +381,10 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.unlock();
     }
 
+    public Command resetPoseCommand(final Pose2d newPose) {
+        return Commands.runOnce(() -> this.resetPose(newPose));
+    }
+
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
     }
@@ -382,7 +406,11 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void resetYaw() {
-        mIMU.reset();
+        double newYaw = 0;
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            newYaw = 180;
+        }
+        mIMU.setYaw(newYaw);
     }
 
     public Command resetYawCommand() {
@@ -390,23 +418,27 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private void updateOdometry() {
+        var angle = getAngle();
+        // var allianceOpt = DriverStation.getAlliance();
+        // if (allianceOpt.isPresent() && allianceOpt.get() == Alliance.Red) {
+        //     angle = angle.unaryMinus();
+        // }
+
         mPoseEstimatorWriteLock.lock();
+
         try {
-            mPoseEstimator.update(getAngle(), getModulePositions());
+            mPoseEstimator.update(angle, getModulePositions());
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
             throw e;
         }
+
         mPoseEstimatorWriteLock.unlock();
     }
-
-    StructPublisher<Pose2d> posePublish = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("robot pose", Pose2d.struct).publish();
 
     @Override
     public void periodic() {
         updateOdometry();
-
-        posePublish.accept(getPose());
 
         boolean logSwerveModules = false;
         if (logSwerveModules) {

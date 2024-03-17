@@ -65,8 +65,8 @@ public class StationaryAutoAimCommand extends Command{
             return;
         }
         var targetPos = aimingPoint.get() ;
-        var ShooterAngle = getShooterAngle(targetPos);
-        mShooterWrist.publicSetRotationSetPoint(ShooterAngle);
+        // var ShooterAngle = getShooterAngle(targetPos);
+        // mShooterWrist.publicSetRotationSetPoint(ShooterAngle);
 
         targetPublisher.accept(new Pose3d(targetPos.plus(new Translation3d(
             mSwerve.getPose().getTranslation().getX(),

@@ -4,17 +4,24 @@
 
 package com.spartronics4915.frc2024;
 
+import com.spartronics4915.frc2024.commands.LimelightAuto;
+import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.visionauto.LockOnOpenLoopCommand;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.datalog.DataLog;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
@@ -27,9 +34,9 @@ public class Robot extends TimedRobot {
     public void robotInit() {
 
         DataLogManager.logNetworkTables(true);
-        
+
         log = DataLogManager.getLog();
-        
+
         DriverStation.startDataLog(log, true);
 
         mRobotContainer = new RobotContainer();
@@ -71,6 +78,15 @@ public class Robot extends TimedRobot {
             mAutonomousCommand.cancel();
         }
         TELEOP_TIMER.start();
+
+        if (RobotBase.isSimulation()) {
+
+            mRobotContainer.getSwerveDrive().resetPose(new Pose2d(2.5, 7, new Rotation2d()));
+            // mRobotContainer.getSwerveDrive().resetPose(new Pose2d(14, 4, Rotation2d.fromDegrees(180)));
+            // LimelightAuto.driveToNote().schedule();
+            // new LockOnCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
+            // new LockOnOpenLoopCommand(VisionSubsystem.getInstance().getSpeakerTagLocator()).schedule();
+        }
     }
 
     @Override
@@ -94,11 +110,12 @@ public class Robot extends TimedRobot {
     /**
      * this method is called every time a robot is enabled or disabled
      */
-    public void modeInit(){
-        
-        //Safety for trapezoid
+    public void modeInit() {
+
+        // Safety for trapezoid
         for (var trapezoid : ModeSwitchInterface.ModeSwitchSubsystems) {
-            if (trapezoid != null) trapezoid.modeSwitchAction();
+            if (trapezoid != null)
+                trapezoid.modeSwitchAction();
         }
     }
 }

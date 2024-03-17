@@ -102,7 +102,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
 
 
         // Limit PID Output for Testing
-        mPid.setOutputRange(-0.6, 0.6);
+        // mPid.setOutputRange(-0.6, 0.6);
 
         // CHECKUP Decide on Vel conversion Factor (aka use rpm?)
 
@@ -388,6 +388,7 @@ public class Elevator extends SubsystemBase implements TrapezoidSimulatorInterfa
         @Override
         public void modeSwitchAction() {
             updateCurrStateToReal();
+            mIsManual = false;
         }
 
     /**

@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024;
 import static com.spartronics4915.frc2024.Constants.Drive.kFrontLeft;
 import static com.spartronics4915.frc2024.Constants.IntakeAssembly.ElevatorConstants.kMetersToRotation;
 import static com.spartronics4915.frc2024.Constants.ShooterConstants.kShootSpeed;
+import static com.spartronics4915.frc2024.Constants.ShooterConstants.kTargetRPM;
 
 import java.util.stream.Stream;
 
@@ -85,7 +86,7 @@ public final class Constants {
 
         // theoretical maximum with NEO and L2 MK4i
         public static final double kMaxSpeed = Units.feetToMeters(15.1);
-        public static final double kMaxAcceleration = 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
+        public static final double kMaxAcceleration = 5; // 9.81 * kTreadCoefficientOfFriction * kTreadWearAdjustment;
 
         public static final double kMaxAngularSpeed = kMaxSpeed / kChassisRadius;
         public static final double kMaxAngularAcceleration = kMaxAcceleration / kChassisRadius;
@@ -143,7 +144,7 @@ public final class Constants {
             // TODO find values for the intake wirst and elevator
             GROUNDPICKUP(Rotation2d.fromDegrees(-30), 0.0), 
             STOW(Rotation2d.fromDegrees(90), 0.0), 
-            AMP(Rotation2d.fromDegrees(-13.408), 0.335614), //TODO find elevator height 
+            AMP(Rotation2d.fromDegrees(-23), 0.36), //TODO find elevator height 
             Climb(Rotation2d.fromDegrees(-20), 4.3), 
             LOAD(Rotation2d.fromDegrees(65), 0.0), 
             SOURCE(Rotation2d.fromDegrees(80.0), 0.143993),  //TODO find elevator height 
@@ -163,16 +164,16 @@ public final class Constants {
 
         public static final class IntakeConstants {// [ ] Intake constants
             public static final MotorConstants kMotorConstants = new MotorConstants(15, MotorType.kBrushless, true,
-                    IdleMode.kBrake, 80);
+                    IdleMode.kBrake, 60);
             public static final MotorConstants kFollowerMotorConstants = new MotorConstants(23, MotorType.kBrushless, true,
-                IdleMode.kBrake, 80);
+                IdleMode.kBrake, 60);
 
             public static final double kMainToFollowRatio = -1/2 * 6748.0/5676.0;
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = -0.5; // placeholder
-            public static final double kLoadSpeed = -0.5; // placeholder
+            public static final double kInSpeed = 0.8; // placeholder
+            public static final double kLoadSpeed = 0.5; // placeholder
             public static final double kOutSpeed = 0.5; // placeholder
             public static final double kOffSpeed = 0;
 
@@ -196,6 +197,12 @@ public final class Constants {
             // public static final IntakeAssemblyState kStartupState = IntakeAssemblyState.STOW;
 
             public static final double kMeterSafetyLimit = 0.23; // HACK tested in sim
+
+            public static final int kCANCoderID = 25;
+
+            public static final Rotation2d kCanCoderResetAngle = Rotation2d.fromDegrees(15);
+
+            public static final double kCANCoderOffset = 0.0;
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
@@ -278,13 +285,15 @@ public final class Constants {
             public static final double kLimitSwitchGoto = 0; // Where the elevator will go to if the limit switch is
                                                              // triggered
             public static final double kMinMeters = 0.0;
-            public static final double kMaxMeters = 0.36; // hack untested
+            public static final double kMaxMeters = 0.38; // hack untested
         }
     }
 
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
             SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)), // TODO find Value
+            SUB_TELE(Rotation2d.fromDegrees(58.7)),
+            HARD_STOP(Rotation2d.fromDegrees(14.9)), //TODO find value
             STOW(Rotation2d.fromDegrees(68));
 
             public final Rotation2d shooterAngle;
@@ -294,23 +303,23 @@ public final class Constants {
             }
         }
 
-        public static double kWristToRotationsRate = 72;
+        public static double kWristToRotationsRate = 66.5;
 
         public static final MotorConstants kMotorConstants = new MotorConstants(21, MotorType.kBrushless, false,
                 IdleMode.kBrake, 0); // placeholder
         
         
     
-        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(69); //only when above the safety height
+        public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(80); //only when above the safety height
         public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
 
-        public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
+        // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
         public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
                                                                                                                    // untested
                                                                                                                    // values
 
-        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(0.05).getRotations(); // 6 degrees
+        public static final double kAimedAtTargetThreshold = Rotation2d.fromDegrees(2).getRotations(); // 6 degrees
 
         public static final int kLimitSwitchChannel = 5;
         public static final double kLimitSwitchEncoderReading = Rotation2d.fromDegrees(70).getRotations();
@@ -326,16 +335,16 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(P, 0.0, 0.0);
+            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
         }
 
         public static final Constraints kConstraints;
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.2;
+            final double timeMinToMaxSeconds = 0.6;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.05;
+            final double timeToFullSpeedSeconds = 0.15;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
@@ -357,11 +366,11 @@ public final class Constants {
         public static final PIDFConstants kPIDconstants = new PIDFConstants(0.6, 2.4, 0.0375, 0.0); // K_u = 1.0, T_u = 0.5
         public static final double kOffSpeed = 0.0; // unsure if this is necessary
         public static final double kShootSpeed = 5600; // placeholder
-        public static final double kDiff = 50;
+        public static final double kDiff = 200;
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 5500;
+        public static final double kTargetRPM = 3500;
     }
 
     public static final class AutoAimConstants {
@@ -400,8 +409,10 @@ public final class Constants {
 
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
-
-        public static final double kShooterSpeed = (kShootSpeed/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0)*(0.038 /*radius (m) */); // needs to be in m/s
+        public static final double kFlyWheelTransferRate = 0.9; //CHECKUP kinda a guess
+        public static final double kFlyWheelRadPerSec = (kTargetRPM/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
+        public static final double kFlyWheelRadius = 0.038;
+        public static final double kShooterSpeed = kFlyWheelTransferRate * kFlyWheelRadius * kFlyWheelRadPerSec; // needs to be in m/s
         public static final double kShooterHeight = 0.1681988;
         public static final double kMaxDistance = 10.0; // Needs units, the maximum relative distance a target can be
                                                         // from the robot for autoaim

@@ -19,26 +19,55 @@ public class DigestCommands {
 
     public static Command in() {
         return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
-            .andThen(new WaitUntilCommand(IntakeAssemblyCommands::atTarget))
-            .andThen(
-                    mIntake.setStateCommand(IntakeState.LOAD)
-                        .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN)))
-            .alongWith(Commands.idle())
-            .finallyDo(() -> {
-                mIntake.setState(IntakeState.OFF);
-                mShooter.setConveyorState(ConveyorState.OFF);
-            });
+                .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+                .andThen(inUnsafe());
+    }
+
+    /**
+     * Same as {@link in} but without moving the intake to the loading position.
+     */
+    public static Command inUnsafe() {
+        return mIntake.setStateCommand(IntakeState.LOAD)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                });
+    }
+
+    public static Command inFromLoaded() {
+        return mIntake.setStateCommand(IntakeState.LOAD)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.SHOOTING))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                });
     }
 
     public static Command out() {
         return mIntake.setStateCommand(IntakeState.OUT)
-            .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
-            .alongWith(mShooter.setShooterStateCommand(ShooterState.BACK))
-            .alongWith(Commands.idle())
-            .finallyDo(() -> {
-                mIntake.setState(IntakeState.OFF);
-                mShooter.setConveyorState(ConveyorState.OFF);
-                mShooter.setShooterState(ShooterState.OFF);
-            });
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OUT))
+                .alongWith(mShooter.setShooterStateCommand(ShooterState.BACK))
+                .alongWith(Commands.idle())
+                .finallyDo(() -> {
+                    mIntake.setState(IntakeState.OFF);
+                    mShooter.setConveyorState(ConveyorState.OFF);
+                    mShooter.setShooterState(ShooterState.OFF);
+                });
+    }
+
+    public static Command startLoadingToShoot() {
+        return IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
+                .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget))
+                .andThen(mIntake.setStateCommand(IntakeState.LOAD)
+                        .alongWith(mShooter.setConveyorStateCommand(ConveyorState.SHOOTING)));
+    }
+
+    public static Command turnOffAllIntakes() {
+
+        return mIntake.setStateCommand(IntakeState.OFF)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OFF));
     }
 }
