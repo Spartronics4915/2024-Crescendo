@@ -267,7 +267,7 @@ public class RobotContainer {
 
         // misc
         mOperatorController.leftStick()
-                .onTrue(mShooterWrist.setStateCommand(ShooterWristState.SUBWOOFER_SHOT));
+                .onTrue(mShooterWrist.setStateCommand(ShooterWristState.SUB_TELE));
 
         mOperatorController.rightStick()
                 .onTrue(mElevator.setTargetCommand(IntakeAssemblyState.Climb));
