@@ -81,6 +81,10 @@ public class TableAutoAimCommand extends Command {
         Rotation2d predictedAngle = getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy()));
         Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(2));
 
+        if (!mVision.getBob().getTv()) {
+            return;
+        }
+
         mShooterWrist.publicSetRotationSetPoint(correctedAngle);
     }
 
