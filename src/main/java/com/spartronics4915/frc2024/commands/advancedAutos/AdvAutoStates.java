@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Time;
 
@@ -16,7 +18,7 @@ public class AdvAutoStates {
     public static final Measure<Time> kNotePresenceDigestThreshold= Seconds.of(0.1);
 
 
-    public static enum AutoState{
+    public static enum AutoStates{
         SHOOT,
         HUNT,
         SCAN,
@@ -31,6 +33,8 @@ public class AdvAutoStates {
         OUTSIDE
     }
     public static NotePresence NotePresenceState = NotePresence.LOADED;
+    public static AutoStates AutoState = AutoStates.AIM;
+
 
     private static void setState(NotePresence state){
         NotePresenceState = state;
@@ -54,4 +58,13 @@ public class AdvAutoStates {
         
     }
     
+
+    //logging stuff
+    private static StringPublisher NotePresencePublisher = NetworkTableInstance.getDefault().getTable("StateLogging").getStringTopic("NotePresence").publish();
+    private static StringPublisher AutoStatePublisher = NetworkTableInstance.getDefault().getTable("StateLogging").getStringTopic("AutoState").publish();
+
+    public static void updateStateLogs(){
+        NotePresencePublisher.accept(NotePresenceState.name());
+        AutoStatePublisher.accept(AutoState.name());
+    }
 }
