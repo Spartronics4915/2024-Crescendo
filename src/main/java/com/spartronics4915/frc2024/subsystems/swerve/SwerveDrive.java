@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -191,6 +192,11 @@ public class SwerveDrive extends SubsystemBase {
                 cs.vyMetersPerSecond = inputy * kMaxSpeed;
                 cs.omegaRadiansPerSecond = inputomega * kMaxAngularSpeed;
 
+                if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red && mIsFieldRelative) {
+                    cs.vxMetersPerSecond = -cs.vxMetersPerSecond;
+                    cs.vyMetersPerSecond = -cs.vyMetersPerSecond;
+                }
+
                 drive(cs, mIsFieldRelative);
             }
 
@@ -339,9 +345,9 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.lock();
         try {
             if (!Robot.TELEOP_TIMER.hasElapsed(5) || DriverStation.isAutonomous()/*Timer.getMatchTime() > 130*/) {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.1, 0.1, 0.1));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.2, 0.2, 3));
             } else {
-                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.15, 0.15, 3.0));
+                mPoseEstimator.addVisionMeasurement(cameraPose, t, MatBuilder.fill(Nat.N3(), Nat.N1(), 0.35, 0.35, 3.0));
             }
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
@@ -375,6 +381,10 @@ public class SwerveDrive extends SubsystemBase {
         mPoseEstimatorWriteLock.unlock();
     }
 
+    public Command resetPoseCommand(final Pose2d newPose) {
+        return Commands.runOnce(() -> this.resetPose(newPose));
+    }
+
     public ChassisSpeeds getRobotRelativeSpeeds() {
         return kKinematics.toChassisSpeeds(Stream.of(mModules).map(m -> m.getState()).toArray(SwerveModuleState[]::new));
     }
@@ -396,7 +406,11 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public void resetYaw() {
-        mIMU.reset();
+        double newYaw = 0;
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red) {
+            newYaw = 180;
+        }
+        mIMU.setYaw(newYaw);
     }
 
     public Command resetYawCommand() {
@@ -404,13 +418,21 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     private void updateOdometry() {
+        var angle = getAngle();
+        // var allianceOpt = DriverStation.getAlliance();
+        // if (allianceOpt.isPresent() && allianceOpt.get() == Alliance.Red) {
+        //     angle = angle.unaryMinus();
+        // }
+
         mPoseEstimatorWriteLock.lock();
+
         try {
-            mPoseEstimator.update(getAngle(), getModulePositions());
+            mPoseEstimator.update(angle, getModulePositions());
         } catch (Exception e) {
             mPoseEstimatorWriteLock.unlock();
             throw e;
         }
+
         mPoseEstimatorWriteLock.unlock();
     }
 

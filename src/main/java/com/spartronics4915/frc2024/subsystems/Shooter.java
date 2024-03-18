@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterface {
-    public static final double ON_SPEED = 0.9;
+    public static final double ON_SPEED = 0.85;
     public static final double BACK_SPEED = 0.2;
     public static final double ROLLER_SPEED_DIFFERENCE = 0.1;
 

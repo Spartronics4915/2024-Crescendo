@@ -207,7 +207,7 @@ public final class Constants {
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
             public static final Rotation2d kMaxAngleGround = Rotation2d.fromDegrees(91/*291*/); //only when below the safety height
-            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-40); 
+            public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(-80); 
 
             public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(100.8);
 
@@ -292,6 +292,7 @@ public final class Constants {
     public static final class ShooterWristConstants { // [ ] Shooter Wrist Constants
         public enum ShooterWristState { // Mostly for debug
             SUBWOOFER_SHOT(Rotation2d.fromDegrees(56.6864193)), // TODO find Value
+            SUB_TELE(Rotation2d.fromDegrees(58.7)),
             HARD_STOP(Rotation2d.fromDegrees(14.9)), //TODO find value
             STOW(Rotation2d.fromDegrees(68));
 
@@ -334,7 +335,7 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(4, 0, 0.02);
+            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
         }
 
         public static final Constraints kConstraints;

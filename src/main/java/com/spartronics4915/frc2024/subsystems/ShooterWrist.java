@@ -249,6 +249,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             kPIDconstants.d()
         );
 
+        pid.setIZone(5. / 360);
+
         // SparkPIDController pid = mWristMotor.getPIDController();
 
         // pid.setP(kPIDconstants.p());
