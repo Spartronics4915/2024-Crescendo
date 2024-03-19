@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class AdvAutoStates {
     public static final Measure<Time> kNotePresenceNoiseDebounce = Seconds.of(0.05);
-    public static final Measure<Time> kNotePresenceDigestThreshold= Seconds.of(0.05);
+    public static final Measure<Time> kNotePresenceDigestThreshold= Seconds.of(0.1);
 
 
     public static enum AutoStates{
