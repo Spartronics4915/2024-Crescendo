@@ -115,10 +115,10 @@ public final class Constants {
 
         public static final double kOdometryUpdatePeriod = 0.01;
 
-        public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, true);
+        public static final ReplanningConfig kReplanningConfig = new ReplanningConfig(true, false);
         public static final HolonomicPathFollowerConfig kPPConfig = new HolonomicPathFollowerConfig(
-                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
-                new com.pathplanner.lib.util.PIDConstants(5.0, 0.0, 0.0),
+                new com.pathplanner.lib.util.PIDConstants(3, 0.0, 0.0),
+                new com.pathplanner.lib.util.PIDConstants(3, 0.0, 0.0),
                 kMaxSpeed,
                 kChassisRadius,
                 kReplanningConfig);

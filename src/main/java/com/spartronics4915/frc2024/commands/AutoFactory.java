@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.GeometryUtil;
 import com.spartronics4915.frc2024.RobotContainer;
+import com.spartronics4915.frc2024.commands.visionauto.TargetDetectorInterface;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
@@ -129,7 +130,7 @@ public final class AutoFactory {
     }
 
     private static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(
-            kMaxSpeed, kMaxAcceleration, kMaxAngularSpeed, kMaxAngularAcceleration);
+            kMaxSpeed, 2, kMaxAngularSpeed, kMaxAngularAcceleration);
 
     private AutoFactory() {}
 
@@ -192,12 +193,6 @@ public final class AutoFactory {
 
     }
 
-    private static Command generateNoPauseToShootAutoSegment(PathSet pathSet) {
-
-        Command driveSweepPathCommand = AutoBuilder.followPath(pathSet.sweepPath.get());
-        return Commands.sequence(generateDriveCommand(pathSet.drivePath),
-                AutoComponents.loadWhileDrivingThenStopAndShootIfNoteLoaded(driveSweepPathCommand));
-    }
 
     private static Command generateDriveCommand(PathPlannerPath path) {
         boolean groundIntake = true;
@@ -212,7 +207,7 @@ public final class AutoFactory {
                 Commands.sequence(
                         AutoBuilder.followPath(path),
                         Commands.waitUntil(VisionSubsystem.getInstance()::aliceSeesNote).withTimeout(1),
-                        noteAction));
+                        noteAction, Commands.print("NOTE DONE"))).andThen(Commands.print("Drive DONE"));
     }
 
     private static Command generateSweepCommand(PathSet pathSet) {
@@ -265,4 +260,14 @@ public final class AutoFactory {
     private static Command shootCommand() {
         return AutoComponents.shootFromLoaded();
     }
+
+    public static Command generatePipelineSegment(PathSet pathSet, TargetDetectorInterface speakerDetector) {
+        Command shootDriveCommand = AutoBuilder.pathfindThenFollowPath(pathSet.sweepPath.get(), PATH_CONSTRAINTS);
+        shootDriveCommand = AutoBuilder.followPath(pathSet.sweepPath.get());
+        return Commands.sequence(
+                generateDriveCommand(pathSet),
+                Commands.print("TRANSITION"),
+                AutoComponents.loadWhileDrivingThenStopAndShootIfNoteLoaded(shootDriveCommand, speakerDetector));
+    }
+
 }

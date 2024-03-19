@@ -1,0 +1,95 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3850551829978148,
+        "y": 6.750071119012919
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5660608484471616,
+        "y": 7.122495892088496
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.6391641502160033,
+        "y": 7.658594664750306
+      },
+      "prevControl": {
+        "x": 1.371084794552565,
+        "y": 7.6606844892771555
+      },
+      "nextControl": {
+        "x": 1.8893648830552228,
+        "y": 7.656644213821965
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.7515306337777306,
+        "y": 7.658594664750306
+      },
+      "prevControl": {
+        "x": 4.429341254505872,
+        "y": 7.697924044975582
+      },
+      "nextControl": {
+        "x": 5.08451758004888,
+        "y": 7.617947234814693
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.171290689126093,
+        "y": 7.339676384573806
+      },
+      "prevControl": {
+        "x": 6.772434880426164,
+        "y": 7.329760370267692
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -7.814166090505021,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.5,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 600.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -1.2221818880644755,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 58.565425955896345,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

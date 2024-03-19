@@ -7,6 +7,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -69,5 +70,22 @@ public class DigestCommands {
 
         return mIntake.setStateCommand(IntakeState.OFF)
                 .alongWith(mShooter.setConveyorStateCommand(ConveyorState.OFF));
+    }
+
+    public static Command intakeToLoaded() {
+
+        Command simCommand = Commands.waitSeconds(2);
+
+        Command startIntake = IntakeAssemblyCommands.setState(IntakeAssemblyState.LOAD)
+        .andThen(Commands.waitUntil(IntakeAssemblyCommands::atTarget)).andThen(
+            mIntake.setStateCommand(IntakeState.LOAD)
+                .alongWith(mShooter.setConveyorStateCommand(ConveyorState.IN))).andThen(Commands.waitUntil(mShooter::beamBreakIsTriggered));
+
+        if(RobotBase.isSimulation()) {
+            return simCommand;
+        }
+        else {
+            return startIntake;
+        }
     }
 }

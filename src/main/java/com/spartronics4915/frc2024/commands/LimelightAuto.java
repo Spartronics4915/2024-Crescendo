@@ -71,13 +71,13 @@ public class LimelightAuto {
                         (noteDetection.get().ty() < noteApproachSlowThreshold.get().doubleValue())) {
                     speed = noteApproachSlowSpeed.get().doubleValue();
                 }
-
+                System.out.println("DriveToNote");
                 mSwerve.drive(new ChassisSpeeds(speed, 0, 0), false);
             });
         }
         return Commands.deadline(
                 Commands.race(
-                        Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote).andThen(Commands.waitSeconds(1)),
+                        Commands.waitUntil(mVisionSubsystem::aliceDoesNotSeeNote),//.andThen(Commands.waitSeconds(1)),
                         Commands.waitUntil(Intake.getInstance()::beamBreakIsTriggered)),
                 Commands.parallel(
                         new LockOnCommand(mVisionSubsystem.getNoteLocator()),

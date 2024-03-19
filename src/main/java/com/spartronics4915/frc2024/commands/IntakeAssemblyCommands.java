@@ -33,7 +33,7 @@ public class IntakeAssemblyCommands {
     }
 
     public static boolean atTarget() {
-        System.out.println("Intake Assembly at target");
+        System.out.println("Calling Intake Assembly at target");
         return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.01);
     }
     
