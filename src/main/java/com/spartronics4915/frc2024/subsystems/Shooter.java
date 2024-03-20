@@ -23,6 +23,7 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -118,6 +119,22 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 conveyorOff();
             }
         }));
+
+        if (RobotBase.isSimulation()) {
+            new Trigger(() -> {
+                return getShooterState() == ShooterState.ON;
+            }).onTrue(
+                Commands.runOnce(() -> {
+                    mSpinUpTimerSim.reset();
+                    mSpinUpTimerSim.start();
+                })
+            ).onFalse(
+                Commands.runOnce(() -> {
+                    mSpinUpTimerSim.reset();
+                    mSpinUpTimerSim.stop();
+                })
+            );
+        }
     }
 
     public boolean beamBreakIsTriggered() {
@@ -229,7 +246,11 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyorMotor.set(0);
     }
 
+    private static Timer mSpinUpTimerSim = new Timer();
     public boolean hasSpunUp() {
+        if (RobotBase.isSimulation()) {
+            mSpinUpTimerSim.hasElapsed(0.1);
+        }
         return (Math.abs(mShooterEncoder.getVelocity()) >= kTargetRPM)
                 && (Math.abs(mShooterFollowMotor.getEncoder().getVelocity()) >= kTargetRPM);
     }
