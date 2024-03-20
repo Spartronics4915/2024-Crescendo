@@ -4,7 +4,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
+import com.spartronics4915.frc2024.Constants.Vision;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
@@ -13,6 +15,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.PIDConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -40,6 +43,19 @@ public class ShuffleBoard {
                 .withProperties(Map.of("Label position", "LEFT")).getEntry();
         map.put(enumValue, i);
         return i;
+    }
+
+    static{
+        ShuffleboardTab tab = Shuffleboard.getTab(DebugTab);
+        tab.add("ground intake", AutoComponents.groundIntake());
+        tab.add("Load into shooter", AutoComponents.loadIntoShooter());
+        tab.add("Shoot from loaded", AutoComponents.shootFromLoaded());
+        tab.add("intake out", Intake.getInstance().setStateCommand(IntakeState.OUT));
+        tab.add("intake off", Intake.getInstance().setStateCommand(IntakeState.OFF));
+        tab.add("intake in", Intake.getInstance().setStateCommand(IntakeState.IN));
+
+
+        // LimelightHelpers.getLatestResults(VisionSubsystem.getInstance().getBob().getName()).targetingResults.targets_Fiducials;
     }
 
     public static class IntakeTabManager {
