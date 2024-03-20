@@ -51,17 +51,15 @@ public class AdvAutoStates {
         shooterBeamBreak.onTrue(Commands.run(() -> setState(NotePresence.LOADED)));
         shooterBeamBreak.onFalse(Commands.run(() -> setState(NotePresence.OUTSIDE)));
         
-        intakeBeamBreak.debounce(kNotePresenceDigestThreshold.in(Seconds)).negate()
-        .and(
-            shooterBeamBreak.debounce(kNotePresenceDigestThreshold.in(Seconds)).negate()
-        ).onTrue(Commands.run(() -> setState(NotePresence.OUTSIDE)));
+        intakeBeamBreak.negate().and(shooterBeamBreak.negate()).debounce(kNotePresenceDigestThreshold.in(Seconds))
+        .onTrue(Commands.run(() -> setState(NotePresence.OUTSIDE)));
         
     }
     
 
     //logging stuff
-    private static StringPublisher NotePresencePublisher = NetworkTableInstance.getDefault().getTable("StateLogging").getStringTopic("NotePresence").publish();
-    private static StringPublisher AutoStatePublisher = NetworkTableInstance.getDefault().getTable("StateLogging").getStringTopic("AutoState").publish();
+    private static StringPublisher NotePresencePublisher = NetworkTableInstance.getDefault().getTable("Logging").getStringTopic("NotePresence").publish();
+    private static StringPublisher AutoStatePublisher = NetworkTableInstance.getDefault().getTable("Logging").getStringTopic("AutoState").publish();
 
     public static void updateStateLogs(){
         NotePresencePublisher.accept(NotePresenceState.name());
