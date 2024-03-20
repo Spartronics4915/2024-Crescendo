@@ -141,6 +141,15 @@ public class RobotContainer {
         // }).onTrue(Commands.runOnce(() -> {
         // DriverStation.reportError("BROWNOUT DETECTED", false);
         // }));
+
+        var mIntake = Intake.getInstance();
+        ShuffleboardTab tab = Shuffleboard.getTab(ShuffleBoard.DebugTab);
+        tab.add("ground intake", AutoComponents.groundIntake());
+        tab.add("Load into shooter", AutoComponents.loadIntoShooter());
+        tab.add("Shoot from loaded", AutoComponents.shootFromLoaded());
+        tab.add("intake out", mIntake.setStateCommand(IntakeState.OUT));
+        tab.add("intake off", mIntake.setStateCommand(IntakeState.OFF));
+        tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
     }
 
     public RobotContainer() {

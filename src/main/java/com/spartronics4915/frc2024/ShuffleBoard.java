@@ -45,18 +45,6 @@ public class ShuffleBoard {
         return i;
     }
 
-    static{
-        ShuffleboardTab tab = Shuffleboard.getTab(DebugTab);
-        tab.add("ground intake", AutoComponents.groundIntake());
-        tab.add("Load into shooter", AutoComponents.loadIntoShooter());
-        tab.add("Shoot from loaded", AutoComponents.shootFromLoaded());
-        tab.add("intake out", Intake.getInstance().setStateCommand(IntakeState.OUT));
-        tab.add("intake off", Intake.getInstance().setStateCommand(IntakeState.OFF));
-        tab.add("intake in", Intake.getInstance().setStateCommand(IntakeState.IN));
-
-
-        // LimelightHelpers.getLatestResults(VisionSubsystem.getInstance().getBob().getName()).targetingResults.targets_Fiducials;
-    }
 
     public static class IntakeTabManager {
         public static String tabName = "Intake";
