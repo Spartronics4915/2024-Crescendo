@@ -6,6 +6,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +35,9 @@ public class IntakeAssemblyCommands {
 
     public static boolean atTarget() {
         System.out.println("Intake Assembly at target");
+        if (RobotBase.isSimulation()) {
+            return true;
+        }
         return mWrist.atTargetState(0.015) && mElevator.atTargetState(0.01);
     }
     
