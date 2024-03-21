@@ -256,7 +256,10 @@ public class RobotContainer {
         // Operator controls
         // Buttons:
         mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
-        mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
+        mOperatorController.y().onTrue(
+            AutoComponents.loadIntoShooter()
+            .andThen(mShooter.setShooterStateCommand(ShooterState.ON))
+        );
         mOperatorController.a()
                 .onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.b().onTrue(Commands.parallel(
