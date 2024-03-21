@@ -9,12 +9,14 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.units.Distance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import java.util.LinkedList;
 
 import com.spartronics4915.frc2024.Constants.BlingModes;
+import com.spartronics4915.frc2024.commands.visionauto.SpeakerTargetTagLocatorSim;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
@@ -78,7 +80,17 @@ public class TableAutoAimCommand extends Command {
     @Override
     public void execute() {
 
-        Rotation2d predictedAngle = getShooterAngle(Rotation2d.fromDegrees(mVision.getBob().getTy()));
+        Rotation2d readAngle = Rotation2d.fromDegrees(mVision.getBob().getTy());
+
+        if (RobotBase.isSimulation()) {
+            var opt = (new SpeakerTargetTagLocatorSim(SwerveDrive.getInstance())).getClosestVisibleTarget();
+            if (opt.isEmpty()) {
+                return;
+            }
+            readAngle = Rotation2d.fromDegrees(opt.get().ty());
+        }
+
+        Rotation2d predictedAngle = getShooterAngle(readAngle);
         Rotation2d correctedAngle = predictedAngle.plus(Rotation2d.fromDegrees(2));
 
         if (!mVision.getBob().getTv()) {
