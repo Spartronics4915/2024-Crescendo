@@ -147,6 +147,7 @@ public class RobotContainer {
         tab.add("ground intake", AutoComponents.groundIntake());
         tab.add("Load into shooter", AutoComponents.loadIntoShooter());
         tab.add("Shoot from loaded", AutoComponents.shootFromLoaded());
+        tab.add("Stationary Aim And Shoot", AutoComponents.stationaryAimAndShoot());
         tab.add("intake out", mIntake.setStateCommand(IntakeState.OUT));
         tab.add("intake off", mIntake.setStateCommand(IntakeState.OFF));
         tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
