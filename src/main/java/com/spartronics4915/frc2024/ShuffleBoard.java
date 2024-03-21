@@ -108,7 +108,8 @@ public class ShuffleBoard {
 
         public static enum WristSubsystemEntries {
             WristSetPoint("WristSetPoint"), WristEncoderReading("WristEncoderReading"), WristManualControl(
-                    "WristManual");
+                    "WristManual"),
+            WristCanCoderReading("IntakeWristCanCoderReading");
 
             private String entryName;
 
@@ -132,6 +133,9 @@ public class ShuffleBoard {
 
             putEntry(out, WristSubsystemEntries.WristEncoderReading, -1.0, mShuffleBoardTab,
                     WristSubsystemEntries.WristEncoderReading.entryName);
+
+            putEntry(out, WristSubsystemEntries.WristCanCoderReading, -1.0, mShuffleBoardTab,
+                    WristSubsystemEntries.WristCanCoderReading.entryName);
 
             var x = mShuffleBoardTab.add("targetSet", 70.0).getEntry();
 
