@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -63,7 +64,10 @@ public class SwerveDrive extends SubsystemBase {
     private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
-    private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("RobotPose", Pose2d.struct).publish();
+    private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("Logging").getStructTopic("RobotPose", Pose2d.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("Logging")
+            .getStructArrayTopic("SwerveDriveCurrentStates", SwerveModuleState.struct).publish();
+
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -456,6 +460,9 @@ public class SwerveDrive extends SubsystemBase {
         var pose = getPose();
         
         mRobotPoseLogger.accept(pose);
+        currStatespublisher.accept(Stream.of(this.getSwerveModules()).map((m) -> {
+            return m.getState();
+        }).toArray(SwerveModuleState[]::new));
 
         final var vs = VisionSubsystem.getInstance();
         vs.getAlice().getVisionMeasurement().ifPresent(this::addVisionMeasurement);
