@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(log, true);
 
         mRobotContainer = new RobotContainer();
+        System.out.println(AdvAutoStates.NotePresenceState); //used to ensure the static methods are run
     }
 
     @Override
