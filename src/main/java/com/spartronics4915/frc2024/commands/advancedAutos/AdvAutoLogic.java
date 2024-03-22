@@ -125,7 +125,8 @@ public class AdvAutoLogic {
                 return AdvAutoStates.AutoState == AutoStates.AIM && mShooterWrist.atTarget() && mSwerve.atTarget();
             }).debounce(aimDebounce.in(Seconds)))
             .withTimeout(aimTimeout.in(Seconds)),
-            AutoComponents.shootFromLoaded()
+            Commands.print("I just tried to shoot a note!")
+            // AutoComponents.shootFromLoaded()
         );
     }
 

@@ -26,6 +26,7 @@ import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.commands.AutoFactory.StartingPosition;
+import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoLogic;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -151,6 +152,9 @@ public class RobotContainer {
         tab.add("intake out", mIntake.setStateCommand(IntakeState.OUT));
         tab.add("intake off", mIntake.setStateCommand(IntakeState.OFF));
         tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
+        tab.add("ScanAimAuto", AdvAutoLogic.visionAimAndShoot());
+        tab.add("SearchGather", AdvAutoLogic.searchAndGather());
+
     }
 
     public RobotContainer() {
