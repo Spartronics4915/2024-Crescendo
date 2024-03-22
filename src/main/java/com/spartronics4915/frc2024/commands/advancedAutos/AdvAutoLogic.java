@@ -31,6 +31,7 @@ import java.util.Set;
 public class AdvAutoLogic {
     //TODO test scan and shoot logic
     //TODO test search and gather logic
+    //TODO test cases where notes aren't present in robot or can't find another note, etc
     
     private static Measure<Time> autoTimeout = Seconds.of(1); 
     private static Measure<Time> searchTimeout = Seconds.of(1); 
