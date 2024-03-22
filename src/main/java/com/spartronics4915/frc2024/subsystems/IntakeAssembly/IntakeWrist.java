@@ -49,6 +49,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
+    //TODO cancoder offsets, direction. and ratio finding
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
     //#region variables

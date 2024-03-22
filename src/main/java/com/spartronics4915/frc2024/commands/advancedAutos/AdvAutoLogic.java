@@ -29,13 +29,13 @@ import java.util.Set;
 
 
 public class AdvAutoLogic {
+    //TODO test scan and shoot logic
+    //TODO test search and gather logic
+    
     private static Measure<Time> autoTimeout = Seconds.of(1); 
     private static Measure<Time> searchTimeout = Seconds.of(1); 
     private static Measure<Time> aimDebounce = Seconds.of(0.1); //time to confirm the shotoer and swerve is on target
     private static Measure<Time> aimTimeout = Seconds.of(1); 
-
-
-
 
     public enum FieldPosition{
         ;

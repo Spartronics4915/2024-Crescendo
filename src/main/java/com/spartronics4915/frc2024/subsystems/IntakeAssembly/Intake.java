@@ -32,6 +32,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     public static enum IntakeState {
         IN, LOAD, OUT, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
+    //TODO speed up digestion and intake speed
 
     private static Intake mInstance;
 

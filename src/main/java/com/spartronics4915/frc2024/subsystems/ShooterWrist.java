@@ -65,6 +65,8 @@ import java.util.function.*;
 import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
 
 public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
+    //TODO tune PID values
+    //TODO tune FF values
 
     // #region variables
 
