@@ -42,7 +42,7 @@ public class AdvAutoStates {
         OUTSIDE
     }
     public static NotePresence NotePresenceState = NotePresence.LOADED;
-    public static AutoStates AutoState = AutoStates.AIM;
+    public static AutoStates AutoState = AutoStates.SCAN;
 
 
     private static void setState(NotePresence state){
