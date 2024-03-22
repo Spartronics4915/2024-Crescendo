@@ -497,8 +497,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private double getFeedForwardValue() {
         return kFeedforwardCalc.calculate(
-                getWristAngle().getRadians() / kWristToRotationsRate,
-                (getEncoderVelReading() / 60.0) * 2 * Math.PI // convert from RPM --> Rads/s
+                getWristAngle().getRadians(),
+                ((getEncoderVelReading() / 60.0) * 2 * Math.PI) / kWristToRotationsRate // convert from RPM --> Rads/s
         );
         // return 0.0;
     }
@@ -527,9 +527,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 MathUtil.clamp(
                     mPidController.calculate(
                         getWristAngle().getRotations(), 
-                        mCurrentState.position)
-                    + getFeedForwardValue(), 
-                -kOutputRange, kOutputRange)
+                        mCurrentState.position),
+                        + getFeedForwardValue()
+                    -kOutputRange, kOutputRange)
             );
         // } else{
         //     mWristMotor.set(0.0);
