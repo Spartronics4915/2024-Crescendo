@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 
 public class AdvAutoLogic {
     private static Measure<Time> autoTimeout = Seconds.of(1); 
+    private static Measure<Time> searchTimeout = Seconds.of(1); 
+
 
     public enum FieldPosition{
         ;
@@ -60,7 +62,7 @@ public class AdvAutoLogic {
             Commands.run(
                 //TODO add preference of direction based on where on the field the robot is
                 () -> mSwerve.setDesiredAngle(
-                    Rotation2d.fromDegrees(mSwerve.getAngle().getDegrees() + (360 / (autoTimeout.in(Seconds)/50)))
+                    Rotation2d.fromDegrees(mSwerve.getAngle().getDegrees() + (360 / (searchTimeout.in(Seconds)/50)))
                     //do one full rotation within the timeout
                 )
             )
