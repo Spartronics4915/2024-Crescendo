@@ -46,6 +46,7 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristCo
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
     //0 = down, 90 = horizantal, 180 = straight up
@@ -103,7 +104,10 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 .getConfigurator()
                 .apply(new CANcoderConfiguration()
                         .withMagnetSensor(new MagnetSensorConfigs()
-                                .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())));
+                                .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())
+                                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                        )
+                );
 
         // resetEncoder(getCanCoderAngle());
         resetEncoder(kStartingAngle);
