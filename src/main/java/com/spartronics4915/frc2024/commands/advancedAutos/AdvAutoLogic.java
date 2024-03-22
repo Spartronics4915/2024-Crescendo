@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.LimelightAuto;
+import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoStates.AutoStates;
@@ -117,7 +118,11 @@ public class AdvAutoLogic {
             //aims if the condition is satisfied, otherwise run scan command
             new ConditionalCommand(
                 aimVision(),
-                scanVision(),
+                scanVision().until(
+                    () -> mVision.getBob().getTv()
+                ).andThen(
+                    aimVision()
+                ),
                 () -> {
                     return mVision.getBob().getTv();
                 }
@@ -147,7 +152,15 @@ public class AdvAutoLogic {
 
     private static Command scanVision(){
         return Commands.parallel(
-            setAutoStateCommand(AutoStates.SCAN)
+            setAutoStateCommand(AutoStates.SCAN),
+            Commands.defer(() -> {
+                final var alliance = DriverStation.getAlliance().get();
+                final var speaker = alliance == Alliance.Blue
+                        ? AutoComponents.BLUE_SPEAKER
+                        : AutoComponents.RED_SPEAKER;
+
+                return new StationaryAutoAimCommand(speaker);
+            }, Set.of())
         );
     }
 
