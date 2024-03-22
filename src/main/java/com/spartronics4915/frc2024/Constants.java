@@ -202,7 +202,7 @@ public final class Constants {
 
             public static final Rotation2d kCanCoderResetAngle = Rotation2d.fromDegrees(15);
 
-            public static final double kCANCoderOffset = 0.0;
+            public static final Rotation2d kCANCoderOffset = Rotation2d.fromDegrees(0.0);
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height

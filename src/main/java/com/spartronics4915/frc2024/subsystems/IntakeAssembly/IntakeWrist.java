@@ -104,7 +104,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
                 .getConfigurator()
                 .apply(new CANcoderConfiguration()
                         .withMagnetSensor(new MagnetSensorConfigs()
-                                .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())
+                                .withMagnetOffset(-kCANCoderOffset.getRotations())
                                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
                         )
                 );
