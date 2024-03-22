@@ -531,6 +531,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                     + getFeedForwardValue(), 
                 -kOutputRange, kOutputRange)
             );
+        // } else{
+        //     mWristMotor.set(0.0);
         // }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
     }
