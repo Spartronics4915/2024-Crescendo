@@ -69,10 +69,6 @@ public class AdvAutoLogic {
             () -> {
                 var detection = mVision.getNoteLocator().getClosestVisibleTarget();
 
-                if (detection.isEmpty()) {
-                    return false;
-                }
-
                 return detection.isPresent();
             }
         );
@@ -119,12 +115,14 @@ public class AdvAutoLogic {
             new ConditionalCommand(
                 aimVision(),
                 scanVision().until(
-                    () -> mVision.getBob().getTv()
+                    () -> mVision.getSpeakerTagLocator().getClosestVisibleTarget().isPresent()
                 ).andThen(
                     aimVision()
                 ),
                 () -> {
-                    return mVision.getBob().getTv();
+                    var opt = mVision.getSpeakerTagLocator().getClosestVisibleTarget();
+
+                    return opt.isPresent();
                 }
             ).until(new Trigger(() -> {
                 return AdvAutoStates.AutoState == AutoStates.AIM && mShooterWrist.atTarget() && mSwerve.atTarget();
