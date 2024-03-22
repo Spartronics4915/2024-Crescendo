@@ -8,6 +8,7 @@ import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoStates.NotePres
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Measure;
@@ -57,7 +58,11 @@ public class AdvAutoLogic {
     private static Command searchForNote(){
         return mSwerve.decoupleRotationCommand().andThen(
             Commands.run(
-                () -> mSwerve.drive(new ChassisSpeeds(0,0,1), false)
+                //TODO add preference of direction based on where on the field the robot is
+                () -> mSwerve.setDesiredAngle(
+                    Rotation2d.fromDegrees(mSwerve.getAngle().getDegrees() + (360 / (autoTimeout.in(Seconds)/50)))
+                    //do one full rotation within the timeout
+                )
             )
         );
     }
