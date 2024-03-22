@@ -30,10 +30,10 @@ public class AdvAutoStates {
     public static enum AutoStates{
         SHOOT,
         HUNT,
-        SCAN,
-        AIM,
-        SEARCH,
-        GATHER
+        SCAN, //searching for target
+        AIM, //aiming at target
+        SEARCH, //searching for note
+        GATHER //gathering note
     }
 
     public static enum NotePresence{
