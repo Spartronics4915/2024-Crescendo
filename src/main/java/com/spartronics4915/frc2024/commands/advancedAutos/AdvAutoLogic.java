@@ -120,9 +120,9 @@ public class AdvAutoLogic {
                     aimVision()
                 ),
                 () -> {
-                    var opt = mVision.getSpeakerTagLocator().getClosestVisibleTarget();
+                    var detection = mVision.getSpeakerTagLocator().getClosestVisibleTarget();
 
-                    return opt.isPresent();
+                    return detection.isPresent();
                 }
             ).until(new Trigger(() -> {
                 return AdvAutoStates.AutoState == AutoStates.AIM && mShooterWrist.atTarget() && mSwerve.atTarget();
