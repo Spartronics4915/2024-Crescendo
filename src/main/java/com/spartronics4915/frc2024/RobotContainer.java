@@ -21,6 +21,7 @@ import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.AutoFactory;
 import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
@@ -154,7 +155,13 @@ public class RobotContainer {
         tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
         tab.add("ScanAimAuto", AdvAutoLogic.visionAimAndShoot());
         tab.add("SearchGather", AdvAutoLogic.searchAndGather());
-
+        tab.add("MAA 3 seconds",  Commands.defer(() -> {
+            final var alliance = DriverStation.getAlliance().get();
+            final var speaker = alliance == Alliance.Blue
+                    ? AutoComponents.BLUE_SPEAKER
+                    : AutoComponents.RED_SPEAKER;
+            return new MovingAutoAimCommand(speaker);
+        }, Set.of()).withTimeout(3));
     }
 
     public RobotContainer() {
