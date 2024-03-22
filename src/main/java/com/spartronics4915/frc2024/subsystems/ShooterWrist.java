@@ -527,7 +527,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 MathUtil.clamp(
                     mPidController.calculate(
                         getWristAngle().getRotations(), 
-                        mCurrentState.position), 
+                        mCurrentState.position)
+                    + getFeedForwardValue(), 
                 -kOutputRange, kOutputRange)
             );
         // }

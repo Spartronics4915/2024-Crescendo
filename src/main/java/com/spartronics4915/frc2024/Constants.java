@@ -311,11 +311,15 @@ public final class Constants {
         
     
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(80); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(24); 
 
         // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
-        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
+        /**
+         * recalc used to find values
+         * https://www.reca.lc/arm?armMass=%7B%22s%22%3A11.3480331%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A9.699347%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A40%2C%22u%22%3A%22A%22%7D&efficiency=97.5&endAngle=%7B%22s%22%3A80%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22NEO%22%7D&ratio=%7B%22magnitude%22%3A72%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A24%2C%22u%22%3A%22deg%22%7D 
+         */
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(0.0, 0.62, 1.40, 0.02); // HACK
                                                                                                                    // untested
                                                                                                                    // values
 
@@ -335,14 +339,14 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
+            kPIDconstants = new PIDConstants(5.5, 0.25, 0.01);
         }
 
         public static final Constraints kConstraints;
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.6;
+            final double timeMinToMaxSeconds = 0.3;
             // How long we expect the shooter to take to get to full speed
             final double timeToFullSpeedSeconds = 0.15;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
