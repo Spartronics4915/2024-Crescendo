@@ -213,9 +213,9 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
-                final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
-                final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
-                        * ShooterWristConstants.kWristToRotationsRate);
+                final double IntakeRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
+                final double motorRotationsNeedingFullPower = (IntakeRotationsNeedingFullPower
+                        * IntakeWristConstants.kWristToRotationsRate);
                 final double maxMotorPowerSetting = 1;
                 final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
     
@@ -229,9 +229,9 @@ public final class Constants {
                 final double timeMinToMaxSeconds = 0.25;
                 // How long we expect the shooter to take to get to full speed
                 final double timeToFullSpeedSeconds = 0.05;
-                final double maxShooterRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
-                        - ShooterWristConstants.kMinAngle.getRotations();
-                final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
+                final double maxIntakeRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
+                        - IntakeWristConstants.kMinAngle.getRotations();
+                final double maxWristVelocity = maxIntakeRotations / timeMinToMaxSeconds;
                 final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
     
                 kConstraints = new Constraints(maxWristVelocity, maxWristAcceleration);
