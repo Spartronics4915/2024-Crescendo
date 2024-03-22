@@ -123,6 +123,10 @@ public class AutoComponents {
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget));
     }
 
+    public static Command warmUpShooter(){
+        return mShooter.setShooterStateCommand(ShooterState.ON);
+    }
+
     public static Command stationaryAutoAim() {
         var shooterFireControl = RobotContainer.getShooterFireControl();
         var aac = new TableAutoAimCommand();
