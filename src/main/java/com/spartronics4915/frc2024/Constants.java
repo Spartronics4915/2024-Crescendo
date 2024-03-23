@@ -311,7 +311,7 @@ public final class Constants {
         
     
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(80); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(24); 
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); 
 
         // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
@@ -339,7 +339,7 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(5.5, 0.25, 0.01);
+            kPIDconstants = new PIDConstants(6.0, 0.25, 0.01);
         }
 
         public static final Constraints kConstraints;
@@ -374,7 +374,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 3500;
+        public static final double kTargetRPM = 4000;
     }
 
     public static final class AutoAimConstants {
