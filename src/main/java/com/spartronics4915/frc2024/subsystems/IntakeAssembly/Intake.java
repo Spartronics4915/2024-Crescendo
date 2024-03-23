@@ -87,7 +87,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mBeamBreakTimer = new Timer();
         mBeamBreakTimer.reset();
         new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(() -> mBeamBreakTimer.start()));
-        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.1)).onTrue(Commands.runOnce(() -> {
+        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.05)).onTrue(Commands.runOnce(() -> {
             if (mCurrentState == IntakeState.IN) {
                 setState(IntakeState.OFF);
             }

@@ -172,8 +172,8 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = 0.5; // placeholder
-            public static final double kLoadSpeed = 0.7; // placeholder
+            public static final double kInSpeed = 0.6; // placeholder
+            public static final double kLoadSpeed = 0.8; // placeholder
             public static final double kOutSpeed = 0.4; // placeholder
             public static final double kOffSpeed = 0;
 
