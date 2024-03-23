@@ -110,8 +110,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mBeamBreakTimer.reset();
 
         // If a note is stored in the shooter, we don't want this trigger running)
-        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
-        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
+        // new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
+        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(() -> {
             if (getConveyorState() != ConveyorState.STORED && (getConveyorState() != ConveyorState.SHOOTING)) {
                 mBeamBreakTimer.stop();
                 mBeamBreakTimer.reset();
@@ -223,8 +223,10 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kShootSpeed);
         // mShooterFollowMotor.set(-kShootSpeed);
 
-        mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
-        mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
+        // mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
+        // mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
+        mPIDControllerLead.setReference(kTargetRPM, ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kTargetRPM - kDiff), ControlType.kVelocity);
         // mShooterMotor.set(ON_SPEED);
         // mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }
