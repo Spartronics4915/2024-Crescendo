@@ -100,7 +100,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     private GenericEntry mShooterWristPigeonDriftEntry;
     private GenericEntry mShooterWristPIDSetpoint;
 
-    public static final double kOutputRange = 0.2;
+    public static final double kOutputRange = 0.5;
     private static final double kRotationLockTolerance = -0.8;
 
     private LinearFilter mFilter;
@@ -320,7 +320,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getCachedShooterPitch();
+        return getEncoderPos();
     }
 
     private void setPosition(Rotation2d newAngle){
