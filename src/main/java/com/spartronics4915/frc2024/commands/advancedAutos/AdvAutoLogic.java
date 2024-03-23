@@ -34,7 +34,7 @@ public class AdvAutoLogic {
     //TODO test cases where notes aren't present in robot or can't find another note, etc
     
     private static Measure<Time> autoTimeout = Seconds.of(1); 
-    private static Measure<Time> searchTimeout = Seconds.of(1); 
+    private static Measure<Time> searchTimeout = Seconds.of(2.5); 
     private static Measure<Time> aimDebounce = Seconds.of(0.1); //time to confirm the shotoer and swerve is on target
     private static Measure<Time> aimTimeout = Seconds.of(1); 
 
@@ -63,9 +63,9 @@ public class AdvAutoLogic {
     public static Command searchAndGather(){
         return Commands.either(
             gather(),
-            searchForNote().until(
+            Commands.defer(() -> searchForNote().until(
                 mVision.getNoteLocator().getClosestVisibleTarget()::isPresent
-            ).withTimeout(autoTimeout.in(Seconds)).andThen(mSwerve.recoupleRotationCommand())
+            ).withTimeout(autoTimeout.in(Seconds)), Set.of())
             .andThen(gather()),
             () -> {
                 var detection = mVision.getNoteLocator().getClosestVisibleTarget();
@@ -75,14 +75,13 @@ public class AdvAutoLogic {
         );
     }
 
-    private static Command searchForNote(){
-        return setAutoStateCommand(AutoStates.SEARCH).andThen(mSwerve.decoupleRotationCommand()).andThen(
+    public static Command searchForNote(){
+        return setAutoStateCommand(AutoStates.SEARCH).andThen(
             Commands.run(
                 //TODO add preference of direction based on where on the field the robot is
-                () -> mSwerve.setDesiredAngle(
-                    Rotation2d.fromDegrees(mSwerve.getAngle().getDegrees() + (360 / (searchTimeout.in(Seconds)/50)))
-                    //do one full rotation within the timeout
-                )
+                () -> {
+                    mSwerve.drive(new ChassisSpeeds(0, 0, Math.toRadians(360)), false);
+                }
             )
         );
     }
@@ -94,7 +93,7 @@ public class AdvAutoLogic {
             LimelightAuto.driveToNote()
         ).until(() -> {
             return AdvAutoStates.NotePresenceState == NotePresence.INTAKE;
-        }).withTimeout(autoTimeout.in(Seconds));
+        }).withTimeout(searchTimeout.in(Seconds));
     }
 
 
