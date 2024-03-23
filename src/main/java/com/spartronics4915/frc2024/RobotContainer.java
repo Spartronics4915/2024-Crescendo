@@ -155,6 +155,7 @@ public class RobotContainer {
         tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
         tab.add("ScanAimAuto", AdvAutoLogic.visionAimAndShoot());
         tab.add("SearchGather", AdvAutoLogic.searchAndGather());
+        tab.add("Spin", AdvAutoLogic.searchForNote().withTimeout(2));
         tab.add("MAA 3 seconds",  Commands.defer(() -> {
             final var alliance = DriverStation.getAlliance().get();
             final var speaker = alliance == Alliance.Blue
