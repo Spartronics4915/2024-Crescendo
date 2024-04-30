@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.Constants.BlingModes;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager;
 import com.spartronics4915.frc2024.ShuffleBoard.ShooterTabManager.ShooterSubsystemEntries;
@@ -206,8 +207,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kShootSpeed);
         // mShooterFollowMotor.set(-kShootSpeed);
 
-        mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
-        mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
+        mPIDControllerLead.setReference(ON_SPEED + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0), ControlType.kDutyCycle);
+        mPIDControllerFollow.setReference(-(ON_SPEED + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0) - 0.05), ControlType.kDutyCycle);
         // mShooterMotor.set(ON_SPEED);
         // mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }

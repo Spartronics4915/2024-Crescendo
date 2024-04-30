@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
@@ -101,6 +102,10 @@ public class RobotContainer {
     private final Bling mBling;
 
     private static final PowerDistribution mPDP = new PowerDistribution();
+
+    public static boolean addTad = false;
+
+    public static final double britishTad = 0.1;
 
     static {
 
@@ -243,6 +248,19 @@ public class RobotContainer {
                 .onTrue(mShooterWrist.resetToAngle(
                         ShooterWristState.HARD_STOP.shooterAngle.getDegrees() + 1));
 
+
+        Shuffleboard.getTab("Tab 12").addBoolean("AddTad", () -> {
+            return addTad;
+        });
+        mDriverController.back().toggleOnTrue(Commands.startEnd(
+            () -> {
+                addTad = true;
+
+            }, () ->{
+                addTad = false;
+            }
+        ));
+
         // Operator controls
         // Buttons:
         mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
@@ -308,7 +326,7 @@ public class RobotContainer {
 
         mOperatorController.rightTrigger(kOperatorTriggerDeadband)
                 .onTrue(mShooter.setShooterStateCommand(ShooterState.ON))
-                .whileTrue(DigestCommands.in())
+                .whileTrue(DigestCommands.in(true))
                 .onFalse(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.a().onTrue(mShooter.setShooterStateCommand(ShooterState.OFF));
         // mOperatorController.y().onTrue(mShooter.setShooterStateCommand(ShooterState.ON));

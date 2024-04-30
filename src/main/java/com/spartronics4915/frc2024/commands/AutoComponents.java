@@ -78,7 +78,7 @@ public class AutoComponents {
     public static Command loadIntoShooter() {
         return Commands.deadline(
                 Commands.waitUntil(mShooter::beamBreakIsTriggered),
-                DigestCommands.in()).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
+                DigestCommands.in(false)).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
     }
 
     public static Command shootFromLoaded() {
