@@ -65,7 +65,8 @@ import java.util.function.*;
 import org.ejml.dense.row.decomposition.hessenberg.TridiagonalDecomposition_FDRB_to_FDRM;
 
 public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInterface, ModeSwitchInterface {
-    //TODO test pigeon2 logic 
+    //TODO tune PID values
+    //TODO tune FF values
 
     // #region variables
 
@@ -249,7 +250,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
             kPIDconstants.d()
         );
 
-        pid.setIZone(5. / 360);
+        pid.setIZone(5.0 / 360.0);
 
         // SparkPIDController pid = mWristMotor.getPIDController();
 
@@ -497,8 +498,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
 
     private double getFeedForwardValue() {
         return kFeedforwardCalc.calculate(
-                getWristAngle().getRadians() / kWristToRotationsRate,
-                (getEncoderVelReading() / 60.0) * 2 * Math.PI // convert from RPM --> Rads/s
+                getWristAngle().getRadians(),
+                ((getEncoderVelReading() / 60.0) * 2 * Math.PI) / kWristToRotationsRate // convert from RPM --> Rads/s
         );
         // return 0.0;
     }
@@ -527,9 +528,12 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                 MathUtil.clamp(
                     mPidController.calculate(
                         getWristAngle().getRotations(), 
-                        mCurrentState.position), 
-                -kOutputRange, kOutputRange)
+                        mCurrentState.position),
+                        -0.05
+                    -kOutputRange, kOutputRange)
             );
+        // } else{
+        //     mWristMotor.set(0.0);
         // }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
     }

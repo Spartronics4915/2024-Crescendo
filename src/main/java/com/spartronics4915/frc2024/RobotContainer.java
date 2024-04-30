@@ -21,11 +21,13 @@ import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.commands.AutoFactory;
 import com.spartronics4915.frc2024.commands.DigestCommands;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.MovingAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimCommand;
 import com.spartronics4915.frc2024.commands.StationaryAutoAimVisionPose;
 import com.spartronics4915.frc2024.commands.TableAutoAimCommand;
 import com.spartronics4915.frc2024.commands.AutoFactory.PathSet;
 import com.spartronics4915.frc2024.commands.AutoFactory.StartingPosition;
+import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoLogic;
 import com.spartronics4915.frc2024.commands.visionauto.ShooterRunFireControl;
 import com.spartronics4915.frc2024.subsystems.TrapezoidSimulator;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -146,6 +148,26 @@ public class RobotContainer {
         // }).onTrue(Commands.runOnce(() -> {
         // DriverStation.reportError("BROWNOUT DETECTED", false);
         // }));
+
+        var mIntake = Intake.getInstance();
+        ShuffleboardTab tab = Shuffleboard.getTab(ShuffleBoard.DebugTab);
+        tab.add("ground intake", AutoComponents.groundIntake());
+        tab.add("Load into shooter", AutoComponents.loadIntoShooter());
+        tab.add("Shoot from loaded", AutoComponents.shootFromLoaded());
+        tab.add("Stationary Aim And Shoot", AutoComponents.stationaryAimAndShoot());
+        tab.add("intake out", mIntake.setStateCommand(IntakeState.OUT));
+        tab.add("intake off", mIntake.setStateCommand(IntakeState.OFF));
+        tab.add("intake in", mIntake.setStateCommand(IntakeState.IN));
+        tab.add("ScanAimAuto", AdvAutoLogic.visionAimAndShoot());
+        tab.add("SearchGather", AdvAutoLogic.searchAndGather());
+        tab.add("Spin", AdvAutoLogic.searchForNote().withTimeout(2));
+        tab.add("MAA 3 seconds",  Commands.defer(() -> {
+            final var alliance = DriverStation.getAlliance().get();
+            final var speaker = alliance == Alliance.Blue
+                    ? AutoComponents.BLUE_SPEAKER
+                    : AutoComponents.RED_SPEAKER;
+            return new MovingAutoAimCommand(speaker);
+        }, Set.of()).withTimeout(3));
     }
 
     public RobotContainer() {
@@ -235,6 +257,7 @@ public class RobotContainer {
         mDriverController.leftStick().onTrue(IntakeAssemblyCommands.stow());
 
         // mDriverController.rightBumper().onTrue(LimelightAuto.driveToNote());
+        mDriverController.rightBumper().toggleOnTrue(LimelightAuto.followNote());
 
         mDriverController.leftTrigger(kDriverTriggerDeadband)
                 .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
@@ -264,7 +287,10 @@ public class RobotContainer {
         // Operator controls
         // Buttons:
         mOperatorController.x().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.AMP));
-        mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
+        mOperatorController.y().onTrue(
+            AutoComponents.loadIntoShooter()
+            .andThen(mShooter.setShooterStateCommand(ShooterState.ON))
+        );
         mOperatorController.a()
                 .onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
         mOperatorController.b().onTrue(Commands.parallel(

@@ -2,7 +2,9 @@ package com.spartronics4915.frc2024.commands;
 
 import java.util.Map;
 
+import com.spartronics4915.frc2024.LimelightHelpers;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.LimelightHelpers.LimelightResults;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -42,6 +44,25 @@ public class LimelightAuto {
                 new AlignToSpeakerCommand(),
                 Commands.waitSeconds(1),
                 aimAndShoot());
+    }
+
+    public static Command followNote() {
+        var noteLocator = mVisionSubsystem.getNoteLocator();
+        Command driveForwardCommand = mSwerve.run(() -> {
+            double speed = 0.0;
+            var noteDetection = noteLocator.getClosestVisibleTarget();
+            if (!noteDetection.isEmpty()) {
+                double height = LimelightHelpers.getLimelightNTDouble("limelight-alice", "tvert");
+                if (height == 0.0 || height > 200.0) speed = 0.0;
+                else if (height < 75.0) speed = 3.5;
+                else speed = (-0.0272 * height) + 5.54; // f(75) = 3.5, f(200) = 0.1
+            }
+            mSwerve.drive(new ChassisSpeeds(speed, 0, 0), false);
+        });
+
+        return Commands.parallel(
+            new LockOnCommand(mVisionSubsystem.getNoteLocator()),
+            driveForwardCommand);
     }
 
     public static Command driveToNote() {

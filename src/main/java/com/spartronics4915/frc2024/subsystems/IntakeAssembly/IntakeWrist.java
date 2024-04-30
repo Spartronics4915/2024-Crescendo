@@ -46,8 +46,10 @@ import static com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeWristCo
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, TrapezoidSimulatorInterface{
+    //TODO cancoder offsets, direction. and ratio finding
     //0 = down, 90 = horizantal, 180 = straight up
     // RPM
     //#region variables
@@ -61,7 +63,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         private Rotation2d mRotSetPoint;
         private Rotation2d mManualDelta;
 
-        // private CANcoder mCANCoder;
+        private CANcoder mCANCoder;
 
         private final ArmFeedforward kFeedforwardCalc;
 
@@ -83,6 +85,8 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         private GenericEntry mManualControlEntry;
         private GenericEntry mWristSetPointEntry;
         private GenericEntry mEncoderEntry;
+        private GenericEntry mCanCoderEntry;
+
 
 
         //#endregion
@@ -96,12 +100,15 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         kTrapezoidProfile = initTrapezoid(IntakeWristConstants.kConstraints);
         kFeedforwardCalc = initFeedForward();
         
-        // mCANCoder = new CANcoder(kCANCoderID);
-        // mCANCoder
-        //         .getConfigurator()
-        //         .apply(new CANcoderConfiguration()
-        //                 .withMagnetSensor(new MagnetSensorConfigs()
-        //                         .withMagnetOffset(-Rotation2d.fromDegrees(kCANCoderOffset).getRotations())));
+        mCANCoder = new CANcoder(kCANCoderID);
+        mCANCoder
+                .getConfigurator()
+                .apply(new CANcoderConfiguration()
+                        .withMagnetSensor(new MagnetSensorConfigs()
+                                .withMagnetOffset(-kCANCoderOffset.getRotations())
+                                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                        )
+                );
 
         // resetEncoder(getCanCoderAngle());
         resetEncoder(kStartingAngle);
@@ -157,6 +164,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mManualControlEntry = mEntries.get(WristSubsystemEntries.WristManualControl);
         mWristSetPointEntry = mEntries.get(WristSubsystemEntries.WristSetPoint);
         mEncoderEntry = mEntries.get(WristSubsystemEntries.WristEncoderReading);
+        mCanCoderEntry = mEntries.get(WristSubsystemEntries.WristCanCoderReading);
 
         IntakeWristTabManager.addMotorControlWidget(this);
     }
@@ -206,9 +214,9 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         return Rotation2d.fromRotations(mEncoder.getPosition()).div(kWristToRotationsRate); //CHECKUP Failure Point?
     }
 
-    // private Rotation2d getCanCoderAngle(){
-    //     return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
-    // }
+    private Rotation2d getCanCoderAngle(){
+        return Rotation2d.fromRotations(mCANCoder.getAbsolutePosition().getValue());
+    }
 
     private double getEncoderVelReading(){
         return mEncoder.getVelocity(); //CHECKUP Failure Point?
@@ -347,6 +355,7 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
         mManualControlEntry.setBoolean(mManualMovement);
         mWristSetPointEntry.setDouble(mRotSetPoint.getDegrees());
         mEncoderEntry.setDouble(getWristAngle().getDegrees());
+        mCanCoderEntry.setDouble(getCanCoderAngle().getDegrees());
     }
 
     private void manualControlUpdate(){ //HACK untested
@@ -384,7 +393,6 @@ public class IntakeWrist extends SubsystemBase implements ModeSwitchInterface, T
     }
 
     private void handleCANCoderLogic(){
-        // System.out.println(getCanCoderAngle());
         // if (getCanCoderAngle().getDegrees() - getWristAngle().getDegrees() < kCanCoderResetAngle.getDegrees()) {
         //     resetEncoder(getCanCoderAngle());
         // }

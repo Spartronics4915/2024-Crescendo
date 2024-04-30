@@ -4,7 +4,9 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants;
+import com.spartronics4915.frc2024.Constants.Vision;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
+import com.spartronics4915.frc2024.commands.AutoComponents;
 import com.spartronics4915.frc2024.subsystems.Elevator;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
@@ -13,6 +15,7 @@ import com.spartronics4915.frc2024.subsystems.IntakeAssembly.IntakeWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake.IntakeState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
+import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.PIDConstants;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,6 +44,7 @@ public class ShuffleBoard {
         map.put(enumValue, i);
         return i;
     }
+
 
     public static class IntakeTabManager {
         public static String tabName = "Intake";
@@ -104,7 +108,8 @@ public class ShuffleBoard {
 
         public static enum WristSubsystemEntries {
             WristSetPoint("WristSetPoint"), WristEncoderReading("WristEncoderReading"), WristManualControl(
-                    "WristManual");
+                    "WristManual"),
+            WristCanCoderReading("IntakeWristCanCoderReading");
 
             private String entryName;
 
@@ -128,6 +133,9 @@ public class ShuffleBoard {
 
             putEntry(out, WristSubsystemEntries.WristEncoderReading, -1.0, mShuffleBoardTab,
                     WristSubsystemEntries.WristEncoderReading.entryName);
+
+            putEntry(out, WristSubsystemEntries.WristCanCoderReading, -1.0, mShuffleBoardTab,
+                    WristSubsystemEntries.WristCanCoderReading.entryName);
 
             var x = mShuffleBoardTab.add("targetSet", 70.0).getEntry();
 

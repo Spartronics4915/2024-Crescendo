@@ -6,6 +6,7 @@ package com.spartronics4915.frc2024;
 
 import com.spartronics4915.frc2024.commands.LimelightAuto;
 import com.spartronics4915.frc2024.commands.LockOnCommand;
+import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoStates;
 import com.spartronics4915.frc2024.commands.visionauto.LockOnOpenLoopCommand;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 import com.spartronics4915.frc2024.util.ModeSwitchInterface;
@@ -40,10 +41,12 @@ public class Robot extends TimedRobot {
         DriverStation.startDataLog(log, true);
 
         mRobotContainer = new RobotContainer();
+        System.out.println(AdvAutoStates.NotePresenceState); //used to ensure the static methods are run
     }
 
     @Override
     public void robotPeriodic() {
+        AdvAutoStates.updateStateLogs();
         CommandScheduler.getInstance().run();
     }
 

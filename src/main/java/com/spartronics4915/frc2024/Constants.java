@@ -172,9 +172,9 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants = new PIDConstants(1.0, 0.0, 0.0); // HACK Tune, and test
 
-            public static final double kInSpeed = 0.8; // placeholder
-            public static final double kLoadSpeed = 0.5; // placeholder
-            public static final double kOutSpeed = 0.5; // placeholder
+            public static final double kInSpeed = 0.5; // placeholder
+            public static final double kLoadSpeed = 0.7; // placeholder
+            public static final double kOutSpeed = 0.4; // placeholder
             public static final double kOffSpeed = 0;
 
             public static final boolean kUseBeamBreak = true;
@@ -202,7 +202,7 @@ public final class Constants {
 
             public static final Rotation2d kCanCoderResetAngle = Rotation2d.fromDegrees(15);
 
-            public static final double kCANCoderOffset = 0.0;
+            public static final Rotation2d kCANCoderOffset = Rotation2d.fromDegrees(0.0);
 
             //TODO find values for this
             public static final Rotation2d kMaxAngleAmp = Rotation2d.fromDegrees(0); //only when above the safety height
@@ -213,9 +213,9 @@ public final class Constants {
 
             public static final PIDConstants kPIDconstants; // don't test with these values
             static{
-                final double shooterRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
-                final double motorRotationsNeedingFullPower = (shooterRotationsNeedingFullPower
-                        * ShooterWristConstants.kWristToRotationsRate);
+                final double IntakeRotationsNeedingFullPower = Rotation2d.fromDegrees(15).getRotations();
+                final double motorRotationsNeedingFullPower = (IntakeRotationsNeedingFullPower
+                        * IntakeWristConstants.kWristToRotationsRate);
                 final double maxMotorPowerSetting = 1;
                 final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
     
@@ -229,9 +229,9 @@ public final class Constants {
                 final double timeMinToMaxSeconds = 0.25;
                 // How long we expect the shooter to take to get to full speed
                 final double timeToFullSpeedSeconds = 0.05;
-                final double maxShooterRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
-                        - ShooterWristConstants.kMinAngle.getRotations();
-                final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
+                final double maxIntakeRotations = IntakeWristConstants.kMaxAngleGround.getRotations()
+                        - IntakeWristConstants.kMinAngle.getRotations();
+                final double maxWristVelocity = maxIntakeRotations / timeMinToMaxSeconds;
                 final double maxWristAcceleration = maxWristVelocity / timeToFullSpeedSeconds;
     
                 kConstraints = new Constraints(maxWristVelocity, maxWristAcceleration);
@@ -311,11 +311,15 @@ public final class Constants {
         
     
         public static final Rotation2d kMaxAngle = Rotation2d.fromDegrees(80); //only when above the safety height
-        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(15); 
+        public static final Rotation2d kMinAngle = Rotation2d.fromDegrees(20); 
 
         // public static final Rotation2d kStartingAngle = Rotation2d.fromDegrees(74);
 
-        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(1.0, 1.0, 1.0, 0.0); // HACK
+        /**
+         * recalc used to find values
+         * https://www.reca.lc/arm?armMass=%7B%22s%22%3A11.3480331%2C%22u%22%3A%22lbs%22%7D&comLength=%7B%22s%22%3A9.699347%2C%22u%22%3A%22in%22%7D&currentLimit=%7B%22s%22%3A40%2C%22u%22%3A%22A%22%7D&efficiency=97.5&endAngle=%7B%22s%22%3A80%2C%22u%22%3A%22deg%22%7D&iterationLimit=10000&motor=%7B%22quantity%22%3A1%2C%22name%22%3A%22NEO%22%7D&ratio=%7B%22magnitude%22%3A72%2C%22ratioType%22%3A%22Reduction%22%7D&startAngle=%7B%22s%22%3A24%2C%22u%22%3A%22deg%22%7D 
+         */
+        public static final FeedForwardConstants kWristFeedForward = new FeedForwardConstants(0.0, 0.62, 1.40, 0.02); // HACK
                                                                                                                    // untested
                                                                                                                    // values
 
@@ -335,14 +339,14 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
+            kPIDconstants = new PIDConstants(6.0, 0.25, 0.01);
         }
 
         public static final Constraints kConstraints;
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.6;
+            final double timeMinToMaxSeconds = 0.3;
             // How long we expect the shooter to take to get to full speed
             final double timeToFullSpeedSeconds = 0.15;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
@@ -370,7 +374,7 @@ public final class Constants {
         public static final double kConveyorInSpeed = 0.5; // placeholder
         public static final double kConveyorOutSpeed = 0.8; // placeholder
 
-        public static final double kTargetRPM = 5000;
+        public static final double kTargetRPM = 4000;
     }
 
     public static final class AutoAimConstants {
@@ -409,8 +413,8 @@ public final class Constants {
 
         public static final Translation3d kAutoAimTarget = new Translation3d(0.2286, 5.5, 2.0);
         // public static final Translation3d kAutoAimTarget = new Translation3d(5, 5, 0.1);
-        public static final double kFlyWheelTransferRate = 0.9; //CHECKUP kinda a guess
-        public static final double kFlyWheelRadPerSec = (kTargetRPM/*rpm, curr free speed */)*(2*Math.PI)*(1/60.0);
+        public static final double kFlyWheelTransferRate = 1.0; //CHECKUP kinda a guess
+        public static final double kFlyWheelRadPerSec = (kTargetRPM/*rpm, curr free speed */)*(1.5)*(2*Math.PI)*(1/60.0);
         public static final double kFlyWheelRadius = 0.038;
         public static final double kShooterSpeed = kFlyWheelTransferRate * kFlyWheelRadius * kFlyWheelRadPerSec; // needs to be in m/s
         public static final double kShooterHeight = 0.1681988;

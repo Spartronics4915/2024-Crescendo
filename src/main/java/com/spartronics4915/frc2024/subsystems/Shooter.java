@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -110,8 +111,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mBeamBreakTimer.reset();
 
         // If a note is stored in the shooter, we don't want this trigger running)
-        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
-        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
+        // new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(mBeamBreakTimer::start));
+        new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(() -> {
             if (getConveyorState() != ConveyorState.STORED && (getConveyorState() != ConveyorState.SHOOTING)) {
                 mBeamBreakTimer.stop();
                 mBeamBreakTimer.reset();
@@ -119,10 +120,26 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
                 conveyorOff();
             }
         }));
+
+        if (RobotBase.isSimulation()) {
+            new Trigger(() -> {
+                return getShooterState() == ShooterState.ON;
+            }).onTrue(
+                Commands.runOnce(() -> {
+                    mSpinUpTimerSim.reset();
+                    mSpinUpTimerSim.start();
+                })
+            ).onFalse(
+                Commands.runOnce(() -> {
+                    mSpinUpTimerSim.reset();
+                    mSpinUpTimerSim.stop();
+                })
+            );
+        }
     }
 
     public boolean beamBreakIsTriggered() {
-        return !mBeamBreak.get(); // TODO: inverted or not?
+        return !mBeamBreak.get(); 
     }
 
     public boolean beamBreakIsNotTriggered() {
@@ -207,8 +224,10 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         // mShooterMotor.set(kShootSpeed);
         // mShooterFollowMotor.set(-kShootSpeed);
 
-        mPIDControllerLead.setReference(ON_SPEED + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0), ControlType.kDutyCycle);
-        mPIDControllerFollow.setReference(-(ON_SPEED + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0) - 0.05), ControlType.kDutyCycle);
+        // mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
+        // mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
+        mPIDControllerLead.setReference(kTargetRPM + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0), ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kTargetRPM - (RobotContainer.addTad ? RobotContainer.britishTad : 0.0) - kDiff), ControlType.kVelocity);
         // mShooterMotor.set(ON_SPEED);
         // mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }
@@ -230,7 +249,11 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
         mConveyorMotor.set(0);
     }
 
+    private static Timer mSpinUpTimerSim = new Timer();
     public boolean hasSpunUp() {
+        if (RobotBase.isSimulation()) {
+            mSpinUpTimerSim.hasElapsed(0.1);
+        }
         return (Math.abs(mShooterEncoder.getVelocity()) >= kTargetRPM)
                 && (Math.abs(mShooterFollowMotor.getEncoder().getVelocity()) >= kTargetRPM);
     }

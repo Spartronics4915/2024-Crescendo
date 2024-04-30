@@ -3,6 +3,7 @@ package com.spartronics4915.frc2024.commands;
 import com.spartronics4915.frc2024.RobotContainer;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
 import com.spartronics4915.frc2024.Constants.ShooterWristConstants.ShooterWristState;
+import com.spartronics4915.frc2024.commands.advancedAutos.AdvAutoStates;
 import com.spartronics4915.frc2024.subsystems.Shooter;
 import com.spartronics4915.frc2024.subsystems.ShooterWrist;
 import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
@@ -77,8 +78,8 @@ public class AutoComponents {
 
     public static Command loadIntoShooter() {
         return Commands.deadline(
-                Commands.waitUntil(mShooter::beamBreakIsTriggered),
-                DigestCommands.in(false)).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
+                Commands.waitUntil(() -> AdvAutoStates.NotePresenceState == AdvAutoStates.NotePresence.LOADED),
+                DigestCommands.in(true)).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
     }
 
     public static Command shootFromLoaded() {
@@ -87,8 +88,8 @@ public class AutoComponents {
         // shooting.
         // This makes sure the beam break is on, then waits for it to go off.
 
-        Command waitUntilBeamBreakTriggeredThenNotTriggered = Commands.waitUntil(mShooter::beamBreakIsTriggered)
-                .andThen(Commands.waitUntil(mShooter::beamBreakIsNotTriggered));
+        Command waitUntilBeamBreakTriggeredThenNotTriggered = Commands.waitUntil(() -> AdvAutoStates.NotePresenceState == AdvAutoStates.NotePresence.LOADED)
+                .andThen(Commands.waitUntil(() -> AdvAutoStates.NotePresenceState != AdvAutoStates.NotePresence.LOADED));
         return Commands.sequence(
                 mShooter.setShooterStateCommand(ShooterState.ON),
                 Commands.waitUntil(mShooter::hasSpunUp).withTimeout(1),
@@ -120,6 +121,10 @@ public class AutoComponents {
                         mIntake.setStateCommand(IntakeState.OFF),
                         IntakeAssemblyCommands.setState(IntakeAssemblyState.GROUNDPICKUP)),
                 Commands.waitUntil(IntakeAssemblyCommands::atTarget));
+    }
+
+    public static Command warmUpShooter(){
+        return mShooter.setShooterStateCommand(ShooterState.ON);
     }
 
     public static Command stationaryAutoAim() {

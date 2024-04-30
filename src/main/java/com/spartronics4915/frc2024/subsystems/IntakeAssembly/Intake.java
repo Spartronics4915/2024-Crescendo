@@ -32,6 +32,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
     public static enum IntakeState {
         IN, LOAD, OUT, OFF, MANUAL, NONE; // NONE is only here as the Shuffleboard default value for troubleshooting
     }
+    //TODO speed up digestion and intake speed
 
     private static Intake mInstance;
 
@@ -86,7 +87,7 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         mBeamBreakTimer = new Timer();
         mBeamBreakTimer.reset();
         new Trigger(this::beamBreakIsTriggered).onTrue(Commands.runOnce(() -> mBeamBreakTimer.start()));
-        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.15)).onTrue(Commands.runOnce(() -> {
+        new Trigger(() -> mBeamBreakTimer.hasElapsed(0.1)).onTrue(Commands.runOnce(() -> {
             if (mCurrentState == IntakeState.IN) {
                 setState(IntakeState.OFF);
             }
@@ -215,23 +216,23 @@ public class Intake extends SubsystemBase implements Loggable, ModeSwitchInterfa
         // mFollowPIDController.setReference(outputPower * kMainToFollowRatio, ControlType.kDutyCycle);
         manualSetPoint = 0.3;
 
-        mMotor.set(0.4);
-        mFollowerMotor.set(-0.3);
+        mMotor.set(kInSpeed);
+        mFollowerMotor.set(-(kInSpeed - 0.1));
 
     }
 
     private void load() {
         //mPIDController.setReference(kLoadSpeed, ControlType.kDutyCycle);
         // mFollowPIDController.setReference(kLoadSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-        mMotor.set(0.7);
-        mFollowerMotor.set(-0.6);
+        mMotor.set(kLoadSpeed);
+        mFollowerMotor.set(-(kLoadSpeed - 0.1));
     }
 
     private void out() {
         // mPIDController.setReference(kOutSpeed, ControlType.kDutyCycle);
         // mFollowPIDController.setReference(kOutSpeed * kMainToFollowRatio, ControlType.kDutyCycle);
-        mMotor.set(-0.4);
-        mFollowerMotor.set(0.3);
+        mMotor.set(-kOutSpeed);
+        mFollowerMotor.set(kOutSpeed-0.1);
     }
 
     private void off() {
