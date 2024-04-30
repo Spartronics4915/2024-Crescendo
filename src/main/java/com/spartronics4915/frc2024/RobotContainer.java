@@ -107,7 +107,7 @@ public class RobotContainer {
 
     public static boolean addTad = false;
 
-    public static final double britishTad = 0.1;
+    public static final double megaTad = 1500;
 
     static {
 

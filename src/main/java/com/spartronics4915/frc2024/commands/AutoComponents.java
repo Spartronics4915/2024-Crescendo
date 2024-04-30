@@ -79,7 +79,7 @@ public class AutoComponents {
     public static Command loadIntoShooter() {
         return Commands.deadline(
                 Commands.waitUntil(() -> AdvAutoStates.NotePresenceState == AdvAutoStates.NotePresence.LOADED),
-                DigestCommands.in(true)).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
+                DigestCommands.in(false)).andThen(mShooter.setConveyorStateCommand(ConveyorState.STORED));
     }
 
     public static Command shootFromLoaded() {

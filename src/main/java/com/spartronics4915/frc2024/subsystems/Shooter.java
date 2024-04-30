@@ -226,8 +226,8 @@ public class Shooter extends SubsystemBase implements Loggable, ModeSwitchInterf
 
         // mPIDControllerLead.setReference(ON_SPEED, ControlType.kDutyCycle);
         // mPIDControllerFollow.setReference(-(ON_SPEED - 0.05), ControlType.kDutyCycle);
-        mPIDControllerLead.setReference(kTargetRPM + (RobotContainer.addTad ? RobotContainer.britishTad : 0.0), ControlType.kVelocity);
-        mPIDControllerFollow.setReference(-(kTargetRPM - (RobotContainer.addTad ? RobotContainer.britishTad : 0.0) - kDiff), ControlType.kVelocity);
+        mPIDControllerLead.setReference(kTargetRPM + (RobotContainer.addTad ? RobotContainer.megaTad : 0.0), ControlType.kVelocity);
+        mPIDControllerFollow.setReference(-(kTargetRPM - (RobotContainer.addTad ? RobotContainer.megaTad : 0.0) - kDiff), ControlType.kVelocity);
         // mShooterMotor.set(ON_SPEED);
         // mShooterFollowMotor.set(-ON_SPEED + 0.05);
     }
