@@ -1,15 +1,15 @@
 package com.spartronics4915.frc2024.commands;
 
 import java.util.Map;
+import java.util.Optional;
 
-import com.spartronics4915.frc2024.LimelightHelpers;
 import com.spartronics4915.frc2024.Constants.IntakeAssembly.IntakeAssemblyState;
-import com.spartronics4915.frc2024.LimelightHelpers.LimelightResults;
+import com.spartronics4915.frc2024.LimelightHelpers;
 import com.spartronics4915.frc2024.subsystems.Shooter;
-import com.spartronics4915.frc2024.subsystems.ShooterWrist;
-import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.Shooter.ConveyorState;
 import com.spartronics4915.frc2024.subsystems.Shooter.ShooterState;
+import com.spartronics4915.frc2024.subsystems.ShooterWrist;
+import com.spartronics4915.frc2024.subsystems.IntakeAssembly.Intake;
 import com.spartronics4915.frc2024.subsystems.swerve.SwerveDrive;
 import com.spartronics4915.frc2024.subsystems.vision.VisionSubsystem;
 
@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import java.util.Optional;
 
 public class LimelightAuto {
     private static final VisionSubsystem mVisionSubsystem = VisionSubsystem.getInstance();
@@ -53,9 +52,9 @@ public class LimelightAuto {
             var noteDetection = noteLocator.getClosestVisibleTarget();
             if (!noteDetection.isEmpty()) {
                 double height = LimelightHelpers.getLimelightNTDouble("limelight-alice", "tvert");
-                if (height == 0.0 || height > 200.0) speed = 0.0;
+                if (height == 0.0 || height > 175.0) speed = 0.0;
                 else if (height < 75.0) speed = 3.5;
-                else speed = (-0.0272 * height) + 5.54; // f(75) = 3.5, f(200) = 0.1
+                else speed = (-0.0345 * height) + 6.0875; // f(75) = 3.5, f(175) = 0.05
             }
             mSwerve.drive(new ChassisSpeeds(speed, 0, 0), false);
         });
