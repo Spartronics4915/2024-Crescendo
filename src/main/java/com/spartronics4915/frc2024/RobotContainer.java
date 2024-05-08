@@ -106,6 +106,8 @@ public class RobotContainer {
     private static final PowerDistribution mPDP = new PowerDistribution();
 
     public static boolean addTad = false;
+    public static boolean singleController = false;
+
 
     public static final double megaTad = 1500;
 
@@ -283,6 +285,10 @@ public class RobotContainer {
                 addTad = false;
             }
         ));
+
+        Shuffleboard.getTab("Tab 12").add("toggle single controller", Commands.run(()->{
+            singleController = !singleController;
+        }));
 
         // Operator controls
         // Buttons:
