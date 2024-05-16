@@ -365,7 +365,7 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
      * https://www.desmos.com/3d/43a3d2d01d (the area showing is where this function returns true)
      */
     private boolean getRotationLock(){
-        return mSwerveIMU.getGravityVectorZ().getValueAsDouble() > kRotationLockTolerance;
+        return mSwerveIMU.getGravityVectorZ().getValueAsDouble() < 0.98;
     }
 
 
@@ -523,7 +523,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
         mShooterWristErrorPID.setDouble(Rotation2d.fromRotations(mCurrentState.position).getDegrees() - getWristAngle().getDegrees());
         mShooterWristErrorTrapazoid.setDouble(mTargetRotation2d.getDegrees() - Rotation2d.fromRotations(mCurrentState.position).getDegrees());
 
-        // if (!getRotationLock()) {
+        if (!getRotationLock()) {
+            // System.out.println(getRotationLock());
             mWristMotor.set(
                 MathUtil.clamp(
                     mPidController.calculate(
@@ -532,9 +533,9 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
                         -0.05
                     -kOutputRange, kOutputRange)
             );
-        // } else{
-        //     mWristMotor.set(0.0);
-        // }
+        } else{
+            mWristMotor.set(0.0);
+        }
         // mPidController.setReference((mCurrentState.position) * kWristToRotationsRate, ControlType.kPosition, 0, 0);
     }
 
