@@ -333,23 +333,23 @@ public class RobotContainer {
 
         // triggers
 
-        // mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
-        //         Commands.repeatingSequence(
-        //                 Commands.defer(() -> {
-        //                     final var alliance = DriverStation.getAlliance().get();
-        //                     final var speaker = alliance == Alliance.Blue
-        //                             ? AutoComponents.BLUE_SPEAKER
-        //                             : AutoComponents.RED_SPEAKER;
-        //                     return Commands.parallel(
-        //                             new TableAutoAimCommand(),
-        //                             // new StationaryAutoAimCommand(speaker)
-        //                             StationaryAutoAimVisionPose
-        //                                     .getStationaryAutoAimVisionOrPose(
-        //                                             mVision.getSpeakerTagLocator(),
-        //                                             speaker));
-        //                 }, Set.of())));
-        mOperatorController.leftTrigger(kDriverTriggerDeadband)
-                .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
+        mOperatorController.leftTrigger(kOperatorTriggerDeadband).whileTrue(
+                Commands.repeatingSequence(
+                        Commands.defer(() -> {
+                            final var alliance = DriverStation.getAlliance().get();
+                            final var speaker = alliance == Alliance.Blue
+                                    ? AutoComponents.BLUE_SPEAKER
+                                    : AutoComponents.RED_SPEAKER;
+                            return Commands.parallel(
+                                    new TableAutoAimCommand(),
+                                    // new StationaryAutoAimCommand(speaker)
+                                    StationaryAutoAimVisionPose
+                                            .getStationaryAutoAimVisionOrPose(
+                                                    mVision.getSpeakerTagLocator(),
+                                                    speaker));
+                        }, Set.of())));
+        // mOperatorController.leftTrigger(kDriverTriggerDeadband)
+        //         .whileTrue(new LockOnCommand(mVision.getNoteLocator()));
 
         // mDriverController.povUp().whileTrue(Commands.defer(() -> {
         // final var alliance = DriverStation.getAlliance().get();
