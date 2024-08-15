@@ -335,7 +335,7 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
+            kPIDconstants = new PIDConstants(15, 0.01, 0.1);
         }
 
         public static final Constraints kConstraints;
