@@ -344,7 +344,7 @@ public final class Constants {
              // The number of seconds that we expect the shooter to go from in to Max
             final double timeMinToMaxSeconds = 0.6;
             // How long we expect the shooter to take to get to full speed
-            final double timeToFullSpeedSeconds = 0.15;
+            final double timeToFullSpeedSeconds = 0.15*4;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
                     - ShooterWristConstants.kMinAngle.getRotations();
             final double maxWristVelocity = maxShooterRotations / timeMinToMaxSeconds;
