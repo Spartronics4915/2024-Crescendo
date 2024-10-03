@@ -335,14 +335,14 @@ public final class Constants {
             final double maxMotorPowerSetting = 1;
             final double P = maxMotorPowerSetting / motorRotationsNeedingFullPower;
 
-            kPIDconstants = new PIDConstants(6, 0/*0.25*/, 0.02);
+            kPIDconstants = new PIDConstants(15, 0.01, 0.05);
         }
 
         public static final Constraints kConstraints;
 
         static {
              // The number of seconds that we expect the shooter to go from in to Max
-            final double timeMinToMaxSeconds = 0.6;
+            final double timeMinToMaxSeconds = 0.75;
             // How long we expect the shooter to take to get to full speed
             final double timeToFullSpeedSeconds = 0.15;
             final double maxShooterRotations = ShooterWristConstants.kMaxAngle.getRotations()
