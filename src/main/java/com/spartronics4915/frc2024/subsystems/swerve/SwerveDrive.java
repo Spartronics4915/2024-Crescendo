@@ -64,10 +64,10 @@ public class SwerveDrive extends SubsystemBase {
     private final Lock mPoseEstimatorReadLock = mPoseEstimatorLock.readLock();
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
-    private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("RobotPose", Pose2d.struct).publish();
+    private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("logging").getStructTopic("RobotPose", Pose2d.struct).publish();
     private StructArrayPublisher<SwerveModuleState> desiredStatespublisher = NetworkTableInstance.getDefault()
             .getTable("simStuff").getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct).publish();
-    private StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff")
+    private StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("logging")
             .getStructArrayTopic("MyCurrentStates", SwerveModuleState.struct).publish();
 
 
@@ -446,7 +446,7 @@ public class SwerveDrive extends SubsystemBase {
     public void periodic() {
         updateOdometry();
 
-        boolean logSwerveModules = false;
+        boolean logSwerveModules = true;
         if (logSwerveModules) {
             currStatespublisher.accept(Stream.of(getSwerveModules()).map((m) -> {
                 return m.getState();
