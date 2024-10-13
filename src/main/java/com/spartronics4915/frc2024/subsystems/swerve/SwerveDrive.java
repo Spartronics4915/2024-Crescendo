@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
@@ -64,6 +65,11 @@ public class SwerveDrive extends SubsystemBase {
     private final Lock mPoseEstimatorWriteLock = mPoseEstimatorLock.writeLock();
 
     private StructPublisher<Pose2d> mRobotPoseLogger = NetworkTableInstance.getDefault().getTable("simStuff").getStructTopic("RobotPose", Pose2d.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> desiredStatespublisher = NetworkTableInstance.getDefault()
+            .getTable("simStuff").getStructArrayTopic("MyDesiredStates", SwerveModuleState.struct).publish();
+    private StructArrayPublisher<SwerveModuleState> currStatespublisher = NetworkTableInstance.getDefault().getTable("simStuff")
+            .getStructArrayTopic("MyCurrentStates", SwerveModuleState.struct).publish();
+
 
     private SwerveDrive() {
         mFrontLeft = new SwerveModule(kFrontLeft);
@@ -442,15 +448,10 @@ public class SwerveDrive extends SubsystemBase {
 
         boolean logSwerveModules = false;
         if (logSwerveModules) {
-            for(int i = 0; i < 4; i ++){
-                String moduleTag = "Module " + i + " encoder : ";
-                double encoderReading = mModules[i].getPosition().angle.getDegrees();
-                SmartDashboard.putNumber(moduleTag, encoderReading);
-                
-                String moduleTagRaw = "Module " + i + " encoder raw: ";
-                double encoderReadingRaw = mModules[i].getAbsoluteAngle().getDegrees();
-                SmartDashboard.putNumber(moduleTagRaw, encoderReadingRaw);
-            }
+            currStatespublisher.accept(Stream.of(getSwerveModules()).map((m) -> {
+                return m.getState();
+            }).toArray(SwerveModuleState[]::new));
+            desiredStatespublisher.accept(getModuleDesiredStates());
         }
 
         var pose = getPose();

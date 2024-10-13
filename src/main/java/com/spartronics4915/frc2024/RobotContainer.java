@@ -42,6 +42,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -195,6 +196,12 @@ public class RobotContainer {
             overviewTab.add(mAutoChooser);
 
             Shuffleboard.getTab("Tab 12").add(mAutoChooser);
+            Shuffleboard.getTab("Tab 12").addBoolean("Intake beam break", () -> {return mIntake.beamBreakIsTriggered();});
+            Shuffleboard.getTab("Tab 12").addBoolean("Intake see's note", () -> {return mVision.aliceSeesNote();});
+            Shuffleboard.getTab("Tab 12").addDouble("Battery Voltage", () -> {
+                return RobotController.getBatteryVoltage();
+            });
+
 
             SmartDashboard.putData(CommandScheduler.getInstance());
         } else {
@@ -340,9 +347,19 @@ public class RobotContainer {
         // return mShooter.setShooterStateCommand(ShooterState.ON)
         //         .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"));
 
-        return mAutoChooser.getSelected();
+        //preload:
+        //AutoComponents.shootPreloaded()
 
-        // return mAutoChooser.getSelected();
+        //4 note center
+        //StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNoteFaster())
+
+        //middle lower 2
+        // StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff"))
+
+
+        // return StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")); //mAutoChooser.getSelected();
+
+        return mAutoChooser.getSelected();
     }
 
     private SendableChooser<Command> buildAutoChooser() {
@@ -350,14 +367,13 @@ public class RobotContainer {
 
         out.setDefaultOption("None", Commands.none());
         
-        out.addOption("Preloaded only", AutoComponents.shootPreloaded());
+        out.addOption("Preloaded only", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(AutoComponents.shootPreloaded()));
         
         out.addOption("Center 4-note", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNote()));
 
         out.addOption("Center 4-note faster", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNoteFaster()));
 
-        out.addOption("Middle Lower 2", mShooter.setShooterStateCommand(ShooterState.ON)
-                .andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));
+        out.addOption("Middle Lower 2", StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));
 
         return out;
     }
