@@ -81,6 +81,9 @@ public class RobotContainer {
 
     private final SendableChooser<Command> mAutoChooser;
 
+    private final SendableChooser<StartingPosition> mStartingPositionChooser;
+
+
     // private static final Intake mIntake = Intake.getInstance();
 
     private static final IntakeWrist mIntakeWrist;
@@ -195,7 +198,14 @@ public class RobotContainer {
             ShuffleboardTab overviewTab = Shuffleboard.getTab(ShuffleBoard.UserTab);
             overviewTab.add(mAutoChooser);
 
+            mStartingPositionChooser = buildPositionChooser();
+            overviewTab.add(mStartingPositionChooser);
+
+            SmartDashboard.putData("Starting position chooser", mStartingPositionChooser);
+
+
             Shuffleboard.getTab("Tab 12").add(mAutoChooser);
+            Shuffleboard.getTab("Tab 12").add(mStartingPositionChooser);
             Shuffleboard.getTab("Tab 12").addBoolean("Intake beam break", () -> {return mIntake.beamBreakIsTriggered();});
             Shuffleboard.getTab("Tab 12").addBoolean("Intake see's note", () -> {return mVision.aliceSeesNote();});
             Shuffleboard.getTab("Tab 12").addDouble("Battery Voltage", () -> {
@@ -203,9 +213,11 @@ public class RobotContainer {
             });
 
 
+
             SmartDashboard.putData(CommandScheduler.getInstance());
         } else {
             mAutoChooser = null;
+            mStartingPositionChooser = null;
         }
         mBling = Bling.getInstance();
         mBling.setMode(BlingModes.OFF);
@@ -360,6 +372,17 @@ public class RobotContainer {
         // return StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")); //mAutoChooser.getSelected();
 
         return mAutoChooser.getSelected();
+    }
+
+    private SendableChooser<StartingPosition> buildPositionChooser(){
+        SendableChooser<StartingPosition> out = new SendableChooser<StartingPosition>();
+
+        out.addOption("TOP", StartingPosition.TOP);
+        out.addOption("MIDDLE", StartingPosition.MIDDLE);
+        out.addOption("BOTTOM", StartingPosition.BOTTOM);
+
+        return out;
+
     }
 
     private SendableChooser<Command> buildAutoChooser() {
