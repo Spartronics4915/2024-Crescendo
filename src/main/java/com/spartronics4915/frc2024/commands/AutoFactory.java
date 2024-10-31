@@ -28,9 +28,9 @@ import static com.spartronics4915.frc2024.Constants.Drive.kMaxAngularAcceleratio
 
 public final class AutoFactory {
     public static enum StartingPosition {
-        TOP(new Pose2d(0.75, 6.67, Rotation2d.fromDegrees(60))),
+        TOP(new Pose2d(0.75, 6.67, Rotation2d.fromDegrees(60))), //Amp side
         MIDDLE(new Pose2d(1.30, 5.62, Rotation2d.fromDegrees(0))),
-        BOTTOM(new Pose2d(0.75, 4.41, Rotation2d.fromDegrees(-60)));
+        BOTTOM(new Pose2d(0.75, 4.41, Rotation2d.fromDegrees(-60))); //Source side
 
         private final Pose2d poseBlue;
 

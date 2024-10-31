@@ -27,17 +27,17 @@ public class Robot extends TimedRobot {
     private Command mAutonomousCommand;
 
     private RobotContainer mRobotContainer;
-    public static DataLog log;
     public static final Timer TELEOP_TIMER = new Timer();
+    // public static DataLog log;
 
     @Override
     public void robotInit() {
 
-        DataLogManager.logNetworkTables(true);
+        // DataLogManager.logNetworkTables(true);
 
-        log = DataLogManager.getLog();
+        // log = DataLogManager.getLog();
 
-        DriverStation.startDataLog(log, true);
+        // DriverStation.startDataLog(log, true);
 
         mRobotContainer = new RobotContainer();
     }

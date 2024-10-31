@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import static com.spartronics4915.frc2024.Constants.OI.kDriverControllerPort;
@@ -268,10 +269,18 @@ public class RobotContainer {
         mOperatorController.y().onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.SOURCE));
         mOperatorController.a()
                 .onTrue(IntakeAssemblyCommands.ComplexSetState(IntakeAssemblyState.GROUNDPICKUP));
-        mOperatorController.b().onTrue(Commands.parallel(
-                mIntake.setStateCommand(IntakeState.OFF),
-                mShooter.setShooterStateCommand(ShooterState.OFF),
-                mShooter.setConveyorStateCommand(ConveyorState.OFF)));
+        // mOperatorController.b().onTrue(Commands.parallel(
+        //         mIntake.setStateCommand(IntakeState.OFF),
+        //         mShooter.setShooterStateCommand(ShooterState.OFF),
+        //         mShooter.setConveyorStateCommand(ConveyorState.OFF)));
+        mOperatorController.b().whileTrue(
+                Commands.startEnd(
+                        () -> {
+                                mIntake.setState(IntakeState.IN);
+                        }
+                , () -> {
+                        mIntake.setState(IntakeState.OFF);
+                }));
 
         // manual controls
 
@@ -371,7 +380,7 @@ public class RobotContainer {
 
         // return StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")); //mAutoChooser.getSelected();
 
-        return mAutoChooser.getSelected();
+        return StartingPosition.setStartingPosition(mStartingPositionChooser.getSelected()).andThen(mAutoChooser.getSelected());
     }
 
     private SendableChooser<StartingPosition> buildPositionChooser(){
@@ -390,13 +399,13 @@ public class RobotContainer {
 
         out.setDefaultOption("None", Commands.none());
         
-        out.addOption("Preloaded only", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(AutoComponents.shootPreloaded()));
+        out.addOption("Preloaded only", (AutoComponents.shootPreloaded()));
         
-        out.addOption("Center 4-note", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNote()));
+        out.addOption("Center 4-note", (CompositeAutos.generateCenterFourNote()));
 
-        out.addOption("Center 4-note faster", StartingPosition.setStartingPosition(StartingPosition.MIDDLE).andThen(CompositeAutos.generateCenterFourNoteFaster()));
+        out.addOption("Center 4-note faster", (CompositeAutos.generateCenterFourNoteFaster()));
 
-        out.addOption("Middle Lower 2", StartingPosition.setStartingPosition(StartingPosition.TOP).andThen(mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));
+        out.addOption("Middle Lower 2", (mShooter.setShooterStateCommand(ShooterState.ON)).andThen(AutoBuilder.buildAuto("MiddleLower2Kickoff")));
 
         return out;
     }
