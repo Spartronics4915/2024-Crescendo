@@ -320,7 +320,8 @@ public class ShooterWrist extends SubsystemBase implements TrapezoidSimulatorInt
     }
 
     public Rotation2d getWristAngle() {
-        return getCachedShooterPitch();
+        // return getCachedShooterPitch();
+        return getEncoderPos();
     }
 
     private void setPosition(Rotation2d newAngle){
